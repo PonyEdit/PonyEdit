@@ -33,15 +33,28 @@ void SshRemoteController::attach(SshConnection* connection)
 	qDebug() << remoteMd5;
 	qDebug() << sSlaveMd5;
 	if (remoteMd5 != sSlaveMd5)
-	{
 		mSsh->writeFile("/home/thingalon/.remoted/slave.py", sSlaveScript.constData(), sSlaveScript.length());
-		/*//	Time to upload a new script
-		QByteArray fullPush = QByteArray("cat << \"END_OF_SLAVE_SCRIPT\" > ~/.remoted/slave.py\n");
-		fullPush.append(sSlaveScript);
-		fullPush.append("\nEND_OF_SLAVE_SCRIPT\n");
 
-		mSsh->execute(fullPush);*/
-	}
+	const char* command = "python ~/.remoted/slave.py\n";
+	mSsh->writeData(command, strlen(command));
 
-	qDebug() << mSsh->execute("python ~/.remoted/slave.py\n");
+	QByteArray testSend("Monkeys Eat Bananas");
+	testSend = testSend.toBase64();
+	testSend.append("\n");
+	mSsh->writeData(testSend.constData(), testSend.length());
+	QByteArray retval = mSsh->readToPrompt();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

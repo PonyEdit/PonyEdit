@@ -122,7 +122,7 @@ QByteArray SshConnection::readToPrompt()
 		rc = libssh2_channel_read(mChannel, mBuffer, SSH_BUFFER_SIZE);
 		if (rc > 0)
 		{
-			//qDebug() << QByteArray(mBuffer, rc);
+			qDebug() << QByteArray(mBuffer, rc);
 			result.append(mBuffer, rc);
 			int index = result.indexOf(SSH_PROMPT);
 			if (index > -1)
@@ -180,7 +180,6 @@ void SshConnection::writeFile(const char* remoteFilename, const char* data, int 
 	}
 
 	libssh2_channel_send_eof(tmpChannel);
-	libssh2_channel_wait_eof(tmpChannel);
 
 	libssh2_channel_wait_closed(tmpChannel);
 	libssh2_channel_free(tmpChannel);

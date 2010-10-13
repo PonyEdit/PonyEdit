@@ -30,6 +30,7 @@ public:
 
 	QByteArray execute(const char* command);
 	QByteArray readToPrompt();
+	QByteArray readLine();
 	void writeData(const char* data, int length);
 	void sendEof();
 
