@@ -4,6 +4,7 @@
 #include <QTextEdit>
 #include <QSyntaxHighlighter>
 #include <QRegExp>
+#include <QTime>
 #include <QCryptographicHash>
 
 #include "sshconnection.h"
@@ -15,13 +16,15 @@ MainWindow::MainWindow(QWidget *parent)
 	QTextEdit* editor = new QTextEdit(this);
 	setCentralWidget(editor);
 
+	QTime t;
+	t.start();
+
 	SshConnection c;
 	c.connect("trouble.net.au", 22);
 	c.authenticatePassword("thingalon", "kr4n5k1");
 
 	SshRemoteController controller;
 	controller.attach(&c);
-
 }
 
 MainWindow::~MainWindow()

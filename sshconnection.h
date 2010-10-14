@@ -31,6 +31,7 @@ public:
 	QByteArray execute(const char* command);
 	QByteArray readToPrompt();
 	QByteArray readLine();
+	QByteArray readUntil(const char* marker);
 	void writeData(const char* data, int length);
 	void sendEof();
 
@@ -43,7 +44,8 @@ private:
 	LIBSSH2_SESSION* mSession;
 	LIBSSH2_CHANNEL* mChannel;
 	QByteArray mServerFingerprint;
-	char mBuffer[SSH_BUFFER_SIZE];
+	char mTmpBuffer[SSH_BUFFER_SIZE];
+	QByteArray mReadBuffer;
 };
 
 #endif // SSHCONNECTION_H

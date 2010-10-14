@@ -38,11 +38,42 @@ void SshRemoteController::attach(SshConnection* connection)
 	const char* command = "python ~/.remoted/slave.py\n";
 	mSsh->writeData(command, strlen(command));
 
-	QByteArray testSend("Monkeys Eat Bananas");
+	QByteArray testSend;
+
+	int req = 1;
+	short msg = 1;
+	testSend.append((const char*)&req, 4);
+	testSend.append((const char*)&msg, 2);
+
 	testSend = testSend.toBase64();
 	testSend.append("\n");
 	mSsh->writeData(testSend.constData(), testSend.length());
-	QByteArray retval = mSsh->readToPrompt();
+	QByteArray retval = mSsh->readLine();
+	retval = QByteArray::fromBase64(retval);
+
+	const char* data = retval.constData();
+
+	int reqId = *(int*)(data + 0);
+	int ok = *(char*)(data + 4);
+
+	qDebug() << "Request ID: " << reqId;
+	qDebug() << "OK: " << ok;
+
+	const char* dataEnd = data + retval.length();
+	data += 5;
+	while (data < dataEnd)
+	{
+		int strlen = *(int*)data;
+		data += 4;
+
+		QString filename = QString(QByteArray(data, strlen));
+		data += strlen;
+
+		int filesize = *(int*)data;
+		data += 4;
+
+		qDebug() << filename << filesize;
+	}
 }
 
 

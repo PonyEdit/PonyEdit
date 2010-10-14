@@ -112,34 +112,35 @@ void SshConnection::createChannel()
 
 QByteArray SshConnection::readToPrompt()
 {
-	int rc;
-	QByteArray result;
-	QTime timeout;
-	timeout.start();
+	return readUntil(SSH_PROMPT);
+}
 
+QByteArray SshConnection::readLine()
+{
+	return readUntil("\n");
+}
+
+QByteArray SshConnection::readUntil(const char* marker)
+{
 	while (1)
 	{
-		rc = libssh2_channel_read(mChannel, mBuffer, SSH_BUFFER_SIZE);
+		int rc = libssh2_channel_read(mChannel, mTmpBuffer, SSH_BUFFER_SIZE);
 		if (rc > 0)
 		{
-			qDebug() << QByteArray(mBuffer, rc);
-			result.append(mBuffer, rc);
-			int index = result.indexOf(SSH_PROMPT);
-			if (index > -1)
-			{
+			//qDebug() << QByteArray(mTmpBuffer, rc);
 
-				result.truncate(index);
+			mReadBuffer.append(mTmpBuffer, rc);
+			int markerIndex = mReadBuffer.indexOf(marker);
+			if (markerIndex > -1)
+			{
+				QByteArray result = mReadBuffer.left(markerIndex);
+				mReadBuffer = mReadBuffer.right(mReadBuffer.size() - (markerIndex + strlen(marker)));
 				return result;
 			}
 		}
 		else if (rc < 0 && rc != LIBSSH2_ERROR_EAGAIN)
 		{
-			throw("Failed to read command prompt!");
-		}
-
-		if (timeout.elapsed() > 5000)
-		{
-			throw("Timeout waiting for command prompt :(");
+			throw("Failed to receive from remote host!");
 		}
 	}
 }
@@ -175,9 +176,7 @@ void SshConnection::writeFile(const char* remoteFilename, const char* data, int 
 	}
 
 	if (libssh2_channel_write(tmpChannel, data, length) < 0)
-	{
 		throw("Error sending file!");
-	}
 
 	libssh2_channel_send_eof(tmpChannel);
 
