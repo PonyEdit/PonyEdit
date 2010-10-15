@@ -1,8 +1,10 @@
 #ifndef SSHREMOTECONTROLLER_H
 #define SSHREMOTECONTROLLER_H
 
+#include <QString>
 #include <QByteArray>
 #include "sshconnection.h"
+#include "remotefile.h"
 
 #define SSH_SLAVE_FILE "slave.py"
 
@@ -12,8 +14,11 @@ public:
 	SshRemoteController();
 	void attach(SshConnection* connection);
 
+	RemoteFile openFile(const char* filename);
+
 private:
 	SshConnection* mSsh;
+	QString mHomeDirectory;
 
 	static bool sSlaveLoaded;
 	static QByteArray sSlaveScript;

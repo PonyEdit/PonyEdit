@@ -9,6 +9,7 @@
 
 #include "sshconnection.h"
 #include "sshremotecontroller.h"
+#include "serverconfigdlg.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -16,15 +17,21 @@ MainWindow::MainWindow(QWidget *parent)
 	QTextEdit* editor = new QTextEdit(this);
 	setCentralWidget(editor);
 
-	QTime t;
-	t.start();
+	ServerConfigDlg dlg(this);
+	dlg.exec();
+	QString hostname = dlg.getHostname();
+	QString login = dlg.getLogin();
+	QString password = dlg.getPassword();
+	QString filename = dlg.getFilename();
 
 	SshConnection c;
-	c.connect("trouble.net.au", 22);
-	c.authenticatePassword("thingalon", "kr4n5k1");
+	c.connect(hostname.toUtf8(), 22);
+	c.authenticatePassword(login.toUtf8(), password.toUtf8());
 
 	SshRemoteController controller;
 	controller.attach(&c);
+
+	RemoteFile f = controller.openFile(filename.toUtf8());
 }
 
 MainWindow::~MainWindow()

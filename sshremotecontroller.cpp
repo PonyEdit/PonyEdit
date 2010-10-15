@@ -38,6 +38,15 @@ void SshRemoteController::attach(SshConnection* connection)
 	const char* command = "python ~/.remoted/slave.py\n";
 	mSsh->writeData(command, strlen(command));
 
+/*	QByteArray welcomeMsg = mSsh->readLine();
+	welcomeMsg = QByteArray::fromBase64(welcomeMsg);
+
+	const char* welcomeData = welcomeMsg.constData();
+	int cwdlen = *(int*)welcomeData;
+	QString cwd = QString(QByteArray(welcomeData + 4, cwdlen));
+	mHomeDirectory = cwd;
+	qDebug() << "Home directory: " << mHomeDirectory;*/
+
 	QByteArray testSend;
 
 	int req = 1;
@@ -74,6 +83,16 @@ void SshRemoteController::attach(SshConnection* connection)
 
 		qDebug() << filename << filesize;
 	}
+}
+
+RemoteFile SshRemoteController::openFile(const char* filename)
+{
+	QByteArray fileContent = mSsh->readFile(filename);
+
+	qDebug() << "Read the following file from the server: ";
+	qDebug() << fileContent;
+
+	return RemoteFile();
 }
 
 

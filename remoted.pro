@@ -17,11 +17,18 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     sshconnection.cpp \
-    sshremotecontroller.cpp
+    sshremotecontroller.cpp \
+    serverconfigdlg.cpp \
+    remotefile.cpp
 
 HEADERS  += mainwindow.h \
     sshconnection.h \
-    sshremotecontroller.h
+    sshremotecontroller.h \
+    serverconfigdlg.h \
+    remotefile.h
 
 OTHER_FILES += \
     slave.py
+
+FORMS += \
+    serverconfigdlg.ui

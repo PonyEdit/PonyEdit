@@ -184,6 +184,11 @@ void SshConnection::writeFile(const char* remoteFilename, const char* data, int 
 	libssh2_channel_free(tmpChannel);
 }
 
+QByteArray SshConnection::readFile(const char* filename)
+{
+	return QByteArray("Not done yet, bitch!");
+}
+
 
 
 

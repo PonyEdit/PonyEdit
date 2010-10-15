@@ -27,6 +27,7 @@ public:
 	void startRemoteSlave(const char* filename);
 
 	void writeFile(const char* remoteFilename, const char* data, int length);
+	QByteArray readFile(const char* filename);
 
 	QByteArray execute(const char* command);
 	QByteArray readToPrompt();

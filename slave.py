@@ -84,4 +84,13 @@ def handleMessage(message):
 		return err
 	return result
 
+
+#
+#	Send startup info
+#
+
+#welcomeMsg = TLD()
+#welcomeMsg.writeString(os.getcwd())
+#print binascii.b2a(welcomeMsg)
+
 mainLoop()
