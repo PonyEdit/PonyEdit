@@ -28,17 +28,16 @@ SshRemoteController::SshRemoteController()
 void SshRemoteController::attach(SshConnection* connection)
 {
 	mSsh = connection;
+
+	const char* home = "cd ~\n";
+	mSsh->execute(home);
+
 	QByteArray remoteMd5 = mSsh->execute("if [ ! -d ~/.remoted ]; then mkdir ~/.remoted; fi; if [ -e ~/.remoted/slave.py ]; then md5sum ~/.remoted/slave.py; else echo x; fi\n").toLower();
 	remoteMd5.truncate(32);
 	qDebug() << remoteMd5;
 	qDebug() << sSlaveMd5;
 	if (remoteMd5 != sSlaveMd5)
-	{
-		const char* home = "cd ~\n";
-		mSsh->writeData(home, strlen(home));
-
 		mSsh->writeFile(".remoted/slave.py", sSlaveScript.constData(), sSlaveScript.length());
-	}
 
 	const char* command = "python ~/.remoted/slave.py\n";
 	mSsh->writeData(command, strlen(command));
@@ -92,15 +91,20 @@ QByteArray SshRemoteController::openFile(const char* filename)
 {
 	QByteArray content = mSsh->readFile(filename);
 
-	/*int req = 1;
 	short msg = 2;
-	int slen = strlen(filename);
-	sendShit.append((const char*)&req, 4);
+	int fnLen = strlen(filename);
+	int msgLen = fnLen + 4;
+
+	QByteArray sendShit;
 	sendShit.append((const char*)&msg, 2);
-	sendShit.append((const char*)&slen, 4);
-	sendShit.append(filename);
-	mSsh->writeData(sendShit);
-	mSsh->readLine();*/
+	sendShit.append((const char*)&msgLen, 4);
+	sendShit.append((const char*)&fnLen, 4);
+	sendShit.append(filename, fnLen);
+	sendShit = sendShit.toBase64();
+	sendShit.append("\n");
+
+	mSsh->writeData(sendShit.constData(), sendShit.length());
+	mSsh->readLine();
 
 	return content;
 }
@@ -125,41 +129,49 @@ void SshRemoteController::ControllerThread::run()
 		mQueueLock.lock();
 		if (mQueue.length())
 		{
+			int saving = 0;
+
 			//	Pack all the changes into one
-			/*QByteArray sendShit;
-			int req = 1;
-			short msg;
+			QByteArray sendShit;
 			int len = mQueue.length();
 			for (int i = 0; i < len; i++)
 			{
-				Push p = mQueue.at(0);
-				if (p.save)
+				Push p = mQueue.at(i);
+				if (!p.save)
 				{
-					msg = 3;
+					short msg = 3;
+					int len = 0;
 					int slen = p.add.length();
-					sendShit.append((const char*)&req, 4);
 					sendShit.append((const char*)&msg, 2);
+					sendShit.append((const char*)&len, 4);
 					sendShit.append((const char*)&p.position, 4);
-					sendShit.append((const char*)&p.remove, 2);
+					sendShit.append((const char*)&p.remove, 4);
 					sendShit.append((const char*)&slen, 4);
 					sendShit.append(p.add);
 				}
 				else
 				{
-					msg = 4;
-					sendShit.append((const char*)&req, 4);
+					saving = 1;
+					short msg = 4;
+					int len = 0;
 					sendShit.append((const char*)&msg, 2);
+					sendShit.append((const char*)&len, 4);
 				}
-			}*/
-			mQueue.empty();
+			}
+			mQueue.clear();
 			mQueueLock.unlock();
 
-			/*mSsh->writeData(sendShit);
+			sendShit = sendShit.toBase64();
+			sendShit.append("\n");
+			mSsh->writeData(sendShit.constData(), sendShit.length());
 			while (len)
 			{
 				mSsh->readLine();
 				len--;
-			}*/
+			}
+
+			if (saving)
+				qDebug() << "FILE SAVED!";
 		}
 		else
 			mQueueLock.unlock();

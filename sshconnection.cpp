@@ -122,24 +122,33 @@ QByteArray SshConnection::readLine()
 
 QByteArray SshConnection::readUntil(const char* marker)
 {
+	int totalReceived = 0;
 	while (1)
 	{
+		int markerIndex = mReadBuffer.indexOf(marker);
+		if (markerIndex > -1)
+		{
+			QByteArray result = mReadBuffer.left(markerIndex);
+
+			//qDebug() << mReadBuffer.size() - (markerIndex + strlen(marker));
+			mReadBuffer = mReadBuffer.right(mReadBuffer.size() - (markerIndex + strlen(marker)));
+
+			//qDebug() << "Exiting readUntil. Total received: " << totalReceived << ". Returning bytes: " << result.length() << ". Leftovers: " << mReadBuffer.length();
+
+			return result;
+		}
+
 		int rc = libssh2_channel_read(mChannel, mTmpBuffer, SSH_BUFFER_SIZE);
 		if (rc > 0)
 		{
+			totalReceived += rc;
 			//qDebug() << QByteArray(mTmpBuffer, rc);
 
 			mReadBuffer.append(mTmpBuffer, rc);
-			int markerIndex = mReadBuffer.indexOf(marker);
-			if (markerIndex > -1)
-			{
-				QByteArray result = mReadBuffer.left(markerIndex);
-				mReadBuffer = mReadBuffer.right(mReadBuffer.size() - (markerIndex + strlen(marker)));
-				return result;
-			}
 		}
 		else if (rc < 0 && rc != LIBSSH2_ERROR_EAGAIN)
 		{
+			qDebug() << "Error code: " << rc;
 			throw("Failed to receive from remote host!");
 		}
 	}

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QtGui/QMainWindow>
+#include <QStatusBar>
 #include <QTextEdit>
 
 #include "sshconnection.h"
@@ -18,6 +19,7 @@ public:
 
 public slots:
 	void docChanged(int, int, int);
+	void save();
 
 private:
 	SshRemoteController* mController;

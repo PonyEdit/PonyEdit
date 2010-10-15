@@ -6,6 +6,8 @@
 #include <QRegExp>
 #include <QTime>
 #include <QCryptographicHash>
+#include <QPushButton>
+#include <QToolBar>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -37,6 +39,10 @@ MainWindow::MainWindow(QWidget *parent)
 	mEditor->setDocument(mCurrentDocument);
 	mCurrentDocument->setDefaultFont(QFont("courier new", 12));
 
+	QToolBar* toolbar = new QToolBar();
+	toolbar->addAction("Save", this, SLOT(save()));
+	this->addToolBar(toolbar);
+
 	connect(mCurrentDocument, SIGNAL(contentsChange(int,int,int)), this, SLOT(docChanged(int,int,int)));
 }
 
@@ -50,8 +56,17 @@ void MainWindow::docChanged(int position, int charsRemoved, int charsAdded)
 	QString plainText = mCurrentDocument->toPlainText();
 
 	Push p;
+	p.save = 0;
 	p.position = position;
 	p.remove = charsRemoved;
 	p.add = plainText.mid(position, charsAdded);
+
+	mController->push(p);
+}
+
+void MainWindow::save()
+{
+	Push p;
+	p.save = 1;
 	mController->push(p);
 }

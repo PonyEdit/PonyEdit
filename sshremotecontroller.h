@@ -30,7 +30,6 @@ public:
 	void push(Push p);
 
 private:
-
 	class ControllerThread : public QThread
 	{
 	public:
@@ -40,7 +39,6 @@ private:
 		QMutex mQueueLock;
 		QList<Push> mQueue;
 	};
-
 
 	SshConnection* mSsh;
 	QString mHomeDirectory;
