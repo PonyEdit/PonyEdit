@@ -14,9 +14,6 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-	QTextEdit* editor = new QTextEdit(this);
-	setCentralWidget(editor);
-
 	ServerConfigDlg dlg(this);
 	dlg.exec();
 	QString hostname = dlg.getHostname();
@@ -31,10 +28,23 @@ MainWindow::MainWindow(QWidget *parent)
 	SshRemoteController controller;
 	controller.attach(&c);
 
-	RemoteFile f = controller.openFile(filename.toUtf8());
+	QByteArray fileContent = controller.openFile(filename.toUtf8());
+
+	mEditor = new QTextEdit(this);
+	setCentralWidget(mEditor);
+
+	mCurrentDocument = new QTextDocument(QString(fileContent));
+	mEditor->setDocument(mCurrentDocument);
+
+	connect(mCurrentDocument, SIGNAL(contentsChange(int,int,int)), this, SLOT(docChanged(int,int,int)));
 }
 
 MainWindow::~MainWindow()
 {
 
+}
+
+void MainWindow::docChanged(int position, int charsRemoved, int charsAdded)
+{
+	qDebug() << position << charsRemoved << charsAdded;
 }

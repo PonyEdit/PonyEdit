@@ -85,14 +85,9 @@ void SshRemoteController::attach(SshConnection* connection)
 	}
 }
 
-RemoteFile SshRemoteController::openFile(const char* filename)
+QByteArray SshRemoteController::openFile(const char* filename)
 {
-	QByteArray fileContent = mSsh->readFile(filename);
-
-	qDebug() << "Read the following file from the server: ";
-	qDebug() << fileContent;
-
-	return RemoteFile();
+	return mSsh->readFile(filename);
 }
 
 

@@ -14,7 +14,7 @@ public:
 	SshRemoteController();
 	void attach(SshConnection* connection);
 
-	RemoteFile openFile(const char* filename);
+	QByteArray openFile(const char* filename);
 
 private:
 	SshConnection* mSsh;
