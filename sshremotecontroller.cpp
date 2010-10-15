@@ -33,7 +33,12 @@ void SshRemoteController::attach(SshConnection* connection)
 	qDebug() << remoteMd5;
 	qDebug() << sSlaveMd5;
 	if (remoteMd5 != sSlaveMd5)
-		mSsh->writeFile("/home/thingalon/.remoted/slave.py", sSlaveScript.constData(), sSlaveScript.length());
+	{
+		const char* home = "cd ~\n";
+		mSsh->writeData(home, strlen(home));
+
+		mSsh->writeFile(".remoted/slave.py", sSlaveScript.constData(), sSlaveScript.length());
+	}
 
 	const char* command = "python ~/.remoted/slave.py\n";
 	mSsh->writeData(command, strlen(command));
