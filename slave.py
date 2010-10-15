@@ -52,7 +52,10 @@ def msg_ls(message, result):
 
 messageDefs = \
 {
-	1: msg_ls
+	1: msg_ls,
+#	2: msg_open,
+#	3: msg_change,
+#	4: msg_save,
 }
 
 

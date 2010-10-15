@@ -4,6 +4,10 @@
 #include <QtGui/QMainWindow>
 #include <QTextEdit>
 
+#include "sshconnection.h"
+#include "sshremotecontroller.h"
+#include "serverconfigdlg.h"
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -16,6 +20,7 @@ public slots:
 	void docChanged(int, int, int);
 
 private:
+	SshRemoteController* mController;
 	QTextDocument* mCurrentDocument;
 	QTextEdit* mEditor;
 };

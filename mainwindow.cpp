@@ -7,10 +7,6 @@
 #include <QTime>
 #include <QCryptographicHash>
 
-#include "sshconnection.h"
-#include "sshremotecontroller.h"
-#include "serverconfigdlg.h"
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -21,20 +17,25 @@ MainWindow::MainWindow(QWidget *parent)
 	QString password = dlg.getPassword();
 	QString filename = dlg.getFilename();
 
-	SshConnection c;
-	c.connect(hostname.toUtf8(), 22);
-	c.authenticatePassword(login.toUtf8(), password.toUtf8());
+	SshConnection* c = new SshConnection();
+	c->connect(hostname.toUtf8(), 22);
+	c->authenticatePassword(login.toUtf8(), password.toUtf8());
 
-	SshRemoteController controller;
-	controller.attach(&c);
+	mController = new SshRemoteController();
+	mController->attach(c);
 
-	QByteArray fileContent = controller.openFile(filename.toUtf8());
+	QByteArray fileContent = mController->openFile(filename.toUtf8());
+
+	mController->splitThread();
 
 	mEditor = new QTextEdit(this);
+	mEditor->setAcceptRichText(false);
+	mEditor->setFont(QFont("courier new", 12));
 	setCentralWidget(mEditor);
 
 	mCurrentDocument = new QTextDocument(QString(fileContent));
 	mEditor->setDocument(mCurrentDocument);
+	mCurrentDocument->setDefaultFont(QFont("courier new", 12));
 
 	connect(mCurrentDocument, SIGNAL(contentsChange(int,int,int)), this, SLOT(docChanged(int,int,int)));
 }
@@ -46,5 +47,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::docChanged(int position, int charsRemoved, int charsAdded)
 {
-	qDebug() << position << charsRemoved << charsAdded;
+	QString plainText = mCurrentDocument->toPlainText();
+
+	Push p;
+	p.position = position;
+	p.remove = charsRemoved;
+	p.add = plainText.mid(position, charsAdded);
+	mController->push(p);
 }

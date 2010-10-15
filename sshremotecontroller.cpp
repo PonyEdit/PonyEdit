@@ -92,10 +92,83 @@ void SshRemoteController::attach(SshConnection* connection)
 
 QByteArray SshRemoteController::openFile(const char* filename)
 {
-	return mSsh->readFile(filename);
+	QByteArray content = mSsh->readFile(filename);
+
+	/*int req = 1;
+	short msg = 2;
+	int slen = strlen(filename);
+	sendShit.append((const char*)&req, 4);
+	sendShit.append((const char*)&msg, 2);
+	sendShit.append((const char*)&slen, 4);
+	sendShit.append(filename);
+	mSsh->writeData(sendShit);
+	mSsh->readLine();*/
+
+	return content;
 }
 
+void SshRemoteController::splitThread()
+{
+	mThread.mSsh = mSsh;
+	mThread.start();
+}
 
+void SshRemoteController::push(Push p)
+{
+	mThread.mQueueLock.lock();
+	mThread.mQueue.push_back(p);
+	mThread.mQueueLock.unlock();
+}
+
+void SshRemoteController::ControllerThread::run()
+{
+	while (1)
+	{
+		mQueueLock.lock();
+		if (mQueue.length())
+		{
+			//	Pack all the changes into one
+			/*QByteArray sendShit;
+			int req = 1;
+			short msg;
+			int len = mQueue.length();
+			for (int i = 0; i < len; i++)
+			{
+				Push p = mQueue.at(0);
+				if (p.save)
+				{
+					msg = 3;
+					int slen = p.add.length();
+					sendShit.append((const char*)&req, 4);
+					sendShit.append((const char*)&msg, 2);
+					sendShit.append((const char*)&p.position, 4);
+					sendShit.append((const char*)&p.remove, 2);
+					sendShit.append((const char*)&slen, 4);
+					sendShit.append(p.add);
+				}
+				else
+				{
+					msg = 4;
+					sendShit.append((const char*)&req, 4);
+					sendShit.append((const char*)&msg, 2);
+				}
+			}*/
+			mQueue.empty();
+			mQueueLock.unlock();
+
+			/*mSsh->writeData(sendShit);
+			while (len)
+			{
+				mSsh->readLine();
+				len--;
+			}*/
+		}
+		else
+			mQueueLock.unlock();
+
+		msleep(500);
+	}
+}
 
 
 
