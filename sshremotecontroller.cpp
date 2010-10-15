@@ -54,27 +54,25 @@ void SshRemoteController::attach(SshConnection* connection)
 
 	QByteArray testSend;
 
-	int req = 1;
 	short msg = 1;
-	testSend.append((const char*)&req, 4);
+	int msgLength = 0;
 	testSend.append((const char*)&msg, 2);
-
+	testSend.append((const char*)&msgLength, 4);
 	testSend = testSend.toBase64();
 	testSend.append("\n");
 	mSsh->writeData(testSend.constData(), testSend.length());
+
 	QByteArray retval = mSsh->readLine();
 	retval = QByteArray::fromBase64(retval);
 
 	const char* data = retval.constData();
 
-	int reqId = *(int*)(data + 0);
-	int ok = *(char*)(data + 4);
+	int ok = *(char*)(data);
 
-	qDebug() << "Request ID: " << reqId;
 	qDebug() << "OK: " << ok;
 
 	const char* dataEnd = data + retval.length();
-	data += 5;
+	data += 1;
 	while (data < dataEnd)
 	{
 		int strlen = *(int*)data;

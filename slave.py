@@ -34,6 +34,9 @@ class TLD:
 	def getData(self):
 		return self.data
 
+	def atEnd(self):
+		return self.cursor >= len(self.data)
+
 
 #
 #	Message Handlers
@@ -68,21 +71,22 @@ def mainLoop():
 		line = sys.stdin.readline().strip()
 		try: line = binascii.a2b_base64(line)
 		except: continue
-		message = TLD()
-		message.setData(line)
-		reply = handleMessage(message)
-		print binascii.b2a_base64(reply.getData())
+		block = TLD()
+		block.setData(line)
+		while (not block.atEnd()):
+			reply = handleMessage(block)
+			print binascii.b2a_base64(reply.getData())
 
 def handleMessage(message):
-	(requestId, messageId) = message.read('LH')
+	(messageId, size) = message.read('HL')
 	try:
-		if (not messageDefs.has_key(messageId)): throw("Invalid messageId: " + str(messageId))
+		if (not messageDefs.has_key(messageId)): raise Exception("Invalid messageId: " + str(messageId))
 		result = TLD()
-		result.write('LB', requestId, 1)
+		result.write('B', 1)
 		messageDefs[messageId](message, result)
 	except Exception, e:
 		err = TLD()
-		err.write('LB', requestId, 0)
+		err.write('B', 0)
 		err.writeString(str(e))
 		return err
 	return result
