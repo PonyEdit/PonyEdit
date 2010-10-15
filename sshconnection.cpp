@@ -186,7 +186,28 @@ void SshConnection::writeFile(const char* remoteFilename, const char* data, int 
 
 QByteArray SshConnection::readFile(const char* filename)
 {
-	return QByteArray("Not done yet, bitch!");
+	struct stat fileInfo;
+	LIBSSH2_CHANNEL* tmpChannel = libssh2_scp_recv(mSession, filename, &fileInfo);
+	if (!tmpChannel)
+		throw("Failed to open remote file!");
+
+	QByteArray fileContent;
+	while (fileContent.length() < fileInfo.st_size)
+	{
+		int amount = SSH_BUFFER_SIZE;
+
+		//	Never ask for more bytes than there are left in the file.
+		if (fileInfo.st_size - fileContent.length() < amount)
+			amount = fileInfo.st_size - fileContent.length();
+
+		int rc = libssh2_channel_read(tmpChannel, mTmpBuffer, amount);
+		if (rc > 0)
+			fileContent.append(mTmpBuffer, rc);
+		else if (rc < 0)
+			throw("Failed to receive file content!");
+	}
+
+	return fileContent;
 }
 
 

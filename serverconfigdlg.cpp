@@ -7,6 +7,8 @@ ServerConfigDlg::ServerConfigDlg(QWidget *parent) :
 {
     ui->setupUi(this);
 	connect(ui->connectButton, SIGNAL(clicked()), this, SLOT(accept()));
+
+	ui->login->setFocus();
 }
 
 ServerConfigDlg::~ServerConfigDlg()
