@@ -9,10 +9,22 @@ def log(t):
 	logfile.flush()
 
 #
-#	TLD class
+#	Config & Definitions
 #
 
-class TLD:
+dataTypes = \
+{
+	0x01: 'h',
+	0x81: 'H',
+	0x02: 'l',
+	0x82: 'L'
+}
+
+#
+#	DataBlock class
+#
+
+class DataBlock:
 	def __init__(self):
 		self.data = ''
 
@@ -44,13 +56,31 @@ class TLD:
 	def atEnd(self):
 		return self.cursor >= len(self.data)
 
+	def readMessage(self):
+		log('a')
+		(messageId, bufferId, length) = self.read('HLL')
+		if (length > len(self.data) - self.cursor): raise Exception('Faulty Message Header!')
+		params = {}
+		target = self.cursor + length
+		while (self.cursor < target):
+			(f, t) = self.read('BB')
+			log(str(self.cursor) + ' ' + str(f) + ' ' + str(t))
+			if (dataTypes.has_key(t)):
+				d = self.read(dataTypes[t])[0]
+			elif t == 0x03:
+				d = self.readString()
+			params[chr(f)] = d
+		if (self.cursor != target):
+			log('Warning: TLD message contents didn\'t match length in header!')
+			self.cursor = target
+		return (messageId, bufferId, params)
 
 #
 #	Message Handlers
 #
 
 #	ls
-def msg_ls(message, result):
+def msg_ls(params, result):
 	log('Running ls')
 	for filename in os.listdir('.'):
 		stat = os.stat(filename)
@@ -58,11 +88,11 @@ def msg_ls(message, result):
 		result.write('L', stat.st_size)
 
 #	open
-def msg_open(message, result):
+def msg_open(params, result):
 	log('Running open')
 	global thefilename
 	global thefile
-	name = message['f']
+	name = params['f']
 	log('Filename = ' + name)
 	thefilename = name
 	f = open(name, "r")
@@ -73,18 +103,18 @@ def msg_open(message, result):
 	log('**********************')
 
 #	change
-def msg_change(message, result):
+def msg_change(params, result):
 	global thefilename
 	global thefile
-	position = message['p']
-	remove = message['r']
-	add = message['a']
+	position = params['p']
+	remove = params['r']
+	add = params['a']
 	thefile = thefile[0:position] + add + thefile[position + remove:]
 	log('file contents:')
 	log(thefile)
 
 #	save
-def msg_save(message, result):
+def msg_save(params, result):
 	global thefilename
 	global thefile
 	log("saving to: " + thefilename)
@@ -116,7 +146,7 @@ def mainLoop():
 		except:
 			log('Receied some bogus input: ' + line)
 			continue
-		block = TLD()
+		block = DataBlock()
 		block.setData(line)
 		log('--> Received ' + str(len(line)) + ' bytes...')
 		while (not block.atEnd()):
@@ -126,34 +156,18 @@ def mainLoop():
 		log('Finished handling them bytes')
 
 def handleMessage(message):
-	(messageId, bufferId, length) = message.read('HLL')
-
-	block = {}
-	target = message.cursor + length
-	while (message.cursor < target):
-		(f, t) = message.read('BB')
-		if (t == 0x01):
-			d = message.read('h')[0]
-		elif (t == 0x81):
-			d = message.read('H')[0]
-		elif (t == 0x02):
-			d = message.read('l')[0]
-		elif (t == 0x82):
-			d = message.read('L')[0]
-		else:
-			d = message.readString()
-		block[chr(f)] = d
+	(messageId, bufferId, params) = message.readMessage()
 
 	log('messageId = ' + str(messageId))
-	log('Paramaters = ' + str(block))
+	log('Paramaters = ' + str(params))
 	try:
 		if (not messageDefs.has_key(messageId)): raise Exception("Invalid messageId: " + str(messageId))
-		result = TLD()
+		result = DataBlock()
 		result.write('B', 1)
-		messageDefs[messageId](block, result)
+		messageDefs[messageId](params, result)
 	except Exception, e:
 		log('Error occurred: ' + str(e))
-		err = TLD()
+		err = DataBlock()
 		err.write('B', 0)
 		err.writeString(str(e))
 		return err

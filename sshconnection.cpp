@@ -129,12 +129,7 @@ QByteArray SshConnection::readUntil(const char* marker)
 		if (markerIndex > -1)
 		{
 			QByteArray result = mReadBuffer.left(markerIndex);
-
-			//qDebug() << mReadBuffer.size() - (markerIndex + strlen(marker));
 			mReadBuffer = mReadBuffer.right(mReadBuffer.size() - (markerIndex + strlen(marker)));
-
-			//qDebug() << "Exiting readUntil. Total received: " << totalReceived << ". Returning bytes: " << result.length() << ". Leftovers: " << mReadBuffer.length();
-
 			return result;
 		}
 
@@ -142,7 +137,7 @@ QByteArray SshConnection::readUntil(const char* marker)
 		if (rc > 0)
 		{
 			totalReceived += rc;
-			//qDebug() << QByteArray(mTmpBuffer, rc);
+			qDebug() << QByteArray(mTmpBuffer, rc);
 
 			mReadBuffer.append(mTmpBuffer, rc);
 		}

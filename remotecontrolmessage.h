@@ -15,7 +15,7 @@ enum DataType
 {
 	dtInt16 =    0x01,
 	dtInt32 =    0x02,
-	dtString =   0x04,
+	dtString =   0x03,
 	dtUnsigned = 0x80
 };
 
