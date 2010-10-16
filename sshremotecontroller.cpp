@@ -121,7 +121,7 @@ void SshRemoteController::ControllerThread::run()
 		else
 			mQueueLock.unlock();
 
-		msleep(500);
+		msleep(10);
 	}
 }
 

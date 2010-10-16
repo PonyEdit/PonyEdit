@@ -19,9 +19,14 @@ public:
 
 public slots:
 	void docChanged(int, int, int);
-	void save();
+
+	void newFile();
+	void openFile();
+	void saveFile();
 
 private:
+	void createToolbar();
+
 	SshRemoteController* mController;
 	QTextDocument* mCurrentDocument;
 	QTextEdit* mEditor;

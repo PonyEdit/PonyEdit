@@ -39,16 +39,22 @@ MainWindow::MainWindow(QWidget *parent)
 	mEditor->setDocument(mCurrentDocument);
 	mCurrentDocument->setDefaultFont(QFont("courier new", 12));
 
-	QToolBar* toolbar = new QToolBar();
-	toolbar->addAction("Save", this, SLOT(save()));
-	this->addToolBar(toolbar);
+	createToolbar();
 
 	connect(mCurrentDocument, SIGNAL(contentsChange(int,int,int)), this, SLOT(docChanged(int,int,int)));
 }
 
 MainWindow::~MainWindow()
 {
+}
 
+void MainWindow::createToolbar()
+{
+	QToolBar* toolbar = new QToolBar("File");
+	toolbar->addAction(QIcon("icons/new.png"), "New", this, SLOT(newFile()));
+	toolbar->addAction(QIcon("icons/open.png"), "Open", this, SLOT(openFile()));
+	toolbar->addAction(QIcon("icons/save.png"), "Save", this, SLOT(saveFile()));
+	this->addToolBar(toolbar);
 }
 
 void MainWindow::docChanged(int position, int charsRemoved, int charsAdded)
@@ -65,7 +71,13 @@ void MainWindow::docChanged(int position, int charsRemoved, int charsAdded)
 	mController->push(p);
 }
 
-void MainWindow::save()
+void MainWindow::newFile(){}
+void MainWindow::openFile()
+{
+
+}
+
+void MainWindow::saveFile()
 {
 	Push p;
 	p.save = 1;
