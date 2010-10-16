@@ -3,6 +3,7 @@
 #include <QCryptographicHash>
 #include <QDebug>
 #include <QFile>
+#include "remotecontrolmessage.h"
 
 bool SshRemoteController::sSlaveLoaded = false;
 QByteArray SshRemoteController::sSlaveScript;
@@ -41,69 +42,20 @@ void SshRemoteController::attach(SshConnection* connection)
 
 	const char* command = "python ~/.remoted/slave.py\n";
 	mSsh->writeData(command, strlen(command));
-
-/*	QByteArray welcomeMsg = mSsh->readLine();
-	welcomeMsg = QByteArray::fromBase64(welcomeMsg);
-
-	const char* welcomeData = welcomeMsg.constData();
-	int cwdlen = *(int*)welcomeData;
-	QString cwd = QString(QByteArray(welcomeData + 4, cwdlen));
-	mHomeDirectory = cwd;
-	qDebug() << "Home directory: " << mHomeDirectory;*/
-
-	QByteArray testSend;
-
-	short msg = 1;
-	int msgLength = 0;
-	testSend.append((const char*)&msg, 2);
-	testSend.append((const char*)&msgLength, 4);
-	testSend = testSend.toBase64();
-	testSend.append("\n");
-	mSsh->writeData(testSend.constData(), testSend.length());
-
-	QByteArray retval = mSsh->readLine();
-	retval = QByteArray::fromBase64(retval);
-
-	const char* data = retval.constData();
-
-	int ok = *(char*)(data);
-
-	qDebug() << "OK: " << ok;
-
-	const char* dataEnd = data + retval.length();
-	data += 1;
-	while (data < dataEnd)
-	{
-		int strlen = *(int*)data;
-		data += 4;
-
-		QString filename = QString(QByteArray(data, strlen));
-		data += strlen;
-
-		int filesize = *(int*)data;
-		data += 4;
-
-		qDebug() << filename << filesize;
-	}
 }
 
 QByteArray SshRemoteController::openFile(const char* filename)
 {
 	QByteArray content = mSsh->readFile(filename);
 
-	short msg = 2;
-	int fnLen = strlen(filename);
-	int msgLen = fnLen + 4;
+	RemoteControlMessage msg(mtOpen);
+	msg.addData('f', filename);
 
-	QByteArray sendShit;
-	sendShit.append((const char*)&msg, 2);
-	sendShit.append((const char*)&msgLen, 4);
-	sendShit.append((const char*)&fnLen, 4);
-	sendShit.append(filename, fnLen);
-	sendShit = sendShit.toBase64();
-	sendShit.append("\n");
+	QByteArray data = msg.finalize();
+	data = data.toBase64();
+	data.append("\n", 1);
 
-	mSsh->writeData(sendShit.constData(), sendShit.length());
+	mSsh->writeData(data.constData(), data.length());
 	mSsh->readLine();
 
 	return content;
@@ -139,23 +91,18 @@ void SshRemoteController::ControllerThread::run()
 				Push p = mQueue.at(i);
 				if (!p.save)
 				{
-					short msg = 3;
-					int len = 0;
-					int slen = p.add.length();
-					sendShit.append((const char*)&msg, 2);
-					sendShit.append((const char*)&len, 4);
-					sendShit.append((const char*)&p.position, 4);
-					sendShit.append((const char*)&p.remove, 4);
-					sendShit.append((const char*)&slen, 4);
-					sendShit.append(p.add);
+					RemoteControlMessage msg(mtChange);
+					msg.addData('p', p.position);
+					msg.addData('r', p.remove);
+					msg.addData('a', p.add.toUtf8().constData());
+					sendShit.append(msg.finalize());
 				}
 				else
 				{
 					saving = 1;
-					short msg = 4;
-					int len = 0;
-					sendShit.append((const char*)&msg, 2);
-					sendShit.append((const char*)&len, 4);
+
+					RemoteControlMessage msg(mtSave);
+					sendShit.append(msg.finalize());
 				}
 			}
 			mQueue.clear();

@@ -19,13 +19,15 @@ SOURCES += main.cpp\
     sshconnection.cpp \
     sshremotecontroller.cpp \
     serverconfigdlg.cpp \
-    remotefile.cpp
+    remotefile.cpp \
+    remotecontrolmessage.cpp
 
 HEADERS  += mainwindow.h \
     sshconnection.h \
     sshremotecontroller.h \
     serverconfigdlg.h \
-    remotefile.h
+    remotefile.h \
+    remotecontrolmessage.h
 
 OTHER_FILES += \
     slave.py

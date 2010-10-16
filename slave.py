@@ -62,7 +62,7 @@ def msg_open(message, result):
 	log('Running open')
 	global thefilename
 	global thefile
-	name = message.readString()
+	name = message['f']
 	log('Filename = ' + name)
 	thefilename = name
 	f = open(name, "r")
@@ -74,10 +74,11 @@ def msg_open(message, result):
 
 #	change
 def msg_change(message, result):
-	(position, remove) = message.read('LL')
 	global thefilename
 	global thefile
-	add = message.readString()
+	position = message['p']
+	remove = message['r']
+	add = message['a']
 	thefile = thefile[0:position] + add + thefile[position + remove:]
 	log('file contents:')
 	log(thefile)
@@ -125,13 +126,31 @@ def mainLoop():
 		log('Finished handling them bytes')
 
 def handleMessage(message):
-	(messageId, size) = message.read('HL')
+	(messageId, bufferId, length) = message.read('HLL')
+
+	block = {}
+	target = message.cursor + length
+	while (message.cursor < target):
+		(f, t) = message.read('BB')
+		if (t == 0x01):
+			d = message.read('h')[0]
+		elif (t == 0x81):
+			d = message.read('H')[0]
+		elif (t == 0x02):
+			d = message.read('l')[0]
+		elif (t == 0x82):
+			d = message.read('L')[0]
+		else:
+			d = message.readString()
+		block[chr(f)] = d
+
 	log('messageId = ' + str(messageId))
+	log('Paramaters = ' + str(block))
 	try:
 		if (not messageDefs.has_key(messageId)): raise Exception("Invalid messageId: " + str(messageId))
 		result = TLD()
 		result.write('B', 1)
-		messageDefs[messageId](message, result)
+		messageDefs[messageId](block, result)
 	except Exception, e:
 		log('Error occurred: ' + str(e))
 		err = TLD()
@@ -144,10 +163,6 @@ def handleMessage(message):
 #
 #	Send startup info
 #
-
-#welcomeMsg = TLD()
-#welcomeMsg.writeString(os.getcwd())
-#print binascii.b2a(welcomeMsg)
 
 log('*************************************** Starting up *********************************************')
 
