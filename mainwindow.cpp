@@ -53,13 +53,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::docChanged(int position, int charsRemoved, int charsAdded)
 {
-	QString plainText = mCurrentDocument->toPlainText();
-
 	Push p;
 	p.save = 0;
 	p.position = position;
 	p.remove = charsRemoved;
-	p.add = plainText.mid(position, charsAdded);
+
+	p.add = "";
+	for (int i = 0; i < charsAdded; i++)
+		p.add += mCurrentDocument->characterAt(i + position);
 
 	mController->push(p);
 }
