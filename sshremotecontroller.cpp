@@ -35,8 +35,6 @@ void SshRemoteController::attach(SshConnection* connection)
 
 	QByteArray remoteMd5 = mSsh->execute("if [ ! -d ~/.remoted ]; then mkdir ~/.remoted; fi; if [ -e ~/.remoted/slave.py ]; then md5sum ~/.remoted/slave.py; else echo x; fi\n").toLower();
 	remoteMd5.truncate(32);
-	qDebug() << remoteMd5;
-	qDebug() << sSlaveMd5;
 	if (remoteMd5 != sSlaveMd5)
 		mSsh->writeFile(".remoted/slave.py", sSlaveScript.constData(), sSlaveScript.length());
 

@@ -57,14 +57,12 @@ class DataBlock:
 		return self.cursor >= len(self.data)
 
 	def readMessage(self):
-		log('a')
 		(messageId, bufferId, length) = self.read('HLL')
 		if (length > len(self.data) - self.cursor): raise Exception('Faulty Message Header!')
 		params = {}
 		target = self.cursor + length
 		while (self.cursor < target):
 			(f, t) = self.read('BB')
-			log(str(self.cursor) + ' ' + str(f) + ' ' + str(t))
 			if (dataTypes.has_key(t)):
 				d = self.read(dataTypes[t])[0]
 			elif t == 0x03:
@@ -81,7 +79,6 @@ class DataBlock:
 
 #	ls
 def msg_ls(params, result):
-	log('Running ls')
 	for filename in os.listdir('.'):
 		stat = os.stat(filename)
 		result.writeString(filename)
@@ -89,18 +86,13 @@ def msg_ls(params, result):
 
 #	open
 def msg_open(params, result):
-	log('Running open')
 	global thefilename
 	global thefile
 	name = params['f']
-	log('Filename = ' + name)
 	thefilename = name
 	f = open(name, "r")
 	thefile = f.read()
 	f.close()
-	log('****** File Contents: ')
-	log(thefile)
-	log('**********************')
 
 #	change
 def msg_change(params, result):
@@ -110,14 +102,11 @@ def msg_change(params, result):
 	remove = params['r']
 	add = params['a']
 	thefile = thefile[0:position] + add + thefile[position + remove:]
-	log('file contents:')
-	log(thefile)
 
 #	save
 def msg_save(params, result):
 	global thefilename
 	global thefile
-	log("saving to: " + thefilename)
 	f = open(thefilename, "w")
 	f.write(thefile)
 	f.close()
@@ -148,12 +137,9 @@ def mainLoop():
 			continue
 		block = DataBlock()
 		block.setData(line)
-		log('--> Received ' + str(len(line)) + ' bytes...')
 		while (not block.atEnd()):
-			log('Reading messages at ' + str(block.cursor) + '...')
 			reply = handleMessage(block)
 			print binascii.b2a_base64(reply.getData()).strip()
-		log('Finished handling them bytes')
 
 def handleMessage(message):
 	(messageId, bufferId, params) = message.readMessage()
