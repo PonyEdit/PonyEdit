@@ -20,17 +20,20 @@ SOURCES += main.cpp\
     sshremotecontroller.cpp \
     serverconfigdlg.cpp \
     remotefile.cpp \
-    remotecontrolmessage.cpp
+    remotecontrolmessage.cpp \
+    filedialog.cpp
 
 HEADERS  += mainwindow.h \
     sshconnection.h \
     sshremotecontroller.h \
     serverconfigdlg.h \
     remotefile.h \
-    remotecontrolmessage.h
+    remotecontrolmessage.h \
+    filedialog.h
 
 OTHER_FILES += \
     slave.py
 
 FORMS += \
-    serverconfigdlg.ui
+    serverconfigdlg.ui \
+    filedialog.ui

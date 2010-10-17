@@ -8,6 +8,7 @@
 #include <QCryptographicHash>
 #include <QPushButton>
 #include <QToolBar>
+#include "filedialog.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -74,7 +75,8 @@ void MainWindow::docChanged(int position, int charsRemoved, int charsAdded)
 void MainWindow::newFile(){}
 void MainWindow::openFile()
 {
-
+	FileDialog dlg(this);
+	dlg.exec();
 }
 
 void MainWindow::saveFile()
