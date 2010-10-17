@@ -100,6 +100,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>hostName</tabstop>
+  <tabstop>login</tabstop>
+  <tabstop>password</tabstop>
+  <tabstop>filename</tabstop>
+  <tabstop>connectButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

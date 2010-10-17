@@ -34,7 +34,7 @@ class DataBlock:
 
 	def read(self, fmt):
 		fmt = '<' + fmt
-		v = struct.unpack_from(fmt, self.data, self.cursor)
+		v = struct.unpack(fmt, self.data[self.cursor:self.cursor + struct.calcsize(fmt)])
 		self.cursor += struct.calcsize(fmt)
 		return v
 
@@ -133,7 +133,7 @@ def mainLoop():
 		line = sys.stdin.readline().strip()
 		try: line = binascii.a2b_base64(line)
 		except:
-			log('Receied some bogus input: ' + line)
+			log('Received some bogus input: ' + line)
 			continue
 		block = DataBlock()
 		block.setData(line)
