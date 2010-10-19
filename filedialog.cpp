@@ -4,6 +4,9 @@
 #include <QDebug>
 #include <QDir>
 
+#define LOCATION_ROLE (Qt::UserRole)
+#define EXPANDED_ROLE (Qt::UserRole + 1)
+
 FileDialog::FileDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::FileDialog)
@@ -34,8 +37,30 @@ void FileDialog::addLocalFile(const QString& label, const QFileInfo& fileInfo, Q
 	parent->addChild(newItem);
 }
 
+QTreeWidgetItem* FileDialog::addLocationToTree(const Location& location, QTreeWidgetItem* parent)
+{
+	QTreeWidgetItem* newItem = new QTreeWidgetItem(0);
+	newItem->setText(0, location.getLabel());
+	newItem->setIcon(0, location.getIcon());
+	newItem->setChildIndicatorPolicy(location.hasChildren() ? QTreeWidgetItem::ShowIndicator : QTreeWidgetItem::DontShowIndicator);
+	newItem->setData(0, LOCATION_ROLE, QVariant::fromValue<Location>(location));
+	newItem->setData(0, EXPANDED_ROLE, QVariant(0));
+
+	if (parent)
+		parent->addChild(newItem);
+	else
+		ui->directoryTree->addTopLevelItem(newItem);
+	return newItem;
+}
+
 void FileDialog::populateFolderTree()
 {
+	QTreeWidgetItem* localComputer = addLocationToTree(Location(LOCATION_LOCALCOMPUTER, Location::Directory), NULL);
+	folderTreeItemExpanded(localComputer);
+	localComputer->setExpanded(true);
+
+
+	/*
 	//
 	//	Local computer; contains home dir and root path(s)
 	//
@@ -49,7 +74,7 @@ void FileDialog::populateFolderTree()
 
 	QFileInfoList driveList = QDir::drives();
 	foreach (QFileInfo driveFileInfo, driveList)
-		addLocalFile(driveFileInfo.filePath(), driveFileInfo, localComputer);
+		addLocalFile(driveFileInfo.filePath(), driveFileInfo, localComputer);*/
 
 	//
 	//	Remote Servers; contains a list of pre-configured known servers
@@ -70,7 +95,15 @@ void FileDialog::populateFolderTree()
 
 void FileDialog::folderTreeItemExpanded(QTreeWidgetItem* item)
 {
+	if (!item->data(0, EXPANDED_ROLE).toInt())
+	{
+		item->setData(0, EXPANDED_ROLE, QVariant(1));
+		Location location = item->data(0, LOCATION_ROLE).value<Location>();
 
+		QList<Location> children = location.getChildren();
+		foreach(Location child, children)
+			addLocationToTree(child, item);
+	}
 }
 
 

@@ -49,6 +49,17 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QToolButton" name="toolButton">
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>icons/favorite.png</normaloff>icons/favorite.png</iconset>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
     </layout>

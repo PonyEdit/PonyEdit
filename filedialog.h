@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QFileIconProvider>
 #include <QTreeWidgetItem>
+#include "location.h"
 
 namespace Ui {
     class FileDialog;
@@ -18,9 +19,12 @@ public:
 
 private slots:
 	void folderTreeItemExpanded(QTreeWidgetItem* item);
+	//void folderTreeChildren(QList<Location> children);
 
 private:
 	void populateFolderTree();
+	QTreeWidgetItem* addLocationToTree(const Location& location, QTreeWidgetItem* parent);
+
 	void addLocalFile(const QString& label, const QFileInfo& fileInfo, QTreeWidgetItem* parent);
 	void addLocalFile(const QFileInfo& fileInfo, QTreeWidgetItem* parent) { addLocalFile(fileInfo.fileName(), fileInfo, parent); }
 
