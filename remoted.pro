@@ -39,3 +39,6 @@ OTHER_FILES += \
 FORMS += \
     serverconfigdlg.ui \
     filedialog.ui
+
+RESOURCES += \
+    resources.qrc

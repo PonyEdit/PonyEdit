@@ -1,12 +1,16 @@
 #include "location.h"
 #include <QFileIconProvider>
+#include <QMetaMethod>
 #include <QObject>
+#include <QDebug>
+#include <QDir>
+
+
+///////////////////////////
+//  Icon Provider stuff  //
+///////////////////////////
 
 QFileIconProvider* sIconProvider = NULL;
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//	Icon Provider stuff; initialize and cleanup
-//
 
 void LocationShared::initIconProvider()
 {
@@ -14,7 +18,7 @@ void LocationShared::initIconProvider()
 		sIconProvider = new QFileIconProvider();
 }
 
-void Location::cleanupIconProvider()
+void LocationShared::cleanupIconProvider()
 {
 	if (sIconProvider)
 	{
@@ -24,9 +28,9 @@ void Location::cleanupIconProvider()
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//	Constructors & Destructors
-//
+//////////////////////////////////
+//  Constructors & Destructors  //
+//////////////////////////////////
 
 Location::Location()
 {
@@ -42,15 +46,28 @@ Location::Location(const Location& other)
 Location::Location(const QString& path)
 {
 	mData = new LocationShared();
-	mData->mType = Unknown;
 	mData->setPath(path);
 }
 
-Location::Location(const QString& path, Type type)
+Location::Location(const QString& path, Type type, int size, QDateTime lastModified)
 {
 	mData = new LocationShared();
-	mData->mType = type;
 	mData->setPath(path);
+	mData->mType = type;
+	mData->mSize = size;
+	mData->mLastModified = lastModified;
+	mData->mSelfLoaded = true;
+}
+
+LocationShared::LocationShared()
+{
+	initIconProvider();
+
+	mReferences = 1;
+	mType = Location::Unknown;
+	mSize = -1;
+	mSelfLoaded = false;
+	mListLoaded = false;
 }
 
 Location::~Location()
@@ -61,106 +78,123 @@ Location::~Location()
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//	Method implementation
-//
+/////////////////////////////
+//  Method Implementation  //
+/////////////////////////////
 
-void LocationShared::setPath(const QString &path)
-{
-	mPath = path;
-	mSpecialType = Location::NotSpecial;
-	if (path.startsWith("special://"))
-	{
-		mProtocol = Location::Special;
-		if (path == LOCATION_LOCALCOMPUTER)
-			mSpecialType = Location::LocalComputer;
-		else if (path == LOCATION_REMOTESERVERS)
-			mSpecialType = Location::RemoteServers;
-		else if (mPath == LOCATION_FAVORITELOCATIONS)
-			mSpecialType = Location::FavoriteLocations;
-		else
-			mProtocol = Location::Invalid;
-	}
-	else if (path.startsWith("file://"))
-		mProtocol = Location::Local;
-	else if (path.startsWith("ssh://"))
-		mProtocol = Location::Ssh;
-	else
-		mProtocol = Location::Invalid;
-}
-
-QString Location::getPath() const
+const QString& Location::getPath() const
 {
 	return mData->mPath;
 }
 
-QString Location::getLabel() const
+const QString& Location::getLabel() const
 {
-	if (mData->mProtocol == Special)
-	{
-		switch (mData->mSpecialType)
-		{
-		case LocalComputer:
-			return "Local Computer";
+	return mData->mLabel;
+}
 
-		case RemoteServers:
-			return "Remote Servers";
-
-		case FavoriteLocations:
-			return "FavoriteLocations";
-
-		case NotSpecial:
-			break;
-		}
-	}
-	else
-	{
-	}
-
-	return "(error)";
+bool Location::isNull() const
+{
+	qDebug() << mData->mPath;
+	qDebug() << mData->mPath.isEmpty();
+	return (mData->mPath.isEmpty());
 }
 
 QIcon Location::getIcon() const
 {
-	if (mData->mProtocol == Special)
+	switch (mData->mProtocol)
 	{
-		switch (mData->mSpecialType)
+	case Location::Local:
+		return sIconProvider->icon(QFileInfo(mData->mPath));
+
+	default:
+		return QIcon();
+	}
+}
+
+Location::Type Location::getType() const
+{
+	if (!mData->mSelfLoaded && mData->mProtocol == Local)
+		mData->localLoadSelf();
+
+	return mData->mType;
+}
+
+void LocationShared::setPath(const QString &path)
+{
+	mPath = path;
+	mPath.replace('\\', '/');
+
+	//	Clean off any trailing slashes
+	while (mPath.endsWith('/'))
+		mPath.truncate(mPath.length() - 2);
+
+	//	Work out what to label this path...
+	int lastSlashIndex = mPath.lastIndexOf('/');
+	mLabel = mPath.mid(lastSlashIndex + 1);
+
+	//	Work out what type of path this is... Later. For now just assume they're all local
+	mProtocol = Location::Local;
+}
+
+void LocationShared::localLoadSelf()
+{
+	QFileInfo fileInfo = QFileInfo(mPath);
+	mType = fileInfo.isDir() ? Location::Directory : Location::File;
+	mSelfLoaded = true;
+}
+
+void LocationShared::localLoadListing()
+{
+	if (!mSelfLoaded)
+		localLoadSelf();
+
+	mChildren.clear();
+
+	QDir directory(mPath);
+	QStringList entries = directory.entryList();
+	foreach (QString entry, entries)
+	{
+		QFileInfo fileInfo(entry);
+		mChildren.append(Location(fileInfo.absoluteFilePath(), fileInfo.isDir() ? Location::Directory : Location::File, fileInfo.size(), fileInfo.lastModified()));
+	}
+
+	mListLoaded = true;
+	emit loadListSuccessful(mChildren, mPath);
+}
+
+void Location::asyncGetChildren(QObject* callbackTarget, const char* succeedSlot, const char* failSlot)
+{
+	if (mData->mListLoaded)
+	{
+		//	If already loaded, just call the success callback immediately.
+		const QMetaObject* metaObject = callbackTarget->metaObject();
+		int callbackIndex = metaObject->indexOfMethod(succeedSlot);
+		QMetaMethod metaMethod = metaObject->method(callbackIndex);
+		metaMethod.invoke(callbackTarget, Qt::QueuedConnection, Q_ARG(QList<Location>, mData->mChildren), Q_ARG(QString, getPath()));
+	}
+	else
+	{
+		QObject::connect(mData, SIGNAL(loadListSuccessful(QList<Location>,QString)), callbackTarget, succeedSlot);
+		QObject::connect(mData, SIGNAL(loadListFailed(QString,QString)), callbackTarget, failSlot);
+
+		if (!mData->mLoading)
 		{
-		case LocalComputer:
-			return sIconProvider->icon(QFileIconProvider::Computer);
-
-		case RemoteServers:
-			return sIconProvider->icon(QFileIconProvider::Network);
-
-		case FavoriteLocations:
-			return QIcon("icons/favorite.png");
-
-		case NotSpecial:
-			break;
+			if (mData->mProtocol == Local)
+				mData->localLoadListing();
+			else
+				throw("Remote loading not implemented yet!");
 		}
 	}
-	else
-	{
-	}
-
-	return QIcon();
 }
 
-Location::Children Location::hasChildren() const
-{
-	if (mData->mProtocol == Special)
-		return HasChildren;
-	else
-		return MightHaveChildren;
-}
 
-QList<Location> Location::getChildren()
-{
-	//if (mData->mSpecialType == LocalComputer)
-	{
-		QList<Location> tmp;
-		tmp.append(Location(LOCATION_REMOTESERVERS));
-		return tmp;
-	}
-}
+
+
+
+
+
+
+
+
+
 

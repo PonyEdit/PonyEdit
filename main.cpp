@@ -26,6 +26,6 @@ int main(int argc, char *argv[])
 		qDebug() << "FATAL ERROR: " << err;
 	}
 
-	Location::cleanupIconProvider();
+	LocationShared::cleanupIconProvider();
 	return result;
 }

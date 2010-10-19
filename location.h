@@ -3,61 +3,70 @@
 
 #include <QString>
 #include <QVariant>
-
-#define LOCATION_LOCALCOMPUTER "special://localComputer"
-#define LOCATION_REMOTESERVERS "special://remoteServers"
-#define LOCATION_FAVORITELOCATIONS "special://favoriteLocations"
+#include <QDateTime>
 
 class LocationShared;
 class Location
 {
-public:
-	enum Protocol { Invalid, Special, Local, Ssh };
-	enum Type { Unknown, Directory, File };
-	enum SpecialType { NotSpecial, LocalComputer, RemoteServers, FavoriteLocations };
-	enum Children { NoChildren = 0, MightHaveChildren, HasChildren };
+	friend class LocationShared;
 
+public:
+	enum Type { Unknown = 0, File = 1, Directory = 2 };
+	enum Protocol { Local = 0, Ssh = 1 };
+
+public:
 	Location();
 	Location(const Location& other);
 	Location(const QString& path);
-	Location(const QString& path, Type type);
 	~Location();
-	static void cleanupIconProvider();
 
-	QString getPath() const;
-	QString getLabel() const;
+	const QString& getPath() const;
+	const QString& getLabel() const;
 	QIcon getIcon() const;
-	Children hasChildren() const;
+	Type getType() const;
 
-	QList<Location> getChildren();
+	bool isNull() const;
+
+	void asyncGetChildren(QObject* callbackTarget, const char* succeedSlot, const char* failSlot);
 
 private:
+	Location(const QString& path, Type type, int size, QDateTime lastModified);
+
 	LocationShared* mData;
 };
 
 class LocationShared : public QObject
 {
 	Q_OBJECT
+	friend class Location;
 
 public:
-	LocationShared() :
-		mProtocol(Location::Invalid), mSpecialType(Location::NotSpecial),
-		mType(Location::Unknown), mReferences(1)
-	{
-		initIconProvider();
-	}
-	~LocationShared() {}
+	static void cleanupIconProvider();
 
-	void initIconProvider();
+signals:
+	void loadListSuccessful(const QList<Location>& children, QString locationPath);
+	void loadListFailed(const QString& error, QString locationPath);
+
+private:
+	LocationShared();
+	static void initIconProvider();
+
 	void setPath(const QString& path);
+	void localLoadSelf();
+	void localLoadListing();
 
-	QString mPath;
-	Location::Protocol mProtocol;
-	Location::SpecialType mSpecialType;
-	Location::Type mType;
 	int mReferences;
+	QString mPath;
+	QString mLabel;
+	Location::Type mType;
+	Location::Protocol mProtocol;
+	QDateTime mLastModified;
+	QList<Location> mChildren;
+	bool mSelfLoaded;
+	bool mListLoaded;
+	bool mLoading;
+	int mSize;
 };
-
 
 Q_DECLARE_METATYPE (Location);
 

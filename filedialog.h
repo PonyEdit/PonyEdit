@@ -1,6 +1,7 @@
 #ifndef FILEDIALOG_H
 #define FILEDIALOG_H
 
+#include <QMap>
 #include <QDialog>
 #include <QFileIconProvider>
 #include <QTreeWidgetItem>
@@ -19,17 +20,20 @@ public:
 
 private slots:
 	void folderTreeItemExpanded(QTreeWidgetItem* item);
-	//void folderTreeChildren(QList<Location> children);
+	void folderChildrenLoaded(const QList<Location>& children, const QString& locationPath);
+	void folderChildrenFailed(const QString& error, const QString& locationPath);
 
 private:
 	void populateFolderTree();
-	QTreeWidgetItem* addLocationToTree(const Location& location, QTreeWidgetItem* parent);
+	QTreeWidgetItem* addLocationToTree(QTreeWidgetItem* parent, const Location& location);
 
 	void addLocalFile(const QString& label, const QFileInfo& fileInfo, QTreeWidgetItem* parent);
 	void addLocalFile(const QFileInfo& fileInfo, QTreeWidgetItem* parent) { addLocalFile(fileInfo.fileName(), fileInfo, parent); }
 
     Ui::FileDialog *ui;
 	QFileIconProvider mIconProvider;
+
+	QMap<QString, QTreeWidgetItem*> mLoadingLocations;
 };
 
 #endif // FILEDIALOG_H

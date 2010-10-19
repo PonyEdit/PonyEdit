@@ -37,30 +37,8 @@ void FileDialog::addLocalFile(const QString& label, const QFileInfo& fileInfo, Q
 	parent->addChild(newItem);
 }
 
-QTreeWidgetItem* FileDialog::addLocationToTree(const Location& location, QTreeWidgetItem* parent)
-{
-	QTreeWidgetItem* newItem = new QTreeWidgetItem(0);
-	newItem->setText(0, location.getLabel());
-	newItem->setIcon(0, location.getIcon());
-	newItem->setChildIndicatorPolicy(location.hasChildren() ? QTreeWidgetItem::ShowIndicator : QTreeWidgetItem::DontShowIndicator);
-	newItem->setData(0, LOCATION_ROLE, QVariant::fromValue<Location>(location));
-	newItem->setData(0, EXPANDED_ROLE, QVariant(0));
-
-	if (parent)
-		parent->addChild(newItem);
-	else
-		ui->directoryTree->addTopLevelItem(newItem);
-	return newItem;
-}
-
 void FileDialog::populateFolderTree()
 {
-	QTreeWidgetItem* localComputer = addLocationToTree(Location(LOCATION_LOCALCOMPUTER, Location::Directory), NULL);
-	folderTreeItemExpanded(localComputer);
-	localComputer->setExpanded(true);
-
-
-	/*
 	//
 	//	Local computer; contains home dir and root path(s)
 	//
@@ -69,12 +47,11 @@ void FileDialog::populateFolderTree()
 	localComputer->setIcon(0, mIconProvider.icon(QFileIconProvider::Computer));
 	ui->directoryTree->addTopLevelItem(localComputer);
 
-	QFileInfo homeFolder(QDir::homePath());
-	addLocalFile(homeFolder, localComputer);
+	addLocationToTree(localComputer, Location(QDir::homePath()));
 
 	QFileInfoList driveList = QDir::drives();
 	foreach (QFileInfo driveFileInfo, driveList)
-		addLocalFile(driveFileInfo.filePath(), driveFileInfo, localComputer);*/
+		addLocalFile(driveFileInfo.filePath(), driveFileInfo, localComputer);
 
 	//
 	//	Remote Servers; contains a list of pre-configured known servers
@@ -93,6 +70,22 @@ void FileDialog::populateFolderTree()
 	ui->directoryTree->addTopLevelItem(favouriteLocations);
 }
 
+QTreeWidgetItem* FileDialog::addLocationToTree(QTreeWidgetItem* parent, const Location& location)
+{
+	QTreeWidgetItem* newItem = new QTreeWidgetItem(0);
+	newItem->setText(0, location.getLabel());
+	newItem->setIcon(0, location.getIcon());
+	newItem->setChildIndicatorPolicy(location.getType() == Location::Directory ? QTreeWidgetItem::ShowIndicator : QTreeWidgetItem::DontShowIndicator);
+	newItem->setData(0, LOCATION_ROLE, QVariant::fromValue<Location>(location));
+	newItem->setData(0, EXPANDED_ROLE, QVariant(0));
+
+	if (parent)
+		parent->addChild(newItem);
+	else
+		ui->directoryTree->addTopLevelItem(newItem);
+	return newItem;
+}
+
 void FileDialog::folderTreeItemExpanded(QTreeWidgetItem* item)
 {
 	if (!item->data(0, EXPANDED_ROLE).toInt())
@@ -100,11 +93,29 @@ void FileDialog::folderTreeItemExpanded(QTreeWidgetItem* item)
 		item->setData(0, EXPANDED_ROLE, QVariant(1));
 		Location location = item->data(0, LOCATION_ROLE).value<Location>();
 
-		QList<Location> children = location.getChildren();
-		foreach(Location child, children)
-			addLocationToTree(child, item);
+		if (!location.isNull())
+		{
+			QTreeWidgetItem* loadingItem = new QTreeWidgetItem();
+			loadingItem->setText(0, "Loading...");
+			loadingItem->setIcon(0, QIcon(":/icons/loading.png"));
+			item->addChild(loadingItem);
+
+			mLoadingLocations.insert(location.getPath(), item);
+			location.asyncGetChildren(this,
+				SLOT(folderChildrenLoaded(QList<Location>,QString)),
+				SLOT(folderChildrenFailed(QString,QString)));
+		}
 	}
 }
 
+void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QString& locationPath)
+{
+	qDebug() << locationPath;
+}
+
+void FileDialog::folderChildrenFailed(const QString& error, const QString& locationPath)
+{
+
+}
 
 
