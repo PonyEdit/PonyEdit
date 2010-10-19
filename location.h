@@ -8,6 +8,7 @@
 #define LOCATION_REMOTESERVERS "special://remoteServers"
 #define LOCATION_FAVORITELOCATIONS "special://favoriteLocations"
 
+class LocationShared;
 class Location
 {
 public:
@@ -17,11 +18,13 @@ public:
 	enum Children { NoChildren = 0, MightHaveChildren, HasChildren };
 
 	Location();
+	Location(const Location& other);
 	Location(const QString& path);
 	Location(const QString& path, Type type);
-	static void cleanup();
+	~Location();
+	static void cleanupIconProvider();
 
-	QString getPath() const { return mPath; }
+	QString getPath() const;
 	QString getLabel() const;
 	QIcon getIcon() const;
 	Children hasChildren() const;
@@ -29,14 +32,32 @@ public:
 	QList<Location> getChildren();
 
 private:
-	void setPath(const QString& path);
+	LocationShared* mData;
+};
+
+class LocationShared : public QObject
+{
+	Q_OBJECT
+
+public:
+	LocationShared() :
+		mProtocol(Location::Invalid), mSpecialType(Location::NotSpecial),
+		mType(Location::Unknown), mReferences(1)
+	{
+		initIconProvider();
+	}
+	~LocationShared() {}
+
 	void initIconProvider();
+	void setPath(const QString& path);
 
 	QString mPath;
-	Protocol mProtocol;
-	SpecialType mSpecialType;
-	Type mType;
+	Location::Protocol mProtocol;
+	Location::SpecialType mSpecialType;
+	Location::Type mType;
+	int mReferences;
 };
+
 
 Q_DECLARE_METATYPE (Location);
 
