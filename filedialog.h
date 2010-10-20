@@ -18,6 +18,8 @@ public:
     explicit FileDialog(QWidget *parent = 0);
     ~FileDialog();
 
+	void showLocation(const Location& location);
+
 private slots:
 	void folderTreeItemExpanded(QTreeWidgetItem* item);
 	void folderChildrenLoaded(const QList<Location>& children, const QString& locationPath);
@@ -27,10 +29,7 @@ private:
 	void populateFolderTree();
 	QTreeWidgetItem* addLocationToTree(QTreeWidgetItem* parent, const Location& location);
 
-	void addLocalFile(const QString& label, const QFileInfo& fileInfo, QTreeWidgetItem* parent);
-	void addLocalFile(const QFileInfo& fileInfo, QTreeWidgetItem* parent) { addLocalFile(fileInfo.fileName(), fileInfo, parent); }
-
-    Ui::FileDialog *ui;
+	Ui::FileDialog *ui;
 	QFileIconProvider mIconProvider;
 
 	QMap<QString, QTreeWidgetItem*> mLoadingLocations;

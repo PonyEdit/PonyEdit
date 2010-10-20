@@ -2,7 +2,6 @@
 #include <QFileIconProvider>
 #include <QMetaMethod>
 #include <QObject>
-#include <QDebug>
 #include <QDir>
 
 
@@ -94,9 +93,12 @@ const QString& Location::getLabel() const
 
 bool Location::isNull() const
 {
-	qDebug() << mData->mPath;
-	qDebug() << mData->mPath.isEmpty();
 	return (mData->mPath.isEmpty());
+}
+
+bool Location::isHidden() const
+{
+	return (mData->mLabel.startsWith('.'));
 }
 
 QIcon Location::getIcon() const
@@ -126,7 +128,7 @@ void LocationShared::setPath(const QString &path)
 
 	//	Clean off any trailing slashes
 	while (mPath.endsWith('/'))
-		mPath.truncate(mPath.length() - 2);
+		mPath.truncate(mPath.length() - 1);
 
 	//	Work out what to label this path...
 	int lastSlashIndex = mPath.lastIndexOf('/');
@@ -151,10 +153,10 @@ void LocationShared::localLoadListing()
 	mChildren.clear();
 
 	QDir directory(mPath);
-	QStringList entries = directory.entryList();
+	QStringList entries = directory.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
 	foreach (QString entry, entries)
 	{
-		QFileInfo fileInfo(entry);
+		QFileInfo fileInfo(mPath + "/" + entry);
 		mChildren.append(Location(fileInfo.absoluteFilePath(), fileInfo.isDir() ? Location::Directory : Location::File, fileInfo.size(), fileInfo.lastModified()));
 	}
 

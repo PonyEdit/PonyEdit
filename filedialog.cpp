@@ -1,7 +1,6 @@
 #include "filedialog.h"
 #include "ui_filedialog.h"
 
-#include <QDebug>
 #include <QDir>
 
 #define LOCATION_ROLE (Qt::UserRole)
@@ -22,21 +21,6 @@ FileDialog::~FileDialog()
     delete ui;
 }
 
-void FileDialog::addLocalFile(const QString& label, const QFileInfo& fileInfo, QTreeWidgetItem* parent)
-{
-	QString realLabel = label;
-	#ifdef Q_WS_WIN
-		realLabel.replace('/', '\\');
-	#endif
-
-	QTreeWidgetItem* newItem = new QTreeWidgetItem(QStringList(label), 0);
-	newItem->setIcon(0, mIconProvider.icon(fileInfo));
-	if (fileInfo.isDir())
-		newItem->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
-
-	parent->addChild(newItem);
-}
-
 void FileDialog::populateFolderTree()
 {
 	//
@@ -47,11 +31,12 @@ void FileDialog::populateFolderTree()
 	localComputer->setIcon(0, mIconProvider.icon(QFileIconProvider::Computer));
 	ui->directoryTree->addTopLevelItem(localComputer);
 
-	addLocationToTree(localComputer, Location(QDir::homePath()));
+	Location homeLocation(QDir::homePath());
+	addLocationToTree(localComputer, homeLocation);
 
 	QFileInfoList driveList = QDir::drives();
 	foreach (QFileInfo driveFileInfo, driveList)
-		addLocalFile(driveFileInfo.filePath(), driveFileInfo, localComputer);
+		addLocationToTree(localComputer, Location(driveFileInfo.absoluteFilePath()));
 
 	//
 	//	Remote Servers; contains a list of pre-configured known servers
@@ -68,6 +53,8 @@ void FileDialog::populateFolderTree()
 	QTreeWidgetItem* favouriteLocations = new QTreeWidgetItem(QStringList("Favorite Locations"), 0);
 	favouriteLocations->setIcon(0, QIcon("icons/favorite.png"));
 	ui->directoryTree->addTopLevelItem(favouriteLocations);
+
+	showLocation(homeLocation);
 }
 
 QTreeWidgetItem* FileDialog::addLocationToTree(QTreeWidgetItem* parent, const Location& location)
@@ -110,7 +97,17 @@ void FileDialog::folderTreeItemExpanded(QTreeWidgetItem* item)
 
 void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QString& locationPath)
 {
-	qDebug() << locationPath;
+	QTreeWidgetItem* item = mLoadingLocations.value(locationPath, NULL);
+	if (item)
+	{
+		mLoadingLocations.remove(locationPath);
+		while (item->childCount())
+			item->removeChild(item->child(0));
+
+		foreach (Location childLocation, children)
+			if (childLocation.getType() == Location::Directory && !childLocation.isHidden())
+				this->addLocationToTree(item, childLocation);
+	}
 }
 
 void FileDialog::folderChildrenFailed(const QString& error, const QString& locationPath)
@@ -118,4 +115,9 @@ void FileDialog::folderChildrenFailed(const QString& error, const QString& locat
 
 }
 
+void FileDialog::showLocation(const Location& location)
+{
+	ui->currentPath->setText(location.getPath());
+	ui->fileList->clear();
+}
 

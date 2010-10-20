@@ -13,8 +13,12 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+	openFile();
+
 	ServerConfigDlg dlg(this);
-	dlg.exec();
+	if (dlg.exec() == QDialog::Rejected)
+		exit(0);
+
 	QString hostname = dlg.getHostname();
 	QString login = dlg.getLogin();
 	QString password = dlg.getPassword();

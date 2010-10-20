@@ -26,6 +26,7 @@ public:
 	Type getType() const;
 
 	bool isNull() const;
+	bool isHidden() const;
 
 	void asyncGetChildren(QObject* callbackTarget, const char* succeedSlot, const char* failSlot);
 
