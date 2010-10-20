@@ -118,6 +118,16 @@ void FileDialog::folderChildrenFailed(const QString& error, const QString& locat
 void FileDialog::showLocation(const Location& location)
 {
 	ui->currentPath->setText(location.getPath());
+
 	ui->fileList->clear();
+	ui->loaderIcon->setPixmap(QPixmap(":/icons/loading.png"));
+	ui->loaderLabel->setText("Loading...");
+	ui->fileListStack->setCurrentWidget(ui->loaderLayer);
 }
+
+
+
+
+
+
 
