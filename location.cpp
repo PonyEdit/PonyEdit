@@ -2,6 +2,7 @@
 #include <QFileIconProvider>
 #include <QMetaMethod>
 #include <QObject>
+#include <QDebug>
 #include <QDir>
 
 
@@ -87,6 +88,19 @@ bool Location::isNull() const { return (mData->mPath.isEmpty()); }
 bool Location::isHidden() const { return (mData->mLabel.startsWith('.')); }
 int Location::getSize() const { return mData->mSize; }
 const QDateTime& Location::getLastModified() const { return mData->mLastModified; }
+bool Location::isDirectory() const { return mData->mType == Directory; }
+
+QString Location::getDisplayPath() const
+{
+	QString p = getPath();
+
+#ifdef Q_OS_WIN
+	if (mData->mProtocol == Local)
+		p.replace('/', '\\');
+#endif
+
+	return p;
+}
 
 QIcon Location::getIcon() const
 {
@@ -148,31 +162,28 @@ void LocationShared::localLoadListing()
 	}
 
 	mListLoaded = true;
+	emitListLoadedSignal();
+}
+
+void LocationShared::emitListLoadedSignal()
+{
 	emit loadListSuccessful(mChildren, mPath);
 }
 
 void Location::asyncGetChildren(QObject* callbackTarget, const char* succeedSlot, const char* failSlot)
 {
-	if (mData->mListLoaded)
-	{
-		//	If already loaded, just call the success callback immediately.
-		const QMetaObject* metaObject = callbackTarget->metaObject();
-		int callbackIndex = metaObject->indexOfMethod(succeedSlot);
-		QMetaMethod metaMethod = metaObject->method(callbackIndex);
-		metaMethod.invoke(callbackTarget, Qt::QueuedConnection, Q_ARG(QList<Location>, mData->mChildren), Q_ARG(QString, getPath()));
-	}
-	else
-	{
-		QObject::connect(mData, SIGNAL(loadListSuccessful(QList<Location>,QString)), callbackTarget, succeedSlot);
-		QObject::connect(mData, SIGNAL(loadListFailed(QString,QString)), callbackTarget, failSlot);
+	QObject::connect(mData, SIGNAL(loadListSuccessful(QList<Location>,QString)), callbackTarget, succeedSlot);
+	QObject::connect(mData, SIGNAL(loadListFailed(QString,QString)), callbackTarget, failSlot);
 
-		if (!mData->mLoading)
-		{
-			if (mData->mProtocol == Local)
-				mData->localLoadListing();
-			else
-				throw("Remote loading not implemented yet!");
-		}
+	if (mData->mListLoaded)
+		mData->emitListLoadedSignal();
+	else if (!mData->mLoading)
+	{
+		mData->mLoading = true;
+		if (mData->mProtocol == Local)
+			mData->localLoadListing();
+		else
+			throw("Remote loading not implemented yet!");
 	}
 }
 

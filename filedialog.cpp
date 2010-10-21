@@ -28,6 +28,7 @@ FileDialog::FileDialog(QWidget *parent) :
 
 	populateFolderTree();
 	connect(ui->directoryTree, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(folderTreeItemExpanded(QTreeWidgetItem*)));
+	connect(ui->directoryTree, SIGNAL(itemSelectionChanged()), this, SLOT(directoryTreeSelected()));
 }
 
 FileDialog::~FileDialog()
@@ -77,7 +78,7 @@ QTreeWidgetItem* FileDialog::addLocationToTree(QTreeWidgetItem* parent, const Lo
 	QTreeWidgetItem* newItem = new QTreeWidgetItem(0);
 	newItem->setText(0, location.getLabel());
 	newItem->setIcon(0, location.getIcon());
-	newItem->setChildIndicatorPolicy(location.getType() == Location::Directory ? QTreeWidgetItem::ShowIndicator : QTreeWidgetItem::DontShowIndicator);
+	newItem->setChildIndicatorPolicy(location.isDirectory() ? QTreeWidgetItem::ShowIndicator : QTreeWidgetItem::DontShowIndicator);
 	newItem->setData(0, LOCATION_ROLE, QVariant::fromValue<Location>(location));
 	newItem->setData(0, EXPANDED_ROLE, QVariant(0));
 
@@ -119,7 +120,7 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 			item->removeChild(item->child(0));
 
 		foreach (Location childLocation, children)
-			if (childLocation.getType() == Location::Directory && !childLocation.isHidden())
+			if (childLocation.isDirectory() && !childLocation.isHidden())
 				this->addLocationToTree(item, childLocation);
 	}
 
@@ -148,7 +149,7 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 				row.append(item);
 
 				item = new QStandardItem();
-				item->setText(childLocation.getType() == Location::Directory ? "" : QString::number(childLocation.getSize()));
+				item->setText(childLocation.isDirectory() ? "" : QString::number(childLocation.getSize()));
 				row.append(item);
 
 				item = new QStandardItem();
@@ -156,7 +157,7 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 				row.append(item);
 
 				item = new QStandardItem();
-				item->setText(childLocation.getType() == Location::Directory ? "D" : "F");
+				item->setText(childLocation.isDirectory() ? "D" : "F");
 				row.append(item);
 
 				mFileListModel->appendRow(row);
@@ -179,7 +180,7 @@ void FileDialog::folderChildrenFailed(const QString& error, const QString& locat
 
 void FileDialog::showLocation(const Location& location)
 {
-	ui->currentPath->setText(location.getPath());
+	ui->currentPath->setText(location.getDisplayPath());
 	mCurrentLocation = location;
 
 	mFileListModel->clear();
@@ -190,7 +191,16 @@ void FileDialog::showLocation(const Location& location)
 	mCurrentLocation.asyncGetChildren(this, SLOT(folderChildrenLoaded(QList<Location>,QString)), SLOT(folderChildrenFailed(QString,QString)));
 }
 
-
+void FileDialog::directoryTreeSelected()
+{
+	QList<QTreeWidgetItem*> items = ui->directoryTree->selectedItems();
+	if (items.length() >= 1)
+	{
+		Location location = items[0]->data(0, LOCATION_ROLE).value<Location>();
+		if (!location.isNull())
+			showLocation(location);
+	}
+}
 
 
 

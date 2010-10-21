@@ -20,6 +20,7 @@ public:
 	Location(const QString& path);
 	~Location();
 
+	QString getDisplayPath() const;
 	const QString& getPath() const;
 	const QString& getLabel() const;
 	QIcon getIcon() const;
@@ -29,6 +30,7 @@ public:
 
 	bool isNull() const;
 	bool isHidden() const;
+	bool isDirectory() const;
 
 	void asyncGetChildren(QObject* callbackTarget, const char* succeedSlot, const char* failSlot);
 
@@ -57,6 +59,7 @@ private:
 	void setPath(const QString& path);
 	void localLoadSelf();
 	void localLoadListing();
+	void emitListLoadedSignal();
 
 	int mReferences;
 	QString mPath;
