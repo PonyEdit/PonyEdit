@@ -11,13 +11,28 @@ FileDialog::FileDialog(QWidget *parent) :
     ui(new Ui::FileDialog)
 {
 	ui->setupUi(this);
-	populateFolderTree();
 
+	mFileListModel = new QStandardItemModel();
+
+	ui->fileList->setModel(mFileListModel);
+	ui->fileList->setShowGrid(false);
+	ui->fileList->verticalHeader()->hide();
+	ui->fileList->setSelectionBehavior(QAbstractItemView::SelectRows);
+	ui->fileList->setWordWrap(false);
+	ui->fileList->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+	QList<int> sizes;
+	sizes.append(1);
+	sizes.append(3);
+	ui->splitter->setSizes(sizes);
+
+	populateFolderTree();
 	connect(ui->directoryTree, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(folderTreeItemExpanded(QTreeWidgetItem*)));
 }
 
 FileDialog::~FileDialog()
 {
+	delete mFileListModel;
     delete ui;
 }
 
@@ -88,15 +103,14 @@ void FileDialog::folderTreeItemExpanded(QTreeWidgetItem* item)
 			item->addChild(loadingItem);
 
 			mLoadingLocations.insert(location.getPath(), item);
-			location.asyncGetChildren(this,
-				SLOT(folderChildrenLoaded(QList<Location>,QString)),
-				SLOT(folderChildrenFailed(QString,QString)));
+			location.asyncGetChildren(this, SLOT(folderChildrenLoaded(QList<Location>,QString)), SLOT(folderChildrenFailed(QString,QString)));
 		}
 	}
 }
 
 void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QString& locationPath)
 {
+	//	Update the folder tree if appropriate
 	QTreeWidgetItem* item = mLoadingLocations.value(locationPath, NULL);
 	if (item)
 	{
@@ -108,6 +122,54 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 			if (childLocation.getType() == Location::Directory && !childLocation.isHidden())
 				this->addLocationToTree(item, childLocation);
 	}
+
+	//	Update the file list if appropriate
+	if (mCurrentLocation.getPath() == locationPath)
+	{
+		ui->fileListStack->setCurrentWidget(ui->fileListLayer);
+		mFileListModel->clear();
+
+		QStringList headerLabels;
+		headerLabels.append("Filename");
+		headerLabels.append("Size");
+		headerLabels.append("Last Modified");
+		mFileListModel->setHorizontalHeaderLabels(headerLabels);
+		ui->fileList->setColumnWidth(0, 250);
+
+		foreach (Location childLocation, children)
+		{
+			if (!childLocation.isHidden())
+			{
+				QList<QStandardItem*> row;
+
+				QStandardItem* item = new QStandardItem();
+				item->setIcon(childLocation.getIcon());
+				item->setText(childLocation.getLabel());
+				row.append(item);
+
+				item = new QStandardItem();
+				item->setText(childLocation.getType() == Location::Directory ? "" : QString::number(childLocation.getSize()));
+				row.append(item);
+
+				item = new QStandardItem();
+				item->setText(childLocation.getLastModified().toString());
+				row.append(item);
+
+				item = new QStandardItem();
+				item->setText(childLocation.getType() == Location::Directory ? "D" : "F");
+				row.append(item);
+
+				mFileListModel->appendRow(row);
+			}
+		}
+
+		ui->fileList->resizeColumnsToContents();
+		ui->fileList->resizeRowsToContents();
+		ui->fileList->setColumnWidth(0, ui->fileList->columnWidth(0) + 30);
+		ui->fileList->setColumnHidden(3, true);
+		mFileListModel->sort(0, (Qt::SortOrder)(Qt::AscendingOrder | Qt::CaseInsensitive));
+		mFileListModel->sort(3, (Qt::SortOrder)(Qt::AscendingOrder | Qt::CaseInsensitive));
+	}
 }
 
 void FileDialog::folderChildrenFailed(const QString& error, const QString& locationPath)
@@ -118,11 +180,14 @@ void FileDialog::folderChildrenFailed(const QString& error, const QString& locat
 void FileDialog::showLocation(const Location& location)
 {
 	ui->currentPath->setText(location.getPath());
+	mCurrentLocation = location;
 
-	ui->fileList->clear();
+	mFileListModel->clear();
 	ui->loaderIcon->setPixmap(QPixmap(":/icons/loading.png"));
 	ui->loaderLabel->setText("Loading...");
 	ui->fileListStack->setCurrentWidget(ui->loaderLayer);
+
+	mCurrentLocation.asyncGetChildren(this, SLOT(folderChildrenLoaded(QList<Location>,QString)), SLOT(folderChildrenFailed(QString,QString)));
 }
 
 

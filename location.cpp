@@ -81,25 +81,12 @@ Location::~Location()
 //  Method Implementation  //
 /////////////////////////////
 
-const QString& Location::getPath() const
-{
-	return mData->mPath;
-}
-
-const QString& Location::getLabel() const
-{
-	return mData->mLabel;
-}
-
-bool Location::isNull() const
-{
-	return (mData->mPath.isEmpty());
-}
-
-bool Location::isHidden() const
-{
-	return (mData->mLabel.startsWith('.'));
-}
+const QString& Location::getPath() const { return mData->mPath; }
+const QString& Location::getLabel() const { return mData->mLabel; }
+bool Location::isNull() const { return (mData->mPath.isEmpty()); }
+bool Location::isHidden() const { return (mData->mLabel.startsWith('.')); }
+int Location::getSize() const { return mData->mSize; }
+const QDateTime& Location::getLastModified() const { return mData->mLastModified; }
 
 QIcon Location::getIcon() const
 {

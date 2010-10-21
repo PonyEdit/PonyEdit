@@ -24,6 +24,8 @@ public:
 	const QString& getLabel() const;
 	QIcon getIcon() const;
 	Type getType() const;
+	int getSize() const;
+	const QDateTime& getLastModified() const;
 
 	bool isNull() const;
 	bool isHidden() const;

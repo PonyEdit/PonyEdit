@@ -4,6 +4,7 @@
 #include <QMap>
 #include <QDialog>
 #include <QFileIconProvider>
+#include <QStandardItemModel>
 #include <QTreeWidgetItem>
 #include "location.h"
 
@@ -31,6 +32,8 @@ private:
 
 	Ui::FileDialog *ui;
 	QFileIconProvider mIconProvider;
+	Location mCurrentLocation;
+	QStandardItemModel* mFileListModel;
 
 	QMap<QString, QTreeWidgetItem*> mLoadingLocations;
 };
