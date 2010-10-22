@@ -4,6 +4,7 @@
 #include <QString>
 #include <QVariant>
 #include <QDateTime>
+#include "sshhost.h"
 
 class LocationShared;
 class Location
@@ -69,6 +70,7 @@ private:
 	int mReferences;
 	QString mPath;
 	QString mLabel;
+
 	Location::Type mType;
 	Location::Protocol mProtocol;
 	QDateTime mLastModified;
@@ -78,6 +80,11 @@ private:
 	bool mListLoaded;
 	bool mLoading;
 	int mSize;
+
+	QString mRemoteHostName;
+	QString mRemoteUserName;
+	QString mRemotePath;
+	SshHost* mRemoteHost;
 };
 
 Q_DECLARE_METATYPE (Location);

@@ -6,9 +6,7 @@ ServerConfigDlg::ServerConfigDlg(QWidget *parent) :
     ui(new Ui::ServerConfigDlg)
 {
     ui->setupUi(this);
-	connect(ui->connectButton, SIGNAL(clicked()), this, SLOT(accept()));
-
-	ui->login->setFocus();
+	ui->userName->setFocus();
 }
 
 ServerConfigDlg::~ServerConfigDlg()
@@ -16,14 +14,14 @@ ServerConfigDlg::~ServerConfigDlg()
     delete ui;
 }
 
-QString ServerConfigDlg::getHostname()
+QString ServerConfigDlg::getHostName()
 {
 	return ui->hostName->text();
 }
 
-QString ServerConfigDlg::getLogin()
+QString ServerConfigDlg::getUserName()
 {
-	return ui->login->text();
+	return ui->userName->text();
 }
 
 QString ServerConfigDlg::getPassword()
@@ -31,7 +29,10 @@ QString ServerConfigDlg::getPassword()
 	return ui->password->text();
 }
 
-QString ServerConfigDlg::getFilename()
+void ServerConfigDlg::setEditHost(SshHost* host)
 {
-	return ui->filename->text();
+	mEditHost = host;
+	ui->hostName->setText(host->getHostName());
+	ui->userName->setText(host->getUserName());
 }
+

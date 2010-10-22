@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     remotefile.cpp \
     remotecontrolmessage.cpp \
     filedialog.cpp \
-    location.cpp
+    location.cpp \
+    sshhost.cpp
 
 HEADERS  += mainwindow.h \
     sshconnection.h \
@@ -31,7 +32,8 @@ HEADERS  += mainwindow.h \
     remotefile.h \
     remotecontrolmessage.h \
     filedialog.h \
-    location.h
+    location.h \
+    sshhost.h
 
 OTHER_FILES += \
     slave.py

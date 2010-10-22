@@ -6,6 +6,9 @@
 #include <QDir>
 
 
+QRegExp gSshServerRegExp("^(?:([^@:]+)@)?([^:]+\\.[^:]+):([^:]+)");
+
+
 ///////////////////////////
 //  Icon Provider stuff  //
 ///////////////////////////
@@ -181,8 +184,19 @@ void LocationShared::setPath(const QString &path)
 	int lastSlashIndex = mPath.lastIndexOf('/');
 	mLabel = mPath.mid(lastSlashIndex + 1);
 
-	//	Work out what type of path this is... Later. For now just assume they're all local
-	mProtocol = Location::Local;
+	//	Work out what kind of path this is. Default if no pattern matches, is local.
+	if (gSshServerRegExp.indexIn(mPath) > -1)
+	{
+		QStringList parts = gSshServerRegExp.capturedTexts();
+		mRemoteUserName = parts[1];
+		mRemoteHostName = parts[2];
+		mRemotePath = parts[3];
+		mRemoteHost = SshHost::getHost(mRemoteHostName, mRemoteUserName);
+
+		mProtocol = Location::Ssh;
+	}
+	else
+		mProtocol = Location::Local;
 }
 
 void LocationShared::localLoadSelf()

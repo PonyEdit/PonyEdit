@@ -2,6 +2,7 @@
 #define SERVERCONFIGDLG_H
 
 #include <QDialog>
+#include "sshhost.h"
 
 namespace Ui {
     class ServerConfigDlg;
@@ -15,13 +16,15 @@ public:
     explicit ServerConfigDlg(QWidget *parent = 0);
     ~ServerConfigDlg();
 
-	QString getHostname();
-	QString getLogin();
+	void setEditHost(SshHost* host);
+
+	QString getHostName();
+	QString getUserName();
 	QString getPassword();
-	QString getFilename();
 
 private:
     Ui::ServerConfigDlg *ui;
+	SshHost* mEditHost;
 };
 
 #endif // SERVERCONFIGDLG_H

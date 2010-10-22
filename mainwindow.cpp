@@ -13,14 +13,14 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-//	openFile();
+	openFile();
 
-	ServerConfigDlg dlg(this);
+	/*ServerConfigDlg dlg(this);
 	if (dlg.exec() == QDialog::Rejected)
 		exit(0);
 
-	QString hostname = dlg.getHostname();
-	QString login = dlg.getLogin();
+	QString hostname = dlg.getHostName();
+	QString login = dlg.getUserName();
 	QString password = dlg.getPassword();
 	QString filename = dlg.getFilename();
 
@@ -33,20 +33,20 @@ MainWindow::MainWindow(QWidget *parent)
 
 	QByteArray fileContent = mController->openFile(filename.toUtf8());
 
-	mController->splitThread();
+	mController->splitThread();*/
 
 	mEditor = new QTextEdit(this);
 	mEditor->setAcceptRichText(false);
 	mEditor->setFont(QFont("courier new", 12));
 	setCentralWidget(mEditor);
 
-	mCurrentDocument = new QTextDocument(QString(fileContent));
+	createToolbar();
+
+	/*mCurrentDocument = new QTextDocument(QString(fileContent));
 	mEditor->setDocument(mCurrentDocument);
 	mCurrentDocument->setDefaultFont(QFont("courier new", 12));
 
-	createToolbar();
-
-	connect(mCurrentDocument, SIGNAL(contentsChange(int,int,int)), this, SLOT(docChanged(int,int,int)));
+	connect(mCurrentDocument, SIGNAL(contentsChange(int,int,int)), this, SLOT(docChanged(int,int,int)));*/
 }
 
 MainWindow::~MainWindow()
