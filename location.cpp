@@ -193,6 +193,9 @@ void LocationShared::setPath(const QString &path)
 		mRemotePath = parts[3];
 		mRemoteHost = SshHost::getHost(mRemoteHostName, mRemoteUserName);
 
+		if (!mRemoteHost)
+			mPath = "";
+
 		mProtocol = Location::Ssh;
 	}
 	else

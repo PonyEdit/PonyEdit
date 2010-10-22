@@ -22,6 +22,9 @@ public:
 	QString getUserName();
 	QString getPassword();
 
+private slots:
+	void acceptedHandler();
+
 private:
     Ui::ServerConfigDlg *ui;
 	SshHost* mEditHost;

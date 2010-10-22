@@ -183,6 +183,9 @@ void FileDialog::folderChildrenFailed(const QString& error, const QString& locat
 
 void FileDialog::showLocation(const Location& location)
 {
+	if (location.isNull())
+		return;
+
 	ui->currentPath->setText(location.getDisplayPath());
 	mCurrentLocation = location;
 

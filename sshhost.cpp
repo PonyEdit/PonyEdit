@@ -10,7 +10,13 @@ SshHost* SshHost::getHost(const QString& hostName, const QString& userName)
 
 	ServerConfigDlg serverConfigDlg;
 	serverConfigDlg.setEditHost(newHost);
-	serverConfigDlg.exec();
+	bool accepted = serverConfigDlg.exec();
+
+	if (!accepted)
+	{
+		delete newHost;
+		return NULL;
+	}
 
 	return newHost;
 }
@@ -20,14 +26,6 @@ SshHost::SshHost(const QString& hostName, const QString& userName)
 {
 	mHostName = hostName;
 	mUserName = userName;
+	mPort = 22;
 }
 
-const QString& SshHost::getHostName() const
-{
-	return mHostName;
-}
-
-const QString& SshHost::getUserName() const
-{
-	return mUserName;
-}
