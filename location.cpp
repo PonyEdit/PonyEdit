@@ -43,6 +43,18 @@ Location::Location(const Location& other)
 	mData->mReferences++;
 }
 
+Location& Location::operator=(const Location& other)
+{
+	mData->mReferences--;
+	if (mData->mReferences <= 0)
+		delete(mData);
+
+	mData = other.mData;
+	mData->mReferences++;
+
+	return *this;
+}
+
 Location::Location(const QString& path)
 {
 	mData = new LocationShared();
@@ -92,6 +104,9 @@ bool Location::isDirectory() const { return mData->mType == Directory; }
 
 QString Location::getDisplayPath() const
 {
+	qDebug() << this << this->mData;
+	qDebug() << this << this->mData->mPath;
+
 	QString p = getPath();
 
 #ifdef Q_OS_WIN

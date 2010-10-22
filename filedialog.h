@@ -28,6 +28,8 @@ private slots:
 	void directoryTreeSelected();
 
 private:
+	void keyPressEvent(QKeyEvent *);
+
 	void populateFolderTree();
 	QTreeWidgetItem* addLocationToTree(QTreeWidgetItem* parent, const Location& location);
 

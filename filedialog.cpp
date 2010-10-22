@@ -2,6 +2,8 @@
 #include "ui_filedialog.h"
 
 #include <QDir>
+#include <QDebug>
+#include <QKeyEvent>
 
 #define LOCATION_ROLE (Qt::UserRole)
 #define EXPANDED_ROLE (Qt::UserRole + 1)
@@ -180,6 +182,9 @@ void FileDialog::folderChildrenFailed(const QString& error, const QString& locat
 
 void FileDialog::showLocation(const Location& location)
 {
+	qDebug() << "x";
+	qDebug() << &location;
+
 	ui->currentPath->setText(location.getDisplayPath());
 	mCurrentLocation = location;
 
@@ -202,6 +207,17 @@ void FileDialog::directoryTreeSelected()
 	}
 }
 
+void FileDialog::keyPressEvent(QKeyEvent *event)
+{
+	if (focusWidget() == ui->currentPath && (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return))
+	{
+		if (ui->currentPath->text() != mCurrentLocation.getDisplayPath())
+		{
+			Location newLocation(ui->currentPath->text());
+			showLocation(newLocation);
+		}
+	}
+}
 
 
 

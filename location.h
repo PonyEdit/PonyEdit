@@ -17,6 +17,7 @@ public:
 public:
 	Location();
 	Location(const Location& other);
+	Location& operator=(const Location& other);
 	Location(const QString& path);
 	~Location();
 
