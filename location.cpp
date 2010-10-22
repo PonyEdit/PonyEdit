@@ -193,6 +193,8 @@ void LocationShared::setPath(const QString &path)
 		mRemotePath = parts[3];
 		mRemoteHost = SshHost::getHost(mRemoteHostName, mRemoteUserName);
 
+		qDebug() << "Connected: " << mRemoteHost;
+
 		if (!mRemoteHost)
 			mPath = "";
 

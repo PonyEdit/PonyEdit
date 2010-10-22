@@ -2,11 +2,15 @@
 #define SSHHOST_H
 
 #include <QString>
+#include "sshconnection.h"
+#include "sshremotecontroller.h"
 
 class SshHost
 {
 public:
-	static SshHost* getHost(const QString& hostName, const QString& userName);
+	static SshHost* getHost(const QString& hostName = QString(), const QString& userName = QString());
+	static SshHost* createHost(const QString& hostName = QString(), const QString& userName = QString());
+	~SshHost();
 
 	inline const QString& getHostName() const { return mHostName; }
 	inline const QString& getUserName() const { return mUserName; }
@@ -18,8 +22,15 @@ public:
 	inline void setPassword(const QString& password) { mPassword = password; }
 	inline void setPort(int port) { mPort = port; }
 
+	bool isConnected() const;
+	bool connect();
+	void disconnect();
+
 private:
 	SshHost(const QString& hostName, const QString& userName);
+
+	SshConnection* mConnection;
+	SshRemoteController* mController;
 
 	QString mHostName;
 	int mPort;

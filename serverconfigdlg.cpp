@@ -13,6 +13,8 @@ ServerConfigDlg::ServerConfigDlg(QWidget *parent) :
 	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 	connect(this, SIGNAL(accepted()), this, SLOT(acceptedHandler()));
+
+	ui->password->setFocus();
 }
 
 ServerConfigDlg::~ServerConfigDlg()
