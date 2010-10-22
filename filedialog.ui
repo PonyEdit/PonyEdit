@@ -28,7 +28,7 @@
         <widget class="QLineEdit" name="currentPath"/>
        </item>
        <item>
-        <widget class="QToolButton" name="toolButton_2">
+        <widget class="QToolButton" name="upLevelButton">
          <property name="text">
           <string>...</string>
          </property>
@@ -39,7 +39,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="toolButton_4">
+        <widget class="QToolButton" name="newFolderButton">
          <property name="text">
           <string>...</string>
          </property>
@@ -50,7 +50,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="toolButton">
+        <widget class="QToolButton" name="addFavoriteButton">
          <property name="text">
           <string>...</string>
          </property>

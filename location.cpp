@@ -34,7 +34,7 @@ void LocationShared::cleanupIconProvider()
 
 Location::Location()
 {
-	mData = new LocationShared();
+	mData = NULL;
 }
 
 Location::Location(const Location& other)
@@ -45,14 +45,23 @@ Location::Location(const Location& other)
 
 Location& Location::operator=(const Location& other)
 {
-	mData->mReferences--;
-	if (mData->mReferences <= 0)
-		delete(mData);
+	if (mData != NULL)
+	{
+		mData->mReferences--;
+		if (mData->mReferences <= 0)
+			delete(mData);
+	}
 
 	mData = other.mData;
 	mData->mReferences++;
 
 	return *this;
+}
+
+Location::Location(LocationShared* data)
+{
+	mData = data;
+	mData->mReferences++;
 }
 
 Location::Location(const QString& path)
@@ -61,7 +70,7 @@ Location::Location(const QString& path)
 	mData->setPath(path);
 }
 
-Location::Location(const QString& path, Type type, int size, QDateTime lastModified)
+Location::Location(const Location& parent, const QString& path, Type type, int size, QDateTime lastModified)
 {
 	mData = new LocationShared();
 	mData->setPath(path);
@@ -69,6 +78,7 @@ Location::Location(const QString& path, Type type, int size, QDateTime lastModif
 	mData->mSize = size;
 	mData->mLastModified = lastModified;
 	mData->mSelfLoaded = true;
+	mData->mParent = parent;
 }
 
 LocationShared::LocationShared()
@@ -84,9 +94,12 @@ LocationShared::LocationShared()
 
 Location::~Location()
 {
-	mData->mReferences--;
-	if (mData->mReferences <= 0)
-		delete (mData);
+	if (mData != NULL)
+	{
+		mData->mReferences--;
+		if (mData->mReferences <= 0)
+			delete (mData);
+	}
 }
 
 
@@ -96,17 +109,35 @@ Location::~Location()
 
 const QString& Location::getPath() const { return mData->mPath; }
 const QString& Location::getLabel() const { return mData->mLabel; }
-bool Location::isNull() const { return (mData->mPath.isEmpty()); }
+bool Location::isNull() const { return (mData == NULL); }
 bool Location::isHidden() const { return (mData->mLabel.startsWith('.')); }
 int Location::getSize() const { return mData->mSize; }
 const QDateTime& Location::getLastModified() const { return mData->mLastModified; }
 bool Location::isDirectory() const { return mData->mType == Directory; }
 
+const Location& Location::getParent()
+{
+	if (mData->mParent.isNull())
+		mData->mParent = Location(getParentPath());
+
+	return mData->mParent;
+}
+
+QString Location::getParentPath() const
+{
+	QString parentPath = getPath();
+	int lastSlash = parentPath.lastIndexOf('/');
+	if (lastSlash < 0)
+		return "";
+	else
+	{
+		parentPath.truncate(lastSlash);
+		return parentPath;
+	}
+}
+
 QString Location::getDisplayPath() const
 {
-	qDebug() << this << this->mData;
-	qDebug() << this << this->mData->mPath;
-
 	QString p = getPath();
 
 #ifdef Q_OS_WIN
@@ -173,7 +204,7 @@ void LocationShared::localLoadListing()
 	foreach (QString entry, entries)
 	{
 		QFileInfo fileInfo(mPath + "/" + entry);
-		mChildren.append(Location(fileInfo.absoluteFilePath(), fileInfo.isDir() ? Location::Directory : Location::File, fileInfo.size(), fileInfo.lastModified()));
+		mChildren.append(Location(Location(this), fileInfo.absoluteFilePath(), fileInfo.isDir() ? Location::Directory : Location::File, fileInfo.size(), fileInfo.lastModified()));
 	}
 
 	mListLoaded = true;

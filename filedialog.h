@@ -26,6 +26,7 @@ private slots:
 	void folderChildrenLoaded(const QList<Location>& children, const QString& locationPath);
 	void folderChildrenFailed(const QString& error, const QString& locationPath);
 	void directoryTreeSelected();
+	void upLevel();
 
 private:
 	void keyPressEvent(QKeyEvent *);

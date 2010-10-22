@@ -13,7 +13,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-	//openFile();
+//	openFile();
 
 	ServerConfigDlg dlg(this);
 	if (dlg.exec() == QDialog::Rejected)

@@ -31,6 +31,7 @@ FileDialog::FileDialog(QWidget *parent) :
 	populateFolderTree();
 	connect(ui->directoryTree, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(folderTreeItemExpanded(QTreeWidgetItem*)));
 	connect(ui->directoryTree, SIGNAL(itemSelectionChanged()), this, SLOT(directoryTreeSelected()));
+	connect(ui->upLevelButton, SIGNAL(clicked()), this, SLOT(upLevel()));
 }
 
 FileDialog::~FileDialog()
@@ -182,9 +183,6 @@ void FileDialog::folderChildrenFailed(const QString& error, const QString& locat
 
 void FileDialog::showLocation(const Location& location)
 {
-	qDebug() << "x";
-	qDebug() << &location;
-
 	ui->currentPath->setText(location.getDisplayPath());
 	mCurrentLocation = location;
 
@@ -217,6 +215,13 @@ void FileDialog::keyPressEvent(QKeyEvent *event)
 			showLocation(newLocation);
 		}
 	}
+}
+
+void FileDialog::upLevel()
+{
+	Location parent = mCurrentLocation.getParent();
+	if (!parent.isNull())
+		showLocation(parent);
 }
 
 

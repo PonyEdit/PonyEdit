@@ -29,6 +29,9 @@ public:
 	int getSize() const;
 	const QDateTime& getLastModified() const;
 
+	const Location& getParent();
+	QString getParentPath() const;
+
 	bool isNull() const;
 	bool isHidden() const;
 	bool isDirectory() const;
@@ -36,7 +39,8 @@ public:
 	void asyncGetChildren(QObject* callbackTarget, const char* succeedSlot, const char* failSlot);
 
 private:
-	Location(const QString& path, Type type, int size, QDateTime lastModified);
+	Location(const Location& parent, const QString& path, Type type, int size, QDateTime lastModified);
+	Location(LocationShared* data);
 
 	LocationShared* mData;
 };
@@ -69,6 +73,7 @@ private:
 	Location::Protocol mProtocol;
 	QDateTime mLastModified;
 	QList<Location> mChildren;
+	Location mParent;
 	bool mSelfLoaded;
 	bool mListLoaded;
 	bool mLoading;
