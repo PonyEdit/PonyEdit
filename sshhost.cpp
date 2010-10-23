@@ -2,15 +2,31 @@
 #include "serverconfigdlg.h"
 #include <QMessageBox>
 
+QList<SshHost*> SshHost::sKnownHosts;
+
 SshHost* SshHost::getHost(const QString& hostName, const QString& userName)
 {
-	//	TODO: Search through the list of known servers to find the one we want
+	SshHost* host = NULL;
+	bool createdHost = false;
 
-	//	No known hosts found. Try to create a new one
-	bool createdHost = true;
-	SshHost* host = createHost(hostName, userName);
+	//	TODO: Search through the list of known servers to find the one we want
+	foreach (SshHost* seekHost, sKnownHosts)
+	{
+		if (hostName == seekHost->mHostName && (userName.isEmpty() || userName == seekHost->mUserName))
+		{
+			host = seekHost;
+			break;
+		}
+	}
+
 	if (!host)
-		return NULL;
+	{
+		//	No known hosts found. Try to create a new one
+		createdHost = true;
+		host = createHost(hostName, userName);
+		if (!host)
+			return NULL;
+	}
 
 	//	Now try to connect to the found/created host if not already connected
 	if (!host->ensureConnection())
@@ -19,6 +35,9 @@ SshHost* SshHost::getHost(const QString& hostName, const QString& userName)
 			delete host;
 		return NULL;
 	}
+
+	if (createdHost)
+		sKnownHosts.append(host);
 
 	return host;
 }

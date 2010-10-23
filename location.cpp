@@ -233,7 +233,9 @@ void LocationShared::localLoadListing()
 
 void LocationShared::emitListLoadedSignal()
 {
+	qDebug() << "A";
 	emit loadListSuccessful(mChildren, mPath);
+	qDebug() << "B";
 }
 
 void Location::asyncGetChildren(QObject* callbackTarget, const char* succeedSlot, const char* failSlot)
@@ -274,6 +276,12 @@ void LocationShared::sshLoadListing()
 
 	SshRemoteController* controller = mRemoteHost->getController();
 	controller->sendRequest(new SshRequest_ls(Location(this)));
+}
+
+void Location::sshChildLoadResponse(const QList<Location>& children)
+{
+	mData->mChildren = children;
+	mData->emitListLoadedSignal();
 }
 
 

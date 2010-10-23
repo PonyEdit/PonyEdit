@@ -69,7 +69,7 @@ void SshRemoteController::ControllerThread::run()
 				rq->packMessage(&massSend);
 				sendingMessages.append(rq);
 			}
-			mRequestQueue.empty();
+			mRequestQueue.clear();
 			mRequestQueueLock.unlock();
 
 			//	Encode and send the bytearray
@@ -80,7 +80,7 @@ void SshRemoteController::ControllerThread::run()
 			//	Wait for a response to each message in turn
 			while (sendingMessages.length())
 			{
-				QByteArray response = mSsh->readLine();
+				QByteArray response = QByteArray::fromBase64(mSsh->readLine());
 				SshRequest* rq = sendingMessages.takeFirst();
 				rq->handleResponse(response);
 				delete rq;

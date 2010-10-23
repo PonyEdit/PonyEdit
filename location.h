@@ -10,6 +10,7 @@ class LocationShared;
 class Location
 {
 	friend class LocationShared;
+	friend class SshRequest_ls;
 
 public:
 	enum Type { Unknown = 0, File = 1, Directory = 2 };
@@ -43,6 +44,8 @@ public:
 private:
 	Location(const Location& parent, const QString& path, Type type, int size, QDateTime lastModified);
 	Location(LocationShared* data);
+
+	void sshChildLoadResponse(const QList<Location>& children);
 
 	LocationShared* mData;
 };

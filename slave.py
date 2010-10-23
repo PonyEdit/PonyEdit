@@ -1,4 +1,4 @@
-import os, sys, binascii, struct
+import os, sys, binascii, struct, stat
 
 thefile = ''
 thefilename = ''
@@ -45,7 +45,7 @@ class DataBlock:
 		return v
 
 	def write(self, fmt, *args):
-		self.data += struct.pack(fmt, *args)
+		self.data += struct.pack('<' + fmt, *args)
 
 	def writeString(self, s):
 		self.data += struct.pack('<L', len(s)) + s
@@ -79,10 +79,11 @@ class DataBlock:
 
 #	ls
 def msg_ls(params, result):
-	for filename in os.listdir('.'):
-		stat = os.stat(filename)
+	d = params['d']
+	for filename in os.listdir(d):
+		s = os.stat(d + '/' + filename)
 		result.writeString(filename)
-		result.write('L', stat.st_size)
+		result.write('BL', stat.S_ISDIR(s.st_mode), s.st_size)
 
 #	open
 def msg_open(params, result):

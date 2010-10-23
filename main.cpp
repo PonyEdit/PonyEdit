@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
 	{
 		SshConnection::initializeLib();
 		qRegisterMetaType<Location>("Location");
+		qRegisterMetaType< QList<Location> >("QList<Location>");
 
 		QApplication a(argc, argv);
 		MainWindow w;

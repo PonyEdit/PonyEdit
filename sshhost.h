@@ -46,7 +46,7 @@ private:
 	QString mName;
 	bool mSave;
 
-	static QList<SshHost*> mKnownHosts;
+	static QList<SshHost*> sKnownHosts;
 };
 
 #endif // SSHHOST_H

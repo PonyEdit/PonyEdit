@@ -60,7 +60,38 @@ void SshRequest_ls::packBody(QByteArray* target)
 
 void SshRequest_ls::handleResponse(const QByteArray& response)
 {
-	qDebug() << "Got response from ms message!!";
-	qDebug() << response.length();
+	QList<Location> dirList;
+
+	const char* cursor = response.constData();
+	const char* dataEnd = response.constData() + response.size();
+
+	cursor++;
+	while (cursor < dataEnd)
+	{
+		quint32 filenameLength;
+		QString filename;
+		quint64 size;
+		//quint64 lastModified;
+		quint8 isDir;
+
+		filenameLength = *(quint32*)cursor;
+		cursor += 4;
+
+		filename = QByteArray(cursor, filenameLength);
+		cursor += filenameLength;
+
+		isDir = *(quint8*)cursor;
+		cursor += 1;
+
+		size = *(quint32*)cursor;
+		cursor += 4;
+
+		/*lastModified = *(quint32*)cursor;
+		cursor += 4;*/
+
+		dirList.append(Location(mLocation, mLocation.getPath() + "/" + filename, isDir?Location::Directory:Location::File, size, QDateTime()));
+	}
+
+	mLocation.sshChildLoadResponse(dirList);
 }
 
