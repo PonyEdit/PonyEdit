@@ -4,8 +4,8 @@
 #include <QString>
 #include <QVariant>
 #include <QDateTime>
-#include "sshhost.h"
 
+class SshHost;
 class LocationShared;
 class Location
 {
@@ -32,6 +32,7 @@ public:
 
 	const Location& getParent();
 	QString getParentPath() const;
+	QString getRemotePath() const;
 
 	bool isNull() const;
 	bool isHidden() const;
@@ -63,9 +64,11 @@ private:
 	static void initIconProvider();
 
 	void setPath(const QString& path);
+
+	void emitListLoadedSignal();
 	void localLoadSelf();
 	void localLoadListing();
-	void emitListLoadedSignal();
+	void sshLoadListing();
 
 	int mReferences;
 	QString mPath;

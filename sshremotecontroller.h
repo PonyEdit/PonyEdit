@@ -6,6 +6,7 @@
 #include <QThread>
 #include <QMutex>
 #include "sshconnection.h"
+#include "sshrequest.h"
 #include "remotefile.h"
 
 #define SSH_SLAVE_FILE "slave.py"
@@ -24,10 +25,8 @@ public:
 	SshRemoteController();
 	void attach(SshConnection* connection);
 
-	QByteArray openFile(const char* filename);
-
 	void splitThread();
-	void push(Push p);
+	void sendRequest(SshRequest* request);
 
 private:
 	class ControllerThread : public QThread
@@ -36,8 +35,9 @@ private:
 		ControllerThread() {}
 		void run();
 		SshConnection* mSsh;
-		QMutex mQueueLock;
-		QList<Push> mQueue;
+
+		QList<SshRequest*> mRequestQueue;
+		QMutex mRequestQueueLock;
 	};
 
 	SshConnection* mSsh;

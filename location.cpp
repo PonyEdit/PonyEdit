@@ -1,4 +1,7 @@
 #include "location.h"
+#include "sshremotecontroller.h"
+#include "sshrequest.h"
+#include "sshhost.h"
 #include <QFileIconProvider>
 #include <QMetaMethod>
 #include <QObject>
@@ -193,8 +196,6 @@ void LocationShared::setPath(const QString &path)
 		mRemotePath = parts[3];
 		mRemoteHost = SshHost::getHost(mRemoteHostName, mRemoteUserName);
 
-		qDebug() << "Connected: " << mRemoteHost;
-
 		if (!mRemoteHost)
 			mPath = "";
 
@@ -245,14 +246,35 @@ void Location::asyncGetChildren(QObject* callbackTarget, const char* succeedSlot
 	else if (!mData->mLoading)
 	{
 		mData->mLoading = true;
-		if (mData->mProtocol == Local)
+		switch (mData->mProtocol)
+		{
+		case Local:
 			mData->localLoadListing();
-		else
-			throw("Remote loading not implemented yet!");
+			break;
+
+		case Ssh:
+			mData->sshLoadListing();
+			break;
+
+		default:
+			throw("Invalid file protocol!");
+		}
 	}
 }
 
+QString Location::getRemotePath() const
+{
+	return mData->mRemotePath;
+}
 
+void LocationShared::sshLoadListing()
+{
+	if (!mRemoteHost->ensureConnection())
+		return;
+
+	SshRemoteController* controller = mRemoteHost->getController();
+	controller->sendRequest(new SshRequest_ls(Location(this)));
+}
 
 
 

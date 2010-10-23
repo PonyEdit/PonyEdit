@@ -5,6 +5,7 @@
 #include "sshconnection.h"
 #include "sshremotecontroller.h"
 
+class SshRemoteController;
 class SshHost
 {
 public:
@@ -23,8 +24,11 @@ public:
 	inline void setPort(int port) { mPort = port; }
 
 	bool isConnected() const;
+	bool ensureConnection();
 	bool connect();
 	void disconnect();
+
+	inline SshRemoteController* getController() { return mController; }
 
 private:
 	SshHost(const QString& hostName, const QString& userName);

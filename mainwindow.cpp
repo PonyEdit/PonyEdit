@@ -73,7 +73,7 @@ void MainWindow::docChanged(int position, int charsRemoved, int charsAdded)
 	for (int i = 0; i < charsAdded; i++)
 		p.add += mCurrentDocument->characterAt(i + position);
 
-	mController->push(p);
+	//mController->push(p);
 }
 
 void MainWindow::newFile(){}
@@ -87,5 +87,5 @@ void MainWindow::saveFile()
 {
 	Push p;
 	p.save = 1;
-	mController->push(p);
+	//mController->push(p);
 }

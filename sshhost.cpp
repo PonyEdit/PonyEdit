@@ -13,14 +13,11 @@ SshHost* SshHost::getHost(const QString& hostName, const QString& userName)
 		return NULL;
 
 	//	Now try to connect to the found/created host if not already connected
-	if (!host->isConnected())
+	if (!host->ensureConnection())
 	{
-		if (!host->connect())
-		{
-			if (createdHost)
-				delete host;
-			return NULL;
-		}
+		if (createdHost)
+			delete host;
+		return NULL;
 	}
 
 	return host;
@@ -103,4 +100,7 @@ void SshHost::disconnect()
 	}
 }
 
-
+bool SshHost::ensureConnection()
+{
+	return isConnected() || connect();
+}
