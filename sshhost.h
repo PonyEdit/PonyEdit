@@ -11,17 +11,24 @@ class SshHost
 public:
 	static SshHost* getHost(const QString& hostName = QString(), const QString& userName = QString());
 	static SshHost* createHost(const QString& hostName = QString(), const QString& userName = QString());
+	static QList<SshHost*>& getKnownHosts() { return sKnownHosts; }
 	~SshHost();
 
 	inline const QString& getHostName() const { return mHostName; }
 	inline const QString& getUserName() const { return mUserName; }
 	inline const QString& getPassword() const { return mPassword; }
 	inline int getPort() const { return mPort; }
+	inline bool getSave() const { return mSave; }
+	inline const QString& getName() const { return mName; }
+	inline bool getSavePassword() const { return mSavePassword; }
 
 	inline void setHostName(const QString& hostName) { mHostName = hostName; }
 	inline void setUserName(const QString& userName) { mUserName = userName; }
 	inline void setPassword(const QString& password) { mPassword = password; }
 	inline void setPort(int port) { mPort = port; }
+	inline void setSave(bool save) { mSave = save; }
+	inline void setName(const QString& name) { mName = name; }
+	inline void setSavePassword(bool savePassword) { mSavePassword = savePassword; }
 
 	bool isConnected() const;
 	bool ensureConnection();

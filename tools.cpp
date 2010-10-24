@@ -1,4 +1,6 @@
 #include "tools.h"
+#include "sshhost.h"
+#include <QSettings>
 
 #define TERABYTE_MULTIPLIER	1099511627776ll
 #define GIGABYTE_MULTIPLIER 1073741824
@@ -17,4 +19,26 @@ QString Tools::humanReadableBytes(quint64 bytes)
 		return QString::number((double)bytes / (double)KILOBYTE_MULTIPLIER, 'f', 1) + " KiB";
 	else
 		return QString::number(bytes) + " bytes";
+}
+
+void Tools::saveServers()
+{
+	QSettings settings;
+	QList<SshHost*> knownHosts = SshHost::getKnownHosts();
+
+	int index = 0;
+	settings.beginWriteArray("servers");
+	foreach (SshHost* host, knownHosts)
+	{
+		if (host->getSave())
+		{
+			settings.setArrayIndex(index++);
+			settings.setValue("hostname", host->getHostName());
+			settings.setValue("port", host->getPort());
+			settings.setValue("username", host->getUserName());
+			settings.setValue("password", host->getSavePassword() ? host->getPassword() : "");
+			settings.setValue("name", host->getName());
+		}
+	}
+	settings.endArray();
 }

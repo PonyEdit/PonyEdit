@@ -175,6 +175,7 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 		ui->fileList->resizeColumnsToContents();
 		ui->fileList->resizeRowsToContents();
 		ui->fileList->setColumnWidth(0, ui->fileList->columnWidth(0) + 30);
+		ui->fileList->setColumnWidth(1, ui->fileList->columnWidth(1) + 30);
 		ui->fileList->setColumnHidden(3, true);
 		mFileListModel->sort(0, (Qt::SortOrder)(Qt::AscendingOrder | Qt::CaseInsensitive));
 		mFileListModel->sort(3, (Qt::SortOrder)(Qt::AscendingOrder | Qt::CaseInsensitive));

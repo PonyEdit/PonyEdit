@@ -1,6 +1,8 @@
 #include "sshhost.h"
 #include "serverconfigdlg.h"
+#include "tools.h"
 #include <QMessageBox>
+
 
 QList<SshHost*> SshHost::sKnownHosts;
 
@@ -38,6 +40,8 @@ SshHost* SshHost::getHost(const QString& hostName, const QString& userName)
 
 	if (createdHost)
 		sKnownHosts.append(host);
+	if (host->getSave())
+		Tools::saveServers();
 
 	return host;
 }
@@ -67,6 +71,8 @@ SshHost::SshHost(const QString& hostName, const QString& userName)
 	mHostName = hostName;
 	mUserName = userName;
 	mPort = 22;
+	mSavePassword = false;
+	mSave = false;
 }
 
 SshHost::~SshHost()

@@ -13,8 +13,12 @@ int main(int argc, char *argv[])
 	try
 	{
 		SshConnection::initializeLib();
+
 		qRegisterMetaType<Location>("Location");
 		qRegisterMetaType< QList<Location> >("QList<Location>");
+
+		QCoreApplication::setOrganizationName("BananaMonkeyChainsaw");
+		QCoreApplication::setApplicationName("RemoteEditor");
 
 		QApplication a(argc, argv);
 		MainWindow w;

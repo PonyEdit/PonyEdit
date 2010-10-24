@@ -24,10 +24,15 @@ public:
 
 private slots:
 	void acceptedHandler();
+	void updateName();
 
 private:
+	QString getAutoName();
+
     Ui::ServerConfigDlg *ui;
 	SshHost* mEditHost;
+
+	QString mLastAutoName;
 };
 
 #endif // SERVERCONFIGDLG_H
