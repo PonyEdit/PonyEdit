@@ -161,10 +161,9 @@ def handleMessage(message):
 	return result
 
 
-#
-#	Send startup info
-#
-
 log('*************************************** Starting up *********************************************')
+
+#	Send the current working directory, which should be the user's home dir.
+print "~=" + os.getcwd()
 
 mainLoop()

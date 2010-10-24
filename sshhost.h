@@ -28,7 +28,9 @@ public:
 	bool connect();
 	void disconnect();
 
+	//	Only usable when connected:
 	inline SshRemoteController* getController() { return mController; }
+	inline const QString& getHomeDirectory() { return mController->getHomeDirectory(); }
 
 private:
 	SshHost(const QString& hostName, const QString& userName);

@@ -161,6 +161,9 @@ QIcon Location::getIcon() const
 	case Location::Local:
 		return sIconProvider->icon(QFileInfo(mData->mPath));
 
+	case Location::Ssh:
+		return sIconProvider->icon(isDirectory() ? QFileIconProvider::Folder : QFileIconProvider::File);
+
 	default:
 		return QIcon();
 	}
@@ -176,7 +179,7 @@ Location::Type Location::getType() const
 
 void LocationShared::setPath(const QString &path)
 {
-	mPath = path;
+	mPath = path.trimmed();
 	mPath.replace('\\', '/');
 
 	//	Clean off any trailing slashes
@@ -190,6 +193,7 @@ void LocationShared::setPath(const QString &path)
 	//	Work out what kind of path this is. Default if no pattern matches, is local.
 	if (gSshServerRegExp.indexIn(mPath) > -1)
 	{
+		mProtocol = Location::Ssh;
 		QStringList parts = gSshServerRegExp.capturedTexts();
 		mRemoteUserName = parts[1];
 		mRemoteHostName = parts[2];
@@ -198,8 +202,13 @@ void LocationShared::setPath(const QString &path)
 
 		if (!mRemoteHost)
 			mPath = "";
-
-		mProtocol = Location::Ssh;
+		else
+		{
+			mPath.replace("~", mRemoteHost->getHomeDirectory());
+			mRemotePath.replace("~", mRemoteHost->getHomeDirectory());
+			mPath = mPath.trimmed();
+			mRemotePath = mRemotePath.trimmed();
+		}
 	}
 	else
 		mProtocol = Location::Local;
@@ -233,9 +242,7 @@ void LocationShared::localLoadListing()
 
 void LocationShared::emitListLoadedSignal()
 {
-	qDebug() << "A";
 	emit loadListSuccessful(mChildren, mPath);
-	qDebug() << "B";
 }
 
 void Location::asyncGetChildren(QObject* callbackTarget, const char* succeedSlot, const char* failSlot)

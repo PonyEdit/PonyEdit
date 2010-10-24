@@ -39,6 +39,17 @@ void SshRemoteController::attach(SshConnection* connection)
 
 	const char* command = "python ~/.remoted/slave.py\n";
 	mSsh->writeData(command, strlen(command));
+
+	//	First line returned should be the user's home dir. If not, an error has occurred.
+	mHomeDirectory = mSsh->readLine().trimmed();
+	if (mHomeDirectory.startsWith("~="))
+	{
+		mHomeDirectory = mHomeDirectory.mid(2);
+		if (mHomeDirectory.endsWith('/'))
+			mHomeDirectory.truncate(mHomeDirectory.length() - 1);
+	}
+	else
+		throw("Failed to start slave script!");
 }
 
 void SshRemoteController::splitThread()

@@ -28,6 +28,8 @@ public:
 	void splitThread();
 	void sendRequest(SshRequest* request);
 
+	inline const QString& getHomeDirectory() const { return mHomeDirectory; }
+
 private:
 	class ControllerThread : public QThread
 	{
