@@ -27,6 +27,7 @@ private slots:
 	void folderChildrenFailed(const QString& error, const QString& locationPath);
 	void directoryTreeSelected();
 	void upLevel();
+	void fileDoubleClicked(QModelIndex index);
 
 private:
 	void keyPressEvent(QKeyEvent *);

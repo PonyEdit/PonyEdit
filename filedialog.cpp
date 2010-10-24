@@ -32,6 +32,7 @@ FileDialog::FileDialog(QWidget *parent) :
 	connect(ui->directoryTree, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(folderTreeItemExpanded(QTreeWidgetItem*)));
 	connect(ui->directoryTree, SIGNAL(itemSelectionChanged()), this, SLOT(directoryTreeSelected()));
 	connect(ui->upLevelButton, SIGNAL(clicked()), this, SLOT(upLevel()));
+	connect(ui->fileList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(fileDoubleClicked(QModelIndex)));
 }
 
 FileDialog::~FileDialog()
@@ -149,6 +150,7 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 				QStandardItem* item = new QStandardItem();
 				item->setIcon(childLocation.getIcon());
 				item->setText(childLocation.getLabel());
+				item->setData(QVariant::fromValue<Location>(childLocation), LOCATION_ROLE);
 				row.append(item);
 
 				item = new QStandardItem();
@@ -225,6 +227,19 @@ void FileDialog::upLevel()
 	Location parent = mCurrentLocation.getParent();
 	if (!parent.isNull())
 		showLocation(parent);
+}
+
+void FileDialog::fileDoubleClicked(QModelIndex index)
+{
+	QStandardItem* item = mFileListModel->itemFromIndex(index);
+	int row = item->row();
+	QStandardItem* primaryItem = mFileListModel->item(row, 0);
+	Location location = primaryItem->data(LOCATION_ROLE).value<Location>();
+
+	if (location.isDirectory())
+		showLocation(location);
+	else
+		qDebug() << "WOULD LOAD A FILE AT THIS POINT!!";
 }
 
 
