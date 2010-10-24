@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     filedialog.cpp \
     location.cpp \
     sshhost.cpp \
-    sshrequest.cpp
+    sshrequest.cpp \
+    tools.cpp
 
 HEADERS  += mainwindow.h \
     sshconnection.h \
@@ -33,7 +34,8 @@ HEADERS  += mainwindow.h \
     filedialog.h \
     location.h \
     sshhost.h \
-    sshrequest.h
+    sshrequest.h \
+    tools.h
 
 OTHER_FILES += \
     slave.py

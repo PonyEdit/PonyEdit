@@ -1,5 +1,6 @@
 #include "filedialog.h"
 #include "ui_filedialog.h"
+#include "tools.h"
 
 #include <QDir>
 #include <QDebug>
@@ -154,7 +155,7 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 				row.append(item);
 
 				item = new QStandardItem();
-				item->setText(childLocation.isDirectory() ? "" : QString::number(childLocation.getSize()));
+				item->setText(childLocation.isDirectory() ? "" : Tools::humanReadableBytes(childLocation.getSize()));
 				row.append(item);
 
 				item = new QStandardItem();
