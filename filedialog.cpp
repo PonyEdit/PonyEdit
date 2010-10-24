@@ -23,6 +23,8 @@ FileDialog::FileDialog(QWidget *parent) :
 	ui->fileList->setSelectionBehavior(QAbstractItemView::SelectRows);
 	ui->fileList->setWordWrap(false);
 	ui->fileList->setEditTriggers(QAbstractItemView::NoEditTriggers);
+	ui->fileList->setFocus();
+	ui->fileList->horizontalHeader()->setHighlightSections(false);
 
 	QList<int> sizes;
 	sizes.append(1);
