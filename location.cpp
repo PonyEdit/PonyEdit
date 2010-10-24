@@ -291,6 +291,7 @@ void LocationShared::sshLoadListing()
 void Location::sshChildLoadResponse(const QList<Location>& children)
 {
 	mData->mChildren = children;
+	mData->mListLoaded = true;
 	mData->emitListLoadedSignal();
 }
 
