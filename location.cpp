@@ -9,7 +9,7 @@
 #include <QDir>
 
 
-QRegExp gSshServerRegExp("^(?:([^@:]+)@)?([^:]+\\.[^:]+):([^:]+)");
+QRegExp gSshServerRegExp("^(?:([^@:]+)@)?([^:]+\\.[^:]+):([^:]+)?");
 
 
 ///////////////////////////
@@ -208,6 +208,9 @@ void LocationShared::setPath(const QString &path)
 			mRemotePath.replace("~", mRemoteHost->getHomeDirectory());
 			mPath = mPath.trimmed();
 			mRemotePath = mRemotePath.trimmed();
+
+			if (mRemotePath.length() == 0)
+				mRemotePath = "/";
 		}
 	}
 	else
