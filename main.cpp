@@ -2,6 +2,7 @@
 #include "mainwindow.h"
 #include "sshconnection.h"
 #include "location.h"
+#include "tools.h"
 #include <QString>
 #include <QDebug>
 #include <QMetaType>
@@ -19,6 +20,8 @@ int main(int argc, char *argv[])
 
 		QCoreApplication::setOrganizationName("BananaMonkeyChainsaw");
 		QCoreApplication::setApplicationName("RemoteEditor");
+
+		Tools::loadServers();
 
 		QApplication a(argc, argv);
 		MainWindow w;

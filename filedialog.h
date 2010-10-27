@@ -28,6 +28,7 @@ private slots:
 	void directoryTreeSelected();
 	void upLevel();
 	void fileDoubleClicked(QModelIndex index);
+	void populateRemoteServers();
 
 private:
 	void keyPressEvent(QKeyEvent *);
@@ -39,6 +40,7 @@ private:
 	QFileIconProvider mIconProvider;
 	Location mCurrentLocation;
 	QStandardItemModel* mFileListModel;
+	QTreeWidgetItem* mRemoteServersBranch;
 
 	QMap<QString, QTreeWidgetItem*> mLoadingLocations;
 };

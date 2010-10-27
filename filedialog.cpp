@@ -1,6 +1,7 @@
 #include "filedialog.h"
 #include "ui_filedialog.h"
 #include "tools.h"
+#include "sshhost.h"
 
 #include <QDir>
 #include <QDebug>
@@ -60,14 +61,17 @@ void FileDialog::populateFolderTree()
 	QFileInfoList driveList = QDir::drives();
 	foreach (QFileInfo driveFileInfo, driveList)
 		addLocationToTree(localComputer, Location(driveFileInfo.absoluteFilePath()));
+	localComputer->setExpanded(true);
 
 	//
 	//	Remote Servers; contains a list of pre-configured known servers
 	//
 
-	QTreeWidgetItem* remoteServers = new QTreeWidgetItem(QStringList("Remote Servers"), 0);
-	remoteServers->setIcon(0, mIconProvider.icon(QFileIconProvider::Network));
-	ui->directoryTree->addTopLevelItem(remoteServers);
+	mRemoteServersBranch = new QTreeWidgetItem(QStringList("Remote Servers"), 0);
+	mRemoteServersBranch->setIcon(0, mIconProvider.icon(QFileIconProvider::Network));
+	ui->directoryTree->addTopLevelItem(mRemoteServersBranch);
+	populateRemoteServers();
+	mRemoteServersBranch->setExpanded(true);
 
 	//
 	//	Favorite Locations; contains a list of bookmarked locations; local or otherwise
@@ -78,6 +82,18 @@ void FileDialog::populateFolderTree()
 	ui->directoryTree->addTopLevelItem(favouriteLocations);
 
 	showLocation(homeLocation);
+}
+
+void FileDialog::populateRemoteServers()
+{
+	QList<SshHost*> knownHosts = SshHost::getKnownHosts();
+	foreach (SshHost* host, knownHosts)
+	{
+		QTreeWidgetItem* item = new QTreeWidgetItem();
+		item->setText(0, host->getName());
+		item->setIcon(0, QIcon(":/icons/server.png"));
+		mRemoteServersBranch->addChild(item);
+	}
 }
 
 QTreeWidgetItem* FileDialog::addLocationToTree(QTreeWidgetItem* parent, const Location& location)

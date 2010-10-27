@@ -1,6 +1,7 @@
 #include "tools.h"
 #include "sshhost.h"
 #include <QSettings>
+#include <QDebug>
 
 #define TERABYTE_MULTIPLIER	1099511627776ll
 #define GIGABYTE_MULTIPLIER 1073741824
@@ -41,4 +42,26 @@ void Tools::saveServers()
 		}
 	}
 	settings.endArray();
+}
+
+void Tools::loadServers()
+{
+	QSettings settings;
+
+	int count = settings.beginReadArray("servers");
+	for (int i = 0; i < count; i++)
+	{
+		settings.setArrayIndex(i);
+		SshHost* host = new SshHost();
+
+		host->setHostName(settings.value("hostname").toString());
+		host->setPort(settings.value("port", 22).toInt());
+		host->setUserName(settings.value("username").toString());
+		host->setName(settings.value("name").toString());
+
+		QString password = settings.value("password").toString();
+		host->setPassword(password);
+
+		SshHost::recordKnownHost(host);
+	}
 }

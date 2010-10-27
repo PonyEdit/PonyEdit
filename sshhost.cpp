@@ -129,3 +129,8 @@ bool SshHost::ensureConnection()
 {
 	return isConnected() || connect();
 }
+
+void SshHost::recordKnownHost(SshHost* host)
+{
+	sKnownHosts.append(host);
+}

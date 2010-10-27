@@ -9,10 +9,13 @@ class SshRemoteController;
 class SshHost
 {
 public:
+	SshHost() {}	//	Only use the default constructor at load-time. Otherwise notifications of new SshHosts won't be sent to UI.
 	static SshHost* getHost(const QString& hostName = QString(), const QString& userName = QString());
 	static SshHost* createHost(const QString& hostName = QString(), const QString& userName = QString());
 	static QList<SshHost*>& getKnownHosts() { return sKnownHosts; }
 	~SshHost();
+
+	static void recordKnownHost(SshHost* host);	//	Only use at load-time.
 
 	inline const QString& getHostName() const { return mHostName; }
 	inline const QString& getUserName() const { return mUserName; }

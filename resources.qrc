@@ -7,5 +7,6 @@
         <file>icons/save.png</file>
         <file>icons/up.png</file>
         <file>icons/loading.png</file>
+        <file>icons/server.png</file>
     </qresource>
 </RCC>
