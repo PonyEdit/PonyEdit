@@ -2,6 +2,7 @@
 #include "serverconfigdlg.h"
 #include "tools.h"
 #include <QMessageBox>
+#include "globaldispatcher.h"
 
 
 QList<SshHost*> SshHost::sKnownHosts;
@@ -42,6 +43,8 @@ SshHost* SshHost::getHost(const QString& hostName, const QString& userName)
 		sKnownHosts.append(host);
 	if (host->getSave())
 		Tools::saveServers();
+
+	gDispatcher->emitSshServersUpdated();
 
 	return host;
 }

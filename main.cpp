@@ -3,9 +3,12 @@
 #include "sshconnection.h"
 #include "location.h"
 #include "tools.h"
+#include "globaldispatcher.h"
 #include <QString>
 #include <QDebug>
 #include <QMetaType>
+
+GlobalDispatcher* gDispatcher = NULL;
 
 int main(int argc, char *argv[])
 {
@@ -20,6 +23,7 @@ int main(int argc, char *argv[])
 
 		QCoreApplication::setOrganizationName("BananaMonkeyChainsaw");
 		QCoreApplication::setApplicationName("RemoteEditor");
+		gDispatcher = new GlobalDispatcher();
 
 		Tools::loadServers();
 
@@ -34,6 +38,7 @@ int main(int argc, char *argv[])
 		qDebug() << "FATAL ERROR: " << err;
 	}
 
+	delete gDispatcher;
 	LocationShared::cleanupIconProvider();
 	return result;
 }

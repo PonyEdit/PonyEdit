@@ -2,6 +2,7 @@
 #include "ui_filedialog.h"
 #include "tools.h"
 #include "sshhost.h"
+#include "globaldispatcher.h"
 
 #include <QDir>
 #include <QDebug>
@@ -37,6 +38,7 @@ FileDialog::FileDialog(QWidget *parent) :
 	connect(ui->directoryTree, SIGNAL(itemSelectionChanged()), this, SLOT(directoryTreeSelected()));
 	connect(ui->upLevelButton, SIGNAL(clicked()), this, SLOT(upLevel()));
 	connect(ui->fileList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(fileDoubleClicked(QModelIndex)));
+	connect(gDispatcher, SIGNAL(sshServersUpdated()), this, SLOT(populateRemoteServers()), Qt::QueuedConnection);
 }
 
 FileDialog::~FileDialog()

@@ -35,7 +35,8 @@ HEADERS  += mainwindow.h \
     location.h \
     sshhost.h \
     sshrequest.h \
-    tools.h
+    tools.h \
+    globaldispatcher.h
 
 OTHER_FILES += \
     slave.py
