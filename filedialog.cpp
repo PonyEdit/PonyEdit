@@ -92,6 +92,9 @@ void FileDialog::populateFolderTree()
 
 void FileDialog::populateRemoteServers()
 {
+	while (mRemoteServersBranch->childCount())
+		mRemoteServersBranch->removeChild(mRemoteServersBranch->child(0));
+
 	QList<SshHost*> knownHosts = SshHost::getKnownHosts();
 	foreach (SshHost* host, knownHosts)
 	{

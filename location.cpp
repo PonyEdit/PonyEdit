@@ -96,6 +96,7 @@ LocationShared::LocationShared()
 	mSize = -1;
 	mSelfLoaded = false;
 	mListLoaded = false;
+	mRemoteHost = NULL;
 }
 
 Location::~Location()
@@ -283,13 +284,18 @@ void Location::sshChildLoadResponse(const QList<Location>& children)
 
 bool LocationShared::ensureConnected()
 {
-	//	Local connections are always connected
+	//	Local locations are always connected
 	if (mProtocol == Location::Local) return true;
 
 	if (mProtocol == Location::Ssh)
 	{
 		if (mRemoteHost == NULL)
 			mRemoteHost = SshHost::getHost(mRemoteHostName, mRemoteUserName);
+
+		qDebug() << mRemoteHost;
+		qDebug() << mRemoteHost->isConnected();
+		qDebug() << mRemoteHost->connect();
+		qDebug() << "Brainz!";
 
 		if (mRemoteHost && (mRemoteHost->isConnected() || mRemoteHost->connect()))
 		{

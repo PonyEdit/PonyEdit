@@ -31,18 +31,10 @@ SshHost* SshHost::getHost(const QString& hostName, const QString& userName)
 			return NULL;
 	}
 
-	//	Now try to connect to the found/created host if not already connected
-	if (!host->ensureConnection())
-	{
-		if (createdHost)
-			delete host;
-		return NULL;
-	}
-
+	//	Add to the list of known hosts, and save the list. If this one is not flagged to be saved, saveServers will go past it.
 	if (createdHost)
 		sKnownHosts.append(host);
-	if (host->getSave())
-		Tools::saveServers();
+	Tools::saveServers();
 
 	gDispatcher->emitSshServersUpdated();
 
@@ -66,6 +58,14 @@ SshHost* SshHost::createHost(const QString& hostName, const QString& userName)
 	return newHost;
 }
 
+SshHost::SshHost()
+{
+	mConnection = NULL;
+	mController = NULL;
+	mSave = true;
+	mSavePassword = false;
+	mPort = 22;
+}
 
 SshHost::SshHost(const QString& hostName, const QString& userName)
 {
