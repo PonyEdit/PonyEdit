@@ -198,20 +198,6 @@ void LocationShared::setPath(const QString &path)
 		mRemoteUserName = parts[1];
 		mRemoteHostName = parts[2];
 		mRemotePath = parts[3];
-		mRemoteHost = SshHost::getHost(mRemoteHostName, mRemoteUserName);
-
-		if (!mRemoteHost)
-			mPath = "";
-		else
-		{
-			mPath.replace("~", mRemoteHost->getHomeDirectory());
-			mRemotePath.replace("~", mRemoteHost->getHomeDirectory());
-			mPath = mPath.trimmed();
-			mRemotePath = mRemotePath.trimmed();
-
-			if (mRemotePath.length() == 0)
-				mRemotePath = "/";
-		}
 	}
 	else
 		mProtocol = Location::Local;
@@ -281,8 +267,8 @@ QString Location::getRemotePath() const
 
 void LocationShared::sshLoadListing()
 {
-	if (!mRemoteHost->ensureConnection())
-		return;
+	if (!ensureConnected())
+		emit loadListFailed("Failed to connect to remote host!", mPath);
 
 	SshRemoteController* controller = mRemoteHost->getController();
 	controller->sendRequest(new SshRequest_ls(Location(this)));
@@ -295,7 +281,33 @@ void Location::sshChildLoadResponse(const QList<Location>& children)
 	mData->emitListLoadedSignal();
 }
 
+bool LocationShared::ensureConnected()
+{
+	//	Local connections are always connected
+	if (mProtocol == Location::Local) return true;
 
+	if (mProtocol == Location::Ssh)
+	{
+		if (mRemoteHost == NULL)
+			mRemoteHost = SshHost::getHost(mRemoteHostName, mRemoteUserName);
+
+		if (mRemoteHost && (mRemoteHost->isConnected() || mRemoteHost->connect()))
+		{
+			mPath.replace("~", mRemoteHost->getHomeDirectory());
+			mRemotePath.replace("~", mRemoteHost->getHomeDirectory());
+			mPath = mPath.trimmed();
+			mRemotePath = mRemotePath.trimmed();
+
+			if (mRemotePath.length() == 0)
+				mRemotePath = "/";
+
+			return true;
+		}
+	}
+
+	mPath = "";
+	return false;
+}
 
 
 

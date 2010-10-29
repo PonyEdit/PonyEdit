@@ -98,9 +98,9 @@ void FileDialog::populateRemoteServers()
 		QTreeWidgetItem* item = new QTreeWidgetItem();
 		item->setText(0, host->getName());
 		item->setIcon(0, QIcon(":/icons/server.png"));
-		item->setData(0, DATA_ROLE, qVariantFromValue((void*)host));
+		item->setData(0, DATA_ROLE, QVariant::fromValue<Location>(host->getDefaultLocation()));
 		item->setData(0, EXPANDED_ROLE, QVariant(1));
-		item->setData(0, TYPE_ROLE, QVariant(NODETYPE_SSHHOST));
+		item->setData(0, TYPE_ROLE, QVariant(NODETYPE_LOCATION));
 		mRemoteServersBranch->addChild(item);
 	}
 }
@@ -242,15 +242,15 @@ void FileDialog::directoryTreeSelected()
 			if (!location.isNull())
 				showLocation(location);
 		}
-		else if (nodeType == NODETYPE_SSHHOST)
+		else if (nodeType == NODETYPE_LOCATION)
 		{
-			SshHost* host = (SshHost*)items[0]->data(0, DATA_ROLE).value<void*>();
+/*			SshHost* host = (SshHost*)items[0]->data(0, DATA_ROLE).value<void*>();
 			if (host)
 			{
 				Location location(host->getFullPath());
 				if (!location.isNull())
 					showLocation(location);
-			}
+			}*/
 		}
 	}
 }

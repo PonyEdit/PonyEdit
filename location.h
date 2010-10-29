@@ -67,6 +67,7 @@ private:
 	static void initIconProvider();
 
 	void setPath(const QString& path);
+	bool ensureConnected();
 
 	void emitListLoadedSignal();
 	void localLoadSelf();

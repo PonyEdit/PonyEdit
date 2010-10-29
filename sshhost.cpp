@@ -139,8 +139,14 @@ void SshHost::recordKnownHost(SshHost* host)
 	sKnownHosts.append(host);
 }
 
-QString SshHost::getFullPath()
+QString SshHost::getDefaultPath()
 {
 	return (mUserName.isEmpty() ? "" : mUserName + "@") + mHostName + ":" + mDefaultDirectory;
 }
+
+Location SshHost::getDefaultLocation()
+{
+	return Location(getDefaultPath());
+}
+
 

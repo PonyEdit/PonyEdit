@@ -40,7 +40,8 @@ public:
 	bool connect();
 	void disconnect();
 
-	QString getFullPath();
+	QString getDefaultPath();
+	Location getDefaultLocation();
 
 	//	Only usable when connected:
 	inline SshRemoteController* getController() { return mController; }

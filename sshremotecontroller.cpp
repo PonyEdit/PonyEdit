@@ -47,6 +47,7 @@ void SshRemoteController::attach(SshConnection* connection)
 		mHomeDirectory = mHomeDirectory.mid(2);
 		if (mHomeDirectory.endsWith('/'))
 			mHomeDirectory.truncate(mHomeDirectory.length() - 1);
+		mHomeDirectory = mHomeDirectory.trimmed();
 	}
 	else
 		throw("Failed to start slave script!");
