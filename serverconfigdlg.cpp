@@ -50,6 +50,7 @@ void ServerConfigDlg::setEditHost(SshHost* host)
 	ui->savePassword->setChecked(host->getSavePassword());
 	ui->saveServer->setChecked(host->getSave());
 	ui->serverName->setText(host->getName());
+	ui->defaultDirectory->setText(host->getDefaultDirectory());
 
 	mLastAutoName = getAutoName();
 	updateName();
@@ -65,6 +66,7 @@ void ServerConfigDlg::acceptedHandler()
 	mEditHost->setPassword(ui->password->text());
 	mEditHost->setSave(ui->saveServer->checkState() == Qt::Checked);
 	mEditHost->setName(ui->serverName->text());
+	mEditHost->setDefaultDirectory(ui->defaultDirectory->text());
 	mEditHost->setSavePassword(ui->savePassword->checkState() == Qt::Checked);
 }
 

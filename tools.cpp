@@ -39,6 +39,7 @@ void Tools::saveServers()
 			settings.setValue("username", host->getUserName());
 			settings.setValue("password", host->getSavePassword() ? host->getPassword() : "");
 			settings.setValue("name", host->getName());
+			settings.setValue("defaultDirectory", host->getDefaultDirectory());
 		}
 	}
 	settings.endArray();
@@ -58,6 +59,7 @@ void Tools::loadServers()
 		host->setPort(settings.value("port", 22).toInt());
 		host->setUserName(settings.value("username").toString());
 		host->setName(settings.value("name").toString());
+		host->setDefaultDirectory(settings.value("defaultDirectory", QVariant("~")).toString());
 
 		QString password = settings.value("password").toString();
 		host->setPassword(password);

@@ -8,8 +8,12 @@
 #include <QDebug>
 #include <QKeyEvent>
 
-#define LOCATION_ROLE (Qt::UserRole)
+#define DATA_ROLE (Qt::UserRole)
 #define EXPANDED_ROLE (Qt::UserRole + 1)
+#define TYPE_ROLE (Qt::UserRole + 2)
+
+#define NODETYPE_LOCATION 1
+#define NODETYPE_SSHHOST 2
 
 FileDialog::FileDialog(QWidget *parent) :
     QDialog(parent),
@@ -94,6 +98,9 @@ void FileDialog::populateRemoteServers()
 		QTreeWidgetItem* item = new QTreeWidgetItem();
 		item->setText(0, host->getName());
 		item->setIcon(0, QIcon(":/icons/server.png"));
+		item->setData(0, DATA_ROLE, qVariantFromValue((void*)host));
+		item->setData(0, EXPANDED_ROLE, QVariant(1));
+		item->setData(0, TYPE_ROLE, QVariant(NODETYPE_SSHHOST));
 		mRemoteServersBranch->addChild(item);
 	}
 }
@@ -104,8 +111,9 @@ QTreeWidgetItem* FileDialog::addLocationToTree(QTreeWidgetItem* parent, const Lo
 	newItem->setText(0, location.getLabel());
 	newItem->setIcon(0, location.getIcon());
 	newItem->setChildIndicatorPolicy(location.isDirectory() ? QTreeWidgetItem::ShowIndicator : QTreeWidgetItem::DontShowIndicator);
-	newItem->setData(0, LOCATION_ROLE, QVariant::fromValue<Location>(location));
+	newItem->setData(0, DATA_ROLE, QVariant::fromValue<Location>(location));
 	newItem->setData(0, EXPANDED_ROLE, QVariant(0));
+	newItem->setData(0, TYPE_ROLE, QVariant(NODETYPE_LOCATION));
 
 	if (parent)
 		parent->addChild(newItem);
@@ -119,7 +127,7 @@ void FileDialog::folderTreeItemExpanded(QTreeWidgetItem* item)
 	if (!item->data(0, EXPANDED_ROLE).toInt())
 	{
 		item->setData(0, EXPANDED_ROLE, QVariant(1));
-		Location location = item->data(0, LOCATION_ROLE).value<Location>();
+		Location location = item->data(0, DATA_ROLE).value<Location>();
 
 		if (!location.isNull())
 		{
@@ -171,7 +179,7 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 				QStandardItem* item = new QStandardItem();
 				item->setIcon(childLocation.getIcon());
 				item->setText(childLocation.getLabel());
-				item->setData(QVariant::fromValue<Location>(childLocation), LOCATION_ROLE);
+				item->setData(QVariant::fromValue<Location>(childLocation), DATA_ROLE);
 				row.append(item);
 
 				item = new QStandardItem();
@@ -226,9 +234,24 @@ void FileDialog::directoryTreeSelected()
 	QList<QTreeWidgetItem*> items = ui->directoryTree->selectedItems();
 	if (items.length() >= 1)
 	{
-		Location location = items[0]->data(0, LOCATION_ROLE).value<Location>();
-		if (!location.isNull())
-			showLocation(location);
+		int nodeType = items[0]->data(0, TYPE_ROLE).toInt();
+
+		if (nodeType == NODETYPE_LOCATION)
+		{
+			Location location = items[0]->data(0, DATA_ROLE).value<Location>();
+			if (!location.isNull())
+				showLocation(location);
+		}
+		else if (nodeType == NODETYPE_SSHHOST)
+		{
+			SshHost* host = (SshHost*)items[0]->data(0, DATA_ROLE).value<void*>();
+			if (host)
+			{
+				Location location(host->getFullPath());
+				if (!location.isNull())
+					showLocation(location);
+			}
+		}
 	}
 }
 
@@ -256,7 +279,7 @@ void FileDialog::fileDoubleClicked(QModelIndex index)
 	QStandardItem* item = mFileListModel->itemFromIndex(index);
 	int row = item->row();
 	QStandardItem* primaryItem = mFileListModel->item(row, 0);
-	Location location = primaryItem->data(LOCATION_ROLE).value<Location>();
+	Location location = primaryItem->data(DATA_ROLE).value<Location>();
 
 	if (location.isDirectory())
 		showLocation(location);

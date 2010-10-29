@@ -3,7 +3,7 @@
 #include "tools.h"
 #include <QMessageBox>
 #include "globaldispatcher.h"
-
+#include <QDebug>
 
 QList<SshHost*> SshHost::sKnownHosts;
 
@@ -74,6 +74,7 @@ SshHost::SshHost(const QString& hostName, const QString& userName)
 	mHostName = hostName;
 	mUserName = userName;
 	mPort = 22;
+	mDefaultDirectory = "~";
 	mSavePassword = false;
 	mSave = false;
 }
@@ -137,3 +138,9 @@ void SshHost::recordKnownHost(SshHost* host)
 {
 	sKnownHosts.append(host);
 }
+
+QString SshHost::getFullPath()
+{
+	return (mUserName.isEmpty() ? "" : mUserName + "@") + mHostName + ":" + mDefaultDirectory;
+}
+
