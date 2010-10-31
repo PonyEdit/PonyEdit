@@ -3,6 +3,7 @@
 #include "tools.h"
 #include <QMessageBox>
 #include "globaldispatcher.h"
+#include "sshconnectingdialog.h"
 #include <QDebug>
 
 QList<SshHost*> SshHost::sKnownHosts;
@@ -60,7 +61,6 @@ SshHost* SshHost::createHost(const QString& hostName, const QString& userName)
 
 SshHost::SshHost()
 {
-	mConnection = NULL;
 	mController = NULL;
 	mSave = true;
 	mSavePassword = false;
@@ -69,7 +69,6 @@ SshHost::SshHost()
 
 SshHost::SshHost(const QString& hostName, const QString& userName)
 {
-	mConnection = NULL;
 	mController = NULL;
 	mHostName = hostName;
 	mUserName = userName;
@@ -86,30 +85,21 @@ SshHost::~SshHost()
 
 bool SshHost::isConnected() const
 {
-	return (mConnection != NULL);
+	return (mController != NULL && mController->getStatus() == SshRemoteController::Connected);
 }
 
 bool SshHost::connect()
 {
 	disconnect();
 
-	//	Establish a raw SSH connection
-	mConnection = new SshConnection();
-	try
+	//	Show a connection dialog; it will manage the whole connection process
+	mController = new SshRemoteController(this);
+	SshConnectingDialog dlg(this, mController);
+	if (!dlg.exec())
 	{
-		mConnection->connect(mHostName.toUtf8(), mPort);
-		mConnection->authenticatePassword(mUserName.toUtf8(), mPassword.toUtf8());
-	}
-	catch (const char* error)
-	{
-		QMessageBox::critical(NULL, this->mHostName + ": Failed to connnect", error);
+		disconnect();
 		return false;
 	}
-
-	//	Attach a controller to the connection. TODO: More error handling.
-	mController = new SshRemoteController();
-	mController->attach(mConnection);
-	mController->splitThread();
 
 	return true;
 }
@@ -120,12 +110,6 @@ void SshHost::disconnect()
 	{
 		delete mController;
 		mController = NULL;
-	}
-
-	if (mConnection != NULL)
-	{
-		delete mConnection;
-		mConnection = NULL;
 	}
 }
 

@@ -50,7 +50,6 @@ public:
 private:
 	SshHost(const QString& hostName, const QString& userName);
 
-	SshConnection* mConnection;
 	SshRemoteController* mController;
 
 	QString mHostName;

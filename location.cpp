@@ -292,11 +292,6 @@ bool LocationShared::ensureConnected()
 		if (mRemoteHost == NULL)
 			mRemoteHost = SshHost::getHost(mRemoteHostName, mRemoteUserName);
 
-		qDebug() << mRemoteHost;
-		qDebug() << mRemoteHost->isConnected();
-		qDebug() << mRemoteHost->connect();
-		qDebug() << "Brainz!";
-
 		if (mRemoteHost && (mRemoteHost->isConnected() || mRemoteHost->connect()))
 		{
 			mPath.replace("~", mRemoteHost->getHomeDirectory());
