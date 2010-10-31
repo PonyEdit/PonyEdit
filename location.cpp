@@ -269,7 +269,10 @@ QString Location::getRemotePath() const
 void LocationShared::sshLoadListing()
 {
 	if (!ensureConnected())
+	{
 		emit loadListFailed("Failed to connect to remote host!", mPath);
+		return;
+	}
 
 	SshRemoteController* controller = mRemoteHost->getController();
 	controller->sendRequest(new SshRequest_ls(Location(this)));

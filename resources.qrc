@@ -8,5 +8,6 @@
         <file>icons/up.png</file>
         <file>icons/loading.png</file>
         <file>icons/server.png</file>
+        <file>icons/error.png</file>
     </qresource>
 </RCC>

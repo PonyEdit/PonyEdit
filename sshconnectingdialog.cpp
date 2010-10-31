@@ -14,6 +14,7 @@ SshConnectingDialog::SshConnectingDialog(SshHost* host, SshRemoteController* con
 
 	mTimer = new QTimer();
 	connect(mTimer, SIGNAL(timeout()), this, SLOT(tick()));
+	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(cancel()));
 }
 
 SshConnectingDialog::~SshConnectingDialog()
@@ -56,6 +57,7 @@ void SshConnectingDialog::tick()
 
 void SshConnectingDialog::cancel()
 {
-	qDebug() << "Cancel.";
+	mController->abortConnection();
+	reject();
 }
 

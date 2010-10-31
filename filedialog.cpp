@@ -213,7 +213,10 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 
 void FileDialog::folderChildrenFailed(const QString& error, const QString& locationPath)
 {
-
+	mFileListModel->clear();
+	ui->loaderIcon->setPixmap(QPixmap(":/icons/error.png"));
+	ui->loaderLabel->setText(QString("Error: " + error));
+	ui->fileListStack->setCurrentWidget(ui->loaderLayer);
 }
 
 void FileDialog::showLocation(const Location& location)

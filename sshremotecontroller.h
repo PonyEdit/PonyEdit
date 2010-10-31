@@ -19,6 +19,7 @@ public:
 	SshRemoteController(SshHost* host);
 	~SshRemoteController();
 
+	void abortConnection();
 	void sendRequest(SshRequest* request);
 	const QString& getHomeDirectory() const;
 

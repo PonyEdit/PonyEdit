@@ -18,6 +18,7 @@ class SshControllerThread : public QThread
 {
 public:
 	SshControllerThread(SshHost* host);
+	~SshControllerThread();
 	void run();
 	void connect();
 	void runMainLoop();
@@ -33,6 +34,7 @@ public:
 	SshConnection* mConnection;
 	QList<SshRequest*> mRequestQueue;
 	QMutex mRequestQueueLock;
+	bool mCloseDown;
 
 	static bool sSlaveLoaded;
 	static QByteArray sSlaveScript;
@@ -56,7 +58,15 @@ SshRemoteController::SshRemoteController(SshHost* host)
 
 SshRemoteController::~SshRemoteController()
 {
+	abortConnection();
 	delete mThread;
+}
+
+void SshRemoteController::abortConnection()
+{
+	mThread->mCloseDown = true;
+	if (!mThread->wait(3000))
+		mThread->terminate();
 }
 
 void SshRemoteController::sendRequest(SshRequest* request)
@@ -102,15 +112,23 @@ SshControllerThread::SshControllerThread(SshHost *host)
 		sSlaveLoaded = true;
 	}
 
+	mCloseDown = false;
 	mLastStatusChange = 0;
 	mHost = host;
 	mConnection = NULL;
 	setStatus(SshRemoteController::NotConnected);
 }
 
+SshControllerThread::~SshControllerThread()
+{
+	if (mConnection)
+		delete mConnection;
+}
+
 void SshControllerThread::run()
 {
 	connect();
+	if (mCloseDown) return;
 	if (mStatus == SshRemoteController::Connected)
 		runMainLoop();
 }
@@ -126,6 +144,7 @@ void SshControllerThread::connect()
 
 		setStatus(SshRemoteController::Connecting);
 		mConnection->connect(mHost->getHostName().toUtf8(), mHost->getPort());
+		if (mCloseDown) return;
 
 		//
 		//	Handle authentication
@@ -139,12 +158,16 @@ void SshControllerThread::connect()
 			{
 				setStatus(SshRemoteController::WaitingForPassword);
 				while ((password = mHost->getPassword()).isEmpty())
+				{
+					if (mCloseDown) return;
 					msleep(100);
+				}
 			}
 
 			setStatus(SshRemoteController::Connecting);
 			authenticated = mConnection->authenticatePassword(mHost->getUserName().toUtf8(), password.toUtf8());
 		}
+		if (mCloseDown) return;
 
 		//
 		//	Switch to remote home directory...
@@ -152,6 +175,7 @@ void SshControllerThread::connect()
 
 		setStatus(SshRemoteController::Negotiating);
 		mConnection->execute("cd ~\n");
+		if (mCloseDown) return;
 
 		//
 		//	Make sure the remote slave script is present, and the md5 hashes match. If not, upload again.
@@ -164,6 +188,7 @@ void SshControllerThread::connect()
 			setStatus(SshRemoteController::UploadingSlave);
 			mConnection->writeFile(".remoted/slave.py", sSlaveScript.constData(), sSlaveScript.length());
 		}
+		if (mCloseDown) return;
 
 		//
 		//	Run the remote python script...
@@ -172,6 +197,7 @@ void SshControllerThread::connect()
 		setStatus(SshRemoteController::StartingSlave);
 		const char* command = "python ~/.remoted/slave.py\n";
 		mConnection->writeData(command, strlen(command));
+		if (mCloseDown) return;
 
 		//
 		//	The first line returned should be the user's home directory. If not, an error has occurred.
@@ -187,6 +213,7 @@ void SshControllerThread::connect()
 		}
 		else
 			throw("Failed to start slave script!");
+		if (mCloseDown) return;
 
 		setStatus(SshRemoteController::Connected);
 	}
@@ -208,6 +235,8 @@ void SshControllerThread::runMainLoop()
 		mRequestQueueLock.lock();
 		if (mRequestQueue.length() > 0)
 		{
+			if (mCloseDown) return;
+
 			//	Pack all of the requests into one bytearray, and unlock the main queue as quickly as possible
 			QByteArray massSend;
 			QList<SshRequest*> sendingMessages;
@@ -236,6 +265,7 @@ void SshControllerThread::runMainLoop()
 		else
 			mRequestQueueLock.unlock();
 
+		if (mCloseDown) return;
 		msleep(10);
 	}
 }
