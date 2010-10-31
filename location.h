@@ -4,6 +4,7 @@
 #include <QString>
 #include <QVariant>
 #include <QDateTime>
+#include "file.h"
 
 class SshHost;
 class LocationShared;
@@ -40,6 +41,7 @@ public:
 	bool isDirectory() const;
 
 	void asyncGetChildren(QObject* callbackTarget, const char* succeedSlot, const char* failSlot);
+	void asyncOpenFile(QObject* callbackTarget, const char* succeedSlot, const char* failSlot);
 
 private:
 	Location(const Location& parent, const QString& path, Type type, int size, QDateTime lastModified);
@@ -62,6 +64,8 @@ public:
 signals:
 	void loadListSuccessful(const QList<Location>& children, QString locationPath);
 	void loadListFailed(const QString& error, QString locationPath);
+	void openFileSuccessful(File* openedFile);
+	void openFileFailed(const QString& error);
 
 private:
 	LocationShared();
@@ -72,6 +76,7 @@ private:
 
 	void emitListLoadedSignal();
 	void emitListLoadError(const QString& error);
+	void emitOpenFileFailed(const QString& error);
 	void localLoadSelf();
 	void localLoadListing();
 	void sshLoadListing();

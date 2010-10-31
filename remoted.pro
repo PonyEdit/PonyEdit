@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     tools.cpp \
     passworddialog.cpp \
     sshconnectingdialog.cpp \
-    editor.cpp
+    editor.cpp \
+    file.cpp
 
 HEADERS  += mainwindow.h \
     sshconnection.h \
@@ -42,7 +43,8 @@ HEADERS  += mainwindow.h \
     globaldispatcher.h \
     passworddialog.h \
     sshconnectingdialog.h \
-    editor.h
+    editor.h \
+    file.h
 
 OTHER_FILES += \
     slave.py
@@ -51,8 +53,7 @@ FORMS += \
     serverconfigdlg.ui \
     filedialog.ui \
     passworddialog.ui \
-    sshconnectingdialog.ui \
-    dialog.ui
+    sshconnectingdialog.ui
 
 RESOURCES += \
     resources.qrc

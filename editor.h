@@ -12,8 +12,13 @@ class Editor : public QStackedWidget
 public:
 	explicit Editor(const Location& fileLocation);
 
+public slots:
+	void openFileFailed(const QString& error);
+	void openFileSuccessful(File* file);
+
 private:
 	QTextEdit* mEditor;
+	Location mFileLocation;
 
 	QWidget* mWorkingPane;
 	QLabel* mWorkingIcon;

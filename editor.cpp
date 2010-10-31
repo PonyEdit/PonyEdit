@@ -1,6 +1,7 @@
 #include "editor.h"
 #include <QHBoxLayout>
 #include <QSpacerItem>
+#include <QDebug>
 
 Editor::Editor(const Location& location) : QStackedWidget()
 {
@@ -21,4 +22,20 @@ Editor::Editor(const Location& location) : QStackedWidget()
 	addWidget(mWorkingPane);
 
 	setCurrentWidget(mWorkingPane);
+
+	mFileLocation = location;
+	mFileLocation.asyncOpenFile(this, SLOT(openFileSuccessful(File*)), SLOT(openFileFailed(QString)));
+}
+
+void Editor::openFileFailed(const QString& error)
+{
+	mWorkingText->setText(QString("Error: ") + error);
+	mWorkingIcon->setPixmap(QPixmap(":/icons/error.png"));
+	setCurrentWidget(mWorkingPane);
+}
+
+void Editor::openFileSuccessful(File* file)
+{
+	qDebug() << "opened file ok :)";
+	setCurrentWidget(mEditor);
 }
