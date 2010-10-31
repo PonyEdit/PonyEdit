@@ -20,6 +20,7 @@ public:
     ~FileDialog();
 
 	void showLocation(const Location& location);
+	QList<Location> getSelectedLocations() const;
 
 private slots:
 	void folderTreeItemExpanded(QTreeWidgetItem* item);

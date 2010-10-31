@@ -250,16 +250,6 @@ void FileDialog::directoryTreeSelected()
 			if (!location.isNull())
 				showLocation(location);
 		}
-		else if (nodeType == NODETYPE_LOCATION)
-		{
-/*			SshHost* host = (SshHost*)items[0]->data(0, DATA_ROLE).value<void*>();
-			if (host)
-			{
-				Location location(host->getFullPath());
-				if (!location.isNull())
-					showLocation(location);
-			}*/
-		}
 	}
 }
 
@@ -292,26 +282,30 @@ void FileDialog::fileDoubleClicked(QModelIndex index)
 	if (location.isDirectory())
 		showLocation(location);
 	else
-		qDebug() << "WOULD LOAD A FILE AT THIS POINT!!";
+		accept();
 }
 
 void FileDialog::fileListSelectionChanged(const QItemSelection&, const QItemSelection&)
 {
-	QStringList selections;
-	QModelIndexList allSelected = ui->fileList->selectionModel()->selectedIndexes();
-	foreach (QModelIndex index, allSelected)
-	{
-		if (index.column() == 0)
-		{
-			Location location = mFileListModel->itemFromIndex(index)->data(DATA_ROLE).value<Location>();
-			if (!location.isDirectory())
-				selections.append(QString('"') + location.getLabel() + '"');
-		}
-	}
+	QList<Location> selections = getSelectedLocations();
+	QStringList selectionLabels;
 
-	ui->fileName->setText(selections.join(", "));
+	foreach (Location l, selections)
+		if (!l.isDirectory())
+			selectionLabels.append(QString('"') + l.getLabel() + '"');
+
+	ui->fileName->setText(selectionLabels.join(", "));
 }
 
+QList<Location> FileDialog::getSelectedLocations() const
+{
+	QList<Location> selections;
+	QModelIndexList allSelected = ui->fileList->selectionModel()->selectedIndexes();
+	foreach (QModelIndex index, allSelected)
+		if (index.column() == 0)
+			selections.append(mFileListModel->itemFromIndex(index)->data(DATA_ROLE).value<Location>());
 
+	return selections;
+}
 
 

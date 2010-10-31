@@ -13,40 +13,10 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-	openFile();
-
-	/*ServerConfigDlg dlg(this);
-	if (dlg.exec() == QDialog::Rejected)
-		exit(0);
-
-	QString hostname = dlg.getHostName();
-	QString login = dlg.getUserName();
-	QString password = dlg.getPassword();
-	QString filename = dlg.getFilename();
-
-	SshConnection* c = new SshConnection();
-	c->connect(hostname.toUtf8(), 22);
-	c->authenticatePassword(login.toUtf8(), password.toUtf8());
-
-	mController = new SshRemoteController();
-	mController->attach(c);
-
-	QByteArray fileContent = mController->openFile(filename.toUtf8());
-
-	mController->splitThread();*/
-
-	mEditor = new QTextEdit(this);
-	mEditor->setAcceptRichText(false);
-	mEditor->setFont(QFont("courier new", 12));
-	setCentralWidget(mEditor);
+	mEditorStack = new QStackedWidget(this);
+	setCentralWidget(mEditorStack);
 
 	createToolbar();
-
-	/*mCurrentDocument = new QTextDocument(QString(fileContent));
-	mEditor->setDocument(mCurrentDocument);
-	mCurrentDocument->setDefaultFont(QFont("courier new", 12));
-
-	connect(mCurrentDocument, SIGNAL(contentsChange(int,int,int)), this, SLOT(docChanged(int,int,int)));*/
 }
 
 MainWindow::~MainWindow()
@@ -62,30 +32,42 @@ void MainWindow::createToolbar()
 	this->addToolBar(toolbar);
 }
 
-void MainWindow::docChanged(int position, int charsRemoved, int charsAdded)
+void MainWindow::newFile(){}
+void MainWindow::openFile()
 {
-/*	Push p;
+	FileDialog dlg(this);
+	if (dlg.exec())
+	{
+		QList<Location> locations = dlg.getSelectedLocations();
+		foreach (Location location, locations)
+		{
+			if (!location.isDirectory())
+			{
+				Editor* newEditor = new Editor(location);
+				mEditorStack->addWidget(newEditor);
+				mEditorStack->setCurrentWidget(newEditor);
+			}
+		}
+	}
+}
+
+void MainWindow::saveFile()
+{
+}
+
+
+
+/*void MainWindow::docChanged(int position, int charsRemoved, int charsAdded)
+{
+	Push p;
 	p.save = 0;
 	p.position = position;
 	p.remove = charsRemoved;
 
 	p.add = "";
 	for (int i = 0; i < charsAdded; i++)
-		p.add += mCurrentDocument->characterAt(i + position);*/
+		p.add += mCurrentDocument->characterAt(i + position);
 
 	//mController->push(p);
-}
+}*/
 
-void MainWindow::newFile(){}
-void MainWindow::openFile()
-{
-	FileDialog dlg(this);
-	dlg.exec();
-}
-
-void MainWindow::saveFile()
-{
-/*	Push p;
-	p.save = 1;*/
-	//mController->push(p);
-}

@@ -4,10 +4,12 @@
 #include <QtGui/QMainWindow>
 #include <QStatusBar>
 #include <QTextEdit>
+#include <QStackedWidget>
 
 #include "sshconnection.h"
 #include "sshremotecontroller.h"
 #include "serverconfigdlg.h"
+#include "editor.h"
 
 class MainWindow : public QMainWindow
 {
@@ -18,8 +20,6 @@ public:
     ~MainWindow();
 
 public slots:
-	void docChanged(int, int, int);
-
 	void newFile();
 	void openFile();
 	void saveFile();
@@ -27,9 +27,8 @@ public slots:
 private:
 	void createToolbar();
 
-	SshRemoteController* mController;
-	QTextDocument* mCurrentDocument;
-	QTextEdit* mEditor;
+	QStackedWidget* mEditorStack;
+	QList<Editor*> mEditors;
 };
 
 #endif // MAINWINDOW_H
