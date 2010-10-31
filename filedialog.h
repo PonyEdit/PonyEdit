@@ -29,6 +29,7 @@ private slots:
 	void upLevel();
 	void fileDoubleClicked(QModelIndex index);
 	void populateRemoteServers();
+	void fileListSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
 private:
 	void keyPressEvent(QKeyEvent *);

@@ -13,7 +13,6 @@
 #define TYPE_ROLE (Qt::UserRole + 2)
 
 #define NODETYPE_LOCATION 1
-#define NODETYPE_SSHHOST 2
 
 FileDialog::FileDialog(QWidget *parent) :
     QDialog(parent),
@@ -43,6 +42,9 @@ FileDialog::FileDialog(QWidget *parent) :
 	connect(ui->upLevelButton, SIGNAL(clicked()), this, SLOT(upLevel()));
 	connect(ui->fileList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(fileDoubleClicked(QModelIndex)));
 	connect(gDispatcher, SIGNAL(sshServersUpdated()), this, SLOT(populateRemoteServers()), Qt::QueuedConnection);
+	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	connect(ui->fileList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(fileListSelectionChanged(const QItemSelection&, const QItemSelection&)));
 }
 
 FileDialog::~FileDialog()
@@ -291,6 +293,23 @@ void FileDialog::fileDoubleClicked(QModelIndex index)
 		showLocation(location);
 	else
 		qDebug() << "WOULD LOAD A FILE AT THIS POINT!!";
+}
+
+void FileDialog::fileListSelectionChanged(const QItemSelection&, const QItemSelection&)
+{
+	QStringList selections;
+	QModelIndexList allSelected = ui->fileList->selectionModel()->selectedIndexes();
+	foreach (QModelIndex index, allSelected)
+	{
+		if (index.column() == 0)
+		{
+			Location location = mFileListModel->itemFromIndex(index)->data(DATA_ROLE).value<Location>();
+			if (!location.isDirectory())
+				selections.append(QString('"') + location.getLabel() + '"');
+		}
+	}
+
+	ui->fileName->setText(selections.join(", "));
 }
 
 
