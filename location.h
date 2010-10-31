@@ -46,6 +46,7 @@ private:
 	Location(LocationShared* data);
 
 	void sshChildLoadResponse(const QList<Location>& children);
+	void childLoadError(const QString& error);
 
 	LocationShared* mData;
 };
@@ -70,6 +71,7 @@ private:
 	bool ensureConnected();
 
 	void emitListLoadedSignal();
+	void emitListLoadError(const QString& error);
 	void localLoadSelf();
 	void localLoadListing();
 	void sshLoadListing();

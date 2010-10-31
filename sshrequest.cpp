@@ -65,7 +65,31 @@ void SshRequest_ls::handleResponse(const QByteArray& response)
 	const char* cursor = response.constData();
 	const char* dataEnd = response.constData() + response.size();
 
-	cursor++;
+	//
+	//	Check for errors
+	//
+
+	bool success = *(cursor++);
+	if (!success)
+	{
+		quint32 errorLength;
+		QString errorString;
+
+		errorLength = *(quint32*)cursor;
+		cursor += 4;
+
+		errorString = QByteArray(cursor, errorLength);
+		cursor += errorLength;
+
+		mLocation.childLoadError(errorString);
+
+		return;
+	}
+
+	//
+	//	Read directory structure
+	//
+
 	while (cursor < dataEnd)
 	{
 		quint32 filenameLength;

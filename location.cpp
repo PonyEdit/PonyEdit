@@ -235,6 +235,11 @@ void LocationShared::emitListLoadedSignal()
 	emit loadListSuccessful(mChildren, mPath);
 }
 
+void LocationShared::emitListLoadError(const QString& error)
+{
+	emit loadListFailed(error, mPath);
+}
+
 void Location::asyncGetChildren(QObject* callbackTarget, const char* succeedSlot, const char* failSlot)
 {
 	QObject::connect(mData, SIGNAL(loadListSuccessful(QList<Location>,QString)), callbackTarget, succeedSlot);
@@ -285,6 +290,11 @@ void Location::sshChildLoadResponse(const QList<Location>& children)
 	mData->emitListLoadedSignal();
 }
 
+void Location::childLoadError(const QString& error)
+{
+	mData->emitListLoadError(error);
+}
+
 bool LocationShared::ensureConnected()
 {
 	//	Local locations are always connected
@@ -312,6 +322,8 @@ bool LocationShared::ensureConnected()
 	mPath = "";
 	return false;
 }
+
+
 
 
 
