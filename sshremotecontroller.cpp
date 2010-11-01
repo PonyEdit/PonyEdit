@@ -81,6 +81,11 @@ const QString& SshRemoteController::getHomeDirectory() const
 	return mThread->mHomeDirectory;
 }
 
+const QString& SshRemoteController::getError() const
+{
+	return mThread->mErrorString;
+}
+
 int SshRemoteController::getLastStatusChange() const
 {
 	return mThread->mLastStatusChange;
@@ -212,17 +217,17 @@ void SshControllerThread::connect()
 			mHomeDirectory = mHomeDirectory.trimmed();
 		}
 		else
-			throw("Failed to start slave script!");
+			throw(QString("Failed to start slave script!"));
 		if (mCloseDown) return;
 
 		setStatus(SshRemoteController::Connected);
 	}
-	catch (const char* error)
+	catch (QString err)
 	{
 		delete mConnection;
 		mConnection = NULL;
 
-		mErrorString = QString("Error while ") + SshRemoteController::sStatusStrings[mStatus] + ": " + error;
+		mErrorString = QString("Error while ") + SshRemoteController::sStatusStrings[mStatus] + ": " + err;
 		setStatus(SshRemoteController::Error);
 		return;
 	}
@@ -259,6 +264,10 @@ void SshControllerThread::runMainLoop()
 				QByteArray response = QByteArray::fromBase64(mConnection->readLine());
 				SshRequest* rq = sendingMessages.takeFirst();
 				rq->handleResponse(response);
+
+				if (rq->hasManualComponent())
+					rq->doManualWork(mConnection);
+
 				delete rq;
 			}
 		}

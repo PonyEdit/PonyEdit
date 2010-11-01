@@ -2,6 +2,7 @@
 #include "ui_sshconnectingdialog.h"
 #include "passworddialog.h"
 #include <QDebug>
+#include <QPushButton>
 
 SshConnectingDialog::SshConnectingDialog(SshHost* host, SshRemoteController* controller) :
 	QDialog(0, Qt::CustomizeWindowHint | Qt::WindowTitleHint),
@@ -52,11 +53,18 @@ void SshConnectingDialog::tick()
 		}
 		else if (status == SshRemoteController::Connected)
 			accept();
+		else if (status == SshRemoteController::Error)
+		{
+			ui->status->setText(QString("Error: ") + mController->getError());
+			ui->buttonBox->button(QDialogButtonBox::Cancel)->setText("OK");
+			mTimer->stop();
+		}
 	}
 }
 
 void SshConnectingDialog::cancel()
 {
+	ui->buttonBox->setEnabled(false);
 	mController->abortConnection();
 	reject();
 }

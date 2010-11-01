@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 
 		result = a.exec();
 	}
-	catch (const char* err)
+	catch (QString err)
 	{
 		qDebug() << "FATAL ERROR: " << err;
 	}

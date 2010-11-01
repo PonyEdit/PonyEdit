@@ -2,7 +2,9 @@
 #define TOOLS_H
 
 #include <QString>
+#include <QMap>
 
+class QThread;
 class Tools
 {
 public:

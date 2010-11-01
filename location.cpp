@@ -266,7 +266,7 @@ void Location::asyncGetChildren(QObject* callbackTarget, const char* succeedSlot
 			break;
 
 		default:
-			throw("Invalid file protocol!");
+			throw(QString("Invalid file protocol!"));
 		}
 	}
 }
@@ -283,7 +283,7 @@ void Location::asyncOpenFile(QObject* callbackTarget, const char* succeedSlot, c
 		break;
 
 	case Ssh:
-		mData->emitOpenFileFailed("Opening remote files is not yet supported!");
+		mData->sshOpenFile();
 		break;
 
 	default:
@@ -294,6 +294,18 @@ void Location::asyncOpenFile(QObject* callbackTarget, const char* succeedSlot, c
 QString Location::getRemotePath() const
 {
 	return mData->mRemotePath;
+}
+
+void LocationShared::sshOpenFile()
+{
+	if (!ensureConnected())
+	{
+		emit openFileFailed("Failed to connect to remote host!");
+		return;
+	}
+
+	SshRemoteController* controller = mRemoteHost->getController();
+	controller->sendRequest(new SshRequest_open(Location(this)));
 }
 
 void LocationShared::sshLoadListing()
@@ -318,6 +330,11 @@ void Location::sshChildLoadResponse(const QList<Location>& children)
 void Location::childLoadError(const QString& error)
 {
 	mData->emitListLoadError(error);
+}
+
+void Location::fileOpenError(const QString& error)
+{
+	mData->emitOpenFileFailed(error);
 }
 
 bool LocationShared::ensureConnected()

@@ -26,6 +26,7 @@ public:
 	int getLastStatusChange() const;
 	Status getStatus() const;
 	static const char* getStatusString(Status s) { return sStatusStrings[s]; }
+	const QString& getError() const;
 
 private:
 	SshControllerThread* mThread;

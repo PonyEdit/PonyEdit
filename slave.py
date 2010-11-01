@@ -1,7 +1,7 @@
 import os, sys, binascii, struct, stat
 
-thefile = ''
-thefilename = ''
+buffers = {}
+nextBufferId = 1
 logfile = open("log.txt", "a")
 
 def log(t):
@@ -19,6 +19,18 @@ dataTypes = \
 	0x02: 'l',
 	0x82: 'L'
 }
+
+#
+#	Buffer class
+#
+
+class Buffer:
+	def __init__(self): pass
+	def openFile(self, name):
+		self.name = name
+		f = open(name, "r")
+		self.data = f.read()
+		f.close()
 
 #
 #	DataBlock class
@@ -87,13 +99,18 @@ def msg_ls(params, result):
 
 #	open
 def msg_open(params, result):
-	global thefilename
-	global thefile
+	global nextBufferId
+	global buffers
+
 	name = params['f']
-	thefilename = name
-	f = open(name, "r")
-	thefile = f.read()
-	f.close()
+	buff = Buffer()
+	buff.openFile(name)
+
+	bufferId = nextBufferId
+	nextBufferId += 1
+	buffers[nextBufferId] = buff
+
+	result.write('L', bufferId)
 
 #	change
 def msg_change(params, result):

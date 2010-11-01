@@ -119,3 +119,64 @@ void SshRequest_ls::handleResponse(const QByteArray& response)
 	mLocation.sshChildLoadResponse(dirList);
 }
 
+
+///////////////////////
+//  Message 1: open  //
+///////////////////////
+
+SshRequest_open::SshRequest_open(const Location& location) : SshRequest(2, 0), mLocation(location) {}
+
+void SshRequest_open::packBody(QByteArray* target)
+{
+	addData(target, 'f', (const char*)mLocation.getRemotePath().toUtf8());
+}
+
+void SshRequest_open::handleResponse(const QByteArray& response)
+{
+	const char* cursor = response.constData();
+
+	//
+	//	Check for errors
+	//
+
+	bool success = *(cursor++);
+	if (!success)
+	{
+		quint32 errorLength;
+		QString errorString;
+
+		errorLength = *(quint32*)cursor;
+		cursor += 4;
+
+		errorString = QByteArray(cursor, errorLength);
+		cursor += errorLength;
+
+		mLocation.fileOpenError(errorString);
+
+		return;
+	}
+
+	//
+	//	Take note of the bufferId
+	//
+
+	quint32 bufferId = *(quint32*)cursor;
+	qDebug() << "opened file; bufferId = " << bufferId;
+}
+
+void SshRequest_open::doManualWork(SshConnection* connection)
+{
+	try
+	{
+		QByteArray data = connection->readFile(mLocation.getRemotePath().toUtf8());
+		qDebug() << "Succeeded reading remote file! Bytes: " << data.length();
+	}
+	catch (QString error)
+	{
+		qDebug() << "Error loading remote file! :(";
+	}
+}
+
+
+
+

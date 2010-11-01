@@ -2,6 +2,8 @@
 #define SSHREQUEST_H
 
 #include <QByteArray>
+#include <QRunnable>
+#include "sshconnection.h"
 #include "location.h"
 
 enum DataType
@@ -22,10 +24,16 @@ public:
 	SshRequest(quint16 messageId, quint32 bufferId);
 	virtual ~SshRequest();
 
+	inline void setConnection(SshConnection* connection) { mConnection = connection; }
+
 	short getMessageId() const { return mMessageId; }
 	void packMessage(QByteArray* target);
 	virtual void packBody(QByteArray* target) {}
 	virtual void handleResponse(const QByteArray& response) {}
+
+	//	Manual work; if this ssh request does stuff like scp data down, this is where to do it.
+	virtual bool hasManualComponent() { return false; }
+	virtual void doManualWork(SshConnection* connection) {}
 
 protected:
 	inline void addData(QByteArray* target, unsigned char field, qint16 d) { append(target, field, dtInt16, (const char*)&d, sizeof(d)); }
@@ -38,6 +46,7 @@ protected:
 private:
 	quint16 mMessageId;
 	quint32 mBufferId;
+	SshConnection* mConnection;
 };
 
 /////////////////////
@@ -50,6 +59,24 @@ public:
 	SshRequest_ls(const Location& location);
 	virtual void packBody(QByteArray* target);
 	virtual void handleResponse(const QByteArray& response);
+
+private:
+	Location mLocation;
+};
+
+///////////////////////
+//  Message 2: open  //
+///////////////////////
+
+class SshRequest_open : public SshRequest
+{
+public:
+	SshRequest_open(const Location& location);
+	virtual void packBody(QByteArray* target);
+	virtual void handleResponse(const QByteArray& response);
+
+	virtual bool hasManualComponent() { return true; }
+	virtual void doManualWork(SshConnection* connection);
 
 private:
 	Location mLocation;

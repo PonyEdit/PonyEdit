@@ -2,6 +2,7 @@
 #include "sshhost.h"
 #include <QSettings>
 #include <QDebug>
+#include <QThread>
 
 #define TERABYTE_MULTIPLIER	1099511627776ll
 #define GIGABYTE_MULTIPLIER 1073741824
@@ -67,3 +68,5 @@ void Tools::loadServers()
 		SshHost::recordKnownHost(host);
 	}
 }
+
+

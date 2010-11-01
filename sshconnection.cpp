@@ -3,17 +3,18 @@
 #include <windows.h>
 #include <QDebug>
 #include <QTime>
+#include <gcrypt.h>
 
 void SshConnection::initializeLib()
 {
 	//	Initialize winsock
 	WSADATA data;
 	if (WSAStartup(0x22, &data) != 0)
-		throw("Failed to initialize WinSock!");
+		throw(QString("Failed to initialize WinSock!"));
 
 	//	Initialize libssh2
 	if (libssh2_init(0) != 0)
-		throw("Failed to initialize SSH library!");
+		throw(QString("Failed to initialize SSH library!"));
 }
 
 SshConnection::SshConnection()
@@ -25,12 +26,12 @@ void SshConnection::connect(const char* host, int port)
 	//	nslookup the hostname
 	struct hostent* server = gethostbyname(host);
 	if (server == NULL)
-		throw("Failed to find host");
+		throw(QString("Failed to find host"));
 
 	//	Create a socket & connect
 	int sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock < -1)
-		throw("Failed to create a socket!");
+		throw(QString("Failed to create a socket!"));
 
 	//	Cycle through all the IP addresses returned by the nslookup, try to connect to each
 	struct sockaddr_in sin;
@@ -45,14 +46,14 @@ void SshConnection::connect(const char* host, int port)
 		tryAddress++;
 	}
 	if (mSocket < 0)
-		throw("Failed to connect to host");
+		throw(QString("Failed to connect to host"));
 
 	//	Create an SSH2 session
 	mSession = libssh2_session_init();
 	if (libssh2_session_startup(mSession, mSocket))
 	{
 		disconnect();
-		throw("Failed to set up SSH session");
+		throw(QString("Failed to set up SSH session"));
 	}
 
 	//	Fetch the remote host's fingerprint
@@ -87,14 +88,14 @@ void SshConnection::createChannel()
 	//	Create a channel
 	mChannel = libssh2_channel_open_session(mSession);
 	if (!mChannel)
-		throw("Failed to create SSH channel!");
+		throw(QString("Failed to create SSH channel!"));
 
 	if (libssh2_channel_request_pty(mChannel, "vanilla"))
-		throw("Failed to set vanilla pty mode");
+		throw(QString("Failed to set vanilla pty mode"));
 
 	//	Start up a shell
 	if (libssh2_channel_shell(mChannel))
-		throw("Failed to create a shell");
+		throw(QString("Failed to create a shell"));
 
 	//	Turn off blocking
 	//libssh2_channel_set_blocking(mChannel, 0);
@@ -143,7 +144,7 @@ QByteArray SshConnection::readUntil(const char* marker)
 		else if (rc < 0 && rc != LIBSSH2_ERROR_EAGAIN)
 		{
 			qDebug() << "Error code: " << rc;
-			throw("Failed to receive from remote host!");
+			throw(QString("Failed to receive from remote host!"));
 		}
 	}
 }
@@ -171,15 +172,12 @@ void SshConnection::writeFile(const char* remoteFilename, const char* data, int 
 	{
 		char *errmsg;
 		int errlen;
-		int err = libssh2_session_last_error(mSession, &errmsg, &errlen, 0);
-		qDebug() << err;
-		qDebug() << errmsg;
-		qDebug() << errlen;
-		throw(errmsg);
+		libssh2_session_last_error(mSession, &errmsg, &errlen, 0);
+		throw(QString(errmsg));
 	}
 
 	if (libssh2_channel_write(tmpChannel, data, length) < 0)
-		throw("Error sending file!");
+		throw(QString("Error sending file!"));
 
 	libssh2_channel_send_eof(tmpChannel);
 
@@ -192,7 +190,7 @@ QByteArray SshConnection::readFile(const char* filename)
 	struct stat fileInfo;
 	LIBSSH2_CHANNEL* tmpChannel = libssh2_scp_recv(mSession, filename, &fileInfo);
 	if (!tmpChannel)
-		throw("Failed to open remote file!");
+		throw(QString("Failed to open remote file!"));
 
 	QByteArray fileContent;
 	while (fileContent.length() < fileInfo.st_size)
@@ -207,7 +205,7 @@ QByteArray SshConnection::readFile(const char* filename)
 		if (rc > 0)
 			fileContent.append(mTmpBuffer, rc);
 		else if (rc < 0)
-			throw("Failed to receive file content!");
+			throw(QString("Failed to receive file content!"));
 	}
 
 	return fileContent;

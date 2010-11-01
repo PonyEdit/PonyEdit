@@ -12,6 +12,7 @@ class Location
 {
 	friend class LocationShared;
 	friend class SshRequest_ls;
+	friend class SshRequest_open;
 
 public:
 	enum Type { Unknown = 0, File = 1, Directory = 2 };
@@ -49,6 +50,7 @@ private:
 
 	void sshChildLoadResponse(const QList<Location>& children);
 	void childLoadError(const QString& error);
+	void fileOpenError(const QString& error);
 
 	LocationShared* mData;
 };
@@ -80,6 +82,7 @@ private:
 	void localLoadSelf();
 	void localLoadListing();
 	void sshLoadListing();
+	void sshOpenFile();
 
 	int mReferences;
 	QString mPath;

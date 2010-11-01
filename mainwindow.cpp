@@ -26,9 +26,9 @@ MainWindow::~MainWindow()
 void MainWindow::createToolbar()
 {
 	QToolBar* toolbar = new QToolBar("File");
-	toolbar->addAction(QIcon("icons/new.png"), "New", this, SLOT(newFile()));
-	toolbar->addAction(QIcon("icons/open.png"), "Open", this, SLOT(openFile()));
-	toolbar->addAction(QIcon("icons/save.png"), "Save", this, SLOT(saveFile()));
+	toolbar->addAction(QIcon(":/icons/new.png"), "New", this, SLOT(newFile()));
+	toolbar->addAction(QIcon(":/icons/open.png"), "Open", this, SLOT(openFile()));
+	toolbar->addAction(QIcon(":/icons/save.png"), "Save", this, SLOT(saveFile()));
 	this->addToolBar(toolbar);
 }
 
