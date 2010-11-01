@@ -263,10 +263,20 @@ void SshControllerThread::runMainLoop()
 			{
 				QByteArray response = QByteArray::fromBase64(mConnection->readLine());
 				SshRequest* rq = sendingMessages.takeFirst();
-				rq->handleResponse(response);
 
-				if (rq->hasManualComponent())
-					rq->doManualWork(mConnection);
+				try
+				{
+					rq->handleResponse(response);
+
+					if (rq->hasManualComponent())
+						rq->doManualWork(mConnection);
+
+					rq->success();
+				}
+				catch (QString error)
+				{
+					rq->error(error);
+				}
 
 				delete rq;
 			}

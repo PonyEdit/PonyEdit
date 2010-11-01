@@ -60,8 +60,6 @@ void SshRequest_ls::packBody(QByteArray* target)
 
 void SshRequest_ls::handleResponse(const QByteArray& response)
 {
-	QList<Location> dirList;
-
 	const char* cursor = response.constData();
 	const char* dataEnd = response.constData() + response.size();
 
@@ -81,9 +79,7 @@ void SshRequest_ls::handleResponse(const QByteArray& response)
 		errorString = QByteArray(cursor, errorLength);
 		cursor += errorLength;
 
-		mLocation.childLoadError(errorString);
-
-		return;
+		throw(errorString);
 	}
 
 	//
@@ -113,10 +109,18 @@ void SshRequest_ls::handleResponse(const QByteArray& response)
 		/*lastModified = *(quint32*)cursor;
 		cursor += 4;*/
 
-		dirList.append(Location(mLocation, mLocation.getPath() + "/" + filename, isDir?Location::Directory:Location::File, size, QDateTime()));
+		mDirList.append(Location(mLocation, mLocation.getPath() + "/" + filename, isDir?Location::Directory:Location::File, size, QDateTime()));
 	}
+}
 
-	mLocation.sshChildLoadResponse(dirList);
+void SshRequest_ls::error(const QString& error)
+{
+	mLocation.childLoadError(error);
+}
+
+void SshRequest_ls::success()
+{
+	mLocation.sshChildLoadResponse(mDirList);
 }
 
 
@@ -151,9 +155,7 @@ void SshRequest_open::handleResponse(const QByteArray& response)
 		errorString = QByteArray(cursor, errorLength);
 		cursor += errorLength;
 
-		mLocation.fileOpenError(errorString);
-
-		return;
+		throw(errorString);
 	}
 
 	//
@@ -166,17 +168,19 @@ void SshRequest_open::handleResponse(const QByteArray& response)
 
 void SshRequest_open::doManualWork(SshConnection* connection)
 {
-	try
-	{
-		QByteArray data = connection->readFile(mLocation.getRemotePath().toUtf8());
-		qDebug() << "Succeeded reading remote file! Bytes: " << data.length();
-	}
-	catch (QString error)
-	{
-		qDebug() << "Error loading remote file! :(";
-	}
+	QByteArray data = connection->readFile(mLocation.getRemotePath().toUtf8());
+	qDebug() << "Succeeded reading remote file! Bytes: " << data.length();
 }
 
+void SshRequest_open::error(const QString& error)
+{
+	mLocation.fileOpenError(error);
+}
+
+void SshRequest_open::success()
+{
+
+}
 
 
 

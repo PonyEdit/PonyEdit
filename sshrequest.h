@@ -31,6 +31,9 @@ public:
 	virtual void packBody(QByteArray* target) {}
 	virtual void handleResponse(const QByteArray& response) {}
 
+	virtual void error(const QString& error) {}
+	virtual void success() {}
+
 	//	Manual work; if this ssh request does stuff like scp data down, this is where to do it.
 	virtual bool hasManualComponent() { return false; }
 	virtual void doManualWork(SshConnection* connection) {}
@@ -60,8 +63,12 @@ public:
 	virtual void packBody(QByteArray* target);
 	virtual void handleResponse(const QByteArray& response);
 
+	virtual void error(const QString& error);
+	virtual void success();
+
 private:
 	Location mLocation;
+	QList<Location> mDirList;
 };
 
 ///////////////////////
@@ -77,6 +84,9 @@ public:
 
 	virtual bool hasManualComponent() { return true; }
 	virtual void doManualWork(SshConnection* connection);
+
+	virtual void error(const QString& error);
+	virtual void success();
 
 private:
 	Location mLocation;
