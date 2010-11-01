@@ -6,7 +6,13 @@
 Editor::Editor(const Location& location) : QStackedWidget()
 {
 	mDocument = NULL;
+
+	mDocument = new QTextDocument();
+
 	mEditor = new QTextEdit();
+	mEditor->setDocument(mDocument);
+	mEditor->setAcceptRichText(false);
+	mEditor->setFont(QFont("courier new", 11));
 	addWidget(mEditor);
 
 	mWorkingPane = new QWidget();
@@ -37,10 +43,18 @@ void Editor::openFileFailed(const QString& error)
 
 void Editor::openFileSuccessful(File* file)
 {
-	setCurrentWidget(mEditor);
-	mDocument = new QTextDocument();
+	mFile = file;
 	mDocument->setPlainText(file->getData());
-	mEditor->setDocument(mDocument);
-	mEditor->setAcceptRichText(false);
-	mEditor->setFont(QFont("courier new", 11));
+	setCurrentWidget(mEditor);
+	connect(mDocument, SIGNAL(contentsChange(int,int,int)), this, SLOT(docChanged(int,int,int)));
 }
+
+void Editor::docChanged(int position, int charsRemoved, int charsAdded)
+{
+	QByteArray added = "";
+	for (int i = 0; i < charsAdded; i++)
+		added += mDocument->characterAt(i + position);
+
+	mFile->changeDocument(position, charsRemoved, added);
+}
+

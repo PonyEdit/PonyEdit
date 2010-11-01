@@ -14,6 +14,8 @@ enum DataType
 	dtUnsigned = 0x80
 };
 
+class SshRemoteController;
+
 //////////////////
 //  Base class  //
 //////////////////
@@ -25,6 +27,7 @@ public:
 	virtual ~SshRequest();
 
 	inline void setConnection(SshConnection* connection) { mConnection = connection; }
+	inline void setController(SshRemoteController* controller) { mController = controller; }
 
 	short getMessageId() const { return mMessageId; }
 	void packMessage(QByteArray* target);
@@ -46,10 +49,10 @@ protected:
 	void addData(QByteArray* target, unsigned char field, const char* d);
 	void append(QByteArray* target, unsigned char field, unsigned char type, const char* data, unsigned int length);
 
-private:
 	quint16 mMessageId;
 	quint32 mBufferId;
 	SshConnection* mConnection;
+	SshRemoteController* mController;
 };
 
 /////////////////////

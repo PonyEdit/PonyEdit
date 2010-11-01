@@ -328,9 +328,9 @@ void Location::sshChildLoadResponse(const QList<Location>& children)
 	mData->emitListLoadedSignal();
 }
 
-void Location::sshFileOpenResponse(quint32 bufferId, const QByteArray& data)
+void Location::sshFileOpenResponse(SshRemoteController* controller, quint32 bufferId, const QByteArray& data)
 {
-	SshFile* newFile = new SshFile(bufferId, data);
+	SshFile* newFile = new SshFile(controller, bufferId, data);
 	mData->emitFileOpenedSignal(newFile);
 }
 

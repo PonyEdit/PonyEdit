@@ -177,7 +177,7 @@ void SshRequest_open::error(const QString& error)
 
 void SshRequest_open::success()
 {
-	mLocation.sshFileOpenResponse(mBufferId, mData);
+	mLocation.sshFileOpenResponse(mController, mBufferId, mData);
 }
 
 

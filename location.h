@@ -8,6 +8,8 @@
 
 class SshHost;
 class LocationShared;
+class SshRemoteController;
+
 class Location
 {
 	friend class LocationShared;
@@ -51,7 +53,7 @@ private:
 	void sshChildLoadResponse(const QList<Location>& children);
 	void childLoadError(const QString& error);
 
-	void sshFileOpenResponse(quint32 bufferId, const QByteArray& data);
+	void sshFileOpenResponse(SshRemoteController* controller, quint32 bufferId, const QByteArray& data);
 	void fileOpenError(const QString& error);
 
 	LocationShared* mData;

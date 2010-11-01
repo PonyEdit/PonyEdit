@@ -15,6 +15,7 @@ public:
 public slots:
 	void openFileFailed(const QString& error);
 	void openFileSuccessful(File* file);
+	void docChanged(int position, int charsRemoved, int charsAdded);
 
 private:
 	QTextEdit* mEditor;
@@ -24,6 +25,7 @@ private:
 	QWidget* mWorkingPane;
 	QLabel* mWorkingIcon;
 	QLabel* mWorkingText;
+	File* mFile;
 };
 
 #endif // EDITOR_H

@@ -17,7 +17,7 @@ const char* SshRemoteController::sStatusStrings[] = { "not connected", "connecti
 class SshControllerThread : public QThread
 {
 public:
-	SshControllerThread(SshHost* host);
+	SshControllerThread(SshRemoteController* controller, SshHost* host);
 	~SshControllerThread();
 	void run();
 	void connect();
@@ -36,6 +36,8 @@ public:
 	QMutex mRequestQueueLock;
 	bool mCloseDown;
 
+	SshRemoteController* mController;
+
 	static bool sSlaveLoaded;
 	static QByteArray sSlaveScript;
 	static QByteArray sSlaveMd5;
@@ -52,7 +54,7 @@ QByteArray SshControllerThread::sSlaveMd5;
 SshRemoteController::SshRemoteController(SshHost* host)
 {
 	//	Fire up a thread to manage this connection
-	mThread = new SshControllerThread(host);
+	mThread = new SshControllerThread(this, host);
 	mThread->start();
 }
 
@@ -101,7 +103,7 @@ SshRemoteController::Status SshRemoteController::getStatus() const
 //  SshControllerThread definitions  //
 ///////////////////////////////////////
 
-SshControllerThread::SshControllerThread(SshHost *host)
+SshControllerThread::SshControllerThread(SshRemoteController* controller, SshHost *host)
 {
 	//	Make sure the slave script is loaded and ready to be pushed
 	if (!sSlaveLoaded)
@@ -117,6 +119,7 @@ SshControllerThread::SshControllerThread(SshHost *host)
 		sSlaveLoaded = true;
 	}
 
+	mController = controller;
 	mCloseDown = false;
 	mLastStatusChange = 0;
 	mHost = host;
@@ -247,6 +250,9 @@ void SshControllerThread::runMainLoop()
 			QList<SshRequest*> sendingMessages;
 			foreach (SshRequest* rq, mRequestQueue)
 			{
+				rq->setConnection(mConnection);
+				rq->setController(mController);
+
 				rq->packMessage(&massSend);
 				sendingMessages.append(rq);
 			}

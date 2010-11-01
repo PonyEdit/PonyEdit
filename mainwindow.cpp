@@ -55,19 +55,3 @@ void MainWindow::saveFile()
 {
 }
 
-
-
-/*void MainWindow::docChanged(int position, int charsRemoved, int charsAdded)
-{
-	Push p;
-	p.save = 0;
-	p.position = position;
-	p.remove = charsRemoved;
-
-	p.add = "";
-	for (int i = 0; i < charsAdded; i++)
-		p.add += mCurrentDocument->characterAt(i + position);
-
-	//mController->push(p);
-}*/
-

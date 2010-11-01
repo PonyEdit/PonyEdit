@@ -10,8 +10,11 @@ public:
 
 	inline const QByteArray& getData() const { return mData; }
 
+	virtual void changeDocument(int position, int removeChars, const QByteArray& insert);
+
 protected:
 	QByteArray mData;
+	bool mChanged;
 };
 
 #endif // FILE_H
