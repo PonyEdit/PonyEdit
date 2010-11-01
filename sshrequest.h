@@ -90,6 +90,8 @@ public:
 
 private:
 	Location mLocation;
+	QByteArray mData;
+	quint32 mBufferId;
 };
 
 #endif // SSHREQUEST_H

@@ -162,14 +162,12 @@ void SshRequest_open::handleResponse(const QByteArray& response)
 	//	Take note of the bufferId
 	//
 
-	quint32 bufferId = *(quint32*)cursor;
-	qDebug() << "opened file; bufferId = " << bufferId;
+	mBufferId = *(quint32*)cursor;
 }
 
 void SshRequest_open::doManualWork(SshConnection* connection)
 {
-	QByteArray data = connection->readFile(mLocation.getRemotePath().toUtf8());
-	qDebug() << "Succeeded reading remote file! Bytes: " << data.length();
+	mData = connection->readFile(mLocation.getRemotePath().toUtf8());
 }
 
 void SshRequest_open::error(const QString& error)
@@ -179,7 +177,7 @@ void SshRequest_open::error(const QString& error)
 
 void SshRequest_open::success()
 {
-
+	mLocation.sshFileOpenResponse(mBufferId, mData);
 }
 
 

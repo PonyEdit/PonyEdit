@@ -1,5 +1,6 @@
 #include "file.h"
 
-File::File()
+File::File(const QByteArray &data)
 {
+	mData = data;
 }

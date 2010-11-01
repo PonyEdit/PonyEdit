@@ -5,6 +5,7 @@
 
 Editor::Editor(const Location& location) : QStackedWidget()
 {
+	mDocument = NULL;
 	mEditor = new QTextEdit();
 	addWidget(mEditor);
 
@@ -36,6 +37,10 @@ void Editor::openFileFailed(const QString& error)
 
 void Editor::openFileSuccessful(File* file)
 {
-	qDebug() << "opened file ok :)";
 	setCurrentWidget(mEditor);
+	mDocument = new QTextDocument();
+	mDocument->setPlainText(file->getData());
+	mEditor->setDocument(mDocument);
+	mEditor->setAcceptRichText(false);
+	mEditor->setFont(QFont("courier new", 11));
 }

@@ -18,6 +18,7 @@ public slots:
 
 private:
 	QTextEdit* mEditor;
+	QTextDocument* mDocument;
 	Location mFileLocation;
 
 	QWidget* mWorkingPane;

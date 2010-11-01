@@ -5,7 +5,6 @@
 #include <QByteArray>
 #include "sshconnection.h"
 #include "sshrequest.h"
-#include "remotefile.h"
 
 #define SSH_SLAVE_FILE "slave.py"
 

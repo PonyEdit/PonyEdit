@@ -2,6 +2,7 @@
 #include "sshremotecontroller.h"
 #include "sshrequest.h"
 #include "sshhost.h"
+#include "sshfile.h"
 #include <QFileIconProvider>
 #include <QMetaMethod>
 #include <QObject>
@@ -327,6 +328,12 @@ void Location::sshChildLoadResponse(const QList<Location>& children)
 	mData->emitListLoadedSignal();
 }
 
+void Location::sshFileOpenResponse(quint32 bufferId, const QByteArray& data)
+{
+	SshFile* newFile = new SshFile(bufferId, data);
+	mData->emitFileOpenedSignal(newFile);
+}
+
 void Location::childLoadError(const QString& error)
 {
 	mData->emitListLoadError(error);
@@ -365,7 +372,10 @@ bool LocationShared::ensureConnected()
 	return false;
 }
 
-
+void LocationShared::emitFileOpenedSignal(File* file)
+{
+	emit openFileSuccessful(file);
+}
 
 
 

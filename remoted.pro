@@ -19,7 +19,6 @@ SOURCES += main.cpp\
     sshconnection.cpp \
     sshremotecontroller.cpp \
     serverconfigdlg.cpp \
-    remotefile.cpp \
     filedialog.cpp \
     location.cpp \
     sshhost.cpp \
@@ -28,13 +27,13 @@ SOURCES += main.cpp\
     passworddialog.cpp \
     sshconnectingdialog.cpp \
     editor.cpp \
-    file.cpp
+    file.cpp \
+    sshfile.cpp
 
 HEADERS  += mainwindow.h \
     sshconnection.h \
     sshremotecontroller.h \
     serverconfigdlg.h \
-    remotefile.h \
     filedialog.h \
     location.h \
     sshhost.h \
@@ -44,7 +43,8 @@ HEADERS  += mainwindow.h \
     passworddialog.h \
     sshconnectingdialog.h \
     editor.h \
-    file.h
+    file.h \
+    sshfile.h
 
 OTHER_FILES += \
     slave.py

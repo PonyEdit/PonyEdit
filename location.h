@@ -50,6 +50,8 @@ private:
 
 	void sshChildLoadResponse(const QList<Location>& children);
 	void childLoadError(const QString& error);
+
+	void sshFileOpenResponse(quint32 bufferId, const QByteArray& data);
 	void fileOpenError(const QString& error);
 
 	LocationShared* mData;
@@ -78,6 +80,7 @@ private:
 
 	void emitListLoadedSignal();
 	void emitListLoadError(const QString& error);
+	void emitFileOpenedSignal(File* file);
 	void emitOpenFileFailed(const QString& error);
 	void localLoadSelf();
 	void localLoadListing();
