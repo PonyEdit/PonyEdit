@@ -35,7 +35,7 @@ class Buffer:
 	def change(self, pos, rem, add):
 		self.data = self.data[0:pos] + add + self.data[pos + rem:]
 
-	def save(self, filename):
+	def save(self):
 		f = open(self.name, "w")
 		f.write(self.data)
 		f.close()
@@ -133,6 +133,7 @@ def msg_save(buff, params, result):
 	s = buff.checksum()
 	if (params['c'] != s):
 		raise Exception("Checksums do not match: " + s + " vs " + params['c'])
+	buff.save()
 
 #
 #	Message Definitions
