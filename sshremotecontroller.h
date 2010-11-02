@@ -9,6 +9,8 @@
 #define SSH_SLAVE_FILE "slave.py"
 
 class SshControllerThread;
+class SshRequest;
+
 class SshRemoteController
 {
 public:

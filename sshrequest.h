@@ -5,6 +5,7 @@
 #include <QRunnable>
 #include "sshconnection.h"
 #include "location.h"
+#include "sshfile.h"
 
 enum DataType
 {
@@ -14,6 +15,7 @@ enum DataType
 	dtUnsigned = 0x80
 };
 
+class SshFile;
 class SshRemoteController;
 
 //////////////////
@@ -46,6 +48,7 @@ protected:
 	inline void addData(QByteArray* target, unsigned char field, quint16 d) { append(target, field, dtUnsigned | dtInt16, (const char*)&d, sizeof(d)); }
 	inline void addData(QByteArray* target, unsigned char field, qint32 d) { append(target, field, dtInt32, (const char*)&d, sizeof(d)); }
 	inline void addData(QByteArray* target, unsigned char field, quint32 d) { append(target, field, dtUnsigned | dtInt32, (const char*)&d, sizeof(d)); }
+	void addData(QByteArray* target, unsigned char field, const QByteArray& d);
 	void addData(QByteArray* target, unsigned char field, const char* d);
 	void append(QByteArray* target, unsigned char field, unsigned char type, const char* data, unsigned int length);
 
@@ -94,7 +97,44 @@ public:
 private:
 	Location mLocation;
 	QByteArray mData;
-	quint32 mBufferId;
+};
+
+////////////////////////////////
+//  Message 3: change buffer  //
+////////////////////////////////
+
+class SshRequest_changeBuffer : public SshRequest
+{
+public:
+	SshRequest_changeBuffer(quint32 bufferId, quint32 position, quint32 removeCount, const QByteArray& add);
+	virtual void packBody(QByteArray* target);
+
+	//	TODO: Add error handler, make it automatically resend full file buffer.
+
+private:
+	quint32 mPosition;
+	quint32 mRemoveCount;
+	QByteArray mAdd;
+};
+
+//////////////////////////////
+//  Message 4: save buffer  //
+//////////////////////////////
+
+class SshRequest_saveBuffer : public SshRequest
+{
+public:
+	SshRequest_saveBuffer(quint32 bufferId, SshFile* file, int revision, const QByteArray& fileContent);
+	virtual void packBody(QByteArray* target);
+	virtual void handleResponse(const QByteArray& response);
+
+	virtual void error(const QString& error);
+	virtual void success();
+
+private:
+	QByteArray mFileContent;
+	SshFile* mFile;
+	int mRevision;
 };
 
 #endif // SSHREQUEST_H

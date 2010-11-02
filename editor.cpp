@@ -58,3 +58,8 @@ void Editor::docChanged(int position, int charsRemoved, int charsAdded)
 	mFile->changeDocument(position, charsRemoved, added);
 }
 
+void Editor::save()
+{
+	mFile->save();
+}
+

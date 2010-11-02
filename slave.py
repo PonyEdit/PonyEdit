@@ -32,6 +32,14 @@ class Buffer:
 		self.data = f.read()
 		f.close()
 
+	def change(self, pos, rem, add):
+		self.data = self.data[0:pos] + add + self.data[pos + rem:]
+
+	def save(self, filename):
+		f = open(filename, "w")
+		f.write(self.data)
+		f.close()
+
 #
 #	DataBlock class
 #
@@ -90,7 +98,7 @@ class DataBlock:
 #
 
 #	ls
-def msg_ls(params, result):
+def msg_ls(buff, params, result):
 	d = params['d']
 	for filename in os.listdir(d):
 		s = os.stat(d + '/' + filename)
@@ -98,7 +106,7 @@ def msg_ls(params, result):
 		result.write('BL', stat.S_ISDIR(s.st_mode), s.st_size)
 
 #	open
-def msg_open(params, result):
+def msg_open(buff, params, result):
 	global nextBufferId
 	global buffers
 
@@ -113,21 +121,15 @@ def msg_open(params, result):
 	result.write('L', bufferId)
 
 #	change
-def msg_change(params, result):
-	global thefilename
-	global thefile
-	position = params['p']
-	remove = params['r']
-	add = params['a']
-	thefile = thefile[0:position] + add + thefile[position + remove:]
+def msg_change(buff, params, result):
+	buff.change(params['p'], params['r'], params['a'])
 
 #	save
-def msg_save(params, result):
-	global thefilename
-	global thefile
-	f = open(thefilename, "w")
-	f.write(thefile)
-	f.close()
+def msg_save(buff, params, result):
+	s = buff.checksum()
+	if (params['c'] != s):
+		raise Exception("Checksums do not match: " + s + " vs " + params['c'])
+	buff.save(params['f'])
 
 #
 #	Message Definitions
@@ -160,15 +162,24 @@ def mainLoop():
 			print binascii.b2a_base64(reply.getData()).strip()
 
 def handleMessage(message):
+	global buffers
+
 	(messageId, bufferId, params) = message.readMessage()
 
+	log('bufferId = ' + str(bufferId))
 	log('messageId = ' + str(messageId))
 	log('Paramaters = ' + str(params))
 	try:
+		if (bufferId > 0):
+			if (not buffers.has_key(bufferId)): raise Exception("Invalid bufferId: " + str(bufferId))
+			buff = buffers[bufferId]
+		else:
+			buff = None
+
 		if (not messageDefs.has_key(messageId)): raise Exception("Invalid messageId: " + str(messageId))
 		result = DataBlock()
 		result.write('B', 1)
-		messageDefs[messageId](params, result)
+		messageDefs[messageId](buff, params, result)
 	except Exception, e:
 		log('Error occurred: ' + str(e))
 		err = DataBlock()

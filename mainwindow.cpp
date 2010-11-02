@@ -53,5 +53,7 @@ void MainWindow::openFile()
 
 void MainWindow::saveFile()
 {
+	Editor* current = (Editor*)mEditorStack->currentWidget();
+	current->save();
 }
 

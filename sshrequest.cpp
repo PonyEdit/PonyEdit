@@ -1,5 +1,6 @@
 #include "sshrequest.h"
 #include <QDebug>
+#include <QCryptographicHash>
 
 //////////////////
 //  Base class  //
@@ -34,6 +35,16 @@ void SshRequest::append(QByteArray* target, unsigned char field, unsigned char t
 	target->append((const char*)&field, 1);
 	target->append((const char*)&type, 1);
 	target->append(data, length);
+}
+
+void SshRequest::addData(QByteArray* target, unsigned char field, const QByteArray& d)
+{
+	quint32 len = d.length();
+	unsigned char type = dtString;
+	target->append((const char*)&field, 1);
+	target->append((const char*)&type, 1);
+	target->append((const char*)&len, 4);
+	target->append(d.constData(), len);
 }
 
 void SshRequest::addData(QByteArray* target, unsigned char field, const char* d)
@@ -125,7 +136,7 @@ void SshRequest_ls::success()
 
 
 ///////////////////////
-//  Message 1: open  //
+//  Message 2: open  //
 ///////////////////////
 
 SshRequest_open::SshRequest_open(const Location& location) : SshRequest(2, 0), mLocation(location) {}
@@ -179,6 +190,92 @@ void SshRequest_open::success()
 {
 	mLocation.sshFileOpenResponse(mController, mBufferId, mData);
 }
+
+////////////////////////////////
+//  Message 3: change buffer  //
+////////////////////////////////
+
+SshRequest_changeBuffer::SshRequest_changeBuffer(quint32 bufferId, quint32 position, quint32 removeCount, const QByteArray& add)
+	: SshRequest(3, bufferId)
+{
+	mPosition = position;
+	mRemoveCount = removeCount;
+	mAdd = add;
+}
+
+void SshRequest_changeBuffer::packBody(QByteArray* target)
+{
+	addData(target, 'p', mPosition);
+	addData(target, 'r', mRemoveCount);
+	addData(target, 'a', mAdd);
+}
+
+//////////////////////////////
+//  Message 4: save buffer  //
+//////////////////////////////
+
+SshRequest_saveBuffer::SshRequest_saveBuffer(quint32 bufferId, SshFile* file, int revision, const QByteArray& fileContent)
+	: SshRequest(2, bufferId)
+{
+	mFile = file;
+	mRevision = revision;
+	mFileContent = fileContent;
+}
+
+void SshRequest_saveBuffer::packBody(QByteArray* target)
+{
+	QCryptographicHash hash(QCryptographicHash::Md5);
+	hash.addData(mFileContent);
+	QByteArray md5checksum = hash.result().toHex().toLower();
+
+	addData(target, 'c', md5checksum);
+}
+
+void SshRequest_saveBuffer::handleResponse(const QByteArray& response)
+{
+	const char* cursor = response.constData();
+
+	//
+	//	Check for errors
+	//
+
+	bool success = *(cursor++);
+	if (!success)
+	{
+		quint32 errorLength;
+		QString errorString;
+
+		errorLength = *(quint32*)cursor;
+		cursor += 4;
+
+		errorString = QByteArray(cursor, errorLength);
+		cursor += errorLength;
+
+		throw(errorString);
+	}
+}
+
+void SshRequest_saveBuffer::error(const QString& error)
+{
+	qDebug() << "Error saving file: " << error;
+}
+
+void SshRequest_saveBuffer::success()
+{
+	mFile->savedRevision(mRevision);
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

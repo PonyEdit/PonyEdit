@@ -10,6 +10,9 @@ public:
 	SshFile(SshRemoteController* controller, int bufferId, const QByteArray& data);
 
 	void changeDocument(int position, int removeChars, const QByteArray& insert);
+	void save();
+
+	void savedRevision(int revision);
 
 private:
 	SshRemoteController* mController;

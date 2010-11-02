@@ -11,6 +11,7 @@ class Editor : public QStackedWidget
     Q_OBJECT
 public:
 	explicit Editor(const Location& fileLocation);
+	void save();
 
 public slots:
 	void openFileFailed(const QString& error);
