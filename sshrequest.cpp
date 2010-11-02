@@ -210,12 +210,42 @@ void SshRequest_changeBuffer::packBody(QByteArray* target)
 	addData(target, 'a', mAdd);
 }
 
+void SshRequest_changeBuffer::handleResponse(const QByteArray& response)
+{
+	const char* cursor = response.constData();
+
+	//
+	//	Check for errors
+	//
+
+	bool success = *(cursor++);
+	if (!success)
+	{
+		quint32 errorLength;
+		QString errorString;
+
+		errorLength = *(quint32*)cursor;
+		cursor += 4;
+
+		errorString = QByteArray(cursor, errorLength);
+		cursor += errorLength;
+
+		throw(errorString);
+	}
+}
+
+
+void SshRequest_changeBuffer::error(const QString& error)
+{
+	qDebug() << "Error changing remote buffer: " << error;
+}
+
 //////////////////////////////
 //  Message 4: save buffer  //
 //////////////////////////////
 
 SshRequest_saveBuffer::SshRequest_saveBuffer(quint32 bufferId, SshFile* file, int revision, const QByteArray& fileContent)
-	: SshRequest(2, bufferId)
+	: SshRequest(4, bufferId)
 {
 	mFile = file;
 	mRevision = revision;

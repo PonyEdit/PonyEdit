@@ -108,8 +108,9 @@ class SshRequest_changeBuffer : public SshRequest
 public:
 	SshRequest_changeBuffer(quint32 bufferId, quint32 position, quint32 removeCount, const QByteArray& add);
 	virtual void packBody(QByteArray* target);
+	virtual void handleResponse(const QByteArray& response);
 
-	//	TODO: Add error handler, make it automatically resend full file buffer.
+	virtual void error(const QString& error);
 
 private:
 	quint32 mPosition;

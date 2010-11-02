@@ -1,4 +1,4 @@
-import os, sys, binascii, struct, stat
+import os, sys, binascii, struct, stat, hashlib
 
 buffers = {}
 nextBufferId = 1
@@ -36,9 +36,13 @@ class Buffer:
 		self.data = self.data[0:pos] + add + self.data[pos + rem:]
 
 	def save(self, filename):
-		f = open(filename, "w")
+		f = open(self.name, "w")
 		f.write(self.data)
 		f.close()
+
+	def checksum(self):
+		m = hashlib.md5(self.data)
+		return m.hexdigest()
 
 #
 #	DataBlock class
@@ -116,7 +120,7 @@ def msg_open(buff, params, result):
 
 	bufferId = nextBufferId
 	nextBufferId += 1
-	buffers[nextBufferId] = buff
+	buffers[bufferId] = buff
 
 	result.write('L', bufferId)
 
@@ -129,7 +133,6 @@ def msg_save(buff, params, result):
 	s = buff.checksum()
 	if (params['c'] != s):
 		raise Exception("Checksums do not match: " + s + " vs " + params['c'])
-	buff.save(params['f'])
 
 #
 #	Message Definitions
