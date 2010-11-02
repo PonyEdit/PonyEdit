@@ -1,6 +1,7 @@
 #include "editor.h"
 #include <QHBoxLayout>
 #include <QSpacerItem>
+#include <QTextCursor>
 #include <QDebug>
 
 Editor::Editor(const Location& location) : QStackedWidget()
@@ -53,7 +54,15 @@ void Editor::docChanged(int position, int charsRemoved, int charsAdded)
 {
 	QByteArray added = "";
 	for (int i = 0; i < charsAdded; i++)
-		added += mDocument->characterAt(i + position);
+	{
+		QChar c = mDocument->characterAt(i + position);
+		if (c == QChar::ParagraphSeparator || c == QChar::LineSeparator)
+			c = QLatin1Char('\n');
+		else if (c == QChar::Nbsp)
+			c = QLatin1Char(' ');
+
+		added += c;
+	}
 
 	mFile->changeDocument(position, charsRemoved, added);
 }

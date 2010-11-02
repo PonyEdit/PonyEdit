@@ -16,6 +16,7 @@ public:
 protected:
 	QByteArray mData;
 	bool mChanged;
+	bool mDosLineEndings;
 	int mRevision;
 	int mLastSavedRevision;
 };

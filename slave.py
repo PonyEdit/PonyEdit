@@ -31,6 +31,7 @@ class Buffer:
 		f = open(name, "r")
 		self.data = f.read()
 		f.close()
+		self.data = self.data.replace('\r\n', '\n')
 
 	def change(self, pos, rem, add):
 		self.data = self.data[0:pos] + add + self.data[pos + rem:]
