@@ -10,6 +10,8 @@ FileList::FileList(QWidget *parent) :
 	mListWidget = new QListWidget();
 	mListWidget->setMinimumWidth(150);
 	setWidget(mListWidget);
+
+	connect(mListWidget, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), this, SLOT(selectionChanged(QListWidgetItem*,QListWidgetItem*)));
 }
 
 void FileList::update(const QList<Editor*>& list)
@@ -23,6 +25,13 @@ void FileList::update(const QList<Editor*>& list)
 		QListWidgetItem* item = new QListWidgetItem();
 		item->setIcon(location.getIcon());
 		item->setText(location.getLabel());
+		item->setData(Qt::UserRole, QVariant::fromValue<void*>((void*)editor));
 		mListWidget->addItem(item);
 	}
+}
+
+void FileList::selectionChanged(QListWidgetItem* current, QListWidgetItem*)
+{
+	Editor* editor = (Editor*)current->data(Qt::UserRole).value<void*>();
+	emit fileSelected(editor);
 }

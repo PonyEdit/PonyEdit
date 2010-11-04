@@ -14,6 +14,12 @@ public:
 
 	void update(const QList<Editor*>& list);
 
+private slots:
+	void selectionChanged(QListWidgetItem * current, QListWidgetItem * previous);
+
+signals:
+	void fileSelected(Editor* editor);
+
 private:
 	QListWidget* mListWidget;
 };

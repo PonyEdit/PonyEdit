@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	mFileList = new FileList();
 	addDockWidget(Qt::LeftDockWidgetArea, mFileList, Qt::Vertical);
+	connect(mFileList, SIGNAL(fileSelected(Editor*)), this, SLOT(fileSelected(Editor*)));
 
 	createToolbar();
 }
@@ -63,4 +64,13 @@ void MainWindow::saveFile()
 	Editor* current = (Editor*)mEditorStack->currentWidget();
 	current->save();
 }
+
+void MainWindow::fileSelected(Editor* editor)
+{
+	mEditorStack->setCurrentWidget(editor);
+}
+
+
+
+
 
