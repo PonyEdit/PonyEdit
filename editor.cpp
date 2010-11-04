@@ -3,6 +3,7 @@
 #include <QSpacerItem>
 #include <QTextCursor>
 #include <QDebug>
+#include "file.h"
 
 Editor::Editor(const Location& location) : QStackedWidget()
 {

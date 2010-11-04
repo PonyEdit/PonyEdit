@@ -15,7 +15,7 @@
 #define NODETYPE_LOCATION 1
 
 FileDialog::FileDialog(QWidget *parent) :
-    QDialog(parent),
+	QDialog(parent),
     ui(new Ui::FileDialog)
 {
 	ui->setupUi(this);

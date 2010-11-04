@@ -9,6 +9,7 @@
 #include "sshconnection.h"
 #include "sshremotecontroller.h"
 #include "serverconfigdlg.h"
+#include "filelist.h"
 #include "editor.h"
 
 class MainWindow : public QMainWindow
@@ -27,6 +28,7 @@ public slots:
 private:
 	void createToolbar();
 
+	FileList* mFileList;
 	QStackedWidget* mEditorStack;
 	QList<Editor*> mEditors;
 };

@@ -14,7 +14,11 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
 	mEditorStack = new QStackedWidget(this);
+	mEditorStack->setMinimumWidth(200);
 	setCentralWidget(mEditorStack);
+
+	mFileList = new FileList();
+	addDockWidget(Qt::LeftDockWidgetArea, mFileList, Qt::Vertical);
 
 	createToolbar();
 }
@@ -25,7 +29,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::createToolbar()
 {
-	QToolBar* toolbar = new QToolBar("File");
+	QToolBar* toolbar = new QToolBar("File Toolbar");
 	toolbar->addAction(QIcon(":/icons/new.png"), "New", this, SLOT(newFile()));
 	toolbar->addAction(QIcon(":/icons/open.png"), "Open", this, SLOT(openFile()));
 	toolbar->addAction(QIcon(":/icons/save.png"), "Save", this, SLOT(saveFile()));
@@ -46,6 +50,9 @@ void MainWindow::openFile()
 				Editor* newEditor = new Editor(location);
 				mEditorStack->addWidget(newEditor);
 				mEditorStack->setCurrentWidget(newEditor);
+				mEditors.append(newEditor);
+
+				mFileList->update(mEditors);
 			}
 		}
 	}

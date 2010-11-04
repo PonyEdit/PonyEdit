@@ -2,7 +2,7 @@
 #include "sshfile.h"
 #include "sshrequest.h"
 
-SshFile::SshFile(SshRemoteController* controller, int bufferId, const QByteArray& data) : File(data)
+SshFile::SshFile(SshRemoteController* controller, int bufferId, const Location& location, const QByteArray& data) : File(location, data)
 {
 	mBufferId = bufferId;
 	mController = controller;

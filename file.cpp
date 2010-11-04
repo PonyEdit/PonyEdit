@@ -1,7 +1,7 @@
 #include "file.h"
 #include <QDebug.h>
 
-File::File(const QByteArray &data)
+File::File(const Location& location, const QByteArray &data)
 {
 	//	Detect line ending mode, then convert to unix-style. Use unix-style line endings everywhere,
 	//	only convert to DOS on saving if that's what we're coming from.
@@ -9,6 +9,7 @@ File::File(const QByteArray &data)
 	if (mDosLineEndings)
 		mData.replace("\r\n", "\n");
 
+	mLocation = location;
 	mData = data;
 	mChanged = false;
 	mRevision = 0;

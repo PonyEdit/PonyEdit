@@ -3,11 +3,12 @@
 
 #include "file.h"
 #include "sshremotecontroller.h"
+#include "location.h"
 
 class SshFile : public File
 {
 public:
-	SshFile(SshRemoteController* controller, int bufferId, const QByteArray& data);
+	SshFile(SshRemoteController* controller, int bufferId, const Location& location, const QByteArray& data);
 
 	void changeDocument(int position, int removeChars, const QByteArray& insert);
 	void save();

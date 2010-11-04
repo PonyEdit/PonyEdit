@@ -4,8 +4,8 @@
 #include <QString>
 #include <QVariant>
 #include <QDateTime>
-#include "file.h"
 
+class File;
 class SshHost;
 class LocationShared;
 class SshRemoteController;

@@ -13,6 +13,9 @@ public:
 	explicit Editor(const Location& fileLocation);
 	void save();
 
+	File* getFile() const { return mFile; }
+	const Location& getLocation() const { return mFileLocation; }
+
 public slots:
 	void openFileFailed(const QString& error);
 	void openFileSuccessful(File* file);
