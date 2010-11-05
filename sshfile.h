@@ -3,20 +3,21 @@
 
 #include "basefile.h"
 
+class SshHost;
 class SshFile : public BaseFile
 {
 public:
-	SshFile(SshRemoteController* controller, const Location& location);
-
+	void open();
 	void save();
 	void savedRevision(int revision);
 	void fileOpened(int bufferId, const QByteArray& content);
 
+	SshFile(const Location& location);	//	Do not call; use File::getFile instead.
+
 protected:
 	virtual void handleDocumentChange(int position, int removeChars, const QByteArray& insert);
-	void loadContent();
 
-	SshRemoteController* mController;
+	SshHost* mHost;
 	int mBufferId;
 };
 

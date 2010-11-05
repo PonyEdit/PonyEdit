@@ -267,23 +267,30 @@ void Location::asyncGetChildren(QObject* callbackTarget, const char* succeedSlot
 	}
 }
 
-BaseFile* Location::openFile()
+BaseFile* Location::getFile()
 {
-	switch (mData->mProtocol)
-	{
-	case Ssh:
-		if (!mData->ensureConnected())
-			throw("Failed to connect to remote host!");
-		return new SshFile(mData->mRemoteHost->getController(), *this);
+	if (!mData->ensureConnected())
+		throw(QString("Failed to connect to remote host!"));
 
-	default:
-		throw("Opening local files not yet supported!");
-	}
+	return BaseFile::getFile(*this);
 }
 
 QString Location::getRemotePath() const
 {
 	return mData->mRemotePath;
+}
+
+Location::Protocol Location::getProtocol() const
+{
+	return mData->mProtocol;
+}
+
+SshHost* Location::getRemoteHost() const
+{
+	if (!mData->ensureConnected())
+		throw(QString("Failed to connect to remote host!"));
+
+	return mData->mRemoteHost;
 }
 
 void LocationShared::sshLoadListing()

@@ -1,18 +1,21 @@
 #include <QDebug>
+#include "sshhost.h"
 #include "sshfile.h"
 #include "sshrequest.h"
 #include "sshremotecontroller.h"
 
-SshFile::SshFile(SshRemoteController* controller, const Location& location) : BaseFile(location)
+SshFile::SshFile(const Location& location) : BaseFile(location)
 {
-	mController = controller;
+	mHost = location.getRemoteHost();
 	mBufferId = -1;
-	loadContent();
 }
 
-void SshFile::loadContent()
+void SshFile::open()
 {
-	mController->sendRequest(new SshRequest_open(this));
+	if (!mHost->ensureConnection())
+		throw(QString("Failed to open file: failed to connect to remote host"));
+
+	mHost->getController()->sendRequest(new SshRequest_open(this));
 }
 
 void SshFile::fileOpened(int bufferId, const QByteArray& content)
@@ -26,7 +29,10 @@ void SshFile::handleDocumentChange(int position, int removeChars, const QByteArr
 	BaseFile::handleDocumentChange(position, removeChars, insert);
 	qDebug() << "Edit revision " << mRevision;
 
-	mController->sendRequest(new SshRequest_changeBuffer(mBufferId, position, removeChars, insert));
+	if (!mHost->ensureConnection())
+		throw(QString("Failed to update file: failed to connect to remote host"));
+
+	mHost->getController()->sendRequest(new SshRequest_changeBuffer(mBufferId, position, removeChars, insert));
 }
 
 void SshFile::savedRevision(int revision)
@@ -37,6 +43,9 @@ void SshFile::savedRevision(int revision)
 
 void SshFile::save()
 {
+	if (!mHost->ensureConnection())
+		throw(QString("Failed to update file: failed to connect to remote host"));
+
 	qDebug() << "Saving revision " << mRevision;
-	mController->sendRequest(new SshRequest_saveBuffer(mBufferId, this, mRevision, mContent));
+	mHost->getController()->sendRequest(new SshRequest_saveBuffer(mBufferId, this, mRevision, mContent));
 }

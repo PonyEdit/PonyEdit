@@ -1,11 +1,46 @@
 #include <QDebug.h>
 
+#include "sshfile.h"
 #include "basefile.h"
 #include "tools.h"
+#include "globaldispatcher.h"
+
+QList<BaseFile*> BaseFile::sActiveFiles;
+
+BaseFile* BaseFile::getFile(const Location& location)
+{
+	const QString& locationPath = location.getPath();
+
+	//	See if the specified location is already open...
+	foreach (BaseFile* file, sActiveFiles)
+		if (file->getLocation().getPath() == locationPath)
+			return file;
+
+	//	If not, create a new file object.
+	BaseFile* newFile = NULL;
+	Location::Protocol protocol = location.getProtocol();
+	switch (protocol)
+	{
+	case Location::Ssh:
+		newFile = new SshFile(location);
+		break;
+
+	default:
+		throw(QString("Opening local files is not yet supported."));
+	}
+
+	if (newFile)
+	{
+		sActiveFiles.append(newFile);
+		gDispatcher->emitActiveFilesUpdated();
+	}
+
+	return newFile;
+}
 
 BaseFile::BaseFile(const Location& location)
 {
-	mOpenStatus = Loading;
+	mOpenStatus = BaseFile::NotOpen;
 	mLocation = location;
 
 	connect(&mDocument, SIGNAL(contentsChange(int,int,int)), this, SLOT(documentChanged(int,int,int)));
@@ -14,7 +49,7 @@ BaseFile::BaseFile(const Location& location)
 
 void BaseFile::documentChanged(int position, int removeChars, int charsAdded)
 {
-	if (mOpenStatus != Ready)
+	if (mOpenStatus != Open)
 		return;
 
 	QByteArray added = "";
@@ -61,15 +96,19 @@ void BaseFile::fileOpened(const QByteArray& content)
 
 	mDocument.setPlainText(content);
 
-	mOpenStatus = Ready;
-	emit openStatusChanged(mOpenStatus);
+	setOpenStatus(Open);
 }
 
 void BaseFile::openError(const QString& error)
 {
 	mError = error;
-	mOpenStatus = Error;
-	emit openStatusChanged(mOpenStatus);
+	setOpenStatus(Error);
+}
+
+void BaseFile::setOpenStatus(OpenStatus newStatus)
+{
+	mOpenStatus = newStatus;
+	emit openStatusChanged(newStatus);
 }
 
 

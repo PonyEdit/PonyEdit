@@ -12,15 +12,16 @@ class BaseFile : public QObject
 	Q_OBJECT
 
 public:
-	enum OpenStatus { Loading, Ready, Error };
+	enum OpenStatus { NotOpen, Opening, Open, Error };
 
-	BaseFile(const Location& location);
+	static BaseFile* getFile(const Location& location);
 
 	inline const QByteArray& getContent() const { return mContent; }
 	inline const Location& getLocation() const { return mLocation; }
 	inline QTextDocument* getTextDocument() { return &mDocument; }
 	inline const QString& getError() const { return mError; }
 
+	virtual void open() = 0;
 	virtual void save() = 0;
 	void openError(const QString& error);
 
@@ -33,6 +34,9 @@ signals:
 	void openStatusChanged(int newStatus);
 
 protected:
+	BaseFile(const Location& location);
+	void setOpenStatus(OpenStatus newStatus);
+
 	virtual void handleDocumentChange(int position, int removeChars, const QByteArray& insert);
 
 	Location mLocation;
@@ -48,6 +52,8 @@ protected:
 
 private:
 	OpenStatus mOpenStatus;
+
+	static QList<BaseFile*> sActiveFiles;
 };
 
 #endif // FILE_H

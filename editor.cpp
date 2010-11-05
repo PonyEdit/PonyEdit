@@ -24,7 +24,8 @@ Editor::Editor(const Location& location) : QStackedWidget()
 	showLoading();
 
 	mFileLocation = location;
-	mFile = mFileLocation.openFile();
+	mFile = mFileLocation.getFile();
+	mFile->open();
 
 	mEditor->setDocument(mFile->getTextDocument());
 	mEditor->setAcceptRichText(false);
@@ -35,9 +36,9 @@ Editor::Editor(const Location& location) : QStackedWidget()
 
 void Editor::openStatusChanged(int openStatus)
 {
-	if (openStatus == BaseFile::Ready)
+	if (openStatus == BaseFile::Open)
 		setCurrentWidget(mEditor);
-	else if (openStatus == BaseFile::Loading)
+	else if (openStatus == BaseFile::Opening)
 		showLoading();
 	else if (openStatus == BaseFile::Error)
 		showError(mFile->getError());

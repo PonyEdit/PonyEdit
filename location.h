@@ -34,16 +34,18 @@ public:
 	Type getType() const;
 	int getSize() const;
 	const QDateTime& getLastModified() const;
+	Protocol getProtocol() const;
 
 	const Location& getParent();
 	QString getParentPath() const;
 	QString getRemotePath() const;
+	SshHost* getRemoteHost() const;
 
 	bool isNull() const;
 	bool isHidden() const;
 	bool isDirectory() const;
 
-	BaseFile* openFile();		//	Returns a file object, which will start loading asynchronously. Throws an error if one occurs. Never returns NULL.
+	BaseFile* getFile();
 
 	void asyncGetChildren(QObject* callbackTarget, const char* succeedSlot, const char* failSlot);
 

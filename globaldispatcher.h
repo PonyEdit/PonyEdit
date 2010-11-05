@@ -15,9 +15,11 @@ class GlobalDispatcher : public QObject
 public:
 	GlobalDispatcher() {}	//	Do not call outside of main(); just use gDispatcher instead.
 	void emitSshServersUpdated() { emit sshServersUpdated(); }
+	void emitActiveFilesUpdated() { emit activeFilesUpdated(); }
 
 signals:
 	void sshServersUpdated();
+	void activeFilesUpdated();
 };
 
 extern GlobalDispatcher* gDispatcher;
