@@ -1,10 +1,12 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include "location.h"
 #include <QLabel>
 #include <QTextEdit>
 #include <QStackedWidget>
+
+#include "location.h"
+#include "basefile.h"
 
 class Editor : public QStackedWidget
 {
@@ -13,15 +15,16 @@ public:
 	explicit Editor(const Location& fileLocation);
 	void save();
 
-	File* getFile() const { return mFile; }
+	BaseFile* getFile() const { return mFile; }
 	const Location& getLocation() const { return mFileLocation; }
 
 public slots:
-	void openFileFailed(const QString& error);
-	void openFileSuccessful(File* file);
-	void docChanged(int position, int charsRemoved, int charsAdded);
+	void openStatusChanged(int openStatus);
 
 private:
+	void showLoading();
+	void showError(const QString& error);
+
 	QTextEdit* mEditor;
 	QTextDocument* mDocument;
 	Location mFileLocation;
@@ -29,7 +32,7 @@ private:
 	QWidget* mWorkingPane;
 	QLabel* mWorkingIcon;
 	QLabel* mWorkingText;
-	File* mFile;
+	BaseFile* mFile;
 };
 
 #endif // EDITOR_H

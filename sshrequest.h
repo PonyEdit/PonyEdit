@@ -3,9 +3,8 @@
 
 #include <QByteArray>
 #include <QRunnable>
-#include "sshconnection.h"
+
 #include "location.h"
-#include "sshfile.h"
 
 enum DataType
 {
@@ -16,7 +15,9 @@ enum DataType
 };
 
 class SshFile;
+class SshConnection;
 class SshRemoteController;
+class BaseFile;
 
 //////////////////
 //  Base class  //
@@ -84,7 +85,7 @@ private:
 class SshRequest_open : public SshRequest
 {
 public:
-	SshRequest_open(const Location& location);
+	SshRequest_open(SshFile* file);
 	virtual void packBody(QByteArray* target);
 	virtual void handleResponse(const QByteArray& response);
 
@@ -95,7 +96,7 @@ public:
 	virtual void success();
 
 private:
-	Location mLocation;
+	SshFile* mFile;
 	QByteArray mData;
 };
 

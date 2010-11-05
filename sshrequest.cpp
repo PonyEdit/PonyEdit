@@ -1,6 +1,8 @@
-#include "sshrequest.h"
 #include <QDebug>
 #include <QCryptographicHash>
+#include "sshrequest.h"
+#include "sshfile.h"
+#include "sshconnection.h"
 
 //////////////////
 //  Base class  //
@@ -139,11 +141,12 @@ void SshRequest_ls::success()
 //  Message 2: open  //
 ///////////////////////
 
-SshRequest_open::SshRequest_open(const Location& location) : SshRequest(2, 0), mLocation(location) {}
+SshRequest_open::SshRequest_open(SshFile* file) : SshRequest(2, 0), mFile(file) {}
 
 void SshRequest_open::packBody(QByteArray* target)
 {
-	addData(target, 'f', (const char*)mLocation.getRemotePath().toUtf8());
+	const Location& fileLocation = mFile->getLocation();
+	addData(target, 'f', (const char*)fileLocation.getRemotePath().toUtf8());
 }
 
 void SshRequest_open::handleResponse(const QByteArray& response)
@@ -178,17 +181,18 @@ void SshRequest_open::handleResponse(const QByteArray& response)
 
 void SshRequest_open::doManualWork(SshConnection* connection)
 {
-	mData = connection->readFile(mLocation.getRemotePath().toUtf8());
+	const Location& fileLocation = mFile->getLocation();
+	mData = connection->readFile(fileLocation.getRemotePath().toUtf8());
 }
 
 void SshRequest_open::error(const QString& error)
 {
-	mLocation.fileOpenError(error);
+	mFile->openError(error);
 }
 
 void SshRequest_open::success()
 {
-	mLocation.sshFileOpenResponse(mController, mBufferId, mData);
+	mFile->fileOpened(mBufferId, mData);
 }
 
 ////////////////////////////////

@@ -27,9 +27,9 @@ SOURCES += main.cpp\
     passworddialog.cpp \
     sshconnectingdialog.cpp \
     editor.cpp \
-    file.cpp \
     sshfile.cpp \
-    filelist.cpp
+    filelist.cpp \
+    basefile.cpp
 
 HEADERS  += mainwindow.h \
     sshconnection.h \
@@ -44,9 +44,9 @@ HEADERS  += mainwindow.h \
     passworddialog.h \
     sshconnectingdialog.h \
     editor.h \
-    file.h \
     sshfile.h \
-    filelist.h
+    filelist.h \
+    basefile.h
 
 OTHER_FILES += \
     slave.py

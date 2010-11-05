@@ -1,16 +1,29 @@
 #include <QDebug>
 #include "sshfile.h"
 #include "sshrequest.h"
+#include "sshremotecontroller.h"
 
-SshFile::SshFile(SshRemoteController* controller, int bufferId, const Location& location, const QByteArray& data) : File(location, data)
+SshFile::SshFile(SshRemoteController* controller, const Location& location) : BaseFile(location)
 {
-	mBufferId = bufferId;
 	mController = controller;
+	mBufferId = -1;
+	loadContent();
 }
 
-void SshFile::changeDocument(int position, int removeChars, const QByteArray& insert)
+void SshFile::loadContent()
 {
-	File::changeDocument(position, removeChars, insert);
+	mController->sendRequest(new SshRequest_open(this));
+}
+
+void SshFile::fileOpened(int bufferId, const QByteArray& content)
+{
+	mBufferId = bufferId;
+	BaseFile::fileOpened(content);
+}
+
+void SshFile::handleDocumentChange(int position, int removeChars, const QByteArray& insert)
+{
+	BaseFile::handleDocumentChange(position, removeChars, insert);
 	qDebug() << "Edit revision " << mRevision;
 
 	mController->sendRequest(new SshRequest_changeBuffer(mBufferId, position, removeChars, insert));
@@ -25,5 +38,5 @@ void SshFile::savedRevision(int revision)
 void SshFile::save()
 {
 	qDebug() << "Saving revision " << mRevision;
-	mController->sendRequest(new SshRequest_saveBuffer(mBufferId, this, mRevision, mData));
+	mController->sendRequest(new SshRequest_saveBuffer(mBufferId, this, mRevision, mContent));
 }

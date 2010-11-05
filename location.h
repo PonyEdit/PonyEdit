@@ -5,8 +5,8 @@
 #include <QVariant>
 #include <QDateTime>
 
-class File;
 class SshHost;
+class BaseFile;
 class LocationShared;
 class SshRemoteController;
 
@@ -43,8 +43,9 @@ public:
 	bool isHidden() const;
 	bool isDirectory() const;
 
+	BaseFile* openFile();		//	Returns a file object, which will start loading asynchronously. Throws an error if one occurs. Never returns NULL.
+
 	void asyncGetChildren(QObject* callbackTarget, const char* succeedSlot, const char* failSlot);
-	void asyncOpenFile(QObject* callbackTarget, const char* succeedSlot, const char* failSlot);
 
 private:
 	Location(const Location& parent, const QString& path, Type type, int size, QDateTime lastModified);
@@ -70,8 +71,6 @@ public:
 signals:
 	void loadListSuccessful(const QList<Location>& children, QString locationPath);
 	void loadListFailed(const QString& error, QString locationPath);
-	void openFileSuccessful(File* openedFile);
-	void openFileFailed(const QString& error);
 
 private:
 	LocationShared();
@@ -82,12 +81,9 @@ private:
 
 	void emitListLoadedSignal();
 	void emitListLoadError(const QString& error);
-	void emitFileOpenedSignal(File* file);
-	void emitOpenFileFailed(const QString& error);
 	void localLoadSelf();
 	void localLoadListing();
 	void sshLoadListing();
-	void sshOpenFile();
 
 	int mReferences;
 	QString mPath;

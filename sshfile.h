@@ -1,21 +1,21 @@
 #ifndef SSHFILE_H
 #define SSHFILE_H
 
-#include "file.h"
-#include "sshremotecontroller.h"
-#include "location.h"
+#include "basefile.h"
 
-class SshFile : public File
+class SshFile : public BaseFile
 {
 public:
-	SshFile(SshRemoteController* controller, int bufferId, const Location& location, const QByteArray& data);
+	SshFile(SshRemoteController* controller, const Location& location);
 
-	void changeDocument(int position, int removeChars, const QByteArray& insert);
 	void save();
-
 	void savedRevision(int revision);
+	void fileOpened(int bufferId, const QByteArray& content);
 
-private:
+protected:
+	virtual void handleDocumentChange(int position, int removeChars, const QByteArray& insert);
+	void loadContent();
+
 	SshRemoteController* mController;
 	int mBufferId;
 };

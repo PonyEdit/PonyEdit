@@ -3,18 +3,11 @@
 #include <QSpacerItem>
 #include <QTextCursor>
 #include <QDebug>
-#include "file.h"
+#include "basefile.h"
 
 Editor::Editor(const Location& location) : QStackedWidget()
 {
-	mDocument = NULL;
-
-	mDocument = new QTextDocument();
-
 	mEditor = new QTextEdit();
-	mEditor->setDocument(mDocument);
-	mEditor->setAcceptRichText(false);
-	mEditor->setFont(QFont("courier new", 11));
 	addWidget(mEditor);
 
 	mWorkingPane = new QWidget();
@@ -22,50 +15,46 @@ Editor::Editor(const Location& location) : QStackedWidget()
 	layout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding));
 	mWorkingIcon = new QLabel();
 	mWorkingIcon->setFixedSize(16, 16);
-	mWorkingIcon->setPixmap(QPixmap(":/icons/loading.png"));
 	layout->addWidget(mWorkingIcon);
 	mWorkingText = new QLabel();
-	mWorkingText->setText("Loading ...");
 	layout->addWidget(mWorkingText);
 	layout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding));
 	addWidget(mWorkingPane);
 
-	setCurrentWidget(mWorkingPane);
+	showLoading();
 
 	mFileLocation = location;
-	mFileLocation.asyncOpenFile(this, SLOT(openFileSuccessful(File*)), SLOT(openFileFailed(QString)));
+	mFile = mFileLocation.openFile();
+
+	mEditor->setDocument(mFile->getTextDocument());
+	mEditor->setAcceptRichText(false);
+	mEditor->setFont(QFont("courier new", 11));
+
+	connect(mFile, SIGNAL(openStatusChanged(int)), this, SLOT(openStatusChanged(int)));
 }
 
-void Editor::openFileFailed(const QString& error)
+void Editor::openStatusChanged(int openStatus)
 {
-	mWorkingText->setText(QString("Error: ") + error);
-	mWorkingIcon->setPixmap(QPixmap(":/icons/error.png"));
+	if (openStatus == BaseFile::Ready)
+		setCurrentWidget(mEditor);
+	else if (openStatus == BaseFile::Loading)
+		showLoading();
+	else if (openStatus == BaseFile::Error)
+		showError(mFile->getError());
+}
+
+void Editor::showLoading()
+{
+	mWorkingIcon->setPixmap(QPixmap(":/icons/loading.png"));
+	mWorkingText->setText("Loading ...");
 	setCurrentWidget(mWorkingPane);
 }
 
-void Editor::openFileSuccessful(File* file)
+void Editor::showError(const QString& error)
 {
-	mFile = file;
-	mDocument->setPlainText(file->getData());
-	setCurrentWidget(mEditor);
-	connect(mDocument, SIGNAL(contentsChange(int,int,int)), this, SLOT(docChanged(int,int,int)));
-}
-
-void Editor::docChanged(int position, int charsRemoved, int charsAdded)
-{
-	QByteArray added = "";
-	for (int i = 0; i < charsAdded; i++)
-	{
-		QChar c = mDocument->characterAt(i + position);
-		if (c == QChar::ParagraphSeparator || c == QChar::LineSeparator)
-			c = QLatin1Char('\n');
-		else if (c == QChar::Nbsp)
-			c = QLatin1Char(' ');
-
-		added += c;
-	}
-
-	mFile->changeDocument(position, charsRemoved, added);
+	mWorkingIcon->setPixmap(QPixmap(":/icons/error.png"));
+	mWorkingText->setText(QString("Error: ") + error);
+	setCurrentWidget(mWorkingPane);
 }
 
 void Editor::save()

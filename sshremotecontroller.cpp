@@ -6,6 +6,8 @@
 #include <QDebug>
 #include <QFile>
 #include "sshhost.h"
+#include "sshrequest.h"
+#include "sshconnection.h"
 
 const char* SshRemoteController::sStatusStrings[] = { "not connected", "connecting", "password required", "negotiating with remote host", "uploading slave script", "starting slave script", "connected", "error" };
 

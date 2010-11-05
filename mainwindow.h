@@ -6,11 +6,8 @@
 #include <QTextEdit>
 #include <QStackedWidget>
 
-#include "sshconnection.h"
-#include "sshremotecontroller.h"
-#include "serverconfigdlg.h"
-#include "filelist.h"
-#include "editor.h"
+class Editor;
+class FileList;
 
 class MainWindow : public QMainWindow
 {

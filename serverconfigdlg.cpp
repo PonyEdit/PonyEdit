@@ -1,6 +1,7 @@
 #include "serverconfigdlg.h"
 #include "ui_serverconfigdlg.h"
 #include "tools.h"
+#include "sshhost.h"
 
 ServerConfigDlg::ServerConfigDlg(QWidget *parent) :
     QDialog(parent),

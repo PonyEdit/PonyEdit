@@ -3,8 +3,9 @@
 
 #include <QDialog>
 #include <QTimer>
-#include "sshhost.h"
-#include "sshremotecontroller.h"
+
+class SshHost;
+class SshRemoteController;
 
 namespace Ui { class SshConnectingDialog; }
 class SshConnectingDialog : public QDialog

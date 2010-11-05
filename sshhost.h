@@ -2,10 +2,10 @@
 #define SSHHOST_H
 
 #include <QString>
-#include "sshconnection.h"
+
+#include "location.h"
 #include "sshremotecontroller.h"
 
-class SshRemoteController;
 class SshHost
 {
 public:

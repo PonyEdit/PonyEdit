@@ -1,6 +1,8 @@
-#include "file.h"
-#include "filelist.h"
 #include <QVBoxLayout>
+
+#include "basefile.h"
+#include "filelist.h"
+#include "editor.h"
 
 FileList::FileList(QWidget *parent) :
     QDockWidget(parent)
@@ -32,6 +34,7 @@ void FileList::update(const QList<Editor*>& list)
 
 void FileList::selectionChanged(QListWidgetItem* current, QListWidgetItem*)
 {
+	if (!current) return;
 	Editor* editor = (Editor*)current->data(Qt::UserRole).value<void*>();
 	emit fileSelected(editor);
 }

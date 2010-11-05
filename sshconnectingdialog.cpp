@@ -1,8 +1,11 @@
+#include <QDebug>
+#include <QPushButton>
+
 #include "sshconnectingdialog.h"
 #include "ui_sshconnectingdialog.h"
 #include "passworddialog.h"
-#include <QDebug>
-#include <QPushButton>
+#include "sshremotecontroller.h"
+#include "sshhost.h"
 
 SshConnectingDialog::SshConnectingDialog(SshHost* host, SshRemoteController* controller) :
 	QDialog(0, Qt::CustomizeWindowHint | Qt::WindowTitleHint),

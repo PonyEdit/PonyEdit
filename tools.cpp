@@ -9,6 +9,8 @@
 #define MEGABYTE_MULTIPLIER 1048576
 #define KILOBYTE_MULTIPLIER 1024
 
+QThread* sMainThread = NULL;
+
 QString Tools::humanReadableBytes(quint64 bytes)
 {
 	if (bytes >= TERABYTE_MULTIPLIER)
@@ -69,4 +71,13 @@ void Tools::loadServers()
 	}
 }
 
+bool Tools::isMainThread()
+{
+	return (QThread::currentThread() == sMainThread);
+}
+
+void Tools::initialize()
+{
+	sMainThread = QThread::currentThread();
+}
 

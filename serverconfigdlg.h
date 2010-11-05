@@ -2,11 +2,10 @@
 #define SERVERCONFIGDLG_H
 
 #include <QDialog>
-#include "sshhost.h"
 
-namespace Ui {
-    class ServerConfigDlg;
-}
+namespace Ui { class ServerConfigDlg; }
+
+class SshHost;
 
 class ServerConfigDlg : public QDialog
 {

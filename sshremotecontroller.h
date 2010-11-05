@@ -3,13 +3,12 @@
 
 #include <QString>
 #include <QByteArray>
-#include "sshconnection.h"
-#include "sshrequest.h"
 
 #define SSH_SLAVE_FILE "slave.py"
 
 class SshControllerThread;
 class SshRequest;
+class SshHost;
 
 class SshRemoteController
 {

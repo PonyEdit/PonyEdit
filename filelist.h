@@ -4,7 +4,8 @@
 #include <QDockWidget>
 #include <QListWidget>
 #include <QList>
-#include "editor.h"
+
+class Editor;
 
 class FileList : public QDockWidget
 {

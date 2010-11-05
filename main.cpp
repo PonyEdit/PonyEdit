@@ -1,12 +1,13 @@
 #include <QtGui/QApplication>
-#include "mainwindow.h"
-#include "sshconnection.h"
-#include "location.h"
-#include "tools.h"
-#include "globaldispatcher.h"
 #include <QString>
 #include <QDebug>
 #include <QMetaType>
+
+#include "globaldispatcher.h"
+#include "sshconnection.h"
+#include "location.h"
+#include "tools.h"
+#include "mainwindow.h"
 
 GlobalDispatcher* gDispatcher = NULL;
 
@@ -26,6 +27,7 @@ int main(int argc, char *argv[])
 		gDispatcher = new GlobalDispatcher();
 
 		Tools::loadServers();
+		Tools::initialize();
 
 		QApplication a(argc, argv);
 		MainWindow w;

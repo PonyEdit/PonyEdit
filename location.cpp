@@ -241,11 +241,6 @@ void LocationShared::emitListLoadError(const QString& error)
 	emit loadListFailed(error, mPath);
 }
 
-void LocationShared::emitOpenFileFailed(const QString& error)
-{
-	emit openFileFailed(error);
-}
-
 void Location::asyncGetChildren(QObject* callbackTarget, const char* succeedSlot, const char* failSlot)
 {
 	QObject::connect(mData, SIGNAL(loadListSuccessful(QList<Location>,QString)), callbackTarget, succeedSlot);
@@ -272,41 +267,23 @@ void Location::asyncGetChildren(QObject* callbackTarget, const char* succeedSlot
 	}
 }
 
-void Location::asyncOpenFile(QObject* callbackTarget, const char* succeedSlot, const char* failSlot)
+BaseFile* Location::openFile()
 {
-	QObject::connect(mData, SIGNAL(openFileSuccessful(File*)), callbackTarget, succeedSlot);
-	QObject::connect(mData, SIGNAL(openFileFailed(QString)), callbackTarget, failSlot);
-
 	switch (mData->mProtocol)
 	{
-	case Local:
-		mData->emitOpenFileFailed("Opening local files is not yet supported!");
-		break;
-
 	case Ssh:
-		mData->sshOpenFile();
-		break;
+		if (!mData->ensureConnected())
+			throw("Failed to connect to remote host!");
+		return new SshFile(mData->mRemoteHost->getController(), *this);
 
 	default:
-		mData->emitOpenFileFailed("Unknown file protocol :(");
+		throw("Opening local files not yet supported!");
 	}
 }
 
 QString Location::getRemotePath() const
 {
 	return mData->mRemotePath;
-}
-
-void LocationShared::sshOpenFile()
-{
-	if (!ensureConnected())
-	{
-		emit openFileFailed("Failed to connect to remote host!");
-		return;
-	}
-
-	SshRemoteController* controller = mRemoteHost->getController();
-	controller->sendRequest(new SshRequest_open(Location(this)));
 }
 
 void LocationShared::sshLoadListing()
@@ -328,20 +305,9 @@ void Location::sshChildLoadResponse(const QList<Location>& children)
 	mData->emitListLoadedSignal();
 }
 
-void Location::sshFileOpenResponse(SshRemoteController* controller, quint32 bufferId, const QByteArray& data)
-{
-	SshFile* newFile = new SshFile(controller, bufferId, *this, data);
-	mData->emitFileOpenedSignal(newFile);
-}
-
 void Location::childLoadError(const QString& error)
 {
 	mData->emitListLoadError(error);
-}
-
-void Location::fileOpenError(const QString& error)
-{
-	mData->emitOpenFileFailed(error);
 }
 
 bool LocationShared::ensureConnected()
@@ -370,11 +336,6 @@ bool LocationShared::ensureConnected()
 
 	mPath = "";
 	return false;
-}
-
-void LocationShared::emitFileOpenedSignal(File* file)
-{
-	emit openFileSuccessful(file);
 }
 
 

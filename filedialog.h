@@ -6,11 +6,10 @@
 #include <QFileIconProvider>
 #include <QStandardItemModel>
 #include <QTreeWidgetItem>
+
 #include "location.h"
 
-namespace Ui {
-    class FileDialog;
-}
+namespace Ui { class FileDialog; }
 
 class FileDialog : public QDialog
 {

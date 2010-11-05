@@ -9,6 +9,8 @@
 #include <QPushButton>
 #include <QToolBar>
 #include "filedialog.h"
+#include "filelist.h"
+#include "editor.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
