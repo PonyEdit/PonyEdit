@@ -15,6 +15,7 @@ public:
 	enum OpenStatus { NotOpen, Opening, Open, Error };
 
 	static BaseFile* getFile(const Location& location);
+	static const QList<BaseFile*>& getActiveFiles();
 
 	inline const QByteArray& getContent() const { return mContent; }
 	inline const Location& getLocation() const { return mLocation; }

@@ -111,5 +111,9 @@ void BaseFile::setOpenStatus(OpenStatus newStatus)
 	emit openStatusChanged(newStatus);
 }
 
+const QList<BaseFile*>& BaseFile::getActiveFiles()
+{
+	return sActiveFiles;
+}
 
 

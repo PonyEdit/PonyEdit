@@ -54,8 +54,6 @@ void MainWindow::openFile()
 				mEditorStack->addWidget(newEditor);
 				mEditorStack->setCurrentWidget(newEditor);
 				mEditors.append(newEditor);
-
-				mFileList->update(mEditors);
 			}
 		}
 	}

@@ -13,10 +13,9 @@ class FileList : public QDockWidget
 public:
     explicit FileList(QWidget *parent = 0);
 
-	void update(const QList<Editor*>& list);
-
 private slots:
 	void selectionChanged(QListWidgetItem * current, QListWidgetItem * previous);
+	void activeFileListUpdated();
 
 signals:
 	void fileSelected(Editor* editor);
