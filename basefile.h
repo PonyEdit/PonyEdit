@@ -21,6 +21,10 @@ public:
 	inline const Location& getLocation() const { return mLocation; }
 	inline QTextDocument* getTextDocument() { return &mDocument; }
 	inline const QString& getError() const { return mError; }
+	inline bool isOpen() const { return mOpenStatus == Open; }
+	inline bool isOpening() const { return mOpenStatus == Opening; }
+	inline bool isUnopened() const { return mOpenStatus == NotOpen; }
+	inline OpenStatus getOpenStatus() const { return mOpenStatus; }
 
 	virtual void open() = 0;
 	virtual void save() = 0;

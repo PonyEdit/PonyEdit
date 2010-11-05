@@ -18,7 +18,7 @@ private slots:
 	void activeFileListUpdated();
 
 signals:
-	void fileSelected(Editor* editor);
+	void fileSelected(BaseFile* file);
 
 private:
 	QListWidget* mListWidget;

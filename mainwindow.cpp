@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	mFileList = new FileList();
 	addDockWidget(Qt::LeftDockWidgetArea, mFileList, Qt::Vertical);
-	connect(mFileList, SIGNAL(fileSelected(Editor*)), this, SLOT(fileSelected(Editor*)));
+	connect(mFileList, SIGNAL(fileSelected(BaseFile*)), this, SLOT(fileSelected(BaseFile*)));
 
 	createToolbar();
 }
@@ -50,7 +50,11 @@ void MainWindow::openFile()
 		{
 			if (!location.isDirectory())
 			{
-				Editor* newEditor = new Editor(location);
+				BaseFile* file = location.getFile();
+				if (file->isUnopened())
+					file->open();
+
+				Editor* newEditor = new Editor(file);
 				mEditorStack->addWidget(newEditor);
 				mEditorStack->setCurrentWidget(newEditor);
 				mEditors.append(newEditor);
@@ -65,9 +69,9 @@ void MainWindow::saveFile()
 	current->save();
 }
 
-void MainWindow::fileSelected(Editor* editor)
+void MainWindow::fileSelected(BaseFile* file)
 {
-	mEditorStack->setCurrentWidget(editor);
+	qDebug() << "File Selected...";
 }
 
 

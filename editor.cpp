@@ -5,7 +5,7 @@
 #include <QDebug>
 #include "basefile.h"
 
-Editor::Editor(const Location& location) : QStackedWidget()
+Editor::Editor(BaseFile* file) : QStackedWidget()
 {
 	mEditor = new QTextEdit();
 	addWidget(mEditor);
@@ -21,22 +21,20 @@ Editor::Editor(const Location& location) : QStackedWidget()
 	layout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding));
 	addWidget(mWorkingPane);
 
-	showLoading();
-
-	mFileLocation = location;
-	mFile = mFileLocation.getFile();
-	mFile->open();
+	mFile = file;
+	connect(mFile, SIGNAL(openStatusChanged(int)), this, SLOT(openStatusChanged(int)));
+	openStatusChanged(mFile->getOpenStatus());
 
 	mEditor->setDocument(mFile->getTextDocument());
 	mEditor->setAcceptRichText(false);
 	mEditor->setFont(QFont("courier new", 11));
-
-	connect(mFile, SIGNAL(openStatusChanged(int)), this, SLOT(openStatusChanged(int)));
 }
 
 void Editor::openStatusChanged(int openStatus)
 {
-	if (openStatus == BaseFile::Open)
+	if (openStatus == BaseFile::NotOpen)
+		showLoading();
+	else if (openStatus == BaseFile::Open)
 		setCurrentWidget(mEditor);
 	else if (openStatus == BaseFile::Opening)
 		showLoading();

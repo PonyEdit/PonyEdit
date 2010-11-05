@@ -21,9 +21,9 @@ FileList::FileList(QWidget *parent) :
 
 void FileList::selectionChanged(QListWidgetItem* current, QListWidgetItem*)
 {
-	/*if (!current) return;
-	Editor* editor = (Editor*)current->data(Qt::UserRole).value<void*>();
-	emit fileSelected(editor);*/
+	if (!current) return;
+	BaseFile* f = (BaseFile*)current->data(Qt::UserRole).value<void*>();
+	emit fileSelected(f);
 }
 
 void FileList::activeFileListUpdated()

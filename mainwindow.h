@@ -21,7 +21,7 @@ public slots:
 	void newFile();
 	void openFile();
 	void saveFile();
-	void fileSelected(Editor* editor);
+	void fileSelected(BaseFile* file);
 
 private:
 	void createToolbar();

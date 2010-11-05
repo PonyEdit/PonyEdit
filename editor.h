@@ -12,11 +12,11 @@ class Editor : public QStackedWidget
 {
     Q_OBJECT
 public:
-	explicit Editor(const Location& fileLocation);
+	explicit Editor(BaseFile* file);
 	void save();
 
 	BaseFile* getFile() const { return mFile; }
-	const Location& getLocation() const { return mFileLocation; }
+	const Location& getLocation() const { return mFile->getLocation(); }
 
 public slots:
 	void openStatusChanged(int openStatus);
@@ -27,7 +27,6 @@ private:
 
 	QTextEdit* mEditor;
 	QTextDocument* mDocument;
-	Location mFileLocation;
 
 	QWidget* mWorkingPane;
 	QLabel* mWorkingIcon;
