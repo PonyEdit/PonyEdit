@@ -6,6 +6,7 @@
 #include <QList>
 
 class Editor;
+class BaseFile;
 
 class FileList : public QDockWidget
 {

@@ -116,4 +116,21 @@ const QList<BaseFile*>& BaseFile::getActiveFiles()
 	return sActiveFiles;
 }
 
+void BaseFile::editorAttached(Editor* editor)	//	Call only from Editor constructor.
+{
+	mAttachedEditors.append(editor);
+}
+
+void BaseFile::editorDetached(Editor* editor)	//	Call only from Editor destructor.
+{
+	mAttachedEditors.removeOne(editor);
+}
+
+
+
+
+
+
+
+
 

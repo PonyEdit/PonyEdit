@@ -22,12 +22,18 @@ Editor::Editor(BaseFile* file) : QStackedWidget()
 	addWidget(mWorkingPane);
 
 	mFile = file;
+	mFile->editorAttached(this);
 	connect(mFile, SIGNAL(openStatusChanged(int)), this, SLOT(openStatusChanged(int)));
 	openStatusChanged(mFile->getOpenStatus());
 
 	mEditor->setDocument(mFile->getTextDocument());
 	mEditor->setAcceptRichText(false);
 	mEditor->setFont(QFont("courier new", 11));
+}
+
+Editor::~Editor()
+{
+	mFile->editorDetached(this);
 }
 
 void Editor::openStatusChanged(int openStatus)

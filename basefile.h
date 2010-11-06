@@ -6,6 +6,7 @@
 #include <QTextDocument>
 
 #include "location.h"
+class Editor;
 
 class BaseFile : public QObject
 {
@@ -29,6 +30,10 @@ public:
 	virtual void open() = 0;
 	virtual void save() = 0;
 	void openError(const QString& error);
+
+	inline const QList<Editor*>& getAttachedEditors() { return mAttachedEditors; }
+	void editorAttached(Editor* editor);	//	Call only from Editor constructor.
+	void editorDetached(Editor* editor);	//	Call only from Editor destructor.
 
 public slots:
 	void fileOpened(const QByteArray& content);
@@ -57,6 +62,7 @@ protected:
 
 private:
 	OpenStatus mOpenStatus;
+	QList<Editor*> mAttachedEditors;
 
 	static QList<BaseFile*> sActiveFiles;
 };

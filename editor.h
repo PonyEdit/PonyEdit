@@ -13,6 +13,7 @@ class Editor : public QStackedWidget
     Q_OBJECT
 public:
 	explicit Editor(BaseFile* file);
+	~Editor();
 	void save();
 
 	BaseFile* getFile() const { return mFile; }

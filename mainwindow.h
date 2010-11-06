@@ -8,6 +8,7 @@
 
 class Editor;
 class FileList;
+class BaseFile;
 
 class MainWindow : public QMainWindow
 {

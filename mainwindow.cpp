@@ -71,7 +71,9 @@ void MainWindow::saveFile()
 
 void MainWindow::fileSelected(BaseFile* file)
 {
-	qDebug() << "File Selected...";
+	const QList<Editor*>& editors = file->getAttachedEditors();
+	if (editors.length() > 0)
+		mEditorStack->setCurrentWidget(editors[0]);
 }
 
 
