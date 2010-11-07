@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QByteArray>
 #include <QTextDocument>
+#include <QPlainTextDocumentLayout>
 
 #include "location.h"
 class Editor;
@@ -20,7 +21,7 @@ public:
 
 	inline const QByteArray& getContent() const { return mContent; }
 	inline const Location& getLocation() const { return mLocation; }
-	inline QTextDocument* getTextDocument() { return &mDocument; }
+	inline QTextDocument* getTextDocument() { return mDocument; }
 	inline const QString& getError() const { return mError; }
 	inline bool isOpen() const { return mOpenStatus == Open; }
 	inline bool isOpening() const { return mOpenStatus == Opening; }
@@ -53,7 +54,8 @@ protected:
 	QByteArray mContent;
 	QString mError;
 
-	QTextDocument mDocument;
+	QTextDocument *mDocument;
+	QPlainTextDocumentLayout *mDocumentLayout;
 
 	bool mChanged;
 	bool mDosLineEndings;

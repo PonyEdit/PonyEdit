@@ -7,7 +7,7 @@
 
 Editor::Editor(BaseFile* file) : QStackedWidget()
 {
-	mEditor = new QTextEdit();
+	mEditor = new CodeEditor();
 	addWidget(mEditor);
 
 	mWorkingPane = new QWidget();
@@ -27,7 +27,6 @@ Editor::Editor(BaseFile* file) : QStackedWidget()
 	openStatusChanged(mFile->getOpenStatus());
 
 	mEditor->setDocument(mFile->getTextDocument());
-	mEditor->setAcceptRichText(false);
 	mEditor->setFont(QFont("courier new", 11));
 }
 

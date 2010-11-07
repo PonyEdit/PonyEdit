@@ -29,7 +29,9 @@ SOURCES += main.cpp\
     editor.cpp \
     sshfile.cpp \
     filelist.cpp \
-    basefile.cpp
+    basefile.cpp \
+    codeeditor.cpp \
+    linenumberwidget.cpp
 
 HEADERS  += mainwindow.h \
     sshconnection.h \
@@ -46,7 +48,9 @@ HEADERS  += mainwindow.h \
     editor.h \
     sshfile.h \
     filelist.h \
-    basefile.h
+    basefile.h \
+	codeeditor.h \
+	linenumberwidget.h
 
 OTHER_FILES += \
     slave.py \

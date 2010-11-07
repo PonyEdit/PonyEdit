@@ -8,6 +8,8 @@
 #include "location.h"
 #include "basefile.h"
 
+#include "codeeditor.h"
+
 class Editor : public QStackedWidget
 {
     Q_OBJECT
@@ -26,7 +28,7 @@ private:
 	void showLoading();
 	void showError(const QString& error);
 
-	QTextEdit* mEditor;
+	CodeEditor* mEditor;
 	QTextDocument* mDocument;
 
 	QWidget* mWorkingPane;

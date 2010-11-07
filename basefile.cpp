@@ -43,7 +43,11 @@ BaseFile::BaseFile(const Location& location)
 	mOpenStatus = BaseFile::NotOpen;
 	mLocation = location;
 
-	connect(&mDocument, SIGNAL(contentsChange(int,int,int)), this, SLOT(documentChanged(int,int,int)));
+	mDocument = new QTextDocument();
+	mDocumentLayout = new QPlainTextDocumentLayout(mDocument);
+	mDocument->setDocumentLayout(mDocumentLayout);
+
+	connect(mDocument, SIGNAL(contentsChange(int,int,int)), this, SLOT(documentChanged(int,int,int)));
 	connect(this, SIGNAL(fileOpenedRethreadSignal(QByteArray)), this, SLOT(fileOpened(QByteArray)), Qt::QueuedConnection);
 }
 
@@ -55,7 +59,7 @@ void BaseFile::documentChanged(int position, int removeChars, int charsAdded)
 	QByteArray added = "";
 	for (int i = 0; i < charsAdded; i++)
 	{
-		QChar c = mDocument.characterAt(i + position);
+		QChar c = mDocument->characterAt(i + position);
 		if (c == QChar::ParagraphSeparator || c == QChar::LineSeparator)
 			c = QLatin1Char('\n');
 		else if (c == QChar::Nbsp)
@@ -94,7 +98,7 @@ void BaseFile::fileOpened(const QByteArray& content)
 	mRevision = 0;
 	mLastSavedRevision = 0;
 
-	mDocument.setPlainText(content);
+	mDocument->setPlainText(content);
 
 	setOpenStatus(Open);
 }
