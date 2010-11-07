@@ -53,6 +53,11 @@ void ServerConfigDlg::setEditHost(SshHost* host)
 	ui->serverName->setText(host->getName());
 	ui->defaultDirectory->setText(host->getDefaultDirectory());
 
+	int scriptIndex = ui->scriptType->findText(host->getScriptType());
+	if(scriptIndex < 0)
+		scriptIndex = 0;
+	ui->scriptType->setCurrentIndex(scriptIndex);
+
 	mLastAutoName = getAutoName();
 	updateName();
 }
@@ -69,6 +74,7 @@ void ServerConfigDlg::acceptedHandler()
 	mEditHost->setName(ui->serverName->text());
 	mEditHost->setDefaultDirectory(ui->defaultDirectory->text());
 	mEditHost->setSavePassword(ui->savePassword->checkState() == Qt::Checked);
+	mEditHost->setScriptType(ui->scriptType->currentText());
 }
 
 QString ServerConfigDlg::getAutoName()

@@ -49,7 +49,8 @@ HEADERS  += mainwindow.h \
     basefile.h
 
 OTHER_FILES += \
-    slave.py
+    slave.py \
+    slave.pl
 
 FORMS += \
     serverconfigdlg.ui \

@@ -25,6 +25,7 @@ public:
 	inline bool getSave() const { return mSave; }
 	inline const QString& getName() const { return mName; }
 	inline bool getSavePassword() const { return mSavePassword; }
+	inline const QString& getScriptType() const { return mScriptType; }
 
 	inline void setHostName(const QString& hostName) { mHostName = hostName; }
 	inline void setUserName(const QString& userName) { mUserName = userName; }
@@ -34,6 +35,7 @@ public:
 	inline void setSave(bool save) { mSave = save; }
 	inline void setName(const QString& name) { mName = name; }
 	inline void setSavePassword(bool savePassword) { mSavePassword = savePassword; }
+	inline void setScriptType(const QString& scriptType) { mScriptType = scriptType; }
 
 	bool isConnected() const;
 	bool ensureConnection();
@@ -63,6 +65,8 @@ private:
 
 	QString mName;
 	bool mSave;
+
+	QString mScriptType;
 
 	static QList<SshHost*> sKnownHosts;
 };

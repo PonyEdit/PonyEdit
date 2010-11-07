@@ -43,6 +43,7 @@ void Tools::saveServers()
 			settings.setValue("password", host->getSavePassword() ? host->getPassword() : "");
 			settings.setValue("name", host->getName());
 			settings.setValue("defaultDirectory", host->getDefaultDirectory());
+			settings.setValue("scriptType", host->getScriptType());
 		}
 	}
 	settings.endArray();
@@ -63,6 +64,7 @@ void Tools::loadServers()
 		host->setUserName(settings.value("username").toString());
 		host->setName(settings.value("name").toString());
 		host->setDefaultDirectory(settings.value("defaultDirectory", QVariant("~")).toString());
+		host->setScriptType(settings.value("scriptType").toString());
 
 		QString password = settings.value("password").toString();
 		host->setPassword(password);

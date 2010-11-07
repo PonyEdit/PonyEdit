@@ -5,6 +5,7 @@
 #include <QCryptographicHash>
 #include <QDebug>
 #include <QFile>
+#include <QRegExp>
 #include "sshhost.h"
 #include "sshrequest.h"
 #include "sshconnection.h"
@@ -25,6 +26,7 @@ public:
 	void connect();
 	void runMainLoop();
 	void setStatus(SshRemoteController::Status status) { mStatus = status; mLastStatusChange++; }
+	void loadScript(bool usePython);
 
 	SshRemoteController::Status mStatus;
 	int mLastStatusChange;
@@ -107,20 +109,6 @@ SshRemoteController::Status SshRemoteController::getStatus() const
 
 SshControllerThread::SshControllerThread(SshRemoteController* controller, SshHost *host)
 {
-	//	Make sure the slave script is loaded and ready to be pushed
-	if (!sSlaveLoaded)
-	{
-		QFile f(SSH_SLAVE_FILE);
-		f.open(QFile::ReadOnly);
-		sSlaveScript = f.readAll();
-
-		QCryptographicHash hash(QCryptographicHash::Md5);
-		hash.addData(sSlaveScript);
-		sSlaveMd5 = hash.result().toHex().toLower();
-
-		sSlaveLoaded = true;
-	}
-
 	mController = controller;
 	mCloseDown = false;
 	mLastStatusChange = 0;
@@ -141,6 +129,29 @@ void SshControllerThread::run()
 	if (mCloseDown) return;
 	if (mStatus == SshRemoteController::Connected)
 		runMainLoop();
+}
+
+void SshControllerThread::loadScript(bool usePython)
+{
+	//	Make sure the slave script is loaded and ready to be pushed
+	if (!sSlaveLoaded)
+	{
+		QFile f;
+		if(usePython)
+			f.setFileName(SSH_PYTHON_SLAVE_FILE);
+		else
+			f.setFileName(SSH_PERL_SLAVE_FILE);
+
+		f.open(QFile::ReadOnly);
+		sSlaveScript = f.readAll();
+
+		QCryptographicHash hash(QCryptographicHash::Md5);
+		hash.addData(sSlaveScript);
+		sSlaveMd5 = hash.result().toHex().toLower();
+
+		sSlaveLoaded = true;
+	}
+
 }
 
 void SshControllerThread::connect()
@@ -188,25 +199,85 @@ void SshControllerThread::connect()
 		if (mCloseDown) return;
 
 		//
+		// Check which script to use
+		//
+
+		bool usePython = false;
+		bool usePerl = false;
+		if(mHost->getScriptType() == "Python")
+			usePython = true;
+		else if(mHost->getScriptType() == "Perl")
+			usePerl = true;
+		else
+		{
+			QByteArray pythonVersion = mConnection->execute("python -V\n");
+			if(pythonVersion.length() > 0)
+			{
+				QRegExp pythonVersionRx("^\\d+\\.\\d+");
+
+				pythonVersion.replace("Python ", "");
+
+				if(pythonVersionRx.indexIn(pythonVersion) > -1 && pythonVersion >= "2.4")
+					usePython = true;
+			}
+
+			if(!usePython)
+			{
+				QByteArray perlVersion = mConnection->execute("perl -v\n");
+				if(perlVersion.length() > 0)
+				{
+					QRegExp perlVersionRx("This is perl, v(\\w+)");
+					if(perlVersionRx.indexIn(perlVersion) > -1)
+					{
+						QString perlVersionNumber = perlVersionRx.cap(1);
+						if(perlVersionNumber >= "5.6")
+							usePerl = true;
+					}
+				}
+			}
+
+			if(!usePython && !usePerl)
+				throw(QString("No usable version of Python or Perl found!"));
+		}
+
+		//
 		//	Make sure the remote slave script is present, and the md5 hashes match. If not, upload again.
 		//
 
-		QByteArray remoteMd5 = mConnection->execute("if [ ! -d ~/.remoted ]; then mkdir ~/.remoted; fi; if [ -e ~/.remoted/slave.py ]; then md5sum ~/.remoted/slave.py; else echo x; fi\n").toLower();
+		loadScript(usePython);
+
+		QByteArray remoteMd5;
+		if(usePython)
+			QByteArray remoteMd5 = mConnection->execute("if [ ! -d ~/.remoted ]; then mkdir ~/.remoted; fi; if [ -e ~/.remoted/slave.py ]; then md5sum ~/.remoted/slave.py; else echo x; fi\n").toLower();
+		else
+			QByteArray remoteMd5 = mConnection->execute("if [ ! -d ~/.remoted ]; then mkdir ~/.remoted; fi; if [ -e ~/.remoted/slave.pl ]; then md5sum ~/.remoted/slave.pl; else echo x; fi\n").toLower();
+
 		remoteMd5.truncate(32);
 		if (remoteMd5 != sSlaveMd5)
 		{
 			setStatus(SshRemoteController::UploadingSlave);
-			mConnection->writeFile(".remoted/slave.py", sSlaveScript.constData(), sSlaveScript.length());
+			if(usePython)
+				mConnection->writeFile(".remoted/slave.py", sSlaveScript.constData(), sSlaveScript.length());
+			else
+				mConnection->writeFile(".remoted/slave.pl", sSlaveScript.constData(), sSlaveScript.length());
 		}
 		if (mCloseDown) return;
 
 		//
-		//	Run the remote python script...
+		//	Run the remote script...
 		//
 
 		setStatus(SshRemoteController::StartingSlave);
-		const char* command = "python ~/.remoted/slave.py\n";
-		mConnection->writeData(command, strlen(command));
+		if(usePython)
+		{
+			const char* command = "python ~/.remoted/slave.py\n";
+			mConnection->writeData(command, strlen(command));
+		}
+		else
+		{
+			const char* command = "perl ~/.remoted/slave.pl\n";
+			mConnection->writeData(command, strlen(command));
+		}
 		if (mCloseDown) return;
 
 		//

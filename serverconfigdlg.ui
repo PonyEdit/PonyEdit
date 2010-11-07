@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>448</width>
-    <height>312</height>
+    <height>374</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -103,6 +103,51 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="title">
+      <string>Advanced</string>
+     </property>
+     <widget class="QLabel" name="label_7">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>121</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Server Script Language:</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="scriptType">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>20</y>
+        <width>121</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>Auto-detect</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Perl</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Python</string>
+       </property>
+      </item>
+     </widget>
+    </widget>
+   </item>
+   <item>
     <widget class="QGroupBox" name="groupBox_3">
      <property name="title">
       <string>Save Server</string>
@@ -147,6 +192,18 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>hostName</tabstop>
+  <tabstop>hostPort</tabstop>
+  <tabstop>userName</tabstop>
+  <tabstop>password</tabstop>
+  <tabstop>savePassword</tabstop>
+  <tabstop>scriptType</tabstop>
+  <tabstop>saveServer</tabstop>
+  <tabstop>serverName</tabstop>
+  <tabstop>defaultDirectory</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

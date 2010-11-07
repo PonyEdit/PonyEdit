@@ -4,7 +4,8 @@
 #include <QString>
 #include <QByteArray>
 
-#define SSH_SLAVE_FILE "slave.py"
+#define SSH_PYTHON_SLAVE_FILE "slave.py"
+#define SSH_PERL_SLAVE_FILE "slave.pl"
 
 class SshControllerThread;
 class SshRequest;
