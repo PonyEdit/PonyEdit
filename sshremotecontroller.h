@@ -4,9 +4,6 @@
 #include <QString>
 #include <QByteArray>
 
-#define SSH_PYTHON_SLAVE_FILE "slave.py"
-#define SSH_PERL_SLAVE_FILE "slave.pl"
-
 class SshControllerThread;
 class SshRequest;
 class SshHost;
@@ -16,6 +13,9 @@ class SshRemoteController
 public:
 	enum Status { NotConnected, Connecting, WaitingForPassword, Negotiating, UploadingSlave, StartingSlave, Connected, Error };
 	static const char* sStatusStrings[];
+
+	enum ScriptType { AutoDetect, Python, Perl, NumScriptTypes };
+	static const char* sScriptTypeLabels[];
 
 	SshRemoteController(SshHost* host);
 	~SshRemoteController();

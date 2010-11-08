@@ -18,6 +18,9 @@ ServerConfigDlg::ServerConfigDlg(QWidget *parent) :
 	connect(ui->hostName, SIGNAL(textEdited(QString)), this, SLOT(updateName()));
 	connect(ui->userName, SIGNAL(textEdited(QString)), this, SLOT(updateName()));
 
+	for (int i = 0; i < SshRemoteController::NumScriptTypes; i++)
+		ui->scriptType->addItem(SshRemoteController::sScriptTypeLabels[i], QVariant::fromValue<int>(i));
+
 	ui->password->setFocus();
 }
 
@@ -53,7 +56,7 @@ void ServerConfigDlg::setEditHost(SshHost* host)
 	ui->serverName->setText(host->getName());
 	ui->defaultDirectory->setText(host->getDefaultDirectory());
 
-	int scriptIndex = ui->scriptType->findText(host->getScriptType());
+	int scriptIndex = ui->scriptType->findData(QVariant::fromValue<int>((int)host->getScriptType()));
 	if(scriptIndex < 0)
 		scriptIndex = 0;
 	ui->scriptType->setCurrentIndex(scriptIndex);
@@ -74,7 +77,7 @@ void ServerConfigDlg::acceptedHandler()
 	mEditHost->setName(ui->serverName->text());
 	mEditHost->setDefaultDirectory(ui->defaultDirectory->text());
 	mEditHost->setSavePassword(ui->savePassword->checkState() == Qt::Checked);
-	mEditHost->setScriptType(ui->scriptType->currentText());
+	mEditHost->setScriptType((SshRemoteController::ScriptType)ui->scriptType->itemData(ui->scriptType->currentIndex()).value<int>());
 }
 
 QString ServerConfigDlg::getAutoName()

@@ -152,12 +152,14 @@ QByteArray SshConnection::readUntil(const char* marker)
 QByteArray SshConnection::execute(const char* command)
 {
 	libssh2_channel_write(mChannel, command, strlen(command));
+	//qDebug() << "SENDING: " << command;
 	return readToPrompt();
 }
 
 void SshConnection::writeData(const char* data, int length)
 {
 	libssh2_channel_write(mChannel, data, length);
+	//qDebug() << "SENDING: " << data;
 }
 
 void SshConnection::sendEof()

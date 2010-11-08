@@ -64,7 +64,7 @@ void Tools::loadServers()
 		host->setUserName(settings.value("username").toString());
 		host->setName(settings.value("name").toString());
 		host->setDefaultDirectory(settings.value("defaultDirectory", QVariant("~")).toString());
-		host->setScriptType(settings.value("scriptType").toString());
+		host->setScriptType((SshRemoteController::ScriptType)settings.value("scriptType", 0).toInt());
 
 		QString password = settings.value("password").toString();
 		host->setPassword(password);
