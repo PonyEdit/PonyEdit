@@ -139,4 +139,14 @@ private:
 	int mRevision;
 };
 
+////////////////////////////
+//  Message 5: keepalive  //
+////////////////////////////
+
+class SshRequest_keepalive : public SshRequest
+{
+public:
+	SshRequest_keepalive() : SshRequest(5, 0) {}
+};
+
 #endif // SSHREQUEST_H

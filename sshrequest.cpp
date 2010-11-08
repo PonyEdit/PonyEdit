@@ -299,17 +299,3 @@ void SshRequest_saveBuffer::success()
 	mFile->savedRevision(mRevision);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QRegExp>
+#include <QTimer>
 #include "sshhost.h"
 #include "sshrequest.h"
 #include "sshconnection.h"
@@ -293,12 +294,20 @@ void SshControllerThread::connect()
 
 void SshControllerThread::runMainLoop()
 {
+	QTime lastMessageTime;
+	lastMessageTime.start();
+	SshRequest_keepalive keepAliveMessage;
+
 	while (1)
 	{
 		mRequestQueueLock.lock();
-		if (mRequestQueue.length() > 0)
+		if (mRequestQueue.length() > 0 || lastMessageTime.elapsed() > KEEPALIVE_TIMEOUT)
 		{
 			if (mCloseDown) return;
+
+			//	If no messages are being sent, send a keepalive signal
+			if (mRequestQueue.length() == 0)
+				mRequestQueue.append(&keepAliveMessage);
 
 			//	Pack all of the requests into one bytearray, and unlock the main queue as quickly as possible
 			QByteArray massSend;
@@ -339,8 +348,12 @@ void SshControllerThread::runMainLoop()
 					rq->error(error);
 				}
 
-				delete rq;
+				//	Don't delete the keepalive message; just reuse the same object over and over.
+				if (rq != &keepAliveMessage)
+					delete rq;
 			}
+
+			lastMessageTime.start();
 		}
 		else
 			mRequestQueueLock.unlock();

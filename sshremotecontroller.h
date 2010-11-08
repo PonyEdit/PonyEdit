@@ -8,6 +8,8 @@ class SshControllerThread;
 class SshRequest;
 class SshHost;
 
+#define	KEEPALIVE_TIMEOUT 60000	/* 60 seconds */
+
 class SshRemoteController
 {
 public:

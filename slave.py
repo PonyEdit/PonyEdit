@@ -136,6 +136,9 @@ def msg_save(buff, params, result):
 		raise Exception("Checksums do not match: " + s + " vs " + params['c'])
 	buff.save()
 
+#	keepalive
+def msg_keepalive(buff, params, result): pass
+
 #
 #	Message Definitions
 #
@@ -146,6 +149,7 @@ messageDefs = \
 	2: msg_open,
 	3: msg_change,
 	4: msg_save,
+	5: msg_keepalive
 }
 
 
