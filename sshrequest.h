@@ -29,7 +29,6 @@ public:
 	SshRequest(quint16 messageId, quint32 bufferId);
 	virtual ~SshRequest();
 
-	inline void setConnection(SshConnection* connection) { mConnection = connection; }
 	inline void setController(SshRemoteController* controller) { mController = controller; }
 
 	short getMessageId() const { return mMessageId; }
@@ -55,7 +54,6 @@ protected:
 
 	quint16 mMessageId;
 	quint32 mBufferId;
-	SshConnection* mConnection;
 	SshRemoteController* mController;
 };
 

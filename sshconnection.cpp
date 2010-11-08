@@ -138,15 +138,23 @@ QByteArray SshConnection::readUntil(const char* marker)
 		if (rc > 0)
 		{
 			totalReceived += rc;
-			qDebug() << QByteArray(mTmpBuffer, rc);
+			//qDebug() << QByteArray(mTmpBuffer, rc);
 			mReadBuffer.append(mTmpBuffer, rc);
 		}
 		else if (rc < 0 && rc != LIBSSH2_ERROR_EAGAIN)
-		{
-			qDebug() << "Error code: " << rc;
-			throw(QString("Failed to receive from remote host!"));
-		}
+			throw(QString("Error while receiving from remote host: ") + getLastError(rc));
 	}
+}
+
+QString SshConnection::getLastError(int rc)
+{
+	char* errorBuffer;
+	int errorLength;
+	libssh2_session_last_error(mSession, &errorBuffer, &errorLength, 0);
+
+	QString error;
+	error.sprintf("%d - %s", rc, errorBuffer);
+	return error;
 }
 
 QByteArray SshConnection::execute(const char* command)
@@ -207,7 +215,7 @@ QByteArray SshConnection::readFile(const char* filename)
 		if (rc > 0)
 			fileContent.append(mTmpBuffer, rc);
 		else if (rc < 0)
-			throw(QString("Failed to receive file content!"));
+			throw(QString("Error while receiving remote file content: ") + getLastError(rc));
 	}
 
 	return fileContent;

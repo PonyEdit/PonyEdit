@@ -40,6 +40,7 @@ public:
 
 private:
 	void createChannel();
+	QString getLastError(int rc);
 
 	int mSocket;
 	LIBSSH2_SESSION* mSession;
