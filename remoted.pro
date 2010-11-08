@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     filelist.cpp \
     basefile.cpp \
     codeeditor.cpp \
-    linenumberwidget.cpp
+    linenumberwidget.cpp \
+    optionsdialog.cpp
 
 HEADERS  += mainwindow.h \
     sshconnection.h \
@@ -50,7 +51,8 @@ HEADERS  += mainwindow.h \
     filelist.h \
     basefile.h \
 	codeeditor.h \
-	linenumberwidget.h
+	linenumberwidget.h \
+    optionsdialog.h
 
 OTHER_FILES += \
     slave.py \
@@ -60,7 +62,8 @@ FORMS += \
     serverconfigdlg.ui \
     filedialog.ui \
     passworddialog.ui \
-    sshconnectingdialog.ui
+    sshconnectingdialog.ui \
+    optionsdialog.ui
 
 RESOURCES += \
     resources.qrc

@@ -15,6 +15,7 @@
 #include "filedialog.h"
 #include "filelist.h"
 #include "editor.h"
+#include "optionsdialog.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -86,6 +87,8 @@ void MainWindow::fileSelected(BaseFile* file)
 
 void MainWindow::options()
 {
+	OptionsDialog dlg(this);
+	dlg.exec();
 }
 
 void MainWindow::about()
