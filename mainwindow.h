@@ -18,11 +18,18 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+	void createFileMenu();
+	void createToolsMenu();
+	void createHelpMenu();
+
 public slots:
 	void newFile();
 	void openFile();
 	void saveFile();
 	void fileSelected(BaseFile* file);
+
+	void options();
+	void about();
 
 private:
 	void createToolbar();

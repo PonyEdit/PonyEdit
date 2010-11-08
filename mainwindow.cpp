@@ -8,6 +8,10 @@
 #include <QCryptographicHash>
 #include <QPushButton>
 #include <QToolBar>
+#include <QMessageBox>
+#include <QMenu>
+#include <QMenuBar>
+#include <QCoreApplication>
 #include "filedialog.h"
 #include "filelist.h"
 #include "editor.h"
@@ -24,6 +28,10 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(mFileList, SIGNAL(fileSelected(BaseFile*)), this, SLOT(fileSelected(BaseFile*)));
 
 	createToolbar();
+
+	createFileMenu();
+	createToolsMenu();
+	createHelpMenu();
 }
 
 MainWindow::~MainWindow()
@@ -76,7 +84,46 @@ void MainWindow::fileSelected(BaseFile* file)
 		mEditorStack->setCurrentWidget(editors[0]);
 }
 
+void MainWindow::options()
+{
+}
 
+void MainWindow::about()
+{
+	QMessageBox::about(this, tr("About Remoted"),
+					 tr("<p>It's awesome.</p><p>The End.</p>"));
+}
 
+void MainWindow::createFileMenu()
+{
+	QMenu *fileMenu = new QMenu(tr("&File"), this);
+	menuBar()->addMenu(fileMenu);
 
+	fileMenu->addAction(tr("&New"), this, SLOT(newFile()),
+						QKeySequence::New);
 
+	fileMenu->addAction(tr("&Open..."), this, SLOT(openFile()),
+						QKeySequence::Open);
+
+	fileMenu->addAction(tr("&Save"), this, SLOT(saveFile()),
+						QKeySequence::Save);
+
+	fileMenu->addAction(tr("E&xit"), QCoreApplication::instance(), SLOT(quit()),
+						QKeySequence::Quit);
+}
+
+void MainWindow::createToolsMenu()
+{
+	QMenu *toolsMenu = new QMenu(tr("&Tools"), this);
+	menuBar()->addMenu(toolsMenu);
+
+	toolsMenu->addAction(tr("&Options..."), this, SLOT(options()));
+}
+
+void MainWindow::createHelpMenu()
+{
+	 QMenu *helpMenu = new QMenu(tr("&Help"), this);
+	 menuBar()->addMenu(helpMenu);
+
+	 helpMenu->addAction(tr("&About"), this, SLOT(about()));
+}
