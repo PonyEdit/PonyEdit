@@ -128,16 +128,13 @@ SshControllerThread::SshControllerThread(SshRemoteController* controller, SshHos
 
 SshControllerThread::~SshControllerThread()
 {
-	if (mConnection)
-		delete mConnection;
+	disconnect();
 }
 
 void SshControllerThread::run()
 {
-	connect();
-	if (mCloseDown) return;
-	if (mStatus == SshRemoteController::Connected)
-		runMainLoop();
+	runMainLoop();
+	disconnect();
 }
 
 void SshControllerThread::loadScript(SshRemoteController::ScriptType type)
@@ -297,83 +294,133 @@ void SshControllerThread::connect()
 
 void SshControllerThread::runMainLoop()
 {
-	QTime lastMessageTime;
-	lastMessageTime.start();
-	SshRequest_keepalive keepAliveMessage;
+	//
+	//	Outer loop: Connects and tries to pump the queue
+	//
 
-	QList<SshRequest*> sendingMessages;
-
-	try
+	while (!mCloseDown)
 	{
-		while (1)
+		connect();
+		if (mCloseDown) return;
+		if (mStatus != SshRemoteController::Connected)
 		{
-			//
-			//	Check the send queue for messages. Drop them in a temp array if they're there
-			//	so the mutex doesn't need to be locked for too long.
-			//
+			qDebug() << "Failed to connect";
 
+			//	If there are files open on this host, tenaciously keep trying to connect
+			if (mHost->numOpenFiles() > 0)
+				continue;
+			else
+				throw(QString("Failed to connect"));
+		}
+		else
+		{
+			if (mHost->numOpenFiles() > 0)
+				qDebug() << "would try to re-establish remote buffers at this point";
+		}
+
+		QTime lastMessageTime;
+		lastMessageTime.restart();
+		SshRequest_keepalive keepAliveMessage;
+		QList<SshRequest*> sendingMessages;
+
+		//
+		//	Inner loop: Pumps messages until the connection dies or closedown is signalled
+		//
+
+		try
+		{
+			while (!mCloseDown)
+			{
+				//
+				//	Check the send queue for messages. Drop them in a temp array if they're there
+				//	so the mutex doesn't need to be locked for too long.
+				//
+
+				mRequestQueueLock.lock();
+				sendingMessages.append(mRequestQueue);
+				mRequestQueue.clear();
+				mRequestQueueLock.unlock();
+
+				if (lastMessageTime.elapsed() > KEEPALIVE_TIMEOUT)
+					sendingMessages.append(&keepAliveMessage);
+
+				//
+				//	If there are messages to send, pack them all into one message and send it
+				//
+
+				if (sendingMessages.length() > 0)
+				{
+					QByteArray sendBlob;
+					foreach (SshRequest* rq, sendingMessages)
+						rq->packMessage(&sendBlob);
+
+					sendBlob = sendBlob.toBase64();
+					sendBlob.append('\n');
+					mConnection->writeData(sendBlob.constData(), sendBlob.length());
+
+					//
+					//	Wait for a response for each message in turn
+					//
+
+					while (sendingMessages.length())
+					{
+						QByteArray response = QByteArray::fromBase64(mConnection->readLine());
+						SshRequest* rq = sendingMessages.takeFirst();
+
+						try
+						{
+							rq->handleResponse(response);
+							if (rq->hasManualComponent())
+								rq->doManualWork(mConnection);
+							rq->success();
+						}
+						catch (QString error)
+						{
+							rq->error(error);
+						}
+
+						//	Delete each request if it's not the keepalive message
+						if (rq != &keepAliveMessage)
+							delete rq;
+					}
+
+					lastMessageTime.restart();
+				}
+
+				if (mCloseDown) return;
+				msleep(10);
+			}
+		}
+		catch (QString error)
+		{
+			qDebug() << "Connection error caught: " << error;
+
+			//	Connection lost. Fail all the jobs in the queue.
 			mRequestQueueLock.lock();
 			sendingMessages.append(mRequestQueue);
 			mRequestQueue.clear();
-			mRequestQueueLock.unlock();
 
-			if (lastMessageTime.elapsed() > KEEPALIVE_TIMEOUT)
-				sendingMessages.append(&keepAliveMessage);
-
-			//
-			//	If there are messages to send, pack them all into one message and send it
-			//
-
-			if (sendingMessages.length() > 0)
+			foreach (SshRequest* rq, sendingMessages)
 			{
-				QByteArray sendBlob;
-				foreach (SshRequest* rq, sendingMessages)
-					rq->packMessage(&sendBlob);
-
-				sendBlob = sendBlob.toBase64();
-				sendBlob.append('\n');
-				mConnection->writeData(sendBlob.constData(), sendBlob.length());
-
-				//
-				//	Wait for a response for each message in turn
-				//
-
-				while (sendingMessages.length())
-				{
-					QByteArray response = QByteArray::fromBase64(mConnection->readLine());
-					SshRequest* rq = sendingMessages.takeFirst();
-
-					try
-					{
-						rq->handleResponse(response);
-						if (rq->hasManualComponent())
-							rq->doManualWork(mConnection);
-						rq->success();
-					}
-					catch (QString error)
-					{
-						rq->error(error);
-					}
-
-					//	Delete each request if it's not the keepalive message
-					if (rq != &keepAliveMessage)
-						delete rq;
-				}
-
-				lastMessageTime.restart();
+				rq->error("Connection lost: " + error);
+				if (rq != &keepAliveMessage)
+					delete rq;
 			}
 
-			if (mCloseDown) return;
-			msleep(10);
+			sendingMessages.clear();
+
+			disconnect();	//	This is inside the lock so status is "not connected" by the time the mutex comes undone.
+			mRequestQueueLock.unlock();
 		}
-	}
-	catch (QString error)
-	{
-		qDebug() << "Connection error caught: " << error;
 	}
 }
 
-
+void SshControllerThread::disconnect()
+{
+	if (mConnection)
+		delete mConnection;
+	setStatus(SshRemoteController::NotConnected);
+}
 
 
 

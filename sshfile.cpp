@@ -7,7 +7,13 @@
 SshFile::SshFile(const Location& location) : BaseFile(location)
 {
 	mHost = location.getRemoteHost();
+	mHost->registerOpenFile(this);
 	mBufferId = -1;
+}
+
+SshFile::~SshFile()
+{
+	mHost->unregisterOpenFile(this);
 }
 
 void SshFile::open()

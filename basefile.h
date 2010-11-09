@@ -46,6 +46,7 @@ signals:
 
 protected:
 	BaseFile(const Location& location);
+	virtual ~BaseFile();
 	void setOpenStatus(OpenStatus newStatus);
 
 	virtual void handleDocumentChange(int position, int removeChars, const QByteArray& insert);

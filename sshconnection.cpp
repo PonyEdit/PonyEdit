@@ -21,6 +21,11 @@ SshConnection::SshConnection()
 	: mSocket(-1), mSession(0), mChannel(0)
 {}
 
+SshConnection::~SshConnection()
+{
+	disconnect();
+}
+
 void SshConnection::connect(const char* host, int port)
 {
 	//	nslookup the hostname
@@ -58,6 +63,30 @@ void SshConnection::connect(const char* host, int port)
 
 	//	Fetch the remote host's fingerprint
 	mServerFingerprint = QByteArray(libssh2_hostkey_hash(mSession, LIBSSH2_HOSTKEY_HASH_SHA1), 20);
+}
+
+void SshConnection::disconnect()
+{
+	if (mChannel)
+	{
+		libssh2_channel_close(mChannel);
+		libssh2_channel_wait_closed(mChannel);
+		libssh2_channel_free(mChannel);
+		mChannel = NULL;
+	}
+
+	if (mSession)
+	{
+		libssh2_session_disconnect(mSession, "Closing connection");
+		libssh2_session_free(mSession);
+		mSession = NULL;
+	}
+
+	if (mSocket > -1)
+	{
+		closesocket(mSocket);
+		mSocket = -1;
+	}
 }
 
 SshConnection::AuthMethods SshConnection::getAuthenticationMethods(const char* username)
@@ -138,11 +167,13 @@ QByteArray SshConnection::readUntil(const char* marker)
 		if (rc > 0)
 		{
 			totalReceived += rc;
-			//qDebug() << QByteArray(mTmpBuffer, rc);
+			qDebug() << QByteArray(mTmpBuffer, rc);
 			mReadBuffer.append(mTmpBuffer, rc);
 		}
-		else if (rc < 0 && rc != LIBSSH2_ERROR_EAGAIN)
+		else if (rc < 0)
 			throw(QString("Error while receiving from remote host: ") + getLastError(rc));
+		else if (libssh2_channel_eof(mChannel))
+			throw(QString("Connection closed by remote host."));
 	}
 }
 
@@ -159,15 +190,22 @@ QString SshConnection::getLastError(int rc)
 
 QByteArray SshConnection::execute(const char* command)
 {
-	libssh2_channel_write(mChannel, command, strlen(command));
-	//qDebug() << "SENDING: " << command;
+	qDebug() << "SENDING: " << command;
+	int len = strlen(command);
+	int rc = libssh2_channel_write(mChannel, command, len);
+	if (rc != len)
+		throw(QString("Error while sending to remote host: ") + getLastError(rc));
+
 	return readToPrompt();
 }
 
 void SshConnection::writeData(const char* data, int length)
 {
-	libssh2_channel_write(mChannel, data, length);
-	//qDebug() << "SENDING: " << data;
+	qDebug() << "SENDING: " << data;
+	int rc = libssh2_channel_write(mChannel, data, length);
+	qDebug() << "Sent bytes: " << rc;
+	if (rc != length)
+		throw(QString("Error while sending to remote host: ") + getLastError(rc));
 }
 
 void SshConnection::sendEof()

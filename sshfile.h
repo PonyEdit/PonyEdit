@@ -3,7 +3,7 @@
 
 #include "basefile.h"
 
-class SshHost;
+class SshRemoteController;
 class SshFile : public BaseFile
 {
 public:
@@ -15,6 +15,7 @@ public:
 	SshFile(const Location& location);	//	Do not call; use File::getFile instead.
 
 protected:
+	virtual ~SshFile();
 	virtual void handleDocumentChange(int position, int removeChars, const QByteArray& insert);
 
 	SshHost* mHost;

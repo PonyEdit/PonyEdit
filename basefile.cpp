@@ -38,6 +38,8 @@ BaseFile* BaseFile::getFile(const Location& location)
 	return newFile;
 }
 
+BaseFile::~BaseFile() {}
+
 BaseFile::BaseFile(const Location& location)
 {
 	mOpenStatus = BaseFile::NotOpen;

@@ -19,9 +19,10 @@ public:
 
 public:
 	SshConnection();
+	~SshConnection();
 
 	void connect(const char* host, int port);
-	void disconnect() {}
+	void disconnect();
 	AuthMethods getAuthenticationMethods(const char* username);
 	bool authenticatePassword(const char* username, const char* password);
 	void startRemoteSlave(const char* filename);

@@ -133,4 +133,20 @@ Location SshHost::getDefaultLocation()
 	return Location(getDefaultPath());
 }
 
+void SshHost::registerOpenFile(SshFile* file)
+{
+	mOpenFiles.append(file);
+}
+
+void SshHost::unregisterOpenFile(SshFile* file)
+{
+	mOpenFiles.removeOne(file);
+}
+
+int SshHost::numOpenFiles() const
+{
+	return mOpenFiles.count();
+}
+
+
 

@@ -6,6 +6,7 @@
 #include "location.h"
 #include "sshremotecontroller.h"
 
+class SshFile;
 class SshHost
 {
 public:
@@ -45,6 +46,10 @@ public:
 	QString getDefaultPath();
 	Location getDefaultLocation();
 
+	void registerOpenFile(SshFile* file);
+	void unregisterOpenFile(SshFile* file);
+	int numOpenFiles() const;
+
 	//	Only usable when connected:
 	inline SshRemoteController* getController() { return mController; }
 	inline const QString& getHomeDirectory() { return mController->getHomeDirectory(); }
@@ -62,6 +67,8 @@ private:
 	bool mSavePassword;
 
 	QString mDefaultDirectory;
+
+	QList<SshFile*> mOpenFiles;
 
 	QString mName;
 	bool mSave;
