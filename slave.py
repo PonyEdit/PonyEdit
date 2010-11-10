@@ -45,6 +45,9 @@ class Buffer:
 		m = hashlib.md5(self.data)
 		return m.hexdigest()
 
+	def setData(self, data):
+		self.data = data
+
 #
 #	DataBlock class
 #
@@ -124,6 +127,7 @@ def msg_open(buff, params, result):
 	buffers[bufferId] = buff
 
 	result.write('L', bufferId)
+	result.writeString(buff.checksum())
 
 #	change
 def msg_change(buff, params, result):
@@ -139,6 +143,17 @@ def msg_save(buff, params, result):
 #	keepalive
 def msg_keepalive(buff, params, result): pass
 
+#	pushcontent
+def msg_pushcontent(buff, params, result):
+	buff.setData(params['d'])
+
+	s = buff.checksum()
+	if (params['c'] != s):
+		raise Exception("Checksums do not match: " + s + " vs " + params['c'])
+
+	if (params['s']):
+		buff.save()
+
 #
 #	Message Definitions
 #
@@ -149,7 +164,8 @@ messageDefs = \
 	2: msg_open,
 	3: msg_change,
 	4: msg_save,
-	5: msg_keepalive
+	5: msg_keepalive,
+	6: msg_pushcontent,
 }
 
 

@@ -148,5 +148,10 @@ int SshHost::numOpenFiles() const
 	return mOpenFiles.count();
 }
 
+const QList<SshFile*> SshHost::getOpenFiles() const
+{
+	return mOpenFiles;
+}
+
 
 

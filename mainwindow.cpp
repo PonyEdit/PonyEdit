@@ -60,7 +60,7 @@ void MainWindow::openFile()
 			if (!location.isDirectory())
 			{
 				BaseFile* file = location.getFile();
-				if (file->isUnopened())
+				if (file->isClosed())
 					file->open();
 
 				Editor* newEditor = new Editor(file);

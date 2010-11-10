@@ -1,4 +1,5 @@
 #include <QDebug.h>
+#include <QCryptographicHash>
 
 #include "sshfile.h"
 #include "basefile.h"
@@ -42,8 +43,9 @@ BaseFile::~BaseFile() {}
 
 BaseFile::BaseFile(const Location& location)
 {
-	mOpenStatus = BaseFile::NotOpen;
+	mOpenStatus = BaseFile::Closed;
 	mLocation = location;
+	mIgnoreChanges = false;
 
 	mDocument = new QTextDocument();
 	mDocumentLayout = new QPlainTextDocumentLayout(mDocument);
@@ -55,7 +57,7 @@ BaseFile::BaseFile(const Location& location)
 
 void BaseFile::documentChanged(int position, int removeChars, int charsAdded)
 {
-	if (mOpenStatus != Open)
+	if (mIgnoreChanges)
 		return;
 
 	QByteArray added = "";
@@ -100,7 +102,9 @@ void BaseFile::fileOpened(const QByteArray& content)
 	mRevision = 0;
 	mLastSavedRevision = 0;
 
+	mIgnoreChanges = true;
 	mDocument->setPlainText(content);
+	mIgnoreChanges = false;
 
 	setOpenStatus(Open);
 }
@@ -130,6 +134,13 @@ void BaseFile::editorAttached(Editor* editor)	//	Call only from Editor construct
 void BaseFile::editorDetached(Editor* editor)	//	Call only from Editor destructor.
 {
 	mAttachedEditors.removeOne(editor);
+}
+
+QString BaseFile::getChecksum() const
+{
+	QCryptographicHash hash(QCryptographicHash::Md5);
+	hash.addData(mContent);
+	return QString(hash.result().toHex().toLower());
 }
 
 

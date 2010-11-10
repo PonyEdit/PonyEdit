@@ -141,7 +141,7 @@ void SshRequest_ls::success()
 //  Message 2: open  //
 ///////////////////////
 
-SshRequest_open::SshRequest_open(SshFile* file) : SshRequest(2, 0), mFile(file) {}
+SshRequest_open::SshRequest_open(SshFile* file, SshRequest_open::Fetch fetch) : SshRequest(2, 0), mFile(file), mFetch(fetch) {}
 
 void SshRequest_open::packBody(QByteArray* target)
 {
@@ -173,16 +173,27 @@ void SshRequest_open::handleResponse(const QByteArray& response)
 	}
 
 	//
-	//	Take note of the bufferId
+	//	Take note of the bufferId & checksum
 	//
 
 	mBufferId = *(quint32*)cursor;
+	cursor += 4;
+
+	int checksumLength = *(quint32*)cursor;
+	cursor += 4;
+
+	mChecksum = QByteArray(cursor, checksumLength);
+	cursor += checksumLength;
+
 }
 
 void SshRequest_open::doManualWork(SshConnection* connection)
 {
-	const Location& fileLocation = mFile->getLocation();
-	mData = connection->readFile(fileLocation.getRemotePath().toUtf8());
+	if (mFetch == Content)
+	{
+		const Location& fileLocation = mFile->getLocation();
+		mData = connection->readFile(fileLocation.getRemotePath().toUtf8());
+	}
 }
 
 void SshRequest_open::error(const QString& error)
@@ -192,7 +203,7 @@ void SshRequest_open::error(const QString& error)
 
 void SshRequest_open::success()
 {
-	mFile->fileOpened(mBufferId, mData);
+	mFile->fileOpened(mBufferId, mData, mChecksum);
 }
 
 ////////////////////////////////
@@ -298,4 +309,69 @@ void SshRequest_saveBuffer::success()
 {
 	mFile->savedRevision(mRevision);
 }
+
+//////////////////////////////
+//  Message 6: pushContent  //
+//////////////////////////////
+
+SshRequest_pushContent::SshRequest_pushContent(quint32 bufferId, SshFile* file, const QByteArray& content)
+	: SshRequest(6, bufferId)
+{
+	mFile = file;
+	mContent = content;
+}
+
+void SshRequest_pushContent::packBody(QByteArray* target)
+{
+	QCryptographicHash hash(QCryptographicHash::Md5);
+	hash.addData(mContent);
+	QByteArray md5checksum = hash.result().toHex().toLower();
+
+	addData(target, 'd', mContent);
+	addData(target, 'c', md5checksum);
+	addData(target, 's', 0);
+}
+
+void SshRequest_pushContent::handleResponse(const QByteArray& response)
+{
+	const char* cursor = response.constData();
+
+	//
+	//	Check for errors
+	//
+
+	bool success = *(cursor++);
+	if (!success)
+	{
+		quint32 errorLength;
+		QString errorString;
+
+		errorLength = *(quint32*)cursor;
+		cursor += 4;
+
+		errorString = QByteArray(cursor, errorLength);
+		cursor += errorLength;
+
+		throw(errorString);
+	}
+}
+
+void SshRequest_pushContent::error(const QString& error)
+{
+	mFile->contentPushError(error);
+}
+
+void SshRequest_pushContent::success()
+{
+	mFile->contentPushSuccess();
+}
+
+
+
+
+
+
+
+
+
 

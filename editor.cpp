@@ -37,7 +37,7 @@ Editor::~Editor()
 
 void Editor::openStatusChanged(int openStatus)
 {
-	if (openStatus == BaseFile::NotOpen)
+	if (openStatus == BaseFile::Closed)
 		showLoading();
 	else if (openStatus == BaseFile::Open)
 		setCurrentWidget(mEditor);

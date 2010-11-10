@@ -83,7 +83,9 @@ private:
 class SshRequest_open : public SshRequest
 {
 public:
-	SshRequest_open(SshFile* file);
+	enum Fetch { Content, Checksum };
+
+	SshRequest_open(SshFile* file, Fetch fetch);
 	virtual void packBody(QByteArray* target);
 	virtual void handleResponse(const QByteArray& response);
 
@@ -96,6 +98,8 @@ public:
 private:
 	SshFile* mFile;
 	QByteArray mData;
+	QString mChecksum;
+	Fetch mFetch;
 };
 
 ////////////////////////////////
@@ -145,6 +149,25 @@ class SshRequest_keepalive : public SshRequest
 {
 public:
 	SshRequest_keepalive() : SshRequest(5, 0) {}
+};
+
+//////////////////////////////
+//  Message 6: pushContent  //
+//////////////////////////////
+
+class SshRequest_pushContent : public SshRequest
+{
+public:
+	SshRequest_pushContent(quint32 bufferId, SshFile* file, const QByteArray& content);
+	virtual void packBody(QByteArray* target);
+	virtual void handleResponse(const QByteArray& response);
+
+	virtual void error(const QString& error);
+	virtual void success();
+
+private:
+	QByteArray mContent;
+	SshFile* mFile;
 };
 
 #endif // SSHREQUEST_H

@@ -49,6 +49,7 @@ public:
 	void registerOpenFile(SshFile* file);
 	void unregisterOpenFile(SshFile* file);
 	int numOpenFiles() const;
+	const QList<SshFile*> getOpenFiles() const;
 
 	//	Only usable when connected:
 	inline SshRemoteController* getController() { return mController; }

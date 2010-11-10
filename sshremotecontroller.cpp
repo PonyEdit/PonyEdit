@@ -10,8 +10,9 @@
 #include "sshhost.h"
 #include "sshrequest.h"
 #include "sshconnection.h"
+#include "sshfile.h"
 
-const char* SshRemoteController::sStatusStrings[] = { "not connected", "connecting", "password required", "negotiating with remote host", "uploading slave script", "starting slave script", "connected", "error" };
+const char* SshRemoteController::sStatusStrings[] = { "not connected", "connecting", "password required", "negotiating with remote host", "uploading slave script", "starting slave script", "pushing buffers", "connected", "error" };
 
 
 /////////////////////////////////
@@ -27,7 +28,7 @@ public:
 	void connect();
 	void disconnect();
 	void runMainLoop();
-	void setStatus(SshRemoteController::Status status) { mStatus = status; mLastStatusChange++; }
+	void setStatus(SshRemoteController::Status status) { mStatus = status; mLastStatusChange++; mController->emitStateChanged(); }
 	void loadScript(SshRemoteController::ScriptType type);
 
 	SshRemoteController::Status mStatus;
@@ -85,10 +86,21 @@ void SshRemoteController::abortConnection()
 void SshRemoteController::sendRequest(SshRequest* request)
 {
 	request->setController(this);
+	bool connected;
 
+	//	Lock the thread before checking if the status is ok; avoids race conditions during disconnects
 	mThread->mRequestQueueLock.lock();
-	mThread->mRequestQueue.append(request);
+	connected = (mThread->mStatus == Connected);
+	if (connected)
+		mThread->mRequestQueue.append(request);
 	mThread->mRequestQueueLock.unlock();
+
+	//	If not connected, auto-fail & delete the request :(
+	if (!connected)
+	{
+		request->error("Not connected!");
+		delete request;
+	}
 }
 
 const QString& SshRemoteController::getHomeDirectory() const
@@ -279,6 +291,10 @@ void SshControllerThread::connect()
 			throw(QString("Failed to start slave script!"));
 		if (mCloseDown) return;
 
+		//
+		//	Connected!!
+		//
+
 		setStatus(SshRemoteController::Connected);
 	}
 	catch (QString err)
@@ -301,21 +317,16 @@ void SshControllerThread::runMainLoop()
 	while (!mCloseDown)
 	{
 		connect();
-		if (mCloseDown) return;
+		if (mCloseDown) break;
+
+		//	Handle connection failure; try again if files are open, fail if not.
 		if (mStatus != SshRemoteController::Connected)
 		{
 			qDebug() << "Failed to connect";
-
-			//	If there are files open on this host, tenaciously keep trying to connect
 			if (mHost->numOpenFiles() > 0)
 				continue;
 			else
 				throw(QString("Failed to connect"));
-		}
-		else
-		{
-			if (mHost->numOpenFiles() > 0)
-				qDebug() << "would try to re-establish remote buffers at this point";
 		}
 
 		QTime lastMessageTime;
@@ -395,7 +406,10 @@ void SshControllerThread::runMainLoop()
 		{
 			qDebug() << "Connection error caught: " << error;
 
+			//
 			//	Connection lost. Fail all the jobs in the queue.
+			//
+
 			mRequestQueueLock.lock();
 			sendingMessages.append(mRequestQueue);
 			mRequestQueue.clear();
@@ -410,6 +424,7 @@ void SshControllerThread::runMainLoop()
 			sendingMessages.clear();
 
 			disconnect();	//	This is inside the lock so status is "not connected" by the time the mutex comes undone.
+
 			mRequestQueueLock.unlock();
 		}
 	}
@@ -421,6 +436,4 @@ void SshControllerThread::disconnect()
 		delete mConnection;
 	setStatus(SshRemoteController::NotConnected);
 }
-
-
 

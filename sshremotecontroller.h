@@ -2,6 +2,7 @@
 #define SSHREMOTECONTROLLER_H
 
 #include <QString>
+#include <QObject>
 #include <QByteArray>
 
 class SshControllerThread;
@@ -10,10 +11,12 @@ class SshHost;
 
 #define	KEEPALIVE_TIMEOUT 60000	/* 60 seconds */
 
-class SshRemoteController
+class SshRemoteController : public QObject
 {
+	Q_OBJECT
+
 public:
-	enum Status { NotConnected, Connecting, WaitingForPassword, Negotiating, UploadingSlave, StartingSlave, Connected, Error };
+	enum Status { NotConnected, Connecting, WaitingForPassword, Negotiating, UploadingSlave, StartingSlave, PushingBuffers, Connected, Error };
 	static const char* sStatusStrings[];
 
 	enum ScriptType { AutoDetect, Python, Perl, NumScriptTypes };
@@ -30,6 +33,11 @@ public:
 	Status getStatus() const;
 	static const char* getStatusString(Status s) { return sStatusStrings[s]; }
 	const QString& getError() const;
+
+	void emitStateChanged() { emit stateChanged(); }
+
+signals:
+	void stateChanged();
 
 private:
 	SshControllerThread* mThread;

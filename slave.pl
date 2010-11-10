@@ -206,6 +206,7 @@ sub msg_open
 	$buffers{$bufferId} = $buff;
 
 	$result->write( 'L', $bufferId );
+	$result->writeString( $buff->checksum() );
 }
 
 #	change

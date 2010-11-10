@@ -14,7 +14,7 @@ class BaseFile : public QObject
 	Q_OBJECT
 
 public:
-	enum OpenStatus { NotOpen, Opening, Open, Error };
+	enum OpenStatus { Closed, Opening, Open, Disconnected, Reconnecting, Error };
 
 	static BaseFile* getFile(const Location& location);
 	static const QList<BaseFile*>& getActiveFiles();
@@ -25,7 +25,7 @@ public:
 	inline const QString& getError() const { return mError; }
 	inline bool isOpen() const { return mOpenStatus == Open; }
 	inline bool isOpening() const { return mOpenStatus == Opening; }
-	inline bool isUnopened() const { return mOpenStatus == NotOpen; }
+	inline bool isClosed() const { return mOpenStatus == Closed; }
 	inline OpenStatus getOpenStatus() const { return mOpenStatus; }
 
 	virtual void open() = 0;
@@ -35,6 +35,8 @@ public:
 	inline const QList<Editor*>& getAttachedEditors() { return mAttachedEditors; }
 	void editorAttached(Editor* editor);	//	Call only from Editor constructor.
 	void editorDetached(Editor* editor);	//	Call only from Editor destructor.
+
+	QString getChecksum() const;
 
 public slots:
 	void fileOpened(const QByteArray& content);
@@ -62,8 +64,8 @@ protected:
 	bool mDosLineEndings;
 	int mRevision;
 	int mLastSavedRevision;
+	bool mIgnoreChanges;	//	Used to disregard change notifications while setting up the text document initially.
 
-private:
 	OpenStatus mOpenStatus;
 	QList<Editor*> mAttachedEditors;
 
