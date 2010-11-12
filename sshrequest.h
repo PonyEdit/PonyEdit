@@ -100,6 +100,7 @@ private:
 	QByteArray mData;
 	QString mChecksum;
 	Fetch mFetch;
+		quint32 mRevision;
 };
 
 ////////////////////////////////

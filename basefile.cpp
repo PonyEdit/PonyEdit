@@ -86,26 +86,16 @@ void BaseFile::handleDocumentChange(int position, int removeChars, const QByteAr
 {
 	mRevision++;
 
-	//	If this type of file stores changes since the last save, add this to the buffer of changes.
-	//	If it is too big, give up buffering until next save.
-	if (storeChanges() && !mChangeBufferOversized)
+	if (storeChanges())
 	{
 		mChangeBufferSize += insert.size();
-		if (mChangeBufferSize > (mContent.size() * 0.9f))
-		{
-			foreach (Change* change, mChangesSinceLastSave) delete change;
-			mChangesSinceLastSave.clear();
-			mChangeBufferOversized = true;
-		}
-		else
-		{
-			Change* change = new Change();
-			change->revision = mRevision;
-			change->position = position;
-			change->remove = removeChars;
-			change->insert = insert;
-			mChangesSinceLastSave.append(change);
-		}
+
+		Change* change = new Change();
+		change->revision = mRevision;
+		change->position = position;
+		change->remove = removeChars;
+		change->insert = insert;
+		mChangesSinceLastSave.append(change);
 	}
 
 	mContent.replace(position, removeChars, insert);
@@ -123,7 +113,7 @@ void BaseFile::fileOpened(const QByteArray& content)
 
 	mContent = content;
 
-	//	Detect line ending mode, then convert it to unix-style. Use unix-style line endings everywhere, only convert to DOS at save time.
+	//  Detect line ending mode, then convert it to unix-style. Use unix-style line endings everywhere, only convert to DOS at save time.
 	mDosLineEndings = mContent.contains("\r\n");
 	if (mDosLineEndings)
 		mContent.replace("\r\n", "\n");
@@ -175,18 +165,23 @@ QString BaseFile::getChecksum() const
 
 void BaseFile::savedRevision(int revision)
 {
-	mLastSavedRevision = revision;
-
-	//	Successful save: Dump changes since the last save, prepare to buffer the next set...
-	if (storeChanges())
-	{
-		while (mChangesSinceLastSave.length() && mChangesSinceLastSave[0]->revision <= mLastSavedRevision)
-			mChangesSinceLastSave.pop_front();
-		mChangeBufferOversized = false;
-		mChangeBufferSize = 0;
-	}
-
+	setLastSavedRevision(revision);
+	gDispatcher->emitGeneralStatusMessage(QString("Finished saving ") + mLocation.getLabel() + " at revision " + QString::number(revision));
 	qDebug() << "Saved revision " << revision;
+}
+
+void BaseFile::setLastSavedRevision(int lastSavedRevision)
+{
+	this->mLastSavedRevision = lastSavedRevision;
+
+	//	Purge all stored changes up to that point...
+	while (mChangesSinceLastSave.length() > 0 && mChangesSinceLastSave[0]->revision <= mLastSavedRevision)
+	{
+		Change* change = mChangesSinceLastSave.takeFirst();
+		mChangeBufferSize -= change->insert.size();
+		if (mChangeBufferSize < 0) mChangeBufferSize = 0;
+		delete change;
+	}
 }
 
 

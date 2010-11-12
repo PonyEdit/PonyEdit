@@ -55,6 +55,7 @@ protected:
 
 	virtual void handleDocumentChange(int position, int removeChars, const QByteArray& insert);
 	virtual bool storeChanges() { return false; }
+	void setLastSavedRevision(int lastSavedRevision);
 
 	Location mLocation;
 	QByteArray mContent;

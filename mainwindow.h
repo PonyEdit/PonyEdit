@@ -5,6 +5,8 @@
 #include <QStatusBar>
 #include <QTextEdit>
 #include <QStackedWidget>
+#include <QStatusBar>
+#include <QLabel>
 
 class Editor;
 class FileList;
@@ -32,12 +34,15 @@ public slots:
 	void about();
 
 	void showErrorMessage(QString error);
+	void showStatusMessage(QString message);
 
 private:
 	void createToolbar();
 
 	FileList* mFileList;
 	QStackedWidget* mEditorStack;
+	QStatusBar* mStatusBar;
+	QLabel* mStatusLine;
 	QList<Editor*> mEditors;
 };
 

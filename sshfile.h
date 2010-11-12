@@ -11,7 +11,7 @@ class SshFile : public BaseFile
 public:
 	void open();
 	void save();
-	void fileOpened(int bufferId, const QByteArray& content, const QString& checksum);
+		void fileOpened(int bufferId, const QByteArray& content, const QString& checksum);
 
 	SshFile(const Location& location);	//	Do not call; use File::getFile instead.
 	void reconnect();

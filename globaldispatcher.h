@@ -18,11 +18,13 @@ public:
 	void emitSshServersUpdated() { emit sshServersUpdated(); }
 	void emitActiveFilesUpdated() { emit activeFilesUpdated(); }
 	void emitGeneralErrorMessage(QString error) { emit generalErrorMessage(error); }
+	void emitGeneralStatusMessage(QString message) { emit generalStatusMessage(message); }
 
 signals:
 	void sshServersUpdated();
 	void activeFilesUpdated();
 	void generalErrorMessage(QString error);
+	void generalStatusMessage(QString message);
 };
 
 extern GlobalDispatcher* gDispatcher;

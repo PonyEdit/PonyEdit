@@ -29,6 +29,11 @@ MainWindow::MainWindow(QWidget *parent)
 	addDockWidget(Qt::LeftDockWidgetArea, mFileList, Qt::Vertical);
 	connect(mFileList, SIGNAL(fileSelected(BaseFile*)), this, SLOT(fileSelected(BaseFile*)));
 
+	mStatusLine = new QLabel();
+	mStatusBar = new QStatusBar();
+	mStatusBar->addPermanentWidget(mStatusLine);
+	setStatusBar(mStatusBar);
+
 	createToolbar();
 
 	createFileMenu();
@@ -36,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent)
 	createHelpMenu();
 
 	connect(gDispatcher, SIGNAL(generalErrorMessage(QString)), this, SLOT(showErrorMessage(QString)), Qt::QueuedConnection);
+	connect(gDispatcher, SIGNAL(generalStatusMessage(QString)), this, SLOT(showStatusMessage(QString)), Qt::QueuedConnection);
 }
 
 MainWindow::~MainWindow()
@@ -137,6 +143,11 @@ void MainWindow::createHelpMenu()
 void MainWindow::showErrorMessage(QString error)
 {
 	QMessageBox::critical(this, error, "Error");
+}
+
+void MainWindow::showStatusMessage(QString message)
+{
+	mStatusLine->setText(message);
 }
 
 

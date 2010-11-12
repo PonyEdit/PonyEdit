@@ -204,7 +204,7 @@ void SshRequest_open::error(const QString& error)
 
 void SshRequest_open::success()
 {
-	mFile->fileOpened(mBufferId, mData, mChecksum);
+		mFile->fileOpened(mBufferId, mData, mChecksum);
 }
 
 ////////////////////////////////
