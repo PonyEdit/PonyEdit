@@ -14,6 +14,7 @@ class BaseFile : public QObject
 	Q_OBJECT
 
 public:
+	struct Change { int revision; int position; int remove; QByteArray insert; };
 	enum OpenStatus { Closed, Opening, Open, Disconnected, Reconnecting, Error };
 
 	static BaseFile* getFile(const Location& location);
@@ -31,6 +32,7 @@ public:
 	virtual void open() = 0;
 	virtual void save() = 0;
 	void openError(const QString& error);
+	void savedRevision(int revision);
 
 	inline const QList<Editor*>& getAttachedEditors() { return mAttachedEditors; }
 	void editorAttached(Editor* editor);	//	Call only from Editor constructor.
@@ -52,6 +54,7 @@ protected:
 	void setOpenStatus(OpenStatus newStatus);
 
 	virtual void handleDocumentChange(int position, int removeChars, const QByteArray& insert);
+	virtual bool storeChanges() { return false; }
 
 	Location mLocation;
 	QByteArray mContent;
@@ -65,6 +68,10 @@ protected:
 	int mRevision;
 	int mLastSavedRevision;
 	bool mIgnoreChanges;	//	Used to disregard change notifications while setting up the text document initially.
+
+	QList<Change*> mChangesSinceLastSave;
+	bool mChangeBufferOversized;
+	quint64 mChangeBufferSize;
 
 	OpenStatus mOpenStatus;
 	QList<Editor*> mAttachedEditors;

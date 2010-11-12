@@ -2,6 +2,7 @@
 #define GLOBALDISPATCHER_H
 
 #include <QObject>
+#include <QString>
 
 //
 //	The global dispatch object (gDispatcher) is used to dispatch globally interesting signals
@@ -16,10 +17,12 @@ public:
 	GlobalDispatcher() {}	//	Do not call outside of main(); just use gDispatcher instead.
 	void emitSshServersUpdated() { emit sshServersUpdated(); }
 	void emitActiveFilesUpdated() { emit activeFilesUpdated(); }
+	void emitGeneralErrorMessage(QString error) { emit generalErrorMessage(error); }
 
 signals:
 	void sshServersUpdated();
 	void activeFilesUpdated();
+	void generalErrorMessage(QString error);
 };
 
 extern GlobalDispatcher* gDispatcher;

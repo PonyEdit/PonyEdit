@@ -3,6 +3,7 @@
 #include "sshrequest.h"
 #include "sshfile.h"
 #include "sshconnection.h"
+#include "globaldispatcher.h"
 
 //////////////////
 //  Base class  //
@@ -302,7 +303,7 @@ void SshRequest_saveBuffer::handleResponse(const QByteArray& response)
 
 void SshRequest_saveBuffer::error(const QString& error)
 {
-	qDebug() << "Error saving file: " << error;
+	gDispatcher->emitGeneralErrorMessage(QString("Failed to save ") + mFile->getLocation().getLabel() + ": " + error);
 }
 
 void SshRequest_saveBuffer::success()

@@ -60,12 +60,6 @@ void SshFile::handleDocumentChange(int position, int removeChars, const QByteArr
 	mHost->getController()->sendRequest(new SshRequest_changeBuffer(mBufferId, position, removeChars, insert));
 }
 
-void SshFile::savedRevision(int revision)
-{
-	mLastSavedRevision = revision;
-	qDebug() << "Saved revision " << revision;
-}
-
 void SshFile::save()
 {
 	if (!mHost->ensureConnection())

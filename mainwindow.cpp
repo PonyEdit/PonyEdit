@@ -16,6 +16,7 @@
 #include "filelist.h"
 #include "editor.h"
 #include "optionsdialog.h"
+#include "globaldispatcher.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -33,6 +34,8 @@ MainWindow::MainWindow(QWidget *parent)
 	createFileMenu();
 	createToolsMenu();
 	createHelpMenu();
+
+	connect(gDispatcher, SIGNAL(generalErrorMessage(QString)), this, SLOT(showErrorMessage(QString)), Qt::QueuedConnection);
 }
 
 MainWindow::~MainWindow()
@@ -130,3 +133,10 @@ void MainWindow::createHelpMenu()
 
 	 helpMenu->addAction(tr("&About"), this, SLOT(about()));
 }
+
+void MainWindow::showErrorMessage(QString error)
+{
+	QMessageBox::critical(this, error, "Error");
+}
+
+

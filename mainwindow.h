@@ -31,6 +31,8 @@ public slots:
 	void options();
 	void about();
 
+	void showErrorMessage(QString error);
+
 private:
 	void createToolbar();
 

@@ -39,13 +39,20 @@ BaseFile* BaseFile::getFile(const Location& location)
 	return newFile;
 }
 
-BaseFile::~BaseFile() {}
+BaseFile::~BaseFile()
+{
+	foreach (Change* change, mChangesSinceLastSave) delete change;
+	mChangesSinceLastSave.clear();
+}
 
 BaseFile::BaseFile(const Location& location)
 {
 	mOpenStatus = BaseFile::Closed;
 	mLocation = location;
 	mIgnoreChanges = false;
+
+	mChangeBufferOversized = false;
+	mChangeBufferSize = 0;
 
 	mDocument = new QTextDocument();
 	mDocumentLayout = new QPlainTextDocumentLayout(mDocument);
@@ -78,6 +85,29 @@ void BaseFile::documentChanged(int position, int removeChars, int charsAdded)
 void BaseFile::handleDocumentChange(int position, int removeChars, const QByteArray &insert)
 {
 	mRevision++;
+
+	//	If this type of file stores changes since the last save, add this to the buffer of changes.
+	//	If it is too big, give up buffering until next save.
+	if (storeChanges() && !mChangeBufferOversized)
+	{
+		mChangeBufferSize += insert.size();
+		if (mChangeBufferSize > (mContent.size() * 0.9f))
+		{
+			foreach (Change* change, mChangesSinceLastSave) delete change;
+			mChangesSinceLastSave.clear();
+			mChangeBufferOversized = true;
+		}
+		else
+		{
+			Change* change = new Change();
+			change->revision = mRevision;
+			change->position = position;
+			change->remove = removeChars;
+			change->insert = insert;
+			mChangesSinceLastSave.append(change);
+		}
+	}
+
 	mContent.replace(position, removeChars, insert);
 	mChanged = true;
 }
@@ -141,6 +171,22 @@ QString BaseFile::getChecksum() const
 	QCryptographicHash hash(QCryptographicHash::Md5);
 	hash.addData(mContent);
 	return QString(hash.result().toHex().toLower());
+}
+
+void BaseFile::savedRevision(int revision)
+{
+	mLastSavedRevision = revision;
+
+	//	Successful save: Dump changes since the last save, prepare to buffer the next set...
+	if (storeChanges())
+	{
+		while (mChangesSinceLastSave.length() && mChangesSinceLastSave[0]->revision <= mLastSavedRevision)
+			mChangesSinceLastSave.pop_front();
+		mChangeBufferOversized = false;
+		mChangeBufferSize = 0;
+	}
+
+	qDebug() << "Saved revision " << revision;
 }
 
 
