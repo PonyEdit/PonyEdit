@@ -63,6 +63,9 @@ void SshFile::fileOpened(int bufferId, const QByteArray& content, const QString&
 
 void SshFile::handleDocumentChange(int position, int removeChars, const QByteArray& insert)
 {
+	if (mIgnoreChanges)
+		return;
+
 	BaseFile::handleDocumentChange(position, removeChars, insert);
 	qDebug() << "Edit revision " << mRevision;
 
@@ -136,6 +139,8 @@ void SshFile::setLastSavedRevision(int lastSavedRevision)
 {
 	BaseFile::setLastSavedRevision(lastSavedRevision);
 
+	qDebug() << mChangePumpCursor << mChangesSinceLastSave.length();
+
 	//	Purge all stored changes up to that point...
 	while (mChangesSinceLastSave.length() > 0 && mChangesSinceLastSave[0]->revision <= mLastSavedRevision)
 	{
@@ -144,6 +149,8 @@ void SshFile::setLastSavedRevision(int lastSavedRevision)
 		mChangePumpCursor--;
 		delete change;
 	}
+
+	qDebug() << mChangePumpCursor << mChangesSinceLastSave.length();
 
 	if (mChangeBufferSize < 0) mChangeBufferSize = 0;
 	if (mChangePumpCursor < 0) mChangePumpCursor = 0;
