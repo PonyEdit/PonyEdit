@@ -272,9 +272,9 @@ void SshRequest_saveBuffer::packBody(QByteArray* target)
 {
 	QCryptographicHash hash(QCryptographicHash::Md5);
 	hash.addData(mFileContent);
-	QByteArray md5checksum = hash.result().toHex().toLower();
+	mChecksum = hash.result().toHex().toLower();
 
-	addData(target, 'c', md5checksum);
+	addData(target, 'c', mChecksum);
 }
 
 void SshRequest_saveBuffer::handleResponse(const QByteArray& response)
@@ -308,7 +308,7 @@ void SshRequest_saveBuffer::error(const QString& error)
 
 void SshRequest_saveBuffer::success()
 {
-	mFile->savedRevision(mRevision);
+	mFile->savedRevision(mRevision, mChecksum);
 }
 
 //////////////////////////////

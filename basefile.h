@@ -15,7 +15,7 @@ class BaseFile : public QObject
 
 public:
 	struct Change { int revision; int position; int remove; QByteArray insert; };
-	enum OpenStatus { Closed, Opening, Open, Disconnected, Reconnecting, Error };
+	enum OpenStatus { Closed, Loading, LoadError, Ready, Disconnected, Reconnecting, Repairing, Closing };
 
 	static BaseFile* getFile(const Location& location);
 	static const QList<BaseFile*>& getActiveFiles();
@@ -24,15 +24,13 @@ public:
 	inline const Location& getLocation() const { return mLocation; }
 	inline QTextDocument* getTextDocument() { return mDocument; }
 	inline const QString& getError() const { return mError; }
-	inline bool isOpen() const { return mOpenStatus == Open; }
-	inline bool isOpening() const { return mOpenStatus == Opening; }
 	inline bool isClosed() const { return mOpenStatus == Closed; }
 	inline OpenStatus getOpenStatus() const { return mOpenStatus; }
 
 	virtual void open() = 0;
 	virtual void save() = 0;
 	void openError(const QString& error);
-	void savedRevision(int revision);
+	void savedRevision(int revision, const QByteArray& checksum);
 
 	inline const QList<Editor*>& getAttachedEditors() { return mAttachedEditors; }
 	void editorAttached(Editor* editor);	//	Call only from Editor constructor.
@@ -67,11 +65,12 @@ protected:
 	bool mChanged;
 	bool mDosLineEndings;
 	int mRevision;
-	int mLastSavedRevision;
-	bool mIgnoreChanges;	//	Used to disregard change notifications while setting up the text document initially.
+	bool mIgnoreChanges;	//	To disregard change signals while changing content of QTextDocument programmatically.
 
+	//	Stuff for tracking saves and changes since the most recent save.
+	int mLastSavedRevision;
+	QByteArray mLastSaveChecksum;
 	QList<Change*> mChangesSinceLastSave;
-	bool mChangeBufferOversized;
 	quint64 mChangeBufferSize;
 
 	OpenStatus mOpenStatus;

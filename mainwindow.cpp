@@ -142,7 +142,7 @@ void MainWindow::createHelpMenu()
 
 void MainWindow::showErrorMessage(QString error)
 {
-	QMessageBox::critical(this, error, "Error");
+	QMessageBox::critical(this, "Error", error);
 }
 
 void MainWindow::showStatusMessage(QString message)

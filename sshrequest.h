@@ -100,7 +100,6 @@ private:
 	QByteArray mData;
 	QString mChecksum;
 	Fetch mFetch;
-		quint32 mRevision;
 };
 
 ////////////////////////////////
@@ -138,6 +137,7 @@ public:
 
 private:
 	QByteArray mFileContent;
+	QByteArray mChecksum;
 	SshFile* mFile;
 	int mRevision;
 };

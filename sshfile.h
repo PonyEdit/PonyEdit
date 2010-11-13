@@ -11,7 +11,7 @@ class SshFile : public BaseFile
 public:
 	void open();
 	void save();
-		void fileOpened(int bufferId, const QByteArray& content, const QString& checksum);
+	void fileOpened(int bufferId, const QByteArray& content, const QString& checksum);
 
 	SshFile(const Location& location);	//	Do not call; use File::getFile instead.
 	void reconnect();
@@ -25,12 +25,15 @@ public slots:
 protected:
 	virtual ~SshFile();
 	virtual void handleDocumentChange(int position, int removeChars, const QByteArray& insert);
+	void pumpChangeQueue();
 	void pushContentToSlave();
 
 	virtual bool storeChanges() { return true; }
 
 	SshHost* mHost;
+	SshRemoteController* mController;	//	Not available before opening the file.
 	int mBufferId;
+	int mChangePumpCursor;
 };
 
 #endif // SSHFILE_H

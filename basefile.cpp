@@ -49,9 +49,8 @@ BaseFile::BaseFile(const Location& location)
 {
 	mOpenStatus = BaseFile::Closed;
 	mLocation = location;
-	mIgnoreChanges = false;
 
-	mChangeBufferOversized = false;
+	mIgnoreChanges = false;
 	mChangeBufferSize = 0;
 
 	mDocument = new QTextDocument();
@@ -64,9 +63,6 @@ BaseFile::BaseFile(const Location& location)
 
 void BaseFile::documentChanged(int position, int removeChars, int charsAdded)
 {
-	if (mIgnoreChanges)
-		return;
-
 	QByteArray added = "";
 	for (int i = 0; i < charsAdded; i++)
 	{
@@ -84,6 +80,9 @@ void BaseFile::documentChanged(int position, int removeChars, int charsAdded)
 
 void BaseFile::handleDocumentChange(int position, int removeChars, const QByteArray &insert)
 {
+	if (mIgnoreChanges)
+		return;
+
 	mRevision++;
 
 	if (storeChanges())
@@ -126,13 +125,13 @@ void BaseFile::fileOpened(const QByteArray& content)
 	mDocument->setPlainText(content);
 	mIgnoreChanges = false;
 
-	setOpenStatus(Open);
+	setOpenStatus(Ready);
 }
 
 void BaseFile::openError(const QString& error)
 {
 	mError = error;
-	setOpenStatus(Error);
+	setOpenStatus(LoadError);
 }
 
 void BaseFile::setOpenStatus(OpenStatus newStatus)
@@ -163,8 +162,9 @@ QString BaseFile::getChecksum() const
 	return QString(hash.result().toHex().toLower());
 }
 
-void BaseFile::savedRevision(int revision)
+void BaseFile::savedRevision(int revision, const QByteArray& checksum)
 {
+	mLastSaveChecksum = checksum;
 	setLastSavedRevision(revision);
 	gDispatcher->emitGeneralStatusMessage(QString("Finished saving ") + mLocation.getLabel() + " at revision " + QString::number(revision));
 	qDebug() << "Saved revision " << revision;

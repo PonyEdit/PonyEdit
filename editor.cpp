@@ -37,14 +37,28 @@ Editor::~Editor()
 
 void Editor::openStatusChanged(int openStatus)
 {
-	if (openStatus == BaseFile::Closed)
-		showLoading();
-	else if (openStatus == BaseFile::Open)
-		setCurrentWidget(mEditor);
-	else if (openStatus == BaseFile::Opening)
-		showLoading();
-	else if (openStatus == BaseFile::Error)
-		showError(mFile->getError());
+	switch (openStatus)
+	{
+		case BaseFile::Closed:
+		case BaseFile::Loading:
+			showLoading();
+			break;
+
+		case BaseFile::LoadError:
+			showError(mFile->getError());
+			break;
+
+		case BaseFile::Ready:
+		case BaseFile::Disconnected:
+		case BaseFile::Reconnecting:
+		case BaseFile::Repairing:
+			setCurrentWidget(mEditor);
+			break;
+
+		case BaseFile::Closing:
+			showError("Closing file...");
+			break;
+	}
 }
 
 void Editor::showLoading()
