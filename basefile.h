@@ -52,8 +52,7 @@ protected:
 	void setOpenStatus(OpenStatus newStatus);
 
 	virtual void handleDocumentChange(int position, int removeChars, const QByteArray& insert);
-	virtual bool storeChanges() { return false; }
-	void setLastSavedRevision(int lastSavedRevision);
+	virtual void setLastSavedRevision(int lastSavedRevision);
 
 	Location mLocation;
 	QByteArray mContent;
@@ -67,11 +66,8 @@ protected:
 	int mRevision;
 	bool mIgnoreChanges;	//	To disregard change signals while changing content of QTextDocument programmatically.
 
-	//	Stuff for tracking saves and changes since the most recent save.
 	int mLastSavedRevision;
 	QByteArray mLastSaveChecksum;
-	QList<Change*> mChangesSinceLastSave;
-	quint64 mChangeBufferSize;
 
 	OpenStatus mOpenStatus;
 	QList<Editor*> mAttachedEditors;

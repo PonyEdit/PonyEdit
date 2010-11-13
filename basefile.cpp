@@ -41,8 +41,6 @@ BaseFile* BaseFile::getFile(const Location& location)
 
 BaseFile::~BaseFile()
 {
-	foreach (Change* change, mChangesSinceLastSave) delete change;
-	mChangesSinceLastSave.clear();
 }
 
 BaseFile::BaseFile(const Location& location)
@@ -51,7 +49,6 @@ BaseFile::BaseFile(const Location& location)
 	mLocation = location;
 
 	mIgnoreChanges = false;
-	mChangeBufferSize = 0;
 
 	mDocument = new QTextDocument();
 	mDocumentLayout = new QPlainTextDocumentLayout(mDocument);
@@ -84,18 +81,6 @@ void BaseFile::handleDocumentChange(int position, int removeChars, const QByteAr
 		return;
 
 	mRevision++;
-
-	if (storeChanges())
-	{
-		mChangeBufferSize += insert.size();
-
-		Change* change = new Change();
-		change->revision = mRevision;
-		change->position = position;
-		change->remove = removeChars;
-		change->insert = insert;
-		mChangesSinceLastSave.append(change);
-	}
 
 	mContent.replace(position, removeChars, insert);
 	mChanged = true;
@@ -173,15 +158,6 @@ void BaseFile::savedRevision(int revision, const QByteArray& checksum)
 void BaseFile::setLastSavedRevision(int lastSavedRevision)
 {
 	this->mLastSavedRevision = lastSavedRevision;
-
-	//	Purge all stored changes up to that point...
-	while (mChangesSinceLastSave.length() > 0 && mChangesSinceLastSave[0]->revision <= mLastSavedRevision)
-	{
-		Change* change = mChangesSinceLastSave.takeFirst();
-		mChangeBufferSize -= change->insert.size();
-		if (mChangeBufferSize < 0) mChangeBufferSize = 0;
-		delete change;
-	}
 }
 
 

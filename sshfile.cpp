@@ -10,11 +10,15 @@ SshFile::SshFile(const Location& location) : BaseFile(location)
 	mHost->registerOpenFile(this);
 	mBufferId = -1;
 	mChangePumpCursor = 0;
+	mChangeBufferSize = 0;
 }
 
 SshFile::~SshFile()
 {
 	mHost->unregisterOpenFile(this);
+
+	foreach (Change* change, mChangesSinceLastSave) delete change;
+	mChangesSinceLastSave.clear();
 }
 
 void SshFile::open()
@@ -62,13 +66,21 @@ void SshFile::handleDocumentChange(int position, int removeChars, const QByteArr
 	BaseFile::handleDocumentChange(position, removeChars, insert);
 	qDebug() << "Edit revision " << mRevision;
 
+	mChangeBufferSize += insert.size();
+	Change* change = new Change();
+	change->revision = mRevision;
+	change->position = position;
+	change->remove = removeChars;
+	change->insert = insert;
+	mChangesSinceLastSave.append(change);
+
 	if (mOpenStatus == Ready)
 		pumpChangeQueue();
 }
 
 void SshFile::pumpChangeQueue()
 {
-	while (mChangePumpCursor < mRevision)
+	while (mChangePumpCursor < mChangesSinceLastSave.length())
 	{
 		Change* change = mChangesSinceLastSave[mChangePumpCursor];
 		mController->sendRequest(new SshRequest_changeBuffer(mBufferId, change->position, change->remove, change->insert));
@@ -120,7 +132,22 @@ void SshFile::connectionStateChanged()
 	}
 }
 
+void SshFile::setLastSavedRevision(int lastSavedRevision)
+{
+	BaseFile::setLastSavedRevision(lastSavedRevision);
 
+	//	Purge all stored changes up to that point...
+	while (mChangesSinceLastSave.length() > 0 && mChangesSinceLastSave[0]->revision <= mLastSavedRevision)
+	{
+		Change* change = mChangesSinceLastSave.takeFirst();
+		mChangeBufferSize -= change->insert.size();
+		mChangePumpCursor--;
+		delete change;
+	}
+
+	if (mChangeBufferSize < 0) mChangeBufferSize = 0;
+	if (mChangePumpCursor < 0) mChangePumpCursor = 0;
+}
 
 
 

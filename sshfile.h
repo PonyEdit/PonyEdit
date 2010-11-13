@@ -25,14 +25,16 @@ public slots:
 protected:
 	virtual ~SshFile();
 	virtual void handleDocumentChange(int position, int removeChars, const QByteArray& insert);
+	virtual void setLastSavedRevision(int lastSavedRevision);
 	void pumpChangeQueue();
 	void pushContentToSlave();
-
-	virtual bool storeChanges() { return true; }
 
 	SshHost* mHost;
 	SshRemoteController* mController;	//	Not available before opening the file.
 	int mBufferId;
+
+	QList<Change*> mChangesSinceLastSave;
+	quint64 mChangeBufferSize;
 	int mChangePumpCursor;
 };
 
