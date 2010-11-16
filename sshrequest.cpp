@@ -311,18 +311,19 @@ void SshRequest_saveBuffer::success()
 	mFile->savedRevision(mRevision, mChecksum);
 }
 
-//////////////////////////////
-//  Message 6: pushContent  //
-//////////////////////////////
+/////////////////////////////
+//  Message 6: resyncFile  //
+/////////////////////////////
 
-SshRequest_pushContent::SshRequest_pushContent(quint32 bufferId, SshFile* file, const QByteArray& content)
+SshRequest_resyncFile::SshRequest_resyncFile(quint32 bufferId, SshFile* file, const QByteArray& content, int revision)
 	: SshRequest(6, bufferId)
 {
+	mRevision = revision;
 	mFile = file;
 	mContent = content;
 }
 
-void SshRequest_pushContent::packBody(QByteArray* target)
+void SshRequest_resyncFile::packBody(QByteArray* target)
 {
 	QCryptographicHash hash(QCryptographicHash::Md5);
 	hash.addData(mContent);
@@ -333,7 +334,7 @@ void SshRequest_pushContent::packBody(QByteArray* target)
 	addData(target, 's', 0);
 }
 
-void SshRequest_pushContent::handleResponse(const QByteArray& response)
+void SshRequest_resyncFile::handleResponse(const QByteArray& response)
 {
 	const char* cursor = response.constData();
 
@@ -357,14 +358,14 @@ void SshRequest_pushContent::handleResponse(const QByteArray& response)
 	}
 }
 
-void SshRequest_pushContent::error(const QString& error)
+void SshRequest_resyncFile::error(const QString& error)
 {
-	mFile->contentPushError(error);
+	mFile->resyncError(error);
 }
 
-void SshRequest_pushContent::success()
+void SshRequest_resyncFile::success()
 {
-	mFile->contentPushSuccess();
+	mFile->resyncSuccess(mRevision);
 }
 
 

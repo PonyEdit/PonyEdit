@@ -16,18 +16,21 @@ public:
 	SshFile(const Location& location);	//	Do not call; use File::getFile instead.
 	void reconnect();
 
-	void contentPushError(const QString& error);
-	void contentPushSuccess();
+	void resyncError(const QString& error);
 
 public slots:
 	void connectionStateChanged();
+	void resyncSuccess(int revision);
+
+signals:
+	void resyncSuccessRethreadSignal(int);
 
 protected:
 	virtual ~SshFile();
 	virtual void handleDocumentChange(int position, int removeChars, const QByteArray& insert);
 	virtual void setLastSavedRevision(int lastSavedRevision);
 	void pumpChangeQueue();
-	void pushContentToSlave();
+	void resync();
 
 	SshHost* mHost;
 	SshRemoteController* mController;	//	Not available before opening the file.

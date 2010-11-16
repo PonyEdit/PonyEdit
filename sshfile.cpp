@@ -3,6 +3,7 @@
 #include "sshfile.h"
 #include "sshrequest.h"
 #include "sshremotecontroller.h"
+#include "tools.h"
 
 SshFile::SshFile(const Location& location) : BaseFile(location)
 {
@@ -11,6 +12,8 @@ SshFile::SshFile(const Location& location) : BaseFile(location)
 	mBufferId = -1;
 	mChangePumpCursor = 0;
 	mChangeBufferSize = 0;
+
+	connect(this, SIGNAL(fileOpenedRethreadSignal(QByteArray)), this, SLOT(resyncSuccess(int)), Qt::QueuedConnection);
 }
 
 SshFile::~SshFile()
@@ -56,9 +59,39 @@ void SshFile::fileOpened(int bufferId, const QByteArray& content, const QString&
 		else
 		{
 			//	If the file's checksum does NOT match the last save, reload the entire thing in its current form...
-			qDebug() << "CHECKSUM MISMATCH: NOT YET IMPLEMENTED";
+			resync();
 		}
 	}
+}
+
+void SshFile::resync()
+{
+	setOpenStatus(Repairing);
+	mController->sendRequest(new SshRequest_resyncFile(mBufferId, this, mContent, mRevision));
+}
+
+void SshFile::resyncError(const QString& error)
+{
+	mError = "Failed to resync with remote host!";
+	setOpenStatus(SyncError);
+}
+
+void SshFile::resyncSuccess(int revision)
+{
+	//	If this is not the main thread, move to the main thread.
+	if (!Tools::isMainThread())
+	{
+		emit resyncSuccessRethreadSignal(revision);
+		return;
+	}
+
+	//	Find the right place to put the revision push cursor
+	mChangePumpCursor = 0;
+	while (mChangePumpCursor < mChangesSinceLastSave.length() && mChangesSinceLastSave[mChangePumpCursor]->revision <= revision)
+		mChangePumpCursor++;
+
+	setOpenStatus(Ready);
+	pumpChangeQueue();
 }
 
 void SshFile::handleDocumentChange(int position, int removeChars, const QByteArray& insert)
@@ -98,24 +131,6 @@ void SshFile::save()
 
 	qDebug() << "Saving revision " << mRevision;
 	mHost->getController()->sendRequest(new SshRequest_saveBuffer(mBufferId, this, mRevision, mContent));
-}
-
-void SshFile::pushContentToSlave()
-{
-	if (!mHost->ensureConnection())
-		throw(QString("Failed to update file: failed to connect to remote host"));
-
-	mHost->getController()->sendRequest(new SshRequest_pushContent(mBufferId, this, mContent));
-}
-
-void SshFile::contentPushError(const QString& error)
-{
-	qDebug() << "Error pushing content: " << error;
-}
-
-void SshFile::contentPushSuccess()
-{
-	qDebug() << "Done pushing content.";
 }
 
 void SshFile::connectionStateChanged()

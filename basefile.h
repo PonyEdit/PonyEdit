@@ -15,7 +15,7 @@ class BaseFile : public QObject
 
 public:
 	struct Change { int revision; int position; int remove; QByteArray insert; };
-	enum OpenStatus { Closed, Loading, LoadError, Ready, Disconnected, Reconnecting, Repairing, Closing };
+	enum OpenStatus { Closed, Loading, LoadError, Ready, Disconnected, Reconnecting, Repairing, SyncError, Closing };
 
 	static BaseFile* getFile(const Location& location);
 	static const QList<BaseFile*>& getActiveFiles();

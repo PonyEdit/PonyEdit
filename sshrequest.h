@@ -152,14 +152,14 @@ public:
 	SshRequest_keepalive() : SshRequest(5, 0) {}
 };
 
-//////////////////////////////
-//  Message 6: pushContent  //
-//////////////////////////////
+/////////////////////////////
+//  Message 6: resyncFile  //
+/////////////////////////////
 
-class SshRequest_pushContent : public SshRequest
+class SshRequest_resyncFile : public SshRequest
 {
 public:
-	SshRequest_pushContent(quint32 bufferId, SshFile* file, const QByteArray& content);
+	SshRequest_resyncFile(quint32 bufferId, SshFile* file, const QByteArray& content, int revision);
 	virtual void packBody(QByteArray* target);
 	virtual void handleResponse(const QByteArray& response);
 
@@ -169,6 +169,7 @@ public:
 private:
 	QByteArray mContent;
 	SshFile* mFile;
+	int mRevision;
 };
 
 #endif // SSHREQUEST_H
