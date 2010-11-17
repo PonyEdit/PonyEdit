@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QTextEdit>
 #include <QStackedWidget>
+#include <QProgressBar>
 
 #include "location.h"
 #include "basefile.h"
@@ -23,18 +24,20 @@ public:
 
 public slots:
 	void openStatusChanged(int openStatus);
+	void fileOpenProgress(int percent);
 
 private:
 	void showLoading();
 	void showError(const QString& error);
 
+	BaseFile* mFile;
 	CodeEditor* mEditor;
 	QTextDocument* mDocument;
 
 	QWidget* mWorkingPane;
 	QLabel* mWorkingIcon;
 	QLabel* mWorkingText;
-	BaseFile* mFile;
+	QProgressBar* mProgressBar;
 };
 
 #endif // EDITOR_H

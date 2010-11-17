@@ -162,7 +162,10 @@ void BaseFile::setLastSavedRevision(int lastSavedRevision)
 	this->mLastSavedRevision = lastSavedRevision;
 }
 
-
+void BaseFile::fileOpenProgressed(int percent)
+{
+	emit fileOpenProgress(percent);
+}
 
 
 

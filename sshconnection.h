@@ -7,6 +7,12 @@
 #define SSH_BUFFER_SIZE 4096
 #define SSH_PROMPT "%-remoted-%"
 
+class ISshConnectionCallback
+{
+public:
+	virtual void fileOpenProgress(int percent) {}
+};
+
 class SshConnection
 {
 public:
@@ -28,7 +34,7 @@ public:
 	void startRemoteSlave(const char* filename);
 
 	void writeFile(const char* remoteFilename, const char* data, int length);
-	QByteArray readFile(const char* filename);
+	QByteArray readFile(const char* filename, ISshConnectionCallback* callback);
 
 	QByteArray execute(const char* command);
 	QByteArray readToPrompt();

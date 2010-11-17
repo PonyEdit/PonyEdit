@@ -5,6 +5,7 @@
 #include <QRunnable>
 
 #include "location.h"
+#include "sshconnection.h"
 
 enum DataType
 {
@@ -80,7 +81,7 @@ private:
 //  Message 2: open  //
 ///////////////////////
 
-class SshRequest_open : public SshRequest
+class SshRequest_open : public SshRequest, public ISshConnectionCallback
 {
 public:
 	enum Fetch { Content, Checksum };
@@ -94,6 +95,8 @@ public:
 
 	virtual void error(const QString& error);
 	virtual void success();
+
+	virtual void fileOpenProgress(int percent);
 
 private:
 	SshFile* mFile;

@@ -193,7 +193,7 @@ void SshRequest_open::doManualWork(SshConnection* connection)
 	if (mFetch == Content)
 	{
 		const Location& fileLocation = mFile->getLocation();
-		mData = connection->readFile(fileLocation.getRemotePath().toUtf8());
+		mData = connection->readFile(fileLocation.getRemotePath().toUtf8(), this);
 	}
 }
 
@@ -204,7 +204,12 @@ void SshRequest_open::error(const QString& error)
 
 void SshRequest_open::success()
 {
-		mFile->fileOpened(mBufferId, mData, mChecksum);
+	mFile->fileOpened(mBufferId, mData, mChecksum);
+}
+
+void SshRequest_open::fileOpenProgress(int percent)
+{
+	mFile->fileOpenProgressed(percent);
 }
 
 ////////////////////////////////

@@ -233,7 +233,7 @@ void SshConnection::writeFile(const char* remoteFilename, const char* data, int 
 	libssh2_channel_free(tmpChannel);
 }
 
-QByteArray SshConnection::readFile(const char* filename)
+QByteArray SshConnection::readFile(const char* filename, ISshConnectionCallback* callback)
 {
 	struct stat fileInfo;
 	LIBSSH2_CHANNEL* tmpChannel = libssh2_scp_recv(mSession, filename, &fileInfo);
@@ -254,6 +254,9 @@ QByteArray SshConnection::readFile(const char* filename)
 			fileContent.append(mTmpBuffer, rc);
 		else if (rc < 0)
 			throw(QString("Error while receiving remote file content: ") + getLastError(rc));
+
+		if (callback != NULL)
+			callback->fileOpenProgress((fileContent.length() * 100) / fileInfo.st_size);
 	}
 
 	return fileContent;

@@ -31,6 +31,7 @@ public:
 	virtual void save() = 0;
 	void openError(const QString& error);
 	void savedRevision(int revision, const QByteArray& checksum);
+	void fileOpenProgressed(int percent);
 
 	inline const QList<Editor*>& getAttachedEditors() { return mAttachedEditors; }
 	void editorAttached(Editor* editor);	//	Call only from Editor constructor.
@@ -44,6 +45,7 @@ public slots:
 
 signals:
 	void fileOpenedRethreadSignal(const QByteArray& content);
+	void fileOpenProgress(int percent);
 	void openStatusChanged(int newStatus);
 
 protected:

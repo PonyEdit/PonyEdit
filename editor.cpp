@@ -1,5 +1,5 @@
 #include "editor.h"
-#include <QHBoxLayout>
+#include <QGridLayout>
 #include <QSpacerItem>
 #include <QTextCursor>
 #include <QDebug>
@@ -11,19 +11,28 @@ Editor::Editor(BaseFile* file) : QStackedWidget()
 	addWidget(mEditor);
 
 	mWorkingPane = new QWidget();
-	QHBoxLayout* layout = new QHBoxLayout(mWorkingPane);
-	layout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding));
+	QGridLayout* layout = new QGridLayout(mWorkingPane);
+	layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), 0, 0, 1, 4);
+	layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 1, 0);
 	mWorkingIcon = new QLabel();
 	mWorkingIcon->setFixedSize(16, 16);
-	layout->addWidget(mWorkingIcon);
+	layout->addWidget(mWorkingIcon, 1, 1, 1, 1);
 	mWorkingText = new QLabel();
-	layout->addWidget(mWorkingText);
-	layout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding));
+	layout->addWidget(mWorkingText, 1, 2, 1, 1);
+	layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 1, 3);
+
+	mProgressBar = new QProgressBar();
+	mProgressBar->setMaximum(100);
+	mProgressBar->setValue(0);
+	layout->addWidget(mProgressBar, 2, 1, 1, 2);
+	layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), 3, 0, 1, 4);
+
 	addWidget(mWorkingPane);
 
 	mFile = file;
 	mFile->editorAttached(this);
 	connect(mFile, SIGNAL(openStatusChanged(int)), this, SLOT(openStatusChanged(int)));
+	connect(mFile, SIGNAL(fileOpenProgress(int)), this, SLOT(fileOpenProgress(int)));
 	openStatusChanged(mFile->getOpenStatus());
 
 	mEditor->setDocument(mFile->getTextDocument());
@@ -33,6 +42,11 @@ Editor::Editor(BaseFile* file) : QStackedWidget()
 Editor::~Editor()
 {
 	mFile->editorDetached(this);
+}
+
+void Editor::fileOpenProgress(int percent)
+{
+	mProgressBar->setValue(percent);
 }
 
 void Editor::openStatusChanged(int openStatus)
@@ -65,6 +79,7 @@ void Editor::showLoading()
 {
 	mWorkingIcon->setPixmap(QPixmap(":/icons/loading.png"));
 	mWorkingText->setText("Loading ...");
+	mProgressBar->show();
 	setCurrentWidget(mWorkingPane);
 }
 
@@ -72,6 +87,7 @@ void Editor::showError(const QString& error)
 {
 	mWorkingIcon->setPixmap(QPixmap(":/icons/error.png"));
 	mWorkingText->setText(QString("Error: ") + error);
+	mProgressBar->hide();
 	setCurrentWidget(mWorkingPane);
 }
 
