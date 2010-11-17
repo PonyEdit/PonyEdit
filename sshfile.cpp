@@ -13,7 +13,7 @@ SshFile::SshFile(const Location& location) : BaseFile(location)
 	mChangePumpCursor = 0;
 	mChangeBufferSize = 0;
 
-	connect(this, SIGNAL(fileOpenedRethreadSignal(QByteArray)), this, SLOT(resyncSuccess(int)), Qt::QueuedConnection);
+	connect(this, SIGNAL(resyncSuccessRethreadSignal(int)), this, SLOT(resyncSuccess(int)), Qt::QueuedConnection);
 }
 
 SshFile::~SshFile()
@@ -78,9 +78,12 @@ void SshFile::resyncError(const QString& error)
 
 void SshFile::resyncSuccess(int revision)
 {
+	qDebug() << "resyncSuccess";
+
 	//	If this is not the main thread, move to the main thread.
 	if (!Tools::isMainThread())
 	{
+		qDebug() << "wrong thread :(";
 		emit resyncSuccessRethreadSignal(revision);
 		return;
 	}
@@ -94,9 +97,12 @@ void SshFile::resyncSuccess(int revision)
 
 void SshFile::movePumpCursor(int revision)
 {
+	qDebug() << "Moving pump cursor to " << revision << " / " << mRevision << ".";
 	mChangePumpCursor = 0;
 	while (mChangePumpCursor < mChangesSinceLastSave.length() && mChangesSinceLastSave[mChangePumpCursor]->revision <= revision)
 		mChangePumpCursor++;
+
+	qDebug() << "Cursor = " << mChangePumpCursor << " / " << mChangesSinceLastSave.length() << ".";
 }
 
 void SshFile::handleDocumentChange(int position, int removeChars, const QByteArray& insert)
