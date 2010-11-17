@@ -132,6 +132,7 @@ def msg_open(buff, params, result):
 #	change
 def msg_change(buff, params, result):
 	buff.change(params['p'], params['r'], params['a'])
+	log(buff.checksum())
 
 #	save
 def msg_save(buff, params, result):

@@ -31,6 +31,7 @@ protected:
 	virtual void setLastSavedRevision(int lastSavedRevision);
 	void pumpChangeQueue();
 	void resync();
+	void movePumpCursor(int revision);
 
 	SshHost* mHost;
 	SshRemoteController* mController;	//	Not available before opening the file.

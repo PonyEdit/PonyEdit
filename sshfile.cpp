@@ -49,10 +49,10 @@ void SshFile::fileOpened(int bufferId, const QByteArray& content, const QString&
 	}
 	else
 	{
-		if (mLastSaveChecksum != checksum)
+		if (mLastSaveChecksum == checksum)
 		{
 			//	If the file's checksum matches the last save, just pump the change queue from the last save...
-			mChangePumpCursor = mLastSavedRevision;
+			movePumpCursor(mLastSavedRevision);
 			setOpenStatus(Ready);
 			pumpChangeQueue();
 		}
@@ -86,12 +86,17 @@ void SshFile::resyncSuccess(int revision)
 	}
 
 	//	Find the right place to put the revision push cursor
-	mChangePumpCursor = 0;
-	while (mChangePumpCursor < mChangesSinceLastSave.length() && mChangesSinceLastSave[mChangePumpCursor]->revision <= revision)
-		mChangePumpCursor++;
+	movePumpCursor(revision);
 
 	setOpenStatus(Ready);
 	pumpChangeQueue();
+}
+
+void SshFile::movePumpCursor(int revision)
+{
+	mChangePumpCursor = 0;
+	while (mChangePumpCursor < mChangesSinceLastSave.length() && mChangesSinceLastSave[mChangePumpCursor]->revision <= revision)
+		mChangePumpCursor++;
 }
 
 void SshFile::handleDocumentChange(int position, int removeChars, const QByteArray& insert)
