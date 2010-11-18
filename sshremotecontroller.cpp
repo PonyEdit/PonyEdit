@@ -333,7 +333,7 @@ void SshControllerThread::runMainLoop()
 			if (mHost->numOpenFiles() > 0)
 				continue;
 			else
-				throw(QString("Failed to connect"));
+				return;
 		}
 
 		QTime lastMessageTime;
