@@ -21,6 +21,7 @@ public:
 	inline const QString& getHostName() const { return mHostName; }
 	inline const QString& getUserName() const { return mUserName; }
 	inline const QString& getPassword() const { return mPassword; }
+	inline const QString& getKeyFile() const { return mKeyFile; }
 	inline const QString& getDefaultDirectory() const { return mDefaultDirectory; }
 	inline int getPort() const { return mPort; }
 	inline bool getSave() const { return mSave; }
@@ -31,6 +32,7 @@ public:
 	inline void setHostName(const QString& hostName) { mHostName = hostName; }
 	inline void setUserName(const QString& userName) { mUserName = userName; }
 	inline void setPassword(const QString& password) { mPassword = password; }
+	inline void setKeyFile(const QString& keyFile) { mKeyFile = keyFile; }
 	inline void setDefaultDirectory(const QString& defaultDirectory) { mDefaultDirectory = defaultDirectory; }
 	inline void setPort(int port) { mPort = port; }
 	inline void setSave(bool save) { mSave = save; }
@@ -65,6 +67,7 @@ private:
 
 	QString mUserName;
 	QString mPassword;
+	QString mKeyFile;
 	bool mSavePassword;
 
 	QString mDefaultDirectory;

@@ -185,7 +185,14 @@ void SshControllerThread::connect()
 		//	Handle authentication
 		//
 
+		SshConnection::AuthMethods authMethods = mConnection->getAuthenticationMethods(mHost->getUserName().toUtf8());
 		bool authenticated = false;
+
+		//	Always try ssh-agent/putty first if key auth is available
+		if (authMethods & SshConnection::PublicKey)
+			authenticated = mConnection->authenticateAgent(mHost->getUserName().toUtf8());
+
+		//	Fall back on password entry
 		while (!authenticated)
 		{
 			QString password = mHost->getPassword();

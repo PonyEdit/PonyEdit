@@ -24,6 +24,7 @@ public:
 private slots:
 	void acceptedHandler();
 	void updateName();
+	void browseForKeyFile();
 
 private:
 	QString getAutoName();

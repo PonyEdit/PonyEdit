@@ -41,6 +41,7 @@ void Tools::saveServers()
 			settings.setValue("port", host->getPort());
 			settings.setValue("username", host->getUserName());
 			settings.setValue("password", host->getSavePassword() ? host->getPassword() : "");
+			settings.setValue("keyFile", host->getKeyFile());
 			settings.setValue("name", host->getName());
 			settings.setValue("defaultDirectory", host->getDefaultDirectory());
 			settings.setValue("scriptType", host->getScriptType());
@@ -62,6 +63,7 @@ void Tools::loadServers()
 		host->setHostName(settings.value("hostname").toString());
 		host->setPort(settings.value("port", 22).toInt());
 		host->setUserName(settings.value("username").toString());
+		host->setKeyFile(settings.value("keyFile").toString());
 		host->setName(settings.value("name").toString());
 		host->setDefaultDirectory(settings.value("defaultDirectory", QVariant("~")).toString());
 		host->setScriptType((SshRemoteController::ScriptType)settings.value("scriptType", 0).toInt());

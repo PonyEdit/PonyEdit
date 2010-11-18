@@ -100,6 +100,8 @@ SshConnection::AuthMethods SshConnection::getAuthenticationMethods(const char* u
 	if (strstr(userauthlist, "publickey") != NULL)
 		methods = (AuthMethods)(methods | PublicKey);
 
+	qDebug() << userauthlist;
+
 	return methods;
 }
 
@@ -110,6 +112,65 @@ bool SshConnection::authenticatePassword(const char* username, const char* passw
 
 	createChannel();
 	return true;
+}
+
+bool SshConnection::authenticateAgent(const char* username)
+{
+	struct libssh2_agent_publickey *identity, *prevIdentity = NULL;
+	LIBSSH2_AGENT* agent = NULL;
+	int rc;
+	bool success = false;
+
+	try
+	{
+		//	Initialize SSH agent code
+		agent = libssh2_agent_init(mSession);
+		if (!agent) throw("Failed to call libssh2_agent_init!");
+
+		//	Connect to the SSH agent
+		rc = libssh2_agent_connect(agent);
+		if (rc) throw("Failed to connect to SSH agent!");
+
+		//	Prepare a list of identities managed by the SSH agent
+		rc = libssh2_agent_list_identities(agent);
+		if (rc) throw("Failed to retrieve identities from SSH agent!");
+
+		while (1)
+		{
+			//	Get an identity
+			rc = libssh2_agent_get_identity(agent, &identity, prevIdentity);
+			if (rc) throw(rc == 1 ? "No identities stored in SSH agent accepted!" : "Failed to receive identity from SSH agent!");
+
+			//	Try an identity
+			qDebug() << "Trying key: " << identity->comment;
+			rc = libssh2_agent_userauth(agent, username, identity);
+			if (rc)
+				qDebug() << "Authentication with key " << identity->comment << " rejected.";
+			else
+			{
+				qDebug() << "Authentication with key " << identity->comment << " accepted!";
+				success = true;
+				break;
+			}
+
+			prevIdentity = identity;
+		}
+	}
+	catch (const char* error)
+	{
+		qDebug() << "Failed to authenticate via SSH agent: " << error;
+	}
+
+	if (agent)
+	{
+		libssh2_agent_disconnect(agent);
+		libssh2_agent_free(agent);
+	}
+
+	if (success)
+		createChannel();
+
+	return success;
 }
 
 void SshConnection::createChannel()

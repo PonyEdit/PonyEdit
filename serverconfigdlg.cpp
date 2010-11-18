@@ -2,6 +2,7 @@
 #include "ui_serverconfigdlg.h"
 #include "tools.h"
 #include "sshhost.h"
+#include <QFileDialog>
 
 ServerConfigDlg::ServerConfigDlg(QWidget *parent) :
     QDialog(parent),
@@ -17,6 +18,7 @@ ServerConfigDlg::ServerConfigDlg(QWidget *parent) :
 	connect(this, SIGNAL(accepted()), this, SLOT(acceptedHandler()));
 	connect(ui->hostName, SIGNAL(textEdited(QString)), this, SLOT(updateName()));
 	connect(ui->userName, SIGNAL(textEdited(QString)), this, SLOT(updateName()));
+	connect(ui->keyFileBrowse, SIGNAL(clicked()), this, SLOT(browseForKeyFile()));
 
 	for (int i = 0; i < SshRemoteController::NumScriptTypes; i++)
 		ui->scriptType->addItem(SshRemoteController::sScriptTypeLabels[i], QVariant::fromValue<int>(i));
@@ -55,6 +57,7 @@ void ServerConfigDlg::setEditHost(SshHost* host)
 	ui->saveServer->setChecked(host->getSave());
 	ui->serverName->setText(host->getName());
 	ui->defaultDirectory->setText(host->getDefaultDirectory());
+	ui->keyFile->setText(host->getKeyFile());
 
 	int scriptIndex = ui->scriptType->findData(QVariant::fromValue<int>((int)host->getScriptType()));
 	if(scriptIndex < 0)
@@ -78,6 +81,7 @@ void ServerConfigDlg::acceptedHandler()
 	mEditHost->setDefaultDirectory(ui->defaultDirectory->text());
 	mEditHost->setSavePassword(ui->savePassword->checkState() == Qt::Checked);
 	mEditHost->setScriptType((SshRemoteController::ScriptType)ui->scriptType->itemData(ui->scriptType->currentIndex()).value<int>());
+	mEditHost->setKeyFile(ui->keyFile->text());
 }
 
 QString ServerConfigDlg::getAutoName()
@@ -95,6 +99,19 @@ void ServerConfigDlg::updateName()
 	{
 		mLastAutoName = getAutoName();
 		ui->serverName->setText(mLastAutoName);
+	}
+}
+
+void ServerConfigDlg::browseForKeyFile()
+{
+	QString filename = QFileDialog::getOpenFileName(this, tr("Select an OpenSSH key file"), ui->keyFile->text());
+	if (!filename.isEmpty())
+	{
+#ifdef Q_OS_WIN
+		filename = filename.replace('/', '\\');
+#endif
+
+		ui->keyFile->setText(filename);
 	}
 }
 
