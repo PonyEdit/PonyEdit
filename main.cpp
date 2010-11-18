@@ -2,6 +2,7 @@
 #include <QString>
 #include <QDebug>
 #include <QMetaType>
+#include <QFont>
 
 #include "globaldispatcher.h"
 #include "sshconnection.h"
@@ -18,6 +19,11 @@ int main(int argc, char *argv[])
 	try
 	{
 		SshConnection::initializeLib();
+
+		QStringList substitutions;
+		substitutions.append("consolas");
+		substitutions.append("courier new");
+		QFont::insertSubstitutions("inconsolata", substitutions);
 
 		qRegisterMetaType<Location>("Location");
 		qRegisterMetaType< QList<Location> >("QList<Location>");

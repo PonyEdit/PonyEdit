@@ -38,7 +38,7 @@ Editor::Editor(BaseFile* file) : QStackedWidget()
 
 	mEditor->setDocument(mFile->getTextDocument());
 	new SyntaxHighlighter(mEditor->document());
-	mEditor->setFont(QFont("courier new", 11));
+	mEditor->setFont(QFont("inconsolata", 11));
 }
 
 Editor::~Editor()
