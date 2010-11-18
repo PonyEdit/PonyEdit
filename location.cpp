@@ -3,6 +3,7 @@
 #include "sshrequest.h"
 #include "sshhost.h"
 #include "sshfile.h"
+#include "globaldispatcher.h"
 #include <QFileIconProvider>
 #include <QMetaMethod>
 #include <QObject>
@@ -233,19 +234,16 @@ void LocationShared::localLoadListing()
 
 void LocationShared::emitListLoadedSignal()
 {
-	emit loadListSuccessful(mChildren, mPath);
+	gDispatcher->emitLocationListSuccessful(mChildren, mPath);
 }
 
 void LocationShared::emitListLoadError(const QString& error)
 {
-	emit loadListFailed(error, mPath);
+	gDispatcher->emitLocationListFailed(error, mPath);
 }
 
-void Location::asyncGetChildren(QObject* callbackTarget, const char* succeedSlot, const char* failSlot)
+void Location::asyncGetChildren()
 {
-	QObject::connect(mData, SIGNAL(loadListSuccessful(QList<Location>,QString)), callbackTarget, succeedSlot);
-	QObject::connect(mData, SIGNAL(loadListFailed(QString,QString)), callbackTarget, failSlot);
-
 	if (mData->mListLoaded)
 		mData->emitListLoadedSignal();
 	else if (!mData->mLoading)
@@ -296,13 +294,12 @@ SshHost* Location::getRemoteHost() const
 void LocationShared::sshLoadListing()
 {
 	if (!ensureConnected())
+		emitListLoadError("Failed to connect to remote host!");
+	else
 	{
-		emit loadListFailed("Failed to connect to remote host!", mPath);
-		return;
+		SshRemoteController* controller = mRemoteHost->getController();
+		controller->sendRequest(new SshRequest_ls(Location(this)));
 	}
-
-	SshRemoteController* controller = mRemoteHost->getController();
-	controller->sendRequest(new SshRequest_ls(Location(this)));
 }
 
 void Location::sshChildLoadResponse(const QList<Location>& children)

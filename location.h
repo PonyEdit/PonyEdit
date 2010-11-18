@@ -47,7 +47,7 @@ public:
 
 	BaseFile* getFile();
 
-	void asyncGetChildren(QObject* callbackTarget, const char* succeedSlot, const char* failSlot);
+	void asyncGetChildren();
 
 private:
 	Location(const Location& parent, const QString& path, Type type, int size, QDateTime lastModified);
@@ -62,17 +62,12 @@ private:
 	LocationShared* mData;
 };
 
-class LocationShared : public QObject
+class LocationShared
 {
-	Q_OBJECT
 	friend class Location;
 
 public:
 	static void cleanupIconProvider();
-
-signals:
-	void loadListSuccessful(const QList<Location>& children, QString locationPath);
-	void loadListFailed(const QString& error, QString locationPath);
 
 private:
 	LocationShared();

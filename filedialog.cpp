@@ -45,6 +45,8 @@ FileDialog::FileDialog(QWidget *parent) :
 	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 	connect(ui->fileList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(fileListSelectionChanged(const QItemSelection&, const QItemSelection&)));
+	connect(gDispatcher, SIGNAL(locationListSuccessful(QList<Location>,QString)), this, SLOT(folderChildrenLoaded(QList<Location>,QString)), Qt::QueuedConnection);
+	connect(gDispatcher, SIGNAL(locationListFailed(QString,QString)), this, SLOT(folderChildrenFailed(QString,QString)), Qt::QueuedConnection);
 }
 
 FileDialog::~FileDialog()
@@ -142,7 +144,7 @@ void FileDialog::folderTreeItemExpanded(QTreeWidgetItem* item)
 			item->addChild(loadingItem);
 
 			mLoadingLocations.insert(location.getPath(), item);
-			location.asyncGetChildren(this, SLOT(folderChildrenLoaded(QList<Location>,QString)), SLOT(folderChildrenFailed(QString,QString)));
+			location.asyncGetChildren();
 		}
 	}
 }
@@ -234,7 +236,7 @@ void FileDialog::showLocation(const Location& location)
 	ui->loaderLabel->setText("Loading...");
 	ui->fileListStack->setCurrentWidget(ui->loaderLayer);
 
-	mCurrentLocation.asyncGetChildren(this, SLOT(folderChildrenLoaded(QList<Location>,QString)), SLOT(folderChildrenFailed(QString,QString)));
+	mCurrentLocation.asyncGetChildren();
 }
 
 void FileDialog::directoryTreeSelected()
