@@ -36,7 +36,6 @@ FileDialog::FileDialog(QWidget *parent) :
 	sizes.append(3);
 	ui->splitter->setSizes(sizes);
 
-	populateFolderTree();
 	connect(ui->directoryTree, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(folderTreeItemExpanded(QTreeWidgetItem*)));
 	connect(ui->directoryTree, SIGNAL(itemSelectionChanged()), this, SLOT(directoryTreeSelected()));
 	connect(ui->upLevelButton, SIGNAL(clicked()), this, SLOT(upLevel()));
@@ -47,6 +46,8 @@ FileDialog::FileDialog(QWidget *parent) :
 	connect(ui->fileList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(fileListSelectionChanged(const QItemSelection&, const QItemSelection&)));
 	connect(gDispatcher, SIGNAL(locationListSuccessful(QList<Location>,QString)), this, SLOT(folderChildrenLoaded(QList<Location>,QString)), Qt::QueuedConnection);
 	connect(gDispatcher, SIGNAL(locationListFailed(QString,QString)), this, SLOT(folderChildrenFailed(QString,QString)), Qt::QueuedConnection);
+
+	populateFolderTree();
 }
 
 FileDialog::~FileDialog()
