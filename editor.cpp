@@ -4,6 +4,7 @@
 #include <QTextCursor>
 #include <QDebug>
 #include "basefile.h"
+#include "syntaxhighlighter.h"
 
 Editor::Editor(BaseFile* file) : QStackedWidget()
 {
@@ -36,6 +37,7 @@ Editor::Editor(BaseFile* file) : QStackedWidget()
 	openStatusChanged(mFile->getOpenStatus());
 
 	mEditor->setDocument(mFile->getTextDocument());
+	new SyntaxHighlighter(mEditor->document());
 	mEditor->setFont(QFont("courier new", 11));
 }
 

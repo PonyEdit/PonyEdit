@@ -3,6 +3,7 @@
 
 #include "codeeditor.h"
 #include "linenumberwidget.h"
+#include "syntaxhighlighter.h"
 
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 {

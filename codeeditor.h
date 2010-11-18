@@ -4,6 +4,7 @@
 #include <QPlainTextEdit>
 
 class LineNumberWidget;
+class SyntaxHighlighter;
 
 class CodeEditor : public QPlainTextEdit
 {
@@ -24,6 +25,7 @@ private slots:
 
 private:
 	LineNumberWidget *mLineNumberWidget;
+	SyntaxHighlighter* mSyntaxHighlighter;
 
 signals:
 public slots:

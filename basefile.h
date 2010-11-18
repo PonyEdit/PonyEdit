@@ -60,8 +60,8 @@ protected:
 	QByteArray mContent;
 	QString mError;
 
-	QTextDocument *mDocument;
-	QPlainTextDocumentLayout *mDocumentLayout;
+	QTextDocument* mDocument;
+	QPlainTextDocumentLayout* mDocumentLayout;
 
 	bool mChanged;
 	bool mDosLineEndings;

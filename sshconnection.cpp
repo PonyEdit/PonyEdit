@@ -228,7 +228,7 @@ QByteArray SshConnection::readUntil(const char* marker)
 		if (rc > 0)
 		{
 			totalReceived += rc;
-			qDebug() << QByteArray(mTmpBuffer, rc);
+			// qDebug() << QByteArray(mTmpBuffer, rc);
 			mReadBuffer.append(mTmpBuffer, rc);
 		}
 		else if (rc < 0)
@@ -251,7 +251,7 @@ QString SshConnection::getLastError(int rc)
 
 QByteArray SshConnection::execute(const char* command)
 {
-	qDebug() << "SENDING: " << command;
+	// qDebug() << "SENDING: " << command;
 	int len = strlen(command);
 	int rc = libssh2_channel_write(mChannel, command, len);
 	if (rc != len)
@@ -262,9 +262,9 @@ QByteArray SshConnection::execute(const char* command)
 
 void SshConnection::writeData(const char* data, int length)
 {
-	qDebug() << "SENDING: " << data;
+	// qDebug() << "SENDING: " << data;
 	int rc = libssh2_channel_write(mChannel, data, length);
-	qDebug() << "Sent bytes: " << rc;
+	// qDebug() << "Sent bytes: " << rc;
 	if (rc != length)
 		throw(QString("Error while sending to remote host: ") + getLastError(rc));
 }

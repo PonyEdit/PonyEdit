@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     basefile.cpp \
     codeeditor.cpp \
     linenumberwidget.cpp \
-    optionsdialog.cpp
+    optionsdialog.cpp \
+    syntaxhighlighter.cpp
 
 HEADERS  += mainwindow.h \
     sshconnection.h \
@@ -52,7 +53,8 @@ HEADERS  += mainwindow.h \
     basefile.h \
 	codeeditor.h \
 	linenumberwidget.h \
-    optionsdialog.h
+    optionsdialog.h \
+    syntaxhighlighter.h
 
 OTHER_FILES += \
     slave.py \
