@@ -11,6 +11,7 @@
 #define DATA_ROLE (Qt::UserRole)
 #define EXPANDED_ROLE (Qt::UserRole + 1)
 #define TYPE_ROLE (Qt::UserRole + 2)
+#define HOST_ROLE (Qt::UserRole + 3)
 
 #define NODETYPE_LOCATION 1
 
@@ -97,19 +98,46 @@ void FileDialog::populateFolderTree()
 
 void FileDialog::populateRemoteServers()
 {
-	while (mRemoteServersBranch->childCount())
-		mRemoteServersBranch->removeChild(mRemoteServersBranch->child(0));
+	//mRemoteServersBranch
 
+	//	Take a quick inventory of the servers in the list now...
+	QMap<SshHost*, bool> currentList;
+	for (int i = 0; i < mRemoteServersBranch->childCount(); i++)
+	{
+		QTreeWidgetItem* child = mRemoteServersBranch->child(i);
+		SshHost* host = (SshHost*)child->data(0, HOST_ROLE).value<void*>();
+		currentList.insert(host, false);
+	}
+
+	//	Go through the list of servers that should be there. Add new entries, mark existing ones as "ok to keep"
 	QList<SshHost*> knownHosts = SshHost::getKnownHosts();
 	foreach (SshHost* host, knownHosts)
 	{
-		QTreeWidgetItem* item = new QTreeWidgetItem();
-		item->setText(0, host->getName());
-		item->setIcon(0, QIcon(":/icons/server.png"));
-		item->setData(0, DATA_ROLE, QVariant::fromValue<Location>(host->getDefaultLocation()));
-		item->setData(0, EXPANDED_ROLE, QVariant(1));
-		item->setData(0, TYPE_ROLE, QVariant(NODETYPE_LOCATION));
-		mRemoteServersBranch->addChild(item);
+		if (currentList.contains(host))
+			currentList.insert(host, true);
+		else
+		{
+			QTreeWidgetItem* item = new QTreeWidgetItem();
+			item->setText(0, host->getName());
+			item->setIcon(0, QIcon(":/icons/server.png"));
+			item->setData(0, DATA_ROLE, QVariant::fromValue<Location>(host->getDefaultLocation()));
+			item->setData(0, EXPANDED_ROLE, QVariant(1));
+			item->setData(0, TYPE_ROLE, QVariant(NODETYPE_LOCATION));
+			item->setData(0, HOST_ROLE, QVariant::fromValue<void*>(host));
+			mRemoteServersBranch->addChild(item);
+		}
+	}
+
+	//	Remove the list entries that have not been marked as "ok to keep"
+	for (int i = 0; i < mRemoteServersBranch->childCount(); i++)
+	{
+		QTreeWidgetItem* child = mRemoteServersBranch->child(i);
+		SshHost* host = (SshHost*)child->data(0, HOST_ROLE).value<void*>();
+		if (!currentList.value(host, true))
+		{
+			i--;
+			delete child;
+		}
 	}
 }
 
