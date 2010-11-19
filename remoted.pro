@@ -33,7 +33,8 @@ SOURCES += main.cpp\
     codeeditor.cpp \
     linenumberwidget.cpp \
     optionsdialog.cpp \
-    syntaxhighlighter.cpp
+    syntaxhighlighter.cpp \
+    searchbar.cpp
 
 HEADERS  += mainwindow.h \
     sshconnection.h \
@@ -54,7 +55,8 @@ HEADERS  += mainwindow.h \
 	codeeditor.h \
 	linenumberwidget.h \
     optionsdialog.h \
-    syntaxhighlighter.h
+    syntaxhighlighter.h \
+    searchbar.h
 
 OTHER_FILES += \
     slave.py \
@@ -65,7 +67,8 @@ FORMS += \
     filedialog.ui \
     passworddialog.ui \
     sshconnectingdialog.ui \
-    optionsdialog.ui
+    optionsdialog.ui \
+    searchbar.ui
 
 RESOURCES += \
     resources.qrc

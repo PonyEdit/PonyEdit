@@ -11,6 +11,7 @@
 class Editor;
 class FileList;
 class BaseFile;
+class SearchBar;
 
 class MainWindow : public QMainWindow
 {
@@ -21,6 +22,7 @@ public:
     ~MainWindow();
 
 	void createFileMenu();
+	void createSearchMenu();
 	void createToolsMenu();
 	void createHelpMenu();
 
@@ -29,6 +31,8 @@ public slots:
 	void openFile();
 	void saveFile();
 	void fileSelected(BaseFile* file);
+	void showSearchBar();
+	void find(const QString& text, bool backwards);
 
 	void options();
 	void about();
@@ -44,6 +48,9 @@ private:
 	QStatusBar* mStatusBar;
 	QLabel* mStatusLine;
 	QList<Editor*> mEditors;
+
+	QDockWidget* mSearchBarWrapper;
+	SearchBar* mSearchBar;
 };
 
 #endif // MAINWINDOW_H

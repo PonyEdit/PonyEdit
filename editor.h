@@ -25,10 +25,13 @@ public:
 public slots:
 	void openStatusChanged(int openStatus);
 	void fileOpenProgress(int percent);
+	void find(const QString& text, bool backwards);
 
 private:
 	void showLoading();
 	void showError(const QString& error);
+
+	bool mFirstOpen;
 
 	BaseFile* mFile;
 	CodeEditor* mEditor;

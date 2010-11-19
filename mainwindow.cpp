@@ -17,6 +17,7 @@
 #include "editor.h"
 #include "optionsdialog.h"
 #include "globaldispatcher.h"
+#include "searchbar.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -29,6 +30,16 @@ MainWindow::MainWindow(QWidget *parent)
 	addDockWidget(Qt::LeftDockWidgetArea, mFileList, Qt::Vertical);
 	connect(mFileList, SIGNAL(fileSelected(BaseFile*)), this, SLOT(fileSelected(BaseFile*)));
 
+	mSearchBar = new SearchBar();
+	mSearchBarWrapper = new QDockWidget("Search", 0, Qt::FramelessWindowHint);
+	mSearchBarWrapper->setFeatures(QDockWidget::DockWidgetClosable);
+	mSearchBarWrapper->setWidget(mSearchBar);
+	addDockWidget(Qt::BottomDockWidgetArea, mSearchBarWrapper, Qt::Horizontal);
+	mSearchBarWrapper->hide();
+	mSearchBarWrapper->setTitleBarWidget(new QWidget(this));
+	connect(mSearchBar, SIGNAL(closeRequested()), mSearchBarWrapper, SLOT(hide()));
+	connect(mSearchBar, SIGNAL(find(QString,bool)), this, SLOT(find(QString,bool)));
+
 	mStatusLine = new QLabel();
 	mStatusBar = new QStatusBar();
 	mStatusBar->addPermanentWidget(mStatusLine);
@@ -37,6 +48,7 @@ MainWindow::MainWindow(QWidget *parent)
 	createToolbar();
 
 	createFileMenu();
+	createSearchMenu();
 	createToolsMenu();
 	createHelpMenu();
 
@@ -76,6 +88,8 @@ void MainWindow::openFile()
 				mEditorStack->addWidget(newEditor);
 				mEditorStack->setCurrentWidget(newEditor);
 				mEditors.append(newEditor);
+
+				newEditor->setFocus();
 			}
 		}
 	}
@@ -84,7 +98,7 @@ void MainWindow::openFile()
 void MainWindow::saveFile()
 {
 	Editor* current = (Editor*)mEditorStack->currentWidget();
-	current->save();
+	if (current) current->save();
 }
 
 void MainWindow::fileSelected(BaseFile* file)
@@ -124,6 +138,13 @@ void MainWindow::createFileMenu()
 						QKeySequence::Quit);
 }
 
+void MainWindow::createSearchMenu()
+{
+	QMenu *searchMenu = new QMenu(tr("&Search"), this);
+	menuBar()->addMenu(searchMenu);
+	searchMenu->addAction(tr("&Show Search Bar"), this, SLOT(showSearchBar()), QKeySequence::Find);
+}
+
 void MainWindow::createToolsMenu()
 {
 	QMenu *toolsMenu = new QMenu(tr("&Tools"), this);
@@ -148,6 +169,18 @@ void MainWindow::showErrorMessage(QString error)
 void MainWindow::showStatusMessage(QString message)
 {
 	mStatusLine->setText(message);
+}
+
+void MainWindow::showSearchBar()
+{
+	mSearchBarWrapper->show();
+	mSearchBar->takeFocus();
+}
+
+void MainWindow::find(const QString& text, bool backwards)
+{
+	Editor* current = (Editor*)mEditorStack->currentWidget();
+	if (current) current->find(text, backwards);
 }
 
 

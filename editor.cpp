@@ -9,6 +9,7 @@
 Editor::Editor(BaseFile* file) : QStackedWidget()
 {
 	mEditor = new CodeEditor();
+	mFirstOpen = true;
 	addWidget(mEditor);
 
 	mWorkingPane = new QWidget();
@@ -65,10 +66,17 @@ void Editor::openStatusChanged(int openStatus)
 			break;
 
 		case BaseFile::Ready:
+			if (mFirstOpen)
+			{
+				mFirstOpen = false;
+				mEditor->moveCursor(QTextCursor::Start, QTextCursor::MoveAnchor);
+			}
+
 		case BaseFile::Disconnected:
 		case BaseFile::Reconnecting:
 		case BaseFile::Repairing:
 			setCurrentWidget(mEditor);
+			if (hasFocus()) mEditor->setFocus();
 			break;
 
 		case BaseFile::Closing:
@@ -96,5 +104,10 @@ void Editor::showError(const QString& error)
 void Editor::save()
 {
 	mFile->save();
+}
+
+void Editor::find(const QString& text, bool backwards)
+{
+	mEditor->find(text, (QTextDocument::FindFlags)(backwards ? QTextDocument::FindBackward : 0));
 }
 
