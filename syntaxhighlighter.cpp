@@ -54,7 +54,7 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent)
 	rule.format = functionFormat;
 	highlightingRules.append(rule);
 
-	commentStartExpression = QRegExp("(/\\*|^=[A-Za-z0-9]+$)");
+	commentStartExpression = QRegExp("(/\\*|^=[A-Za-z0-9]+)");
 	commentEndExpression = QRegExp("(\\*/|^=cut$)");
 }
 
