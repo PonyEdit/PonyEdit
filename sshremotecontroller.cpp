@@ -266,7 +266,7 @@ void SshControllerThread::connect()
 		QByteArray remoteMd5 = mConnection->execute((QString("if [ ! -d ~/.remoted ]; then mkdir ~/.remoted; fi; if [ -e ~/.remoted/") +
 			scriptName + " ]; then md5sum ~/.remoted/" + scriptName + "; else echo x; fi\n").toAscii()).toLower();
 		remoteMd5.truncate(32);
-		if (remoteMd5 != sSlaveMd5)
+		if (remoteMd5 != sSlaveMd5[scriptType])
 		{
 			setStatus(SshRemoteController::UploadingSlave);
 			mConnection->writeFile((QString(".remoted/") + scriptName).toAscii(), sSlaveScript[scriptType].constData(), sSlaveScript[scriptType].length());
