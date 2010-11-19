@@ -21,11 +21,6 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-	void createFileMenu();
-	void createSearchMenu();
-	void createToolsMenu();
-	void createHelpMenu();
-
 public slots:
 	void newFile();
 	void openFile();
@@ -40,8 +35,17 @@ public slots:
 	void showErrorMessage(QString error);
 	void showStatusMessage(QString message);
 
+protected:
+	void closeEvent(QCloseEvent* event);
+
 private:
 	void createToolbar();
+	void createFileMenu();
+	void createSearchMenu();
+	void createToolsMenu();
+	void createHelpMenu();
+	void createSearchBar();
+	void restoreState();
 
 	FileList* mFileList;
 	QStackedWidget* mEditorStack;

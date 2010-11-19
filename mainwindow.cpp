@@ -12,6 +12,8 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QCoreApplication>
+#include <QSettings>
+
 #include "filedialog.h"
 #include "filelist.h"
 #include "editor.h"
@@ -30,15 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
 	addDockWidget(Qt::LeftDockWidgetArea, mFileList, Qt::Vertical);
 	connect(mFileList, SIGNAL(fileSelected(BaseFile*)), this, SLOT(fileSelected(BaseFile*)));
 
-	mSearchBar = new SearchBar();
-	mSearchBarWrapper = new QDockWidget("Search", 0, Qt::FramelessWindowHint);
-	mSearchBarWrapper->setFeatures(QDockWidget::DockWidgetClosable);
-	mSearchBarWrapper->setWidget(mSearchBar);
-	addDockWidget(Qt::BottomDockWidgetArea, mSearchBarWrapper, Qt::Horizontal);
-	mSearchBarWrapper->hide();
-	mSearchBarWrapper->setTitleBarWidget(new QWidget(this));
-	connect(mSearchBar, SIGNAL(closeRequested()), mSearchBarWrapper, SLOT(hide()));
-	connect(mSearchBar, SIGNAL(find(QString,bool)), this, SLOT(find(QString,bool)));
+	createSearchBar();
 
 	mStatusLine = new QLabel();
 	mStatusBar = new QStatusBar();
@@ -54,10 +48,32 @@ MainWindow::MainWindow(QWidget *parent)
 
 	connect(gDispatcher, SIGNAL(generalErrorMessage(QString)), this, SLOT(showErrorMessage(QString)), Qt::QueuedConnection);
 	connect(gDispatcher, SIGNAL(generalStatusMessage(QString)), this, SLOT(showStatusMessage(QString)), Qt::QueuedConnection);
+
+	restoreState();
 }
 
 MainWindow::~MainWindow()
 {
+}
+
+void MainWindow::restoreState()
+{
+	QSettings settings;
+	restoreGeometry(settings.value("mainwindow/geometry").toByteArray());
+	QMainWindow::restoreState(settings.value("mainwindow/state").toByteArray());
+}
+
+void MainWindow::createSearchBar()
+{
+	mSearchBar = new SearchBar();
+	mSearchBarWrapper = new QDockWidget("Search", 0, Qt::FramelessWindowHint);
+	mSearchBarWrapper->setFeatures(QDockWidget::DockWidgetClosable);
+	mSearchBarWrapper->setWidget(mSearchBar);
+	addDockWidget(Qt::BottomDockWidgetArea, mSearchBarWrapper, Qt::Horizontal);
+	mSearchBarWrapper->hide();
+	mSearchBarWrapper->setTitleBarWidget(new QWidget(this));
+	connect(mSearchBar, SIGNAL(closeRequested()), mSearchBarWrapper, SLOT(hide()));
+	connect(mSearchBar, SIGNAL(find(QString,bool)), this, SLOT(find(QString,bool)));
 }
 
 void MainWindow::createToolbar()
@@ -181,6 +197,15 @@ void MainWindow::find(const QString& text, bool backwards)
 {
 	Editor* current = (Editor*)mEditorStack->currentWidget();
 	if (current) current->find(text, backwards);
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+	//	Save the geometry and toolbar state of this window on the way out
+	QSettings settings;
+	settings.setValue("mainwindow/geometry", saveGeometry());
+	settings.setValue("mainwindow/state", saveState());
+	QMainWindow::closeEvent(event);
 }
 
 
