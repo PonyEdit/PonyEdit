@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QKeyEvent>
+#include <QSettings>
 
 #define DATA_ROLE (Qt::UserRole)
 #define EXPANDED_ROLE (Qt::UserRole + 1)
@@ -34,9 +35,9 @@ FileDialog::FileDialog(QWidget *parent) :
 	ui->fileList->setFocus();
 	ui->fileList->horizontalHeader()->setHighlightSections(false);
 
-	QList<int> sizes;
-	sizes.append(1);
-	sizes.append(3);
+	QList<int> sizes = ui->splitter->sizes();
+	sizes[0] = 1;
+	sizes[1] = 300;
 	ui->splitter->setSizes(sizes);
 
 	connect(ui->directoryTree, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(folderTreeItemExpanded(QTreeWidgetItem*)));
@@ -49,8 +50,12 @@ FileDialog::FileDialog(QWidget *parent) :
 	connect(ui->fileList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(fileListSelectionChanged(const QItemSelection&, const QItemSelection&)));
 	connect(gDispatcher, SIGNAL(locationListSuccessful(QList<Location>,QString)), this, SLOT(folderChildrenLoaded(QList<Location>,QString)), Qt::QueuedConnection);
 	connect(gDispatcher, SIGNAL(locationListFailed(QString,QString)), this, SLOT(folderChildrenFailed(QString,QString)), Qt::QueuedConnection);
+	connect(this, SIGNAL(accepted()), this, SLOT(closing()));
+	connect(this, SIGNAL(rejected()), this, SLOT(closing()));
 
 	populateFolderTree();
+
+	restoreState();
 
 	showLocation(mLastLocation);
 }
@@ -59,6 +64,12 @@ FileDialog::~FileDialog()
 {
 	delete mFileListModel;
     delete ui;
+}
+
+void FileDialog::restoreState()
+{
+	QSettings settings;
+	restoreGeometry(settings.value("filedialog/geometry").toByteArray());
 }
 
 void FileDialog::populateFolderTree()
@@ -344,6 +355,13 @@ QList<Location> FileDialog::getSelectedLocations() const
 			selections.append(mFileListModel->itemFromIndex(index)->data(DATA_ROLE).value<Location>());
 
 	return selections;
+}
+
+void FileDialog::closing()
+{
+	//	Save the geometry of this window on the way out
+	QSettings settings;
+	settings.setValue("filedialog/geometry", saveGeometry());
 }
 
 

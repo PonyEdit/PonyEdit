@@ -30,9 +30,11 @@ private slots:
 	void fileDoubleClicked(QModelIndex index);
 	void populateRemoteServers();
 	void fileListSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+	void closing();
 
 private:
 	void keyPressEvent(QKeyEvent *);
+	void restoreState();
 
 	void populateFolderTree();
 	QTreeWidgetItem* addLocationToTree(QTreeWidgetItem* parent, const Location& location);
