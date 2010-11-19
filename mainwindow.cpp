@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
 	mFileList = new FileList();
 	addDockWidget(Qt::LeftDockWidgetArea, mFileList, Qt::Vertical);
 	connect(mFileList, SIGNAL(fileSelected(BaseFile*)), this, SLOT(fileSelected(BaseFile*)));
+	mFileList->setObjectName("File List");
 
 	createSearchBar();
 
@@ -74,6 +75,7 @@ void MainWindow::createSearchBar()
 	mSearchBarWrapper->setTitleBarWidget(new QWidget(this));
 	connect(mSearchBar, SIGNAL(closeRequested()), mSearchBarWrapper, SLOT(hide()));
 	connect(mSearchBar, SIGNAL(find(QString,bool)), this, SLOT(find(QString,bool)));
+	mSearchBarWrapper->setObjectName("Search Bar");
 }
 
 void MainWindow::createToolbar()
@@ -83,6 +85,7 @@ void MainWindow::createToolbar()
 	toolbar->addAction(QIcon(":/icons/open.png"), "Open", this, SLOT(openFile()));
 	toolbar->addAction(QIcon(":/icons/save.png"), "Save", this, SLOT(saveFile()));
 	this->addToolBar(toolbar);
+	toolbar->setObjectName("File Toolbar");
 }
 
 void MainWindow::newFile(){}
