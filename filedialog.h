@@ -44,6 +44,8 @@ private:
 	QTreeWidgetItem* mRemoteServersBranch;
 
 	QMap<QString, QTreeWidgetItem*> mLoadingLocations;
+
+	static Location mLastLocation;
 };
 
 #endif // FILEDIALOG_H

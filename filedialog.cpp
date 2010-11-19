@@ -15,6 +15,8 @@
 
 #define NODETYPE_LOCATION 1
 
+Location FileDialog::mLastLocation;
+
 FileDialog::FileDialog(QWidget *parent) :
 	QDialog(parent),
     ui(new Ui::FileDialog)
@@ -49,6 +51,8 @@ FileDialog::FileDialog(QWidget *parent) :
 	connect(gDispatcher, SIGNAL(locationListFailed(QString,QString)), this, SLOT(folderChildrenFailed(QString,QString)), Qt::QueuedConnection);
 
 	populateFolderTree();
+
+	showLocation(mLastLocation);
 }
 
 FileDialog::~FileDialog()
@@ -93,7 +97,8 @@ void FileDialog::populateFolderTree()
 	favouriteLocations->setIcon(0, QIcon("icons/favorite.png"));
 	ui->directoryTree->addTopLevelItem(favouriteLocations);
 
-	showLocation(homeLocation);
+	if (mLastLocation.isNull())
+		mLastLocation = homeLocation;
 }
 
 void FileDialog::populateRemoteServers()
@@ -256,6 +261,8 @@ void FileDialog::showLocation(const Location& location)
 {
 	if (location.isNull())
 		return;
+
+	mLastLocation = location;
 
 	ui->currentPath->setText(location.getDisplayPath());
 	mCurrentLocation = location;
