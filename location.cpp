@@ -124,7 +124,20 @@ int Location::getSize() const { return mData->mSize; }
 const QDateTime& Location::getLastModified() const { return mData->mLastModified; }
 bool Location::isDirectory() const { return mData->mType == Directory; }
 
-const Location& Location::getParent()
+bool Location::operator==(const Location& other) const
+{
+	return mData->mPath == other.mData->mPath;
+}
+
+const Location& Location::getDirectory() const
+{
+	if (isDirectory())
+		return *this;
+	else
+		return getParent();
+}
+
+const Location& Location::getParent() const
 {
 	if (mData->mParent.isNull())
 		mData->mParent = Location(getParentPath());

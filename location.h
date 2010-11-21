@@ -36,7 +36,8 @@ public:
 	const QDateTime& getLastModified() const;
 	Protocol getProtocol() const;
 
-	const Location& getParent();
+	const Location& getParent() const;
+	const Location& getDirectory() const;		// Returns self if is directory, or parent if is file.
 	QString getParentPath() const;
 	QString getRemotePath() const;
 	SshHost* getRemoteHost() const;
@@ -48,6 +49,8 @@ public:
 	BaseFile* getFile();
 
 	void asyncGetChildren();
+
+	bool operator==(const Location& other) const;
 
 private:
 	Location(const Location& parent, const QString& path, Type type, int size, QDateTime lastModified);

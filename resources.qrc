@@ -12,5 +12,8 @@
         <file>icons/next.png</file>
         <file>icons/previous.png</file>
         <file>icons/cross.png</file>
+        <file>icons/filechanged.png</file>
+        <file>icons/disconnected.png</file>
+        <file>icons/resync.png</file>
     </qresource>
 </RCC>

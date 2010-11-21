@@ -16,6 +16,7 @@ class BaseFile : public QObject
 public:
 	struct Change { int revision; int position; int remove; QByteArray insert; };
 	enum OpenStatus { Closed, Loading, LoadError, Ready, Disconnected, Reconnecting, Repairing, SyncError, Closing };
+	static const char* sStatusLabels[];
 
 	static BaseFile* getFile(const Location& location);
 	static const QList<BaseFile*>& getActiveFiles();
@@ -26,6 +27,8 @@ public:
 	inline const QString& getError() const { return mError; }
 	inline bool isClosed() const { return mOpenStatus == Closed; }
 	inline OpenStatus getOpenStatus() const { return mOpenStatus; }
+	inline int getLoadingPercent() const { return mLoadingPercent; }
+	inline bool hasUnsavedChanges() const { return mRevision > mLastSavedRevision; }
 
 	virtual void open() = 0;
 	virtual void save() = 0;
@@ -38,6 +41,10 @@ public:
 	void editorDetached(Editor* editor);	//	Call only from Editor destructor.
 
 	QString getChecksum() const;
+	const Location& getDirectory() const;
+
+	void ignoreChanges() { mIgnoreChanges++; }
+	void unignoreChanges() { mIgnoreChanges--; if (mIgnoreChanges < 0) mIgnoreChanges = 0; }
 
 public slots:
 	void fileOpened(const QByteArray& content);
@@ -47,6 +54,7 @@ signals:
 	void fileOpenedRethreadSignal(const QByteArray& content);
 	void fileOpenProgress(int percent);
 	void openStatusChanged(int newStatus);
+	void unsavedStatusChanged();
 
 protected:
 	BaseFile(const Location& location);
@@ -66,15 +74,14 @@ protected:
 	bool mChanged;
 	bool mDosLineEndings;
 	int mRevision;
-	bool mIgnoreChanges;	//	To disregard change signals while changing content of QTextDocument programmatically.
+	int mIgnoreChanges;	//	To disregard change signals while changing content of QTextDocument programmatically.
 
 	int mLastSavedRevision;
 	QByteArray mLastSaveChecksum;
 
+	int mLoadingPercent;
 	OpenStatus mOpenStatus;
 	QList<Editor*> mAttachedEditors;
-
-	static QList<BaseFile*> sActiveFiles;
 };
 
 #endif // FILE_H

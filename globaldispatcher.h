@@ -17,7 +17,6 @@ class GlobalDispatcher : public QObject
 public:
 	GlobalDispatcher() {}	//	Do not call outside of main(); just use gDispatcher instead.
 	void emitSshServersUpdated() { emit sshServersUpdated(); }
-	void emitActiveFilesUpdated() { emit activeFilesUpdated(); }
 
 	void emitGeneralErrorMessage(QString error) { emit generalErrorMessage(error); }
 	void emitGeneralStatusMessage(QString message) { emit generalStatusMessage(message); }
@@ -25,15 +24,18 @@ public:
 	void emitLocationListSuccessful(const QList<Location>& children, QString locationPath) { emit locationListSuccessful(children, locationPath); }
 	void emitLocationListFailed(const QString& error, QString locationPath) { emit locationListFailed(error, locationPath); }
 
+	void emitSelectFile(BaseFile* file) { emit selectFile(file); }
+
 signals:
 	void sshServersUpdated();
-	void activeFilesUpdated();
 
 	void generalErrorMessage(QString error);
 	void generalStatusMessage(QString message);
 
 	void locationListSuccessful(const QList<Location>& children, QString locationPath);
 	void locationListFailed(const QString& error, QString locationPath);
+
+	void selectFile(BaseFile* file);
 };
 
 extern GlobalDispatcher* gDispatcher;

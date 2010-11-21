@@ -30,7 +30,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 	mFileList = new FileList();
 	addDockWidget(Qt::LeftDockWidgetArea, mFileList, Qt::Vertical);
-	connect(mFileList, SIGNAL(fileSelected(BaseFile*)), this, SLOT(fileSelected(BaseFile*)));
 	mFileList->setObjectName("File List");
 
 	createSearchBar();
@@ -49,6 +48,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	connect(gDispatcher, SIGNAL(generalErrorMessage(QString)), this, SLOT(showErrorMessage(QString)), Qt::QueuedConnection);
 	connect(gDispatcher, SIGNAL(generalStatusMessage(QString)), this, SLOT(showStatusMessage(QString)), Qt::QueuedConnection);
+	connect(gDispatcher, SIGNAL(selectFile(BaseFile*)), this, SLOT(fileSelected(BaseFile*)));
 
 	restoreState();
 }
@@ -108,6 +108,8 @@ void MainWindow::openFile()
 				mEditorStack->setCurrentWidget(newEditor);
 				mEditors.append(newEditor);
 
+				gDispatcher->emitSelectFile(file);
+
 				newEditor->setFocus();
 			}
 		}
@@ -122,6 +124,8 @@ void MainWindow::saveFile()
 
 void MainWindow::fileSelected(BaseFile* file)
 {
+	if (!file) return;
+
 	const QList<Editor*>& editors = file->getAttachedEditors();
 	if (editors.length() > 0)
 		mEditorStack->setCurrentWidget(editors[0]);

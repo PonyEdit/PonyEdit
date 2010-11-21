@@ -2,11 +2,11 @@
 #define FILELIST_H
 
 #include <QDockWidget>
-#include <QListWidget>
-#include <QList>
+#include <QTreeView>
 
 class Editor;
 class BaseFile;
+class AutoExpandTreeView;
 
 class FileList : public QDockWidget
 {
@@ -14,15 +14,15 @@ class FileList : public QDockWidget
 public:
     explicit FileList(QWidget *parent = 0);
 
-private slots:
-	void selectionChanged(QListWidgetItem * current, QListWidgetItem * previous);
-	void activeFileListUpdated();
+	BaseFile* getSelectedFile();
 
-signals:
-	void fileSelected(BaseFile* file);
+private slots:
+	void selectFile(BaseFile* file);
+	void fileSelected();
+	void itemClicked(QModelIndex index);
 
 private:
-	QListWidget* mListWidget;
+	AutoExpandTreeView* mTreeView;
 };
 
 #endif // FILELIST_H

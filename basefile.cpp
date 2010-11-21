@@ -5,17 +5,16 @@
 #include "basefile.h"
 #include "tools.h"
 #include "globaldispatcher.h"
+#include "openfilemodel.h"
 
-QList<BaseFile*> BaseFile::sActiveFiles;
+const char* BaseFile::sStatusLabels[] =  { "Closed", "Loading...", "Error while loading", "Ready", "Disconnected", "Reconnecting...", "Lost Synchronization; Repairing", "Syncronization Error", "Closing" };
 
 BaseFile* BaseFile::getFile(const Location& location)
 {
-	const QString& locationPath = location.getPath();
-
 	//	See if the specified location is already open...
-	foreach (BaseFile* file, sActiveFiles)
-		if (file->getLocation().getPath() == locationPath)
-			return file;
+	BaseFile* existingFile = gOpenFileModel.getFile(location);
+	if (existingFile)
+		return existingFile;
 
 	//	If not, create a new file object.
 	BaseFile* newFile = NULL;
@@ -31,10 +30,7 @@ BaseFile* BaseFile::getFile(const Location& location)
 	}
 
 	if (newFile)
-	{
-		sActiveFiles.append(newFile);
-		gDispatcher->emitActiveFilesUpdated();
-	}
+		gOpenFileModel.registerFile(newFile);
 
 	return newFile;
 }
@@ -45,10 +41,11 @@ BaseFile::~BaseFile()
 
 BaseFile::BaseFile(const Location& location)
 {
+	mLoadingPercent = 0;
 	mOpenStatus = BaseFile::Closed;
 	mLocation = location;
 
-	mIgnoreChanges = false;
+	mIgnoreChanges = 0;
 
 	mDocument = new QTextDocument();
 	mDocumentLayout = new QPlainTextDocumentLayout(mDocument);
@@ -77,6 +74,7 @@ void BaseFile::documentChanged(int position, int removeChars, int charsAdded)
 
 void BaseFile::handleDocumentChange(int position, int removeChars, const QByteArray &insert)
 {
+	qDebug() << "handleDocumentChange " << mIgnoreChanges;
 	if (mIgnoreChanges)
 		return;
 
@@ -86,6 +84,7 @@ void BaseFile::handleDocumentChange(int position, int removeChars, const QByteAr
 	mChanged = true;
 
 	qDebug() << "Checksum: " << getChecksum();
+	emit unsavedStatusChanged();
 }
 
 void BaseFile::fileOpened(const QByteArray& content)
@@ -99,18 +98,27 @@ void BaseFile::fileOpened(const QByteArray& content)
 
 	mContent = content;
 
+	QTime t;
+	t.start();
+
 	//  Detect line ending mode, then convert it to unix-style. Use unix-style line endings everywhere, only convert to DOS at save time.
 	mDosLineEndings = mContent.contains("\r\n");
 	if (mDosLineEndings)
 		mContent.replace("\r\n", "\n");
 
+	qDebug() << "Time taken scanning document: " << t.elapsed();
+	t.restart();
+
 	mChanged = false;
 	mRevision = 0;
 	mLastSavedRevision = 0;
 
-	mIgnoreChanges = true;
+	ignoreChanges();
 	mDocument->setPlainText(content);
-	mIgnoreChanges = false;
+	unignoreChanges();
+
+	qDebug() << "Time taken calling setPlainText: " << t.elapsed();
+	t.restart();
 
 	setOpenStatus(Ready);
 }
@@ -125,11 +133,6 @@ void BaseFile::setOpenStatus(OpenStatus newStatus)
 {
 	mOpenStatus = newStatus;
 	emit openStatusChanged(newStatus);
-}
-
-const QList<BaseFile*>& BaseFile::getActiveFiles()
-{
-	return sActiveFiles;
 }
 
 void BaseFile::editorAttached(Editor* editor)	//	Call only from Editor constructor.
@@ -155,6 +158,7 @@ void BaseFile::savedRevision(int revision, const QByteArray& checksum)
 	setLastSavedRevision(revision);
 	gDispatcher->emitGeneralStatusMessage(QString("Finished saving ") + mLocation.getLabel() + " at revision " + QString::number(revision));
 	qDebug() << "Saved revision " << revision;
+	emit unsavedStatusChanged();
 }
 
 void BaseFile::setLastSavedRevision(int lastSavedRevision)
@@ -164,10 +168,14 @@ void BaseFile::setLastSavedRevision(int lastSavedRevision)
 
 void BaseFile::fileOpenProgressed(int percent)
 {
+	mLoadingPercent = percent;
 	emit fileOpenProgress(percent);
 }
 
-
+const Location& BaseFile::getDirectory() const
+{
+	return mLocation.getDirectory();
+}
 
 
 

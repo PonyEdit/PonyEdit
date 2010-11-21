@@ -1,72 +1,82 @@
+#include <QHeaderView>
 #include <QVBoxLayout>
+#include <QDebug>
 #include <QMap>
 
+#include "openfilemodel.h"
+#include "filelistitemdelegate.h"
 #include "globaldispatcher.h"
 #include "basefile.h"
 #include "filelist.h"
 #include "editor.h"
+
+class AutoExpandTreeView : public QTreeView
+{
+public:
+	virtual void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight) { this->expandAll(); }
+};
 
 FileList::FileList(QWidget *parent) :
     QDockWidget(parent)
 {
 	setWindowTitle("Open Files");
 
-	mListWidget = new QListWidget();
-	mListWidget->setMinimumWidth(150);
-	setWidget(mListWidget);
+	mTreeView = new AutoExpandTreeView();
+	mTreeView->setModel(&gOpenFileModel);
+	mTreeView->setMinimumWidth(150);
+	mTreeView->header()->hide();
+	mTreeView->setItemDelegate(new FileListItemDelegate(mTreeView));
+	mTreeView->setAttribute(Qt::WA_MacShowFocusRect, false);
+	mTreeView->setSelectionMode(QAbstractItemView::SingleSelection);
+	mTreeView->setSelectionBehavior(QAbstractItemView::SelectRows);
+	mTreeView->viewport()->setAttribute(Qt::WA_Hover);
+	mTreeView->header()->setStretchLastSection(false);
+	mTreeView->header()->setResizeMode(0, QHeaderView::Stretch);
+	mTreeView->header()->setResizeMode(1, QHeaderView::Fixed);
+	mTreeView->header()->resizeSection(1, 16);
 
-	connect(mListWidget, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), this, SLOT(selectionChanged(QListWidgetItem*,QListWidgetItem*)));
-	connect(gDispatcher, SIGNAL(activeFilesUpdated()), this, SLOT(activeFileListUpdated()));
+	setWidget(mTreeView);
+
+	connect(gDispatcher, SIGNAL(selectFile(BaseFile*)), this, SLOT(selectFile(BaseFile*)));
+	connect(mTreeView->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), this, SLOT(fileSelected()));
+	connect(mTreeView, SIGNAL(clicked(QModelIndex)), this, SLOT(itemClicked(QModelIndex)));
 }
 
-void FileList::selectionChanged(QListWidgetItem* current, QListWidgetItem*)
+BaseFile* FileList::getSelectedFile()
 {
-	if (!current) return;
-	BaseFile* f = (BaseFile*)current->data(Qt::UserRole).value<void*>();
-	emit fileSelected(f);
+	QModelIndex selectedIndex = mTreeView->selectionModel()->currentIndex();
+	if (selectedIndex.isValid())
+		return (BaseFile*)gOpenFileModel.data(selectedIndex, OpenFileModel::FileRole).value<void*>();
+
+	return NULL;
 }
 
-void FileList::activeFileListUpdated()
+void FileList::selectFile(BaseFile* file)
 {
-	//	Take a quick inventory of the files in the list now...
-	QMap<BaseFile*, bool> currentList;
-	for (int row = 0; row < mListWidget->count(); row++)
+	if (!file) return;
+	if (getSelectedFile() != file)
 	{
-		QListWidgetItem* item = mListWidget->item(row);
-		BaseFile* file = (BaseFile*)item->data(Qt::UserRole).value<void*>();
-		currentList.insert(file, false);
-	}
-
-	//	Go through the list of files that should be there. Add new entries, mark existing ones as "ok to keep"
-	const QList<BaseFile*>& fileList = BaseFile::getActiveFiles();
-	foreach (BaseFile* file, fileList)
-	{
-		if (currentList.contains(file))
-			currentList.insert(file, true);
-		else
-		{
-			Location location = file->getLocation();
-
-			QListWidgetItem* item = new QListWidgetItem();
-			item->setIcon(location.getIcon());
-			item->setText(location.getLabel());
-			item->setData(Qt::UserRole, QVariant::fromValue<void*>((void*)file));
-			mListWidget->addItem(item);
-		}
-	}
-
-	//	Remove the list entries that have not been marked as "ok to keep"
-	for (int row = 0; row < mListWidget->count(); row++)
-	{
-		QListWidgetItem* item = mListWidget->item(row);
-		BaseFile* file = (BaseFile*)item->data(Qt::UserRole).value<void*>();
-		if (!currentList.value(file, true))
-		{
-			row--;
-			delete item;
-		}
+		QModelIndex index = gOpenFileModel.findFile(file);
+		mTreeView->setCurrentIndex(index);
 	}
 }
+
+void FileList::fileSelected()
+{
+	BaseFile* file = getSelectedFile();
+	gDispatcher->emitSelectFile(file);
+}
+
+void FileList::itemClicked(QModelIndex index)
+{
+	if (index.column() == 1)
+		gOpenFileModel.closeButtonClicked(index);
+}
+
+
+
+
+
 
 
 

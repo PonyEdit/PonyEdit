@@ -34,7 +34,9 @@ SOURCES += main.cpp\
     linenumberwidget.cpp \
     optionsdialog.cpp \
     syntaxhighlighter.cpp \
-    searchbar.cpp
+    searchbar.cpp \
+    openfilemodel.cpp \
+    filelistitemdelegate.cpp
 
 HEADERS  += mainwindow.h \
     sshconnection.h \
@@ -56,7 +58,9 @@ HEADERS  += mainwindow.h \
 	linenumberwidget.h \
     optionsdialog.h \
     syntaxhighlighter.h \
-    searchbar.h
+    searchbar.h \
+    openfilemodel.h \
+    filelistitemdelegate.h
 
 OTHER_FILES += \
     slave.py \
