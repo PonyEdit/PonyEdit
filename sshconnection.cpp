@@ -1,17 +1,29 @@
 #include "sshconnection.h"
 
-#include <windows.h>
+#ifdef Q_OS_WIN
+	#include <windows.h>
+#else
+	#include <sys/types.h>
+	#include <sys/socket.h>
+	#include <netinet/in.h>
+	#include <arpa/inet.h>
+	#include <unistd.h>
+	#include <netdb.h>
+	void closesocket(int socket) { close(socket); }
+#endif
+
 #include <QDebug>
 #include <QTime>
-#include <gcrypt.h>
+//#include <gcrypt.h>
 
 void SshConnection::initializeLib()
 {
+#ifdef Q_OS_WIN
 	//	Initialize winsock
 	WSADATA data;
 	if (WSAStartup(0x22, &data) != 0)
 		throw(QString("Failed to initialize WinSock!"));
-
+#endif
 	//	Initialize libssh2
 	if (libssh2_init(0) != 0)
 		throw(QString("Failed to initialize SSH library!"));

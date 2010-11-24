@@ -4,9 +4,17 @@
 #
 #-------------------------------------------------
 
-INCLUDEPATH += $$PWD/../libssh2-1.2.7/include/
+win32 {
+	INCLUDEPATH += $$PWD/../libssh2-1.2.7/include/
 
-LIBS     += -L$$PWD/../libssh2-1.2.7/lib/ -lgcrypt -llibgpg-error -lssh2 -lwsock32
+	LIBS     += -L$$PWD/../libssh2-1.2.7/lib/ -llibgpg-error -lwsock32
+}
+
+!win32 {
+	LIBS	+= -lgpg-error
+}
+
+LIBS	+= -lssh2
 
 QT       += core gui network
 
