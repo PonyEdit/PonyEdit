@@ -117,7 +117,7 @@ int OpenFileModel::rowCount(const QModelIndex& parent) const
 	return parentEntry->children.length();
 }
 
-int OpenFileModel::columnCount(const QModelIndex& parent) const
+int OpenFileModel::columnCount(const QModelIndex& /*parent*/) const
 {
 	return 2;
 }

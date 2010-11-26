@@ -10,7 +10,7 @@
 class ISshConnectionCallback
 {
 public:
-	virtual void fileOpenProgress(int percent) {}
+        virtual void fileOpenProgress(int /*percent*/) {}
 };
 
 class SshConnection

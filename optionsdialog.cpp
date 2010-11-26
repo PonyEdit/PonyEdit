@@ -82,12 +82,12 @@ void OptionsDialog::downloadSyntaxHilighterFilesList()
 
 void OptionsDialog::downloadSyntaxHilighterFiles()
 {
-	QNetworkReply *filesListReply = qobject_cast<QNetworkReply *>(sender());
+        QNetworkReply *filesListReply = qobject_cast<QNetworkReply*>(sender());
 
 	QList<QUrl> fileUrls = parseSyntaxHilighterFilesListXML(filesListReply);
 }
 
-QList<QUrl> OptionsDialog::parseSyntaxHilighterFilesListXML(QNetworkReply *filesListReply)
+QList<QUrl> OptionsDialog::parseSyntaxHilighterFilesListXML(QNetworkReply* /*filesListReply*/)
 {
 	QList<QUrl> languageUrls;
 

@@ -20,10 +20,13 @@ int main(int argc, char *argv[])
 	{
 		SshConnection::initializeLib();
 
+#ifndef Q_OS_LINUX
 		QStringList substitutions;
 		substitutions.append("consolas");
 		substitutions.append("courier new");
+		substitutions.append("helvetica");
 		QFont::insertSubstitutions("inconsolata", substitutions);
+#endif
 
 		qRegisterMetaType<Location>("Location");
 		qRegisterMetaType< QList<Location> >("QList<Location>");

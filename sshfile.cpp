@@ -70,7 +70,7 @@ void SshFile::resync()
 	mController->sendRequest(new SshRequest_resyncFile(mBufferId, this, mContent, mRevision));
 }
 
-void SshFile::resyncError(const QString& error)
+void SshFile::resyncError(const QString& /*error*/)
 {
 	mError = "Failed to resync with remote host!";
 	setOpenStatus(SyncError);
@@ -178,7 +178,6 @@ void SshFile::setLastSavedRevision(int lastSavedRevision)
 
 	qDebug() << mChangePumpCursor << mChangesSinceLastSave.length();
 
-	if (mChangeBufferSize < 0) mChangeBufferSize = 0;
 	if (mChangePumpCursor < 0) mChangePumpCursor = 0;
 }
 

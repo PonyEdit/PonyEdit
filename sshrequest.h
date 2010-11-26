@@ -34,15 +34,15 @@ public:
 
 	short getMessageId() const { return mMessageId; }
 	void packMessage(QByteArray* target);
-	virtual void packBody(QByteArray* target) {}
-	virtual void handleResponse(const QByteArray& response) {}
+        virtual void packBody(QByteArray* /*target*/) {}
+        virtual void handleResponse(const QByteArray& /*response*/) {}
 
-	virtual void error(const QString& error) {}
+        virtual void error(const QString& /*error*/) {}
 	virtual void success() {}
 
 	//	Manual work; if this ssh request does stuff like scp data down, this is where to do it.
 	virtual bool hasManualComponent() { return false; }
-	virtual void doManualWork(SshConnection* connection) {}
+        virtual void doManualWork(SshConnection* /*connection*/) {}
 
 protected:
 	inline void addData(QByteArray* target, unsigned char field, qint16 d) { append(target, field, dtInt16, (const char*)&d, sizeof(d)); }
