@@ -85,10 +85,20 @@ void FileDialog::populateFolderTree()
 	Location homeLocation(QDir::homePath());
 	addLocationToTree(localComputer, homeLocation);
 
+#ifdef Q_OS_MAC
+	QDir directory("/Volumes");
+	QStringList entries = directory.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
+	foreach (QString entry, entries)
+	{
+		QFileInfo driveFileInfo("/Volumes/" + entry);
+		addLocationToTree(localComputer, Location(driveFileInfo.absoluteFilePath()));
+	}
+#elif Q_OS_WIN
 	QFileInfoList driveList = QDir::drives();
 	foreach (QFileInfo driveFileInfo, driveList)
 		addLocationToTree(localComputer, Location(driveFileInfo.absoluteFilePath()));
 	localComputer->setExpanded(true);
+#endif
 
 	//
 	//	Remote Servers; contains a list of pre-configured known servers
