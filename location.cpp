@@ -172,6 +172,7 @@ QString Location::getDisplayPath() const
 
 QIcon Location::getIcon() const
 {
+#ifdef Q_OS_WIN
 	switch (mData->mProtocol)
 	{
 	case Location::Local:
@@ -183,6 +184,9 @@ QIcon Location::getIcon() const
 	default:
 		return QIcon();
 	}
+#else
+	return sIconProvider->icon(QFileInfo(mData->mPath));
+#endif
 }
 
 Location::Type Location::getType() const
@@ -199,12 +203,14 @@ void LocationShared::setPath(const QString &path)
 	mPath.replace('\\', '/');
 
 	//	Clean off any trailing slashes
-	while (mPath.endsWith('/'))
+	while (mPath.endsWith('/') && mPath.length() > 1)
 		mPath.truncate(mPath.length() - 1);
 
 	//	Work out what to label this path...
 	int lastSlashIndex = mPath.lastIndexOf('/');
 	mLabel = mPath.mid(lastSlashIndex + 1);
+	if (mLabel.length() == 0)
+		mLabel = "Root (/)";
 
 	//	Work out what kind of path this is. Default if no pattern matches, is local.
 	if (gSshServerRegExp.indexIn(mPath) > -1)

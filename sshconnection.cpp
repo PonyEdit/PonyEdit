@@ -50,6 +50,8 @@ void SshConnection::connect(const char* host, int port)
 	if (sock < -1)
 		throw(QString("Failed to create a socket!"));
 
+	qDebug() << "x";
+
 	//	Cycle through all the IP addresses returned by the nslookup, try to connect to each
 	struct sockaddr_in sin;
 	sin.sin_family = AF_INET;
@@ -58,12 +60,15 @@ void SshConnection::connect(const char* host, int port)
 	while (mSocket < 0 && server->h_addr_list[tryAddress] != 0)
 	{
 		sin.sin_addr.s_addr = *(u_long*)server->h_addr_list[tryAddress];
-		if (::connect(sock, (struct sockaddr*)&sin, sizeof(struct sockaddr_in)) == 0)
+		int rc = ::connect(sock, (struct sockaddr*)&sin, sizeof(struct sockaddr_in));
+		if (rc == 0)
 			mSocket = sock;
 		tryAddress++;
 	}
 	if (mSocket < 0)
 		throw(QString("Failed to connect to host"));
+
+	qDebug() << "y";
 
 	//	Create an SSH2 session
 	mSession = libssh2_session_init();
@@ -72,6 +77,8 @@ void SshConnection::connect(const char* host, int port)
 		disconnect();
 		throw(QString("Failed to set up SSH session"));
 	}
+
+	qDebug() << "z";
 
 	//	Fetch the remote host's fingerprint
 	mServerFingerprint = QByteArray(libssh2_hostkey_hash(mSession, LIBSSH2_HOSTKEY_HASH_SHA1), 20);
