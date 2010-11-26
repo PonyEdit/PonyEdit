@@ -172,7 +172,11 @@ QString Location::getDisplayPath() const
 
 QIcon Location::getIcon() const
 {
-#ifdef Q_OS_WIN
+	//	TODO: So far only Linux can provide icons for remote files without pooping its pants.
+	//	do something nicer for Windows.
+#ifdef Q_OS_LINUX
+	return sIconProvider->icon(QFileInfo(mData->mPath));
+#else
 	switch (mData->mProtocol)
 	{
 	case Location::Local:
@@ -184,8 +188,6 @@ QIcon Location::getIcon() const
 	default:
 		return QIcon();
 	}
-#else
-	return sIconProvider->icon(QFileInfo(mData->mPath));
 #endif
 }
 
