@@ -14,7 +14,6 @@
 
 #include <QDebug>
 #include <QTime>
-//#include <gcrypt.h>
 
 void SshConnection::initializeLib()
 {

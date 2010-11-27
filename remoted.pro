@@ -14,6 +14,10 @@ win32 {
 	LIBS	+= -lgpg-error
 }
 
+macx {
+	DEFINES += __DARWIN_64_BIT_INO_T
+}
+
 LIBS	+= -lssh2
 
 QT       += core gui network

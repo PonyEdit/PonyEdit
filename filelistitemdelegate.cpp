@@ -33,66 +33,74 @@ void FileListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 	{
 		//	Column 0 contains the label, and if it's a file also the status.
 		QRect labelRect = option.rect;
-		QStylePainter sp(painter->device(), mParent);
 
-		if (file)
+		QPaintDevice* device = painter->device();
+		painter->end();
+
 		{
-			BaseFile::OpenStatus fileStatus = file->getOpenStatus();
-			if (fileStatus == BaseFile::Loading)
+			QStylePainter sp(device, mParent);
+
+			if (file)
 			{
-				//	Show a progress bar while loading the file...
-				QStyleOptionProgressBar so;
-				so.rect = QRect(labelRect.right() - 32, labelRect.top() + 2, 32, labelRect.height() - 4);
-				so.direction = Qt::LeftToRight;
-				so.minimum = 0;
-				so.maximum = 100;
-				so.progress = file->getLoadingPercent();
+				BaseFile::OpenStatus fileStatus = file->getOpenStatus();
+				if (fileStatus == BaseFile::Loading)
+				{
+					//	Show a progress bar while loading the file...
+					QStyleOptionProgressBar so;
+					so.rect = QRect(labelRect.right() - 32, labelRect.top() + 2, 32, labelRect.height() - 4);
+					so.direction = Qt::LeftToRight;
+					so.minimum = 0;
+					so.maximum = 100;
+					so.progress = file->getLoadingPercent();
 
-				sp.drawControl(QStyle::CE_ProgressBar, so);
+					sp.drawControl(QStyle::CE_ProgressBar, so);
 
-				labelRect.adjust(0, 0, -34, 0);
+					labelRect.adjust(0, 0, -34, 0);
+				}
+				else
+				{
+					if (file->hasUnsavedChanges())
+					{
+						sp.drawPixmap(labelRect.right() - 16, labelRect.top(), 16, 16, QPixmap(":/icons/filechanged.png"));
+						labelRect.adjust(0, 0, -18, 0);
+					}
+
+					if (fileStatus == BaseFile::Disconnected || fileStatus == BaseFile::Reconnecting)
+					{
+						sp.drawPixmap(labelRect.right() - 16, labelRect.top(), 16, 16, QPixmap(":/icons/disconnected.png"));
+						labelRect.adjust(0, 0, -18, 0);
+					}
+					else if (fileStatus == BaseFile::Repairing)
+					{
+						sp.drawPixmap(labelRect.right() - 16, labelRect.top(), 16, 16, QPixmap(":/icons/resync.png"));
+						labelRect.adjust(0, 0, -18, 0);
+					}
+				}
+
+				//	Draw the icon
+				location.getIcon().paint(&sp, labelRect.left(), labelRect.top(), 16, 16);
+				labelRect.adjust(16, 0, 0, 0);
 			}
+
+			//	Add some padding around the text...
+			labelRect.adjust(2, 0, -2, 0);
+
+			//	Actually draw the text
+			sp.setFont(option.font);
+			sp.setBrush(option.palette.text());
+
+			QString label;
+			if (file)
+				label = option.fontMetrics.elidedText(location.getLabel(), Qt::ElideMiddle, labelRect.width());
 			else
 			{
-				if (file->hasUnsavedChanges())
-				{
-					sp.drawPixmap(labelRect.right() - 16, labelRect.top(), 16, 16, QPixmap(":/icons/filechanged.png"));
-					labelRect.adjust(0, 0, -18, 0);
-				}
-
-				if (fileStatus == BaseFile::Disconnected || fileStatus == BaseFile::Reconnecting)
-				{
-					sp.drawPixmap(labelRect.right() - 16, labelRect.top(), 16, 16, QPixmap(":/icons/disconnected.png"));
-					labelRect.adjust(0, 0, -18, 0);
-				}
-				else if (fileStatus == BaseFile::Repairing)
-				{
-					sp.drawPixmap(labelRect.right() - 16, labelRect.top(), 16, 16, QPixmap(":/icons/resync.png"));
-					labelRect.adjust(0, 0, -18, 0);
-				}
+				label = location.getPath();
+				label = squashLabel(label, option.fontMetrics, labelRect.width());
 			}
-
-			//	Draw the icon
-			location.getIcon().paint(&sp, labelRect.left(), labelRect.top(), 16, 16);
-			labelRect.adjust(16, 0, 0, 0);
+			sp.drawText(labelRect, label);
 		}
 
-		//	Add some padding around the text...
-		labelRect.adjust(2, 0, -2, 0);
-
-		//	Actually draw the text
-		sp.setFont(option.font);
-		sp.setBrush(option.palette.text());
-
-		QString label;
-		if (file)
-			label = option.fontMetrics.elidedText(location.getLabel(), Qt::ElideMiddle, labelRect.width());
-		else
-		{
-			label = location.getPath();
-			label = squashLabel(label, option.fontMetrics, labelRect.width());
-		}
-		sp.drawText(labelRect, label);
+		painter->begin(device);
 	}
 }
 
