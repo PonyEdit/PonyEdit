@@ -6,6 +6,7 @@
 #include "tools.h"
 #include "globaldispatcher.h"
 #include "openfilemodel.h"
+#include "editor.h"
 
 const char* BaseFile::sStatusLabels[] =  { "Closed", "Loading...", "Error while loading", "Ready", "Disconnected", "Reconnecting...", "Lost Synchronization; Repairing", "Syncronization Error", "Closing" };
 
@@ -37,6 +38,11 @@ BaseFile* BaseFile::getFile(const Location& location)
 
 BaseFile::~BaseFile()
 {
+	//	Tell every attached editor
+	foreach (Editor* editor, mAttachedEditors)
+		editor->fileClosed();
+
+	if (mDocument) delete mDocument;
 }
 
 BaseFile::BaseFile(const Location& location)
@@ -176,6 +182,8 @@ const Location& BaseFile::getDirectory() const
 {
 	return mLocation.getDirectory();
 }
+
+
 
 
 

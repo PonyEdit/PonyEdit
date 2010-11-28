@@ -45,6 +45,7 @@ private:
 
 	QModelIndex registerDirectory(const Location& location);
 	QModelIndex addToTree(QModelIndex parent, Entry* entry);
+	void removeEntry(Entry* entry);
 
 	QList<BaseFile*> mOpenFiles;
 	Entry* mTopLevelEntry;

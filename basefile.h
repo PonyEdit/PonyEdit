@@ -20,6 +20,7 @@ public:
 
 	static BaseFile* getFile(const Location& location);
 	static const QList<BaseFile*>& getActiveFiles();
+	virtual ~BaseFile();
 
 	inline const QByteArray& getContent() const { return mContent; }
 	inline const Location& getLocation() const { return mLocation; }
@@ -58,7 +59,6 @@ signals:
 
 protected:
 	BaseFile(const Location& location);
-	virtual ~BaseFile();
 	void setOpenStatus(OpenStatus newStatus);
 
 	virtual void handleDocumentChange(int position, int removeChars, const QByteArray& insert);

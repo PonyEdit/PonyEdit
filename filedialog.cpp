@@ -93,7 +93,7 @@ void FileDialog::populateFolderTree()
 		QFileInfo driveFileInfo("/Volumes/" + entry);
 		addLocationToTree(localComputer, Location(driveFileInfo.absoluteFilePath()));
 	}
-#elif Q_OS_WIN
+#elif defined Q_OS_WIN
 	QFileInfoList driveList = QDir::drives();
 	foreach (QFileInfo driveFileInfo, driveList)
 		addLocationToTree(localComputer, Location(driveFileInfo.absoluteFilePath()));

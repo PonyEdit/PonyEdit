@@ -174,21 +174,25 @@ QIcon Location::getIcon() const
 {
 	//	TODO: So far only Linux can provide icons for remote files without pooping its pants.
 	//	do something nicer for Windows.
-#ifdef Q_OS_LINUX
-	return sIconProvider->icon(QFileInfo(mData->mPath));
-#else
 	switch (mData->mProtocol)
 	{
 	case Location::Local:
 		return sIconProvider->icon(QFileInfo(mData->mPath));
 
 	case Location::Ssh:
-		return sIconProvider->icon(isDirectory() ? QFileIconProvider::Folder : QFileIconProvider::File);
+		if (isDirectory())
+			return sIconProvider->icon(QFileIconProvider::Folder);
+		else
+			#ifdef Q_OS_LINUX
+				return sIconProvider->icon(QFileInfo(mData->mPath));
+			#else
+				return sIconProvider->icon(QFileIconProvider::File);
+			#endif
 
 	default:
 		return QIcon();
 	}
-#endif
+
 }
 
 Location::Type Location::getType() const

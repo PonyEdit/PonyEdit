@@ -203,6 +203,30 @@ void OpenFileModel::closeFiles(const QList<BaseFile*>& files)
 		if (result != QMessageBox::Discard)
 			return;
 	}
+
+	foreach (BaseFile* file, files)
+	{
+		delete file;
+		removeEntry(mFileLookup.value(file));
+	}
+}
+
+void OpenFileModel::removeEntry(Entry* entry)
+{
+	Entry* parentEntry = entry->parent;
+	int row = parentEntry->children.indexOf(entry);
+
+	QModelIndex index = createIndex(row, 0, entry);
+	QModelIndex parentIndex = parent(index);
+
+	beginRemoveRows(parentIndex, row, row);
+	parentEntry->children.removeAt(row);
+	endRemoveRows();
+
+	//	If this is a file being removed, also remove the directory above it if its now empty
+	if (entry->file)
+		if (parentEntry->children.length() == 0)
+			removeEntry(parentEntry);
 }
 
 

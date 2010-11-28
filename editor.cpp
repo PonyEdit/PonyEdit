@@ -111,3 +111,26 @@ void Editor::find(const QString& text, bool backwards)
 	mEditor->find(text, (QTextDocument::FindFlags)(backwards ? QTextDocument::FindBackward : 0));
 }
 
+void Editor::fileClosed()
+{
+	delete this;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

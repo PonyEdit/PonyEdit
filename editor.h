@@ -21,6 +21,7 @@ public:
 
 	BaseFile* getFile() const { return mFile; }
 	const Location& getLocation() const { return mFile->getLocation(); }
+	void fileClosed();				//	Called when the file this editor is attached to, is closed.
 
 public slots:
 	void openStatusChanged(int openStatus);

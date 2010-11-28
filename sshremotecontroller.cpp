@@ -440,7 +440,10 @@ void SshControllerThread::runMainLoop()
 void SshControllerThread::disconnect()
 {
 	if (mConnection)
+	{
 		delete mConnection;
+		mConnection = NULL;
+	}
 	setStatus(SshRemoteController::NotConnected);
 }
 
