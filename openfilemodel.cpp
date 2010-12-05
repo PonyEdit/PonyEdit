@@ -1,13 +1,20 @@
+#include "unsavedchangesdialog.h"
 #include "openfilemodel.h"
+#include "openfilemanager.h"
 #include "basefile.h"
 #include <QDebug>
 #include <QMessageBox>
 
-OpenFileModel gOpenFileModel;
-
-OpenFileModel::OpenFileModel() : QAbstractItemModel(0)
+OpenFileModel::OpenFileModel(QObject* parent) : QAbstractItemModel(parent)
 {
 	mTopLevelEntry = new Entry();
+
+	connect(&gOpenFileManager, SIGNAL(fileOpened(BaseFile*)), this, SLOT(fileOpened(BaseFile*)));
+	connect(&gOpenFileManager, SIGNAL(fileClosed(BaseFile*)), this, SLOT(fileClosed(BaseFile*)));
+
+	//	Add any already-open files
+	foreach (BaseFile* file, gOpenFileManager.getOpenFiles())
+		fileOpened(file);
 }
 
 OpenFileModel::~OpenFileModel()
@@ -15,24 +22,15 @@ OpenFileModel::~OpenFileModel()
 	delete mTopLevelEntry;
 }
 
-BaseFile* OpenFileModel::getFile(const Location& location) const
+void OpenFileModel::fileOpened(BaseFile* file)
 {
-	foreach (BaseFile* file, mOpenFiles)
-		if (file->getLocation() == location)
-			return file;
-
-	return NULL;
-}
-
-void OpenFileModel::registerFile(BaseFile* file)
-{
-	//	Create an entry for the new file
+	//	Create an Entry for the new file
 	Entry* newEntry = new Entry();
 	newEntry->file = file;
 	newEntry->location = file->getLocation();
 	mFileLookup.insert(file, newEntry);
 
-	//	Work out where this belongs in the tree...
+	//	Work out where this belongs in the tree... (create a directory branch if necessary)
 	QModelIndex directoryIndex = registerDirectory(file->getDirectory());
 
 	//	Insert it.
@@ -41,6 +39,11 @@ void OpenFileModel::registerFile(BaseFile* file)
 	connect(file, SIGNAL(openStatusChanged(int)), this, SLOT(fileChanged()));
 	connect(file, SIGNAL(fileOpenProgress(int)), this, SLOT(fileChanged()));
 	connect(file, SIGNAL(unsavedStatusChanged()), this, SLOT(fileChanged()));
+}
+
+void OpenFileModel::fileClosed(BaseFile* file)
+{
+	qDebug() << "TODO: OpenFileModel::fileClosed(BaseFile*)";
 }
 
 void OpenFileModel::fileChanged()
@@ -198,16 +201,8 @@ void OpenFileModel::closeFiles(const QList<BaseFile*>& files)
 
 	if (unsavedFiles.length())
 	{
-		QMessageBox::StandardButton result = QMessageBox::warning(NULL, "Unsaved Changes", QString("You are about to close ") +
-			QString::number(unsavedFiles.length()) + " files with unsaved changes. Are you sure?", QMessageBox::Discard | QMessageBox::Cancel);
-		if (result != QMessageBox::Discard)
-			return;
-	}
-
-	foreach (BaseFile* file, files)
-	{
-		delete file;
-		removeEntry(mFileLookup.value(file));
+		UnsavedChangesDialog dialog(unsavedFiles);
+		dialog.exec();
 	}
 }
 

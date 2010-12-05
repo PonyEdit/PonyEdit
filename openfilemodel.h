@@ -13,7 +13,7 @@ class OpenFileModel : public QAbstractItemModel
 public:
 	enum Roles { LocationRole = Qt::UserRole, FileRole = Qt::UserRole + 1 };
 
-	explicit OpenFileModel();
+	explicit OpenFileModel(QObject* parent);
 	~OpenFileModel();
 
 	QModelIndex index(int row, int column, const QModelIndex &parent) const;
@@ -23,13 +23,13 @@ public:
 	QVariant data(const QModelIndex &index, int role) const;
 	Qt::ItemFlags flags(const QModelIndex &index) const;
 
-	BaseFile* getFile(const Location& location) const;
-	void registerFile(BaseFile* file);
 	QModelIndex findFile(BaseFile* file) const;
 	void closeButtonClicked(QModelIndex index);
 	void closeFiles(const QList<BaseFile*>& files);
 
 private slots:
+	void fileOpened(BaseFile* file);
+	void fileClosed(BaseFile* file);
 	void fileChanged();
 
 private:
@@ -51,7 +51,5 @@ private:
 	Entry* mTopLevelEntry;
 	QMap<BaseFile*, Entry*> mFileLookup;
 };
-
-extern OpenFileModel gOpenFileModel;
 
 #endif // OPENFILEMODEL_H

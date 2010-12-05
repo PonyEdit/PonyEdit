@@ -21,8 +21,10 @@ FileList::FileList(QWidget *parent) :
 {
 	setWindowTitle("Open Files");
 
+	mFileModel = new OpenFileModel(this);
+
 	mTreeView = new AutoExpandTreeView();
-	mTreeView->setModel(&gOpenFileModel);
+	mTreeView->setModel(mFileModel);
 	mTreeView->setMinimumWidth(150);
 	mTreeView->header()->hide();
 	mTreeView->setItemDelegate(new FileListItemDelegate(mTreeView));
@@ -46,7 +48,7 @@ BaseFile* FileList::getSelectedFile()
 {
 	QModelIndex selectedIndex = mTreeView->selectionModel()->currentIndex();
 	if (selectedIndex.isValid())
-		return (BaseFile*)gOpenFileModel.data(selectedIndex, OpenFileModel::FileRole).value<void*>();
+		return (BaseFile*)mFileModel->data(selectedIndex, OpenFileModel::FileRole).value<void*>();
 
 	return NULL;
 }
@@ -56,7 +58,7 @@ void FileList::selectFile(BaseFile* file)
 	if (!file) return;
 	if (getSelectedFile() != file)
 	{
-		QModelIndex index = gOpenFileModel.findFile(file);
+		QModelIndex index = mFileModel->findFile(file);
 		mTreeView->setCurrentIndex(index);
 	}
 }
@@ -70,7 +72,7 @@ void FileList::fileSelected()
 void FileList::itemClicked(QModelIndex index)
 {
 	if (index.column() == 1)
-		gOpenFileModel.closeButtonClicked(index);
+		mFileModel->closeButtonClicked(index);
 }
 
 

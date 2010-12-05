@@ -48,7 +48,9 @@ SOURCES += main.cpp\
     syntaxhighlighter.cpp \
     searchbar.cpp \
     openfilemodel.cpp \
-    filelistitemdelegate.cpp
+    filelistitemdelegate.cpp \
+    unsavedchangesdialog.cpp \
+    openfilemanager.cpp
 
 HEADERS  += mainwindow.h \
     sshconnection.h \
@@ -72,7 +74,9 @@ HEADERS  += mainwindow.h \
     syntaxhighlighter.h \
     searchbar.h \
     openfilemodel.h \
-    filelistitemdelegate.h
+    filelistitemdelegate.h \
+    unsavedchangesdialog.h \
+    openfilemanager.h
 
 OTHER_FILES += \
     slave.py \
@@ -84,7 +88,8 @@ FORMS += \
     passworddialog.ui \
     sshconnectingdialog.ui \
     optionsdialog.ui \
-    searchbar.ui
+    searchbar.ui \
+    unsavedchangesdialog.ui
 
 RESOURCES += \
     resources.qrc

@@ -12,6 +12,7 @@ class Editor;
 class FileList;
 class BaseFile;
 class SearchBar;
+class UnsavedChangesDialog;
 
 class MainWindow : public QMainWindow
 {
@@ -55,6 +56,7 @@ private:
 
 	QDockWidget* mSearchBarWrapper;
 	SearchBar* mSearchBar;
+	UnsavedChangesDialog* mUnsavedChangesDialog;
 };
 
 #endif // MAINWINDOW_H

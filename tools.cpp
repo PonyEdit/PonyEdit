@@ -3,6 +3,7 @@
 #include <QSettings>
 #include <QDebug>
 #include <QThread>
+#include <QRegExp>
 
 #define TERABYTE_MULTIPLIER	1099511627776ll
 #define GIGABYTE_MULTIPLIER 1073741824
@@ -84,4 +85,32 @@ void Tools::initialize()
 {
 	sMainThread = QThread::currentThread();
 }
+
+QString Tools::squashLabel(const QString& label, const QFontMetrics& metrics, int availableWidth)
+{
+	QRegExp separators("[\\/\\\\@\\:\\.]");
+
+	int fullWidth = metrics.size(Qt::TextSingleLine, label).width();
+	int shortFall = fullWidth - availableWidth;
+
+	int cursor = 0;
+	QString result = label;
+	while (shortFall > 0)
+	{
+		int nextSeparator = result.indexOf(separators, cursor);
+		if (nextSeparator == -1)
+			return metrics.elidedText(result, Qt::ElideMiddle, availableWidth);
+
+		QString shorten = result.mid(cursor, nextSeparator - cursor);
+		int cullLength = metrics.size(Qt::TextSingleLine, shorten.mid(1)).width();
+
+		result.replace(cursor, shorten.length(), shorten[0]);
+		cursor = cursor + 2;
+
+		shortFall -= cullLength;
+	}
+
+	return result;
+}
+
 

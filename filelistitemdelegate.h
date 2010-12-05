@@ -12,8 +12,6 @@ public:
 	virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 private:
-	QString squashLabel(const QString& label, const QFontMetrics& metrics, int width) const;
-
 	QTreeView* mParent;
 };
 

@@ -5,7 +5,7 @@
 #include "basefile.h"
 #include "tools.h"
 #include "globaldispatcher.h"
-#include "openfilemodel.h"
+#include "openfilemanager.h"
 #include "editor.h"
 
 const char* BaseFile::sStatusLabels[] =  { "Closed", "Loading...", "Error while loading", "Ready", "Disconnected", "Reconnecting...", "Lost Synchronization; Repairing", "Syncronization Error", "Closing" };
@@ -13,7 +13,7 @@ const char* BaseFile::sStatusLabels[] =  { "Closed", "Loading...", "Error while 
 BaseFile* BaseFile::getFile(const Location& location)
 {
 	//	See if the specified location is already open...
-	BaseFile* existingFile = gOpenFileModel.getFile(location);
+	BaseFile* existingFile = gOpenFileManager.getFile(location);
 	if (existingFile)
 		return existingFile;
 
@@ -31,7 +31,7 @@ BaseFile* BaseFile::getFile(const Location& location)
 	}
 
 	if (newFile)
-		gOpenFileModel.registerFile(newFile);
+		gOpenFileManager.registerFile(newFile);
 
 	return newFile;
 }
@@ -183,9 +183,13 @@ const Location& BaseFile::getDirectory() const
 	return mLocation.getDirectory();
 }
 
+void BaseFile::requestClose()
+{
+}
 
-
-
-
+void BaseFile::close()
+{
+	qDebug() << "Actually start closing the file...";
+}
 
 

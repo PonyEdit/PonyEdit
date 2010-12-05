@@ -47,6 +47,8 @@ public:
 	void ignoreChanges() { mIgnoreChanges++; }
 	void unignoreChanges() { mIgnoreChanges--; if (mIgnoreChanges < 0) mIgnoreChanges = 0; }
 
+	void requestClose();
+
 public slots:
 	void fileOpened(const QByteArray& content);
 	void documentChanged(int position, int removeChars, int added);
@@ -63,6 +65,8 @@ protected:
 
 	virtual void handleDocumentChange(int position, int removeChars, const QByteArray& insert);
 	virtual void setLastSavedRevision(int lastSavedRevision);
+
+	virtual void close();
 
 	Location mLocation;
 	QByteArray mContent;

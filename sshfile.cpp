@@ -18,6 +18,9 @@ SshFile::SshFile(const Location& location) : BaseFile(location)
 
 SshFile::~SshFile()
 {
+/*	if (mController && mBufferId > -1)
+		mController->sendRequest(new SshRequest_close(mBufferId));*/
+
 	mHost->unregisterOpenFile(this);
 
 	foreach (Change* change, mChangesSinceLastSave) delete change;

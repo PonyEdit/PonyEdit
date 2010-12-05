@@ -20,10 +20,13 @@
 #include "optionsdialog.h"
 #include "globaldispatcher.h"
 #include "searchbar.h"
+#include "unsavedchangesdialog.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
+	mUnsavedChangesDialog = NULL;
+
 	mEditorStack = new QStackedWidget(this);
 	mEditorStack->setMinimumWidth(200);
 	setCentralWidget(mEditorStack);
@@ -214,5 +217,4 @@ void MainWindow::closeEvent(QCloseEvent* event)
 	settings.setValue("mainwindow/state", saveState());
 	QMainWindow::closeEvent(event);
 }
-
 

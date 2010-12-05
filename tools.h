@@ -1,6 +1,7 @@
 #ifndef TOOLS_H
 #define TOOLS_H
 
+#include <QFontMetrics>
 #include <QString>
 #include <QMap>
 
@@ -14,6 +15,8 @@ public:
 	static bool isMainThread();
 
 	static void initialize();
+
+	static QString squashLabel(const QString& label, const QFontMetrics& metrics, int width);
 };
 
 #endif // TOOLS_H
