@@ -4,11 +4,11 @@
 #include <QStyledItemDelegate>
 #include <QTreeView>
 
-class FileListItemDelegate : public QStyledItemDelegate
+class OpenFileItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-	explicit FileListItemDelegate(QTreeView *parent = 0);
+	explicit OpenFileItemDelegate(QTreeView *parent = 0);
 	virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 private:

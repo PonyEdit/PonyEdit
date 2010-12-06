@@ -1,4 +1,4 @@
-#include "filelistitemdelegate.h"
+#include "openfileitemdelegate.h"
 #include "openfiletreemodel.h"
 #include "basefile.h"
 #include "tools.h"
@@ -10,12 +10,12 @@
 #include <QIcon>
 #include <QStyle>
 
-FileListItemDelegate::FileListItemDelegate(QTreeView *parent) : QStyledItemDelegate(parent)
+OpenFileItemDelegate::OpenFileItemDelegate(QTreeView *parent) : QStyledItemDelegate(parent)
 {
 	mParent = parent;
 }
 
-void FileListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void OpenFileItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
 	Location location = index.data(OpenFileTreeModel::LocationRole).value<Location>();
 	BaseFile* file = (BaseFile*)index.data(OpenFileTreeModel::FileRole).value<void*>();

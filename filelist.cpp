@@ -4,7 +4,7 @@
 #include <QMap>
 
 #include "openfiletreemodel.h"
-#include "filelistitemdelegate.h"
+#include "openfileitemdelegate.h"
 #include "globaldispatcher.h"
 #include "basefile.h"
 #include "filelist.h"
@@ -27,7 +27,7 @@ FileList::FileList(QWidget *parent) :
 	mTreeView->setModel(mFileModel);
 	mTreeView->setMinimumWidth(150);
 	mTreeView->header()->hide();
-	mTreeView->setItemDelegate(new FileListItemDelegate(mTreeView));
+	mTreeView->setItemDelegate(new OpenFileItemDelegate(mTreeView));
 	mTreeView->setAttribute(Qt::WA_MacShowFocusRect, false);
 	mTreeView->setSelectionMode(QAbstractItemView::SingleSelection);
 	mTreeView->setSelectionBehavior(QAbstractItemView::SelectRows);

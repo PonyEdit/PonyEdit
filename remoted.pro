@@ -47,10 +47,10 @@ SOURCES += main.cpp\
     optionsdialog.cpp \
     syntaxhighlighter.cpp \
     searchbar.cpp \
-    filelistitemdelegate.cpp \
     unsavedchangesdialog.cpp \
     openfilemanager.cpp \
-    openfiletreemodel.cpp
+    openfiletreemodel.cpp \
+    openfileitemdelegate.cpp
 
 HEADERS  += mainwindow.h \
     sshconnection.h \
@@ -73,10 +73,10 @@ HEADERS  += mainwindow.h \
     optionsdialog.h \
     syntaxhighlighter.h \
     searchbar.h \
-    filelistitemdelegate.h \
     unsavedchangesdialog.h \
     openfilemanager.h \
-    openfiletreemodel.h
+    openfiletreemodel.h \
+    openfileitemdelegate.h
 
 OTHER_FILES += \
     slave.py \
