@@ -7,14 +7,14 @@
 
 class BaseFile;
 
-class OpenFileModel : public QAbstractItemModel
+class OpenFileTreeModel : public QAbstractItemModel
 {
     Q_OBJECT
 public:
 	enum Roles { LocationRole = Qt::UserRole, FileRole = Qt::UserRole + 1 };
 
-	explicit OpenFileModel(QObject* parent);
-	~OpenFileModel();
+	explicit OpenFileTreeModel(QObject* parent);
+	~OpenFileTreeModel();
 
 	QModelIndex index(int row, int column, const QModelIndex &parent) const;
 	QModelIndex parent(const QModelIndex& index) const;

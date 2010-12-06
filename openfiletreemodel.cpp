@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QMessageBox>
 
-OpenFileModel::OpenFileModel(QObject* parent) : QAbstractItemModel(parent)
+OpenFileTreeModel::OpenFileTreeModel(QObject* parent) : QAbstractItemModel(parent)
 {
 	mTopLevelEntry = new Entry();
 
@@ -17,12 +17,12 @@ OpenFileModel::OpenFileModel(QObject* parent) : QAbstractItemModel(parent)
 		fileOpened(file);
 }
 
-OpenFileModel::~OpenFileModel()
+OpenFileTreeModel::~OpenFileTreeModel()
 {
 	delete mTopLevelEntry;
 }
 
-void OpenFileModel::fileOpened(BaseFile* file)
+void OpenFileTreeModel::fileOpened(BaseFile* file)
 {
 	//	Create an Entry for the new file
 	Entry* newEntry = new Entry();
@@ -41,12 +41,12 @@ void OpenFileModel::fileOpened(BaseFile* file)
 	connect(file, SIGNAL(unsavedStatusChanged()), this, SLOT(fileChanged()));
 }
 
-void OpenFileModel::fileClosed(BaseFile* file)
+void OpenFileTreeModel::fileClosed(BaseFile* file)
 {
 	qDebug() << "TODO: OpenFileModel::fileClosed(BaseFile*)";
 }
 
-void OpenFileModel::fileChanged()
+void OpenFileTreeModel::fileChanged()
 {
 	BaseFile* file = (BaseFile*)QObject::sender();
 	Entry* fileEntry = mFileLookup.value(file);
@@ -58,7 +58,7 @@ void OpenFileModel::fileChanged()
 	}
 }
 
-QModelIndex OpenFileModel::addToTree(QModelIndex parent, Entry* entry)
+QModelIndex OpenFileTreeModel::addToTree(QModelIndex parent, Entry* entry)
 {
 	Entry* parentEntry = parent.isValid() ? (Entry*)parent.internalPointer() : mTopLevelEntry;
 
@@ -78,7 +78,7 @@ QModelIndex OpenFileModel::addToTree(QModelIndex parent, Entry* entry)
 	return index;
 }
 
-QModelIndex OpenFileModel::registerDirectory(const Location& location)
+QModelIndex OpenFileTreeModel::registerDirectory(const Location& location)
 {
 	//	First see if the directory is already in the tree...
 	for (int row = 0; row < mTopLevelEntry->children.length(); row++)
@@ -91,7 +91,7 @@ QModelIndex OpenFileModel::registerDirectory(const Location& location)
 	return addToTree(QModelIndex(), newEntry);
 }
 
-QModelIndex OpenFileModel::index(int row, int column, const QModelIndex &parent) const
+QModelIndex OpenFileTreeModel::index(int row, int column, const QModelIndex &parent) const
 {
 	Entry* parentEntry = (parent.isValid() ? (Entry*)parent.internalPointer() : mTopLevelEntry);
 	if (parentEntry->children.length() <= row)
@@ -101,7 +101,7 @@ QModelIndex OpenFileModel::index(int row, int column, const QModelIndex &parent)
 	return createIndex(row, column, entry);
 }
 
-QModelIndex OpenFileModel::parent(const QModelIndex& index) const
+QModelIndex OpenFileTreeModel::parent(const QModelIndex& index) const
 {
 	Entry* entry = (Entry*)index.internalPointer();
 	if (!entry || !entry->parent || entry->parent == mTopLevelEntry)
@@ -114,18 +114,18 @@ QModelIndex OpenFileModel::parent(const QModelIndex& index) const
 	return createIndex(row, 0, parentEntry);
 }
 
-int OpenFileModel::rowCount(const QModelIndex& parent) const
+int OpenFileTreeModel::rowCount(const QModelIndex& parent) const
 {
 	Entry* parentEntry = (parent.isValid() ? (Entry*)parent.internalPointer() : mTopLevelEntry);
 	return parentEntry->children.length();
 }
 
-int OpenFileModel::columnCount(const QModelIndex& /*parent*/) const
+int OpenFileTreeModel::columnCount(const QModelIndex& /*parent*/) const
 {
 	return 2;
 }
 
-QVariant OpenFileModel::data(const QModelIndex &index, int role) const
+QVariant OpenFileTreeModel::data(const QModelIndex &index, int role) const
 {
 	if (!index.isValid())
 		return QVariant();
@@ -150,13 +150,13 @@ QVariant OpenFileModel::data(const QModelIndex &index, int role) const
 		return QVariant::fromValue<void*>(entry->file);
 }
 
-Qt::ItemFlags OpenFileModel::flags(const QModelIndex &index) const
+Qt::ItemFlags OpenFileTreeModel::flags(const QModelIndex &index) const
 {
 	Entry* entry = (Entry*)index.internalPointer();
 	return (entry->file ? Qt::ItemIsSelectable : Qt::NoItemFlags) | Qt::ItemIsEnabled;
 }
 
-QModelIndex OpenFileModel::findFile(BaseFile* file) const
+QModelIndex OpenFileTreeModel::findFile(BaseFile* file) const
 {
 	Entry* fileEntry = mFileLookup.value(file);
 	if (fileEntry && fileEntry->parent)
@@ -169,7 +169,7 @@ QModelIndex OpenFileModel::findFile(BaseFile* file) const
 	return QModelIndex();
 }
 
-void OpenFileModel::closeButtonClicked(QModelIndex index)
+void OpenFileTreeModel::closeButtonClicked(QModelIndex index)
 {
 	if (!index.isValid()) return;
 
@@ -191,7 +191,7 @@ void OpenFileModel::closeButtonClicked(QModelIndex index)
 		closeFiles(closingFiles);
 }
 
-void OpenFileModel::closeFiles(const QList<BaseFile*>& files)
+void OpenFileTreeModel::closeFiles(const QList<BaseFile*>& files)
 {
 	//	Look for unsaved changes
 	QList<BaseFile*> unsavedFiles;
@@ -206,7 +206,7 @@ void OpenFileModel::closeFiles(const QList<BaseFile*>& files)
 	}
 }
 
-void OpenFileModel::removeEntry(Entry* entry)
+void OpenFileTreeModel::removeEntry(Entry* entry)
 {
 	Entry* parentEntry = entry->parent;
 	int row = parentEntry->children.indexOf(entry);

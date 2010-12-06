@@ -1,5 +1,5 @@
 #include "filelistitemdelegate.h"
-#include "openfilemodel.h"
+#include "openfiletreemodel.h"
 #include "basefile.h"
 #include "tools.h"
 #include <QApplication>
@@ -17,8 +17,8 @@ FileListItemDelegate::FileListItemDelegate(QTreeView *parent) : QStyledItemDeleg
 
 void FileListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-	Location location = index.data(OpenFileModel::LocationRole).value<Location>();
-	BaseFile* file = (BaseFile*)index.data(OpenFileModel::FileRole).value<void*>();
+	Location location = index.data(OpenFileTreeModel::LocationRole).value<Location>();
+	BaseFile* file = (BaseFile*)index.data(OpenFileTreeModel::FileRole).value<void*>();
 
 	//	Always paint the default background
 	QStyledItemDelegate::paint(painter, option, index);

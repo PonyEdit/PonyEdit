@@ -7,7 +7,7 @@
 class Editor;
 class BaseFile;
 class AutoExpandTreeView;
-class OpenFileModel;
+class OpenFileTreeModel;
 
 class FileList : public QDockWidget
 {
@@ -24,7 +24,7 @@ private slots:
 
 private:
 	AutoExpandTreeView* mTreeView;
-	OpenFileModel* mFileModel;
+	OpenFileTreeModel* mFileModel;
 };
 
 #endif // FILELIST_H

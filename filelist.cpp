@@ -3,7 +3,7 @@
 #include <QDebug>
 #include <QMap>
 
-#include "openfilemodel.h"
+#include "openfiletreemodel.h"
 #include "filelistitemdelegate.h"
 #include "globaldispatcher.h"
 #include "basefile.h"
@@ -21,7 +21,7 @@ FileList::FileList(QWidget *parent) :
 {
 	setWindowTitle("Open Files");
 
-	mFileModel = new OpenFileModel(this);
+	mFileModel = new OpenFileTreeModel(this);
 
 	mTreeView = new AutoExpandTreeView();
 	mTreeView->setModel(mFileModel);
@@ -48,7 +48,7 @@ BaseFile* FileList::getSelectedFile()
 {
 	QModelIndex selectedIndex = mTreeView->selectionModel()->currentIndex();
 	if (selectedIndex.isValid())
-		return (BaseFile*)mFileModel->data(selectedIndex, OpenFileModel::FileRole).value<void*>();
+		return (BaseFile*)mFileModel->data(selectedIndex, OpenFileTreeModel::FileRole).value<void*>();
 
 	return NULL;
 }
