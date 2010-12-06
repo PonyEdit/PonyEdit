@@ -1,5 +1,5 @@
 #include "unsavedchangesdialog.h"
-#include "openfilemodel.h"
+#include "openfiletreemodel.h"
 #include "openfilemanager.h"
 #include "basefile.h"
 #include <QDebug>

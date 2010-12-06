@@ -215,6 +215,8 @@ void SshControllerThread::connect()
 		//	Switch to remote home directory...
 		//
 
+		qDebug() << "Switching to home dir...";
+
 		setStatus(SshRemoteController::Negotiating);
 		mConnection->execute("cd ~\n");
 		if (mCloseDown) return;
@@ -277,6 +279,8 @@ void SshControllerThread::connect()
 		//	Run the remote script...
 		//
 
+		qDebug() << "Running remote script...";
+
 		setStatus(SshRemoteController::StartingSlave);
 		const char* startCommand = sSlaveStartCommands[scriptType];
 		mConnection->writeData(startCommand, strlen(startCommand));
@@ -287,6 +291,8 @@ void SshControllerThread::connect()
 		//
 
 		mHomeDirectory = mConnection->readLine().trimmed();
+		qDebug() << "Recevied: " << mHomeDirectory;
+
 		if (mHomeDirectory.startsWith("~="))
 		{
 			mHomeDirectory = mHomeDirectory.mid(2);

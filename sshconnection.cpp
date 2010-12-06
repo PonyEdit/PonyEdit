@@ -193,6 +193,8 @@ bool SshConnection::authenticateAgent(const char* username)
 
 void SshConnection::createChannel()
 {
+	qDebug() << "Creating an SSH channel...";
+
 	//	Create a channel
 	mChannel = libssh2_channel_open_session(mSession);
 	if (!mChannel)
@@ -217,6 +219,8 @@ void SshConnection::createChannel()
 	command = "stty -echo\n";
 	libssh2_channel_write(mChannel, command, strlen(command));
 	readToPrompt();
+
+	qDebug() << "SSH Shell session created!";
 }
 
 QByteArray SshConnection::readToPrompt()
