@@ -23,6 +23,12 @@ void OpenFileManager::registerFile(BaseFile* file)
 	emit fileOpened(file);
 }
 
+void OpenFileManager::deregisterFile(BaseFile* file)
+{
+	mOpenFiles.removeAll(file);
+	emit fileClosed(file);
+}
+
 const QList<BaseFile*> OpenFileManager::getOpenFiles() const
 {
 	return mOpenFiles;
@@ -34,8 +40,13 @@ void OpenFileManager::closeFiles(const QList<BaseFile*>& files, bool force)
 	if (unsavedFiles.length() > 0)
 	{
 		UnsavedChangesDialog dialog(unsavedFiles);
-		dialog.exec();
+		if (dialog.exec() != QDialog::Accepted)
+			return;
 	}
+
+	foreach (BaseFile* file, files)
+		if (mOpenFiles.contains(file))
+			file->close();
 }
 
 bool OpenFileManager::unsavedChanges() const

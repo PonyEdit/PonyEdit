@@ -57,6 +57,8 @@ void Editor::openStatusChanged(int openStatus)
 	switch (openStatus)
 	{
 		case BaseFile::Closed:
+			break;
+
 		case BaseFile::Loading:
 			showLoading();
 			break;

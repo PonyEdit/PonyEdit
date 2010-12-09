@@ -8,6 +8,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include "openfiletreeview.h"
+#include "openfilemanager.h"
 
 UnsavedChangesDialog::UnsavedChangesDialog(const QList<BaseFile*>& files) :
 	QDialog(0)
@@ -36,6 +37,7 @@ UnsavedChangesDialog::UnsavedChangesDialog(const QList<BaseFile*>& files) :
 	connect(mTreeView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection,QItemSelection)));
 	connect(mButtonBox, SIGNAL(rejected()), this, SLOT(reject()));
 	connect(mButtonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(buttonClicked(QAbstractButton*)));
+	connect(&gOpenFileManager, SIGNAL(fileClosed(BaseFile*)), this, SLOT(fileClosed(BaseFile*)));
 }
 
 UnsavedChangesDialog::~UnsavedChangesDialog()
@@ -47,18 +49,15 @@ void UnsavedChangesDialog::buttonClicked(QAbstractButton* button)
 	QList<BaseFile*> selectedFiles = mTreeView->getSelectedFiles();
 	if (button == (QAbstractButton*)mButtonBox->button(QDialogButtonBox::Save))
 	{
-		//
 		//	Save
-		//
-
 		foreach (BaseFile* file, selectedFiles)
 			file->save();
 	}
 	else if (button == (QAbstractButton*)mButtonBox->button(QDialogButtonBox::Discard))
 	{
-		//
 		//	Discard
-		//
+		foreach (BaseFile* file, selectedFiles)
+			file->close();
 	}
 }
 
@@ -72,12 +71,20 @@ void UnsavedChangesDialog::selectionChanged(QItemSelection before, QItemSelectio
 void UnsavedChangesDialog::fileStateChanged()
 {
 	BaseFile* file = static_cast<BaseFile*>(QObject::sender());
-	qDebug() << "FILE STATE CHANGED" << file->hasUnsavedChanges();
 	if (!file->hasUnsavedChanges())
 	{
-		mTreeView->removeFile(file);
-		if (mTreeView->model()->rowCount() == 0)
-			accept();
+		BaseFile::OpenStatus status = file->getOpenStatus();
+
+		qDebug() << "Status = " << status << " closed = " << BaseFile::Closed;
+
+		if (status != BaseFile::Closed && status != BaseFile::Closing)
+			file->close();
 	}
 }
 
+void UnsavedChangesDialog::fileClosed(BaseFile* file)
+{
+	mTreeView->removeFile(file);
+	if (mTreeView->model()->rowCount() == 0)
+		accept();
+}

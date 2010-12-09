@@ -22,7 +22,7 @@ OpenFileTreeModel::OpenFileTreeModel(QObject* parent, int flags, const QList<Bas
 	else
 	{
 		connect(&gOpenFileManager, SIGNAL(fileOpened(BaseFile*)), this, SLOT(fileOpened(BaseFile*)));
-		connect(&gOpenFileManager, SIGNAL(fileClosed(BaseFile*)), this, SLOT(fileClosed(BaseFile*)));
+		connect(&gOpenFileManager, SIGNAL(fileClosed(BaseFile*)), this, SLOT(fileClosed(BaseFile*)), Qt::DirectConnection);
 
 		//	Add any already-open files
 		foreach (BaseFile* file, gOpenFileManager.getOpenFiles())
@@ -56,7 +56,7 @@ void OpenFileTreeModel::fileOpened(BaseFile* file)
 
 void OpenFileTreeModel::fileClosed(BaseFile* file)
 {
-	qDebug() << "TODO: OpenFileModel::fileClosed(BaseFile*)";
+	removeFile(file);
 }
 
 void OpenFileTreeModel::fileChanged()

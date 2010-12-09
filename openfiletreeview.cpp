@@ -21,8 +21,7 @@ OpenFileTreeView::OpenFileTreeView(QWidget *parent, int optionFlags, const QList
 	setAttribute(Qt::WA_MacShowFocusRect, false);
 	viewport()->setAttribute(Qt::WA_Hover);
 	header()->setResizeMode(0, QHeaderView::Stretch);
-	setSelectionMode(optionFlags & MultiSelect ? QAbstractItemView::MultiSelection :
-		QAbstractItemView::SingleSelection);
+	setSelectionMode(optionFlags & MultiSelect ? QAbstractItemView::ExtendedSelection : QAbstractItemView::SingleSelection);
 
 	if (optionFlags & CloseButtons)
 	{
@@ -87,22 +86,6 @@ void OpenFileTreeView::removeFile(BaseFile* file)
 	mModel->removeFile(file);
 }
 
-/*
-void OpenFileTreeModel::closeFiles(const QList<BaseFile*>& files)
-{
-	//	Look for unsaved changes
-	QList<BaseFile*> unsavedFiles;
-	foreach (BaseFile* file, files)
-		if (file->hasUnsavedChanges())
-			unsavedFiles.append(file);
-
-	if (unsavedFiles.length())
-	{
-		UnsavedChangesDialog dialog(unsavedFiles);
-		dialog.exec();
-	}
-}
-*/
 
 
 

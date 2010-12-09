@@ -21,6 +21,7 @@
 #include "globaldispatcher.h"
 #include "searchbar.h"
 #include "unsavedchangesdialog.h"
+#include "openfilemanager.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -52,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(gDispatcher, SIGNAL(generalErrorMessage(QString)), this, SLOT(showErrorMessage(QString)), Qt::QueuedConnection);
 	connect(gDispatcher, SIGNAL(generalStatusMessage(QString)), this, SLOT(showStatusMessage(QString)), Qt::QueuedConnection);
 	connect(gDispatcher, SIGNAL(selectFile(BaseFile*)), this, SLOT(fileSelected(BaseFile*)));
+	connect(&gOpenFileManager, SIGNAL(fileClosed(BaseFile*)), this, SLOT(fileClosed(BaseFile*)), Qt::DirectConnection);
 
 	restoreState();
 }
@@ -216,5 +218,20 @@ void MainWindow::closeEvent(QCloseEvent* event)
 	settings.setValue("mainwindow/geometry", saveGeometry());
 	settings.setValue("mainwindow/state", saveState());
 	QMainWindow::closeEvent(event);
+}
+
+void MainWindow::fileClosed(BaseFile* file)
+{
+	for (int i = 0; i < mEditors.length(); i++)
+	{
+		Editor* e = mEditors[i];
+		if (e->getFile() == file)
+		{
+			mEditors.removeAt(i);
+			i--;
+
+			delete e;
+		}
+	}
 }
 

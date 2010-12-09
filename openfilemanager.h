@@ -16,6 +16,7 @@ public:
 
 	BaseFile* getFile(const Location& location) const;   // Returns already-open files at specified location, NULL if not opened already
 	void registerFile(BaseFile* file);                   // Register the specified file with the manager. Manager then takes ownership and manages object lifecycle
+	void deregisterFile(BaseFile* file);                 // Remove the specified file from the manager. Used after files are successfully closed
 	const QList<BaseFile*> getOpenFiles() const;         // Returns a list of all the currently opened files
 
 	bool unsavedChanges() const;                         // Returns true if any opened file has unsaved changes

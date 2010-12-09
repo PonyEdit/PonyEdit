@@ -36,6 +36,8 @@ public slots:
 	void showErrorMessage(QString error);
 	void showStatusMessage(QString message);
 
+	void fileClosed(BaseFile* file);
+
 protected:
 	void closeEvent(QCloseEvent* event);
 

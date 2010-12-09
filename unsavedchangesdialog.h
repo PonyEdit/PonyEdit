@@ -22,6 +22,7 @@ private slots:
 	void buttonClicked(QAbstractButton* button);
 	void selectionChanged(QItemSelection before, QItemSelection after);
 	void fileStateChanged();
+	void fileClosed(BaseFile* file);
 
 private:
 	QDialogButtonBox* mButtonBox;

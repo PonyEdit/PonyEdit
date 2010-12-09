@@ -59,6 +59,7 @@ BaseFile::BaseFile(const Location& location)
 
 	connect(mDocument, SIGNAL(contentsChange(int,int,int)), this, SLOT(documentChanged(int,int,int)));
 	connect(this, SIGNAL(fileOpenedRethreadSignal(QByteArray)), this, SLOT(fileOpened(QByteArray)), Qt::QueuedConnection);
+	connect(this, SIGNAL(closeCompletedRethreadSignal()), this, SLOT(closeCompleted()), Qt::QueuedConnection);
 }
 
 void BaseFile::documentChanged(int position, int removeChars, int charsAdded)
@@ -183,13 +184,18 @@ const Location& BaseFile::getDirectory() const
 	return mLocation.getDirectory();
 }
 
-void BaseFile::requestClose()
+void BaseFile::closeCompleted()
 {
-}
+	//	If this is not the main thread, move to the main thread.
+	if (!Tools::isMainThread())
+	{
+		emit closeCompletedRethreadSignal();
+		return;
+	}
 
-void BaseFile::close()
-{
-	qDebug() << "Actually start closing the file...";
+	setOpenStatus(Closed);
+	gOpenFileManager.deregisterFile(this);
+	delete this;
 }
 
 

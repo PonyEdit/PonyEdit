@@ -34,10 +34,10 @@ public:
 
 	short getMessageId() const { return mMessageId; }
 	void packMessage(QByteArray* target);
-        virtual void packBody(QByteArray* /*target*/) {}
-        virtual void handleResponse(const QByteArray& /*response*/) {}
+	virtual void packBody(QByteArray* /*target*/) {}
+	virtual void handleResponse(const QByteArray& /*response*/) {}
 
-        virtual void error(const QString& /*error*/) {}
+	virtual void error(const QString& /*error*/) {}
 	virtual void success() {}
 
 	//	Manual work; if this ssh request does stuff like scp data down, this is where to do it.
@@ -173,6 +173,22 @@ private:
 	QByteArray mContent;
 	SshFile* mFile;
 	int mRevision;
+};
+
+////////////////////////
+//  Message 7: close  //
+////////////////////////
+
+class SshRequest_closeFile : public SshRequest
+{
+public:
+	SshRequest_closeFile(SshFile* file, quint32 bufferId);
+
+	virtual void error(const QString& error);
+	virtual void success();
+
+private:
+	SshFile* mFile;
 };
 
 #endif // SSHREQUEST_H

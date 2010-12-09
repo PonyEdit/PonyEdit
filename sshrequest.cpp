@@ -373,6 +373,27 @@ void SshRequest_resyncFile::success()
 	mFile->resyncSuccess(mRevision);
 }
 
+////////////////////////////
+//  Message 7: closeFile  //
+////////////////////////////
+
+SshRequest_closeFile::SshRequest_closeFile(SshFile* file, quint32 bufferId)
+	: SshRequest(7, bufferId)
+{
+	mFile = file;
+}
+
+void SshRequest_closeFile::error(const QString& error)
+{
+	//	Don't care if this fails; the only way it can fail is if the connection drops.
+	//	If the connection drops, the file is essentially closed server-side anyway.
+	mFile->closeCompleted();
+}
+
+void SshRequest_closeFile::success()
+{
+	mFile->closeCompleted();
+}
 
 
 

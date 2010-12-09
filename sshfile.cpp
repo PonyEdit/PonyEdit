@@ -81,12 +81,9 @@ void SshFile::resyncError(const QString& /*error*/)
 
 void SshFile::resyncSuccess(int revision)
 {
-	qDebug() << "resyncSuccess";
-
 	//	If this is not the main thread, move to the main thread.
 	if (!Tools::isMainThread())
 	{
-		qDebug() << "wrong thread :(";
 		emit resyncSuccessRethreadSignal(revision);
 		return;
 	}
@@ -100,12 +97,9 @@ void SshFile::resyncSuccess(int revision)
 
 void SshFile::movePumpCursor(int revision)
 {
-	qDebug() << "Moving pump cursor to " << revision << " / " << mRevision << ".";
 	mChangePumpCursor = 0;
 	while (mChangePumpCursor < mChangesSinceLastSave.length() && mChangesSinceLastSave[mChangePumpCursor]->revision <= revision)
 		mChangePumpCursor++;
-
-	qDebug() << "Cursor = " << mChangePumpCursor << " / " << mChangesSinceLastSave.length() << ".";
 }
 
 void SshFile::handleDocumentChange(int position, int removeChars, const QByteArray& insert)
@@ -114,7 +108,6 @@ void SshFile::handleDocumentChange(int position, int removeChars, const QByteArr
 		return;
 
 	BaseFile::handleDocumentChange(position, removeChars, insert);
-	qDebug() << "Edit revision " << mRevision;
 
 	mChangeBufferSize += insert.size();
 	Change* change = new Change();
@@ -143,7 +136,6 @@ void SshFile::save()
 	if (!mHost->ensureConnection())
 		throw(QString("Failed to update file: failed to connect to remote host"));
 
-	qDebug() << "Saving revision " << mRevision;
 	mHost->getController()->sendRequest(new SshRequest_saveBuffer(mBufferId, this, mRevision, mContent));
 }
 
@@ -168,8 +160,6 @@ void SshFile::setLastSavedRevision(int lastSavedRevision)
 {
 	BaseFile::setLastSavedRevision(lastSavedRevision);
 
-	qDebug() << mChangePumpCursor << mChangesSinceLastSave.length();
-
 	//	Purge all stored changes up to that point...
 	while (mChangesSinceLastSave.length() > 0 && mChangesSinceLastSave[0]->revision <= mLastSavedRevision)
 	{
@@ -179,10 +169,24 @@ void SshFile::setLastSavedRevision(int lastSavedRevision)
 		delete change;
 	}
 
-	qDebug() << mChangePumpCursor << mChangesSinceLastSave.length();
-
 	if (mChangePumpCursor < 0) mChangePumpCursor = 0;
 }
+
+void SshFile::close()
+{
+	setOpenStatus(Closing);
+	mHost->getController()->sendRequest(new SshRequest_closeFile(this, mBufferId));
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

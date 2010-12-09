@@ -33,6 +33,7 @@ public:
 
 	virtual void open() = 0;
 	virtual void save() = 0;
+	virtual void close() = 0;	// Warning: This call is asynchronous in some kinds of file; eg SshFile.
 	void openError(const QString& error);
 	void savedRevision(int revision, const QByteArray& checksum);
 	void fileOpenProgressed(int percent);
@@ -47,14 +48,14 @@ public:
 	void ignoreChanges() { mIgnoreChanges++; }
 	void unignoreChanges() { mIgnoreChanges--; if (mIgnoreChanges < 0) mIgnoreChanges = 0; }
 
-	void requestClose();
-
 public slots:
 	void fileOpened(const QByteArray& content);
 	void documentChanged(int position, int removeChars, int added);
+	void closeCompleted();
 
 signals:
 	void fileOpenedRethreadSignal(const QByteArray& content);
+	void closeCompletedRethreadSignal();
 	void fileOpenProgress(int percent);
 	void openStatusChanged(int newStatus);
 	void unsavedStatusChanged();
@@ -65,8 +66,6 @@ protected:
 
 	virtual void handleDocumentChange(int position, int removeChars, const QByteArray& insert);
 	virtual void setLastSavedRevision(int lastSavedRevision);
-
-	virtual void close();
 
 	Location mLocation;
 	QByteArray mContent;
