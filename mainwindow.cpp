@@ -213,6 +213,12 @@ void MainWindow::find(const QString& text, bool backwards)
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
+	if (!gOpenFileManager.closeAllFiles())
+	{
+		event->ignore();
+		return;
+	}
+
 	//	Save the geometry and toolbar state of this window on the way out
 	QSettings settings;
 	settings.setValue("mainwindow/geometry", saveGeometry());

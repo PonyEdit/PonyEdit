@@ -34,19 +34,21 @@ const QList<BaseFile*> OpenFileManager::getOpenFiles() const
 	return mOpenFiles;
 }
 
-void OpenFileManager::closeFiles(const QList<BaseFile*>& files, bool force)
+bool OpenFileManager::closeFiles(const QList<BaseFile*>& files, bool force)
 {
 	QList<BaseFile*> unsavedFiles = getUnsavedFiles();
 	if (unsavedFiles.length() > 0)
 	{
 		UnsavedChangesDialog dialog(unsavedFiles);
 		if (dialog.exec() != QDialog::Accepted)
-			return;
+			return false;
 	}
 
 	foreach (BaseFile* file, files)
 		if (mOpenFiles.contains(file))
 			file->close();
+
+	return true;
 }
 
 bool OpenFileManager::unsavedChanges() const
