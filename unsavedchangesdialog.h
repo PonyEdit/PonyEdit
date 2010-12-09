@@ -2,6 +2,7 @@
 #define UNSAVEDCHANGESDIALOG_H
 
 #include <QAbstractButton>
+#include <QItemSelection>
 #include <QDialog>
 #include <QList>
 
@@ -19,7 +20,8 @@ public:
 
 private slots:
 	void buttonClicked(QAbstractButton* button);
-	void selectionChanged();
+	void selectionChanged(QItemSelection before, QItemSelection after);
+	void fileStateChanged();
 
 private:
 	QDialogButtonBox* mButtonBox;

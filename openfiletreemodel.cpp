@@ -73,7 +73,7 @@ void OpenFileTreeModel::fileChanged()
 
 QModelIndex OpenFileTreeModel::addToTree(QModelIndex parent, Entry* entry)
 {
-	Entry* parentEntry = parent.isValid() ? (Entry*)parent.internalPointer() : mTopLevelEntry;
+	Entry* parentEntry = parent.isValid() ? static_cast<Entry*>(parent.internalPointer()) : mTopLevelEntry;
 
 	//	Work out where within the parent to insert this new item... (Maintaining alphabetic sorting)
 	int insertIndex;
@@ -106,7 +106,7 @@ QModelIndex OpenFileTreeModel::registerDirectory(const Location& location)
 
 QModelIndex OpenFileTreeModel::index(int row, int column, const QModelIndex &parent) const
 {
-	Entry* parentEntry = (parent.isValid() ? (Entry*)parent.internalPointer() : mTopLevelEntry);
+	Entry* parentEntry = (parent.isValid() ? static_cast<Entry*>(parent.internalPointer()) : mTopLevelEntry);
 	if (parentEntry->children.length() <= row)
 		return QModelIndex();
 	Entry* entry = parentEntry->children[row];
@@ -116,7 +116,7 @@ QModelIndex OpenFileTreeModel::index(int row, int column, const QModelIndex &par
 
 QModelIndex OpenFileTreeModel::parent(const QModelIndex& index) const
 {
-	Entry* entry = (Entry*)index.internalPointer();
+	Entry* entry = static_cast<Entry*>(index.internalPointer());
 	if (!entry || !entry->parent || entry->parent == mTopLevelEntry)
 		return QModelIndex();
 
@@ -129,7 +129,7 @@ QModelIndex OpenFileTreeModel::parent(const QModelIndex& index) const
 
 int OpenFileTreeModel::rowCount(const QModelIndex& parent) const
 {
-	Entry* parentEntry = (parent.isValid() ? (Entry*)parent.internalPointer() : mTopLevelEntry);
+	Entry* parentEntry = (parent.isValid() ? static_cast<Entry*>(parent.internalPointer()) : mTopLevelEntry);
 	return parentEntry->children.length();
 }
 
@@ -143,7 +143,7 @@ QVariant OpenFileTreeModel::data(const QModelIndex &index, int role) const
 	if (!index.isValid())
 		return QVariant();
 
-	Entry* entry = (Entry*)index.internalPointer();
+	Entry* entry = static_cast<Entry*>(index.internalPointer());
 	if (role == Qt::ToolTipRole)
 	{
 		QString tooltip = entry->location.getPath();
@@ -165,7 +165,7 @@ QVariant OpenFileTreeModel::data(const QModelIndex &index, int role) const
 
 Qt::ItemFlags OpenFileTreeModel::flags(const QModelIndex &index) const
 {
-	Entry* entry = (Entry*)index.internalPointer();
+	Entry* entry = static_cast<Entry*>(index.internalPointer());
 	return (entry->file ? Qt::ItemIsSelectable : Qt::NoItemFlags) | Qt::ItemIsEnabled;
 }
 
@@ -204,7 +204,7 @@ BaseFile* OpenFileTreeModel::getFileAtIndex(const QModelIndex& index)
 {
 	if (index.isValid())
 	{
-		Entry* entry = (Entry*)index.internalPointer();
+		Entry* entry = static_cast<Entry*>(index.internalPointer());
 		if (entry)
 			return entry->file;
 	}
@@ -218,7 +218,7 @@ QList<BaseFile*> OpenFileTreeModel::getIndexAndChildFiles(const QModelIndex& ind
 
 	if (!index.isValid()) return closingFiles;
 
-	Entry* entry = (Entry*)index.internalPointer();
+	Entry* entry = static_cast<Entry*>(index.internalPointer());
 	if (!entry) return closingFiles;
 
 	if (entry->file)
@@ -234,7 +234,17 @@ QList<BaseFile*> OpenFileTreeModel::getIndexAndChildFiles(const QModelIndex& ind
 	return closingFiles;
 }
 
+void OpenFileTreeModel::removeFile(BaseFile* file)
+{
+	QModelIndex index = findFile(file);
+	if (index.isValid())
+	{
+		Entry* entry = static_cast<Entry*>(index.internalPointer());
+		removeEntry(entry);
+	}
 
+	mFiles.removeAll(file);
+}
 
 
 

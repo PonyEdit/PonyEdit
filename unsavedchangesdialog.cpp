@@ -24,13 +24,18 @@ UnsavedChangesDialog::UnsavedChangesDialog(const QList<BaseFile*>& files) :
 	mTreeView->expandAll();
 	mTreeView->setMinimumWidth(250);
 	mTreeView->setMinimumHeight(200);
+	mTreeView->selectAll();
 
 	mButtonBox = new QDialogButtonBox(this);
 	mButtonBox->setStandardButtons(QDialogButtonBox::Save | QDialogButtonBox::Discard | QDialogButtonBox::Cancel);
 	layout->addWidget(mButtonBox);
 
-	//connect(ui->fileList, SIGNAL(itemSelectionChanged()), this, SLOT(selectionChanged()));
-	//connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(buttonClicked(QAbstractButton*)));
+	foreach (BaseFile* file, files)
+		connect(file, SIGNAL(unsavedStatusChanged()), this, SLOT(fileStateChanged()));
+
+	connect(mTreeView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection,QItemSelection)));
+	connect(mButtonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	connect(mButtonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(buttonClicked(QAbstractButton*)));
 }
 
 UnsavedChangesDialog::~UnsavedChangesDialog()
@@ -39,44 +44,40 @@ UnsavedChangesDialog::~UnsavedChangesDialog()
 
 void UnsavedChangesDialog::buttonClicked(QAbstractButton* button)
 {
-	/*QList<QTableWidgetItem*> items = ui->fileList->selectedItems();
-	if (button == (QAbstractButton*)ui->buttonBox->button(QDialogButtonBox::Save))
+	QList<BaseFile*> selectedFiles = mTreeView->getSelectedFiles();
+	if (button == (QAbstractButton*)mButtonBox->button(QDialogButtonBox::Save))
 	{
 		//
-		//	Save clicked.
+		//	Save
 		//
 
-		QList<QTableWidgetItem*> selectedItems = ui->fileList->selectedItems();
-		foreach (QTableWidgetItem* item, selectedItems)
-		{
-			QVariant data = item->data();
-			if (data.isValid())
-			{
-				BaseFile* file = (BaseFile*)data.value<void*>();
-
-			}
-		}
+		foreach (BaseFile* file, selectedFiles)
+			file->save();
 	}
-	else if (button == (QAbstractButton*)ui->buttonBox->button(QDialogButtonBox::Discard))
+	else if (button == (QAbstractButton*)mButtonBox->button(QDialogButtonBox::Discard))
 	{
 		//
-		//	Discard clicked. Just need to remove from from the list.
+		//	Discard
 		//
-
-		QList<int> removeRows;
-		foreach (QTableWidgetItem* item, items)
-		{
-			qDebug() << item->row();
-		}
-	}*/
+	}
 }
 
-void UnsavedChangesDialog::selectionChanged()
+void UnsavedChangesDialog::selectionChanged(QItemSelection before, QItemSelection after)
 {
-	/*bool itemsSelected = ui->fileList->selectedItems().length() > 0;
-	ui->buttonBox->button(QDialogButtonBox::Save)->setEnabled(itemsSelected);
-	ui->buttonBox->button(QDialogButtonBox::Discard)->setEnabled(itemsSelected);*/
+	bool itemsSelected = mTreeView->selectionModel()->selectedRows().count() > 0;
+	mButtonBox->button(QDialogButtonBox::Save)->setEnabled(itemsSelected);
+	mButtonBox->button(QDialogButtonBox::Discard)->setEnabled(itemsSelected);
 }
 
-
+void UnsavedChangesDialog::fileStateChanged()
+{
+	BaseFile* file = static_cast<BaseFile*>(QObject::sender());
+	qDebug() << "FILE STATE CHANGED" << file->hasUnsavedChanges();
+	if (!file->hasUnsavedChanges())
+	{
+		mTreeView->removeFile(file);
+		if (mTreeView->model()->rowCount() == 0)
+			accept();
+	}
+}
 

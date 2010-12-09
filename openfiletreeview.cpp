@@ -19,9 +19,10 @@ OpenFileTreeView::OpenFileTreeView(QWidget *parent, int optionFlags, const QList
 	//	Configure look & feel details
 	header()->hide();
 	setAttribute(Qt::WA_MacShowFocusRect, false);
-	setSelectionMode(QAbstractItemView::SingleSelection);
 	viewport()->setAttribute(Qt::WA_Hover);
 	header()->setResizeMode(0, QHeaderView::Stretch);
+	setSelectionMode(optionFlags & MultiSelect ? QAbstractItemView::MultiSelection :
+		QAbstractItemView::SingleSelection);
 
 	if (optionFlags & CloseButtons)
 	{
@@ -66,6 +67,24 @@ void OpenFileTreeView::itemClicked(QModelIndex index)
 		QList<BaseFile*> closingFiles = mModel->getIndexAndChildFiles(index);
 		gOpenFileManager.closeFiles(closingFiles);
 	}
+}
+
+QList<BaseFile*> OpenFileTreeView::getSelectedFiles() const
+{
+	QModelIndexList selectedIndices = selectionModel()->selectedIndexes();
+	QList<BaseFile*> selectedFiles;
+	foreach (QModelIndex index, selectedIndices)
+	{
+		BaseFile* file = mModel->getFileAtIndex(index);
+		if (file != NULL) selectedFiles.append(file);
+	}
+
+	return selectedFiles;
+}
+
+void OpenFileTreeView::removeFile(BaseFile* file)
+{
+	mModel->removeFile(file);
 }
 
 /*

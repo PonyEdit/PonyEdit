@@ -27,6 +27,8 @@ public:
 	BaseFile* getFileAtIndex(const QModelIndex& index);
 	QList<BaseFile*> getIndexAndChildFiles(const QModelIndex& index);
 
+	void removeFile(BaseFile* file);            //  Only useful when explicitly specified files.
+
 private slots:
 	void fileOpened(BaseFile* file);
 	void fileClosed(BaseFile* file);
