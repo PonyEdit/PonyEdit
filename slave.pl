@@ -48,6 +48,7 @@ our %dataTypes =
 	{
 		my ($self, $name) = @_;
 		$self->{NAME} = $name;
+		$self->{CLOSED} = 0;
 
 		open( BUFFER_FILE, "<$name" );
 		my @data = <BUFFER_FILE>;
@@ -76,6 +77,20 @@ our %dataTypes =
 	{
 		my $self = shift;
 		return md5_hex( $self->{DATA} );
+	}
+
+	sub setData
+	{
+		my ($self, $data) = @_;
+		$self->{DATA} = $data;
+	}
+
+	sub close
+	{
+		my $self = shift;
+		$self->{DATA} = undef;
+		$self->{NAME} = undef;
+		$self->{CLOSED} = 1;
 	}
 }
 
@@ -233,6 +248,34 @@ sub msg_save
 #	keepalive
 sub msg_keepalive {}
 
+#	pushcontent
+sub msg_pushcontent
+{
+	my( $buff, $params, $result ) = @_;
+
+	$buff->setData($params->{'d'});
+
+	my $s = $buff->checksum();
+	if ($params->{'c'} != $s)
+	{
+		die( "Checksums do not match: $s vs " . $params->{'c'} );
+	}
+
+	if ($params->{'s'})
+	{
+		$buff->save();
+	}
+}
+
+#	close
+sub msg_close
+{
+	my( $buff, $params, $result ) = @_;
+
+	errlog("Closing buffer.");
+	$buff->close();
+}
+
 #
 #	Message Definitions
 #
@@ -244,6 +287,8 @@ our %messageDefs =
 	3 => \&msg_change,
 	4 => \&msg_save,
 	5 => \&msg_keepalive,
+	6 => \&msg_pushcontent,
+	7 => \&msg_close,
 );
 
 #
@@ -312,6 +357,12 @@ sub handleMessage
 		$result = DataBlock->new();
 		$result->write( 'C', 1 );
 		&{$messageDefs{$messageId}}($buff, $params, $result);
+
+		if ($buff && $buff->{CLOSED})
+		{
+			delete $buffers{$buff};
+		}
+
 		1;
 	}
 	or do

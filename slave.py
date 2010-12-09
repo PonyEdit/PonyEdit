@@ -28,6 +28,7 @@ class Buffer:
 	def __init__(self): pass
 	def openFile(self, name):
 		self.name = name
+		self.closed = False
 		f = open(name, "r")
 		self.data = f.read()
 		f.close()
@@ -47,6 +48,11 @@ class Buffer:
 
 	def setData(self, data):
 		self.data = data
+
+	def close(self):
+		self.data = None
+		self.name = None
+		self.closed = True
 
 #
 #	DataBlock class
@@ -155,6 +161,11 @@ def msg_pushcontent(buff, params, result):
 	if (params['s']):
 		buff.save()
 
+#	close
+def msg_close(buff, params, result):
+	log("Closing buffer.")
+	buff.close()
+
 #
 #	Message Definitions
 #
@@ -167,6 +178,7 @@ messageDefs = \
 	4: msg_save,
 	5: msg_keepalive,
 	6: msg_pushcontent,
+	7: msg_close
 }
 
 
@@ -195,6 +207,7 @@ def handleMessage(message):
 	log('bufferId = ' + str(bufferId))
 	log('messageId = ' + str(messageId))
 	log('Paramaters = ' + str(params))
+
 	try:
 		if (bufferId > 0):
 			if (not buffers.has_key(bufferId)): raise Exception("Invalid bufferId: " + str(bufferId))
@@ -206,6 +219,9 @@ def handleMessage(message):
 		result = DataBlock()
 		result.write('B', 1)
 		messageDefs[messageId](buff, params, result)
+
+		if (buff != None and buff.closed):
+			del buffers[bufferId]
 	except Exception, e:
 		log('Error occurred: ' + str(e))
 		err = DataBlock()
