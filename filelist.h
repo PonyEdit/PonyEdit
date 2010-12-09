@@ -6,8 +6,7 @@
 
 class Editor;
 class BaseFile;
-class AutoExpandTreeView;
-class OpenFileTreeModel;
+class OpenFileTreeView;
 
 class FileList : public QDockWidget
 {
@@ -15,16 +14,12 @@ class FileList : public QDockWidget
 public:
     explicit FileList(QWidget *parent = 0);
 
-	BaseFile* getSelectedFile();
-
 private slots:
 	void selectFile(BaseFile* file);
 	void fileSelected();
-	void itemClicked(QModelIndex index);
 
 private:
-	AutoExpandTreeView* mTreeView;
-	OpenFileTreeModel* mFileModel;
+	OpenFileTreeView* mTreeView;
 };
 
 #endif // FILELIST_H

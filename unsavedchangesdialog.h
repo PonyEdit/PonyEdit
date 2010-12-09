@@ -5,15 +5,16 @@
 #include <QDialog>
 #include <QList>
 
-namespace Ui { class UnsavedChangesDialog; }
-
 class BaseFile;
+class QDialogButtonBox;
+class OpenFileTreeView;
+
 class UnsavedChangesDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-	explicit UnsavedChangesDialog(QList<BaseFile*> files);
+	explicit UnsavedChangesDialog(const QList<BaseFile*>& files);
     ~UnsavedChangesDialog();
 
 private slots:
@@ -21,8 +22,8 @@ private slots:
 	void selectionChanged();
 
 private:
-    Ui::UnsavedChangesDialog *ui;
-	QList<BaseFile*> mFiles;
+	QDialogButtonBox* mButtonBox;
+	OpenFileTreeView* mTreeView;
 };
 
 #endif // UNSAVEDCHANGESDIALOG_H

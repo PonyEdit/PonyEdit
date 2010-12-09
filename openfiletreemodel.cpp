@@ -1,3 +1,4 @@
+#include "openfiletreeview.h"
 #include "unsavedchangesdialog.h"
 #include "openfiletreemodel.h"
 #include "openfilemanager.h"
@@ -5,16 +6,28 @@
 #include <QDebug>
 #include <QMessageBox>
 
-OpenFileTreeModel::OpenFileTreeModel(QObject* parent) : QAbstractItemModel(parent)
+OpenFileTreeModel::OpenFileTreeModel(QObject* parent, int flags, const QList<BaseFile*>* files) : QAbstractItemModel(parent)
 {
+	mOptionFlags = flags;
 	mTopLevelEntry = new Entry();
 
-	connect(&gOpenFileManager, SIGNAL(fileOpened(BaseFile*)), this, SLOT(fileOpened(BaseFile*)));
-	connect(&gOpenFileManager, SIGNAL(fileClosed(BaseFile*)), this, SLOT(fileClosed(BaseFile*)));
+	mExplicitFiles = (files != NULL);
+	if (mExplicitFiles)
+	{
+		mFiles = *files;
 
-	//	Add any already-open files
-	foreach (BaseFile* file, gOpenFileManager.getOpenFiles())
-		fileOpened(file);
+		foreach (BaseFile* file, mFiles)
+			fileOpened(file);
+	}
+	else
+	{
+		connect(&gOpenFileManager, SIGNAL(fileOpened(BaseFile*)), this, SLOT(fileOpened(BaseFile*)));
+		connect(&gOpenFileManager, SIGNAL(fileClosed(BaseFile*)), this, SLOT(fileClosed(BaseFile*)));
+
+		//	Add any already-open files
+		foreach (BaseFile* file, gOpenFileManager.getOpenFiles())
+			fileOpened(file);
+	}
 }
 
 OpenFileTreeModel::~OpenFileTreeModel()
@@ -122,7 +135,7 @@ int OpenFileTreeModel::rowCount(const QModelIndex& parent) const
 
 int OpenFileTreeModel::columnCount(const QModelIndex& /*parent*/) const
 {
-	return 2;
+	return (mOptionFlags & OpenFileTreeView::CloseButtons ? 2 : 1);
 }
 
 QVariant OpenFileTreeModel::data(const QModelIndex &index, int role) const
@@ -169,43 +182,6 @@ QModelIndex OpenFileTreeModel::findFile(BaseFile* file) const
 	return QModelIndex();
 }
 
-void OpenFileTreeModel::closeButtonClicked(QModelIndex index)
-{
-	if (!index.isValid()) return;
-
-	Entry* entry = (Entry*)index.internalPointer();
-	if (!entry) return;
-
-	QList<BaseFile*> closingFiles;
-	if (entry->file)
-		closingFiles.append(entry->file);
-	else
-	{
-		//	Close a whole path
-		foreach (Entry* childEntry, entry->children)
-			if (childEntry->file)
-				closingFiles.append(childEntry->file);
-	}
-
-	if (closingFiles.length())
-		closeFiles(closingFiles);
-}
-
-void OpenFileTreeModel::closeFiles(const QList<BaseFile*>& files)
-{
-	//	Look for unsaved changes
-	QList<BaseFile*> unsavedFiles;
-	foreach (BaseFile* file, files)
-		if (file->hasUnsavedChanges())
-			unsavedFiles.append(file);
-
-	if (unsavedFiles.length())
-	{
-		UnsavedChangesDialog dialog(unsavedFiles);
-		dialog.exec();
-	}
-}
-
 void OpenFileTreeModel::removeEntry(Entry* entry)
 {
 	Entry* parentEntry = entry->parent;
@@ -224,9 +200,39 @@ void OpenFileTreeModel::removeEntry(Entry* entry)
 			removeEntry(parentEntry);
 }
 
+BaseFile* OpenFileTreeModel::getFileAtIndex(const QModelIndex& index)
+{
+	if (index.isValid())
+	{
+		Entry* entry = (Entry*)index.internalPointer();
+		if (entry)
+			return entry->file;
+	}
 
+	return NULL;
+}
 
+QList<BaseFile*> OpenFileTreeModel::getIndexAndChildFiles(const QModelIndex& index)
+{
+	QList<BaseFile*> closingFiles;
 
+	if (!index.isValid()) return closingFiles;
+
+	Entry* entry = (Entry*)index.internalPointer();
+	if (!entry) return closingFiles;
+
+	if (entry->file)
+		closingFiles.append(entry->file);
+	else
+	{
+		//	Close a whole path
+		foreach (Entry* childEntry, entry->children)
+			if (childEntry->file)
+				closingFiles.append(childEntry->file);
+	}
+
+	return closingFiles;
+}
 
 
 

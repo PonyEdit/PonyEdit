@@ -50,7 +50,8 @@ SOURCES += main.cpp\
     unsavedchangesdialog.cpp \
     openfilemanager.cpp \
     openfiletreemodel.cpp \
-    openfileitemdelegate.cpp
+    openfileitemdelegate.cpp \
+    openfiletreeview.cpp
 
 HEADERS  += mainwindow.h \
     sshconnection.h \
@@ -76,7 +77,8 @@ HEADERS  += mainwindow.h \
     unsavedchangesdialog.h \
     openfilemanager.h \
     openfiletreemodel.h \
-    openfileitemdelegate.h
+    openfileitemdelegate.h \
+    openfiletreeview.h
 
 OTHER_FILES += \
     slave.py \
@@ -88,8 +90,7 @@ FORMS += \
     passworddialog.ui \
     sshconnectingdialog.ui \
     optionsdialog.ui \
-    searchbar.ui \
-    unsavedchangesdialog.ui
+    searchbar.ui
 
 RESOURCES += \
     resources.qrc

@@ -4,69 +4,49 @@
 #include "basefile.h"
 #include <QDebug>
 #include <QPushButton>
-#include <QTreeWidgetItem>
+#include <QDialogButtonBox>
+#include <QLabel>
+#include <QVBoxLayout>
+#include "openfiletreeview.h"
 
-UnsavedChangesDialog::UnsavedChangesDialog(QList<BaseFile*> files) :
-	QDialog(0),
-    ui(new Ui::UnsavedChangesDialog)
+UnsavedChangesDialog::UnsavedChangesDialog(const QList<BaseFile*>& files) :
+	QDialog(0)
 {
-    ui->setupUi(this);
+	QVBoxLayout* layout = new QVBoxLayout(this);
+	setLayout(layout);
 
-	//
-	//	Configure the shape and size of the table...
-	//
+	QLabel* label = new QLabel(this);
+	label->setText("The following files have unsaved changes: ");
+	layout->addWidget(label);
 
-	ui->fileList->horizontalHeader()->setResizeMode(0, QHeaderView::Stretch);
-	ui->fileList->horizontalHeader()->setResizeMode(1, QHeaderView::Fixed);
-	ui->fileList->setColumnWidth(1, 80);
-	ui->fileList->setRowCount(files.count());
-	int lineHeight = ui->fileList->fontMetrics().height() + 2;
+	mTreeView = new OpenFileTreeView(this, OpenFileTreeView::MultiSelect | OpenFileTreeView::UnsavedOnly, &files);
+	layout->addWidget(mTreeView);
+	mTreeView->expandAll();
+	mTreeView->setMinimumWidth(250);
+	mTreeView->setMinimumHeight(200);
 
-	//
-	//	Populate the table
-	//
+	mButtonBox = new QDialogButtonBox(this);
+	mButtonBox->setStandardButtons(QDialogButtonBox::Save | QDialogButtonBox::Discard | QDialogButtonBox::Cancel);
+	layout->addWidget(mButtonBox);
 
-	QTableWidgetItem* item;
-	mFiles = files;
-	int row = 0;
-	foreach (BaseFile* file, files)
-	{
-		Location fileLocation = file->getLocation();
-
-		//	Column 1: Full path of the file, elided on the left
-		item = new QTableWidgetItem(fileLocation.getIcon(), fileLocation.getPath());
-		item->setData(Qt::UserRole, QVariant::fromValue<void*>(file));
-		ui->fileList->setItem(row, 0, item);
-
-		//	Column 2: Status of the file...
-		item = new QTableWidgetItem("Unsaved");
-		ui->fileList->setItem(row, 1, item);
-
-		ui->fileList->setRowHeight(row, lineHeight);
-		row++;
-	}
-
-	ui->fileList->selectAll();
-
-	connect(ui->fileList, SIGNAL(itemSelectionChanged()), this, SLOT(selectionChanged()));
-	connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(buttonClicked(QAbstractButton*)));
+	//connect(ui->fileList, SIGNAL(itemSelectionChanged()), this, SLOT(selectionChanged()));
+	//connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(buttonClicked(QAbstractButton*)));
 }
 
 UnsavedChangesDialog::~UnsavedChangesDialog()
 {
-    delete ui;
 }
 
 void UnsavedChangesDialog::buttonClicked(QAbstractButton* button)
 {
-	QList<QTableWidgetItem*> items = ui->fileList->selectedItems();
+	/*QList<QTableWidgetItem*> items = ui->fileList->selectedItems();
 	if (button == (QAbstractButton*)ui->buttonBox->button(QDialogButtonBox::Save))
 	{
 		//
 		//	Save clicked.
 		//
 
-		/*QList<QTableWidgetItem*> selectedItems = ui->fileList->selectedItems();
+		QList<QTableWidgetItem*> selectedItems = ui->fileList->selectedItems();
 		foreach (QTableWidgetItem* item, selectedItems)
 		{
 			QVariant data = item->data();
@@ -75,7 +55,7 @@ void UnsavedChangesDialog::buttonClicked(QAbstractButton* button)
 				BaseFile* file = (BaseFile*)data.value<void*>();
 
 			}
-		}*/
+		}
 	}
 	else if (button == (QAbstractButton*)ui->buttonBox->button(QDialogButtonBox::Discard))
 	{
@@ -88,14 +68,14 @@ void UnsavedChangesDialog::buttonClicked(QAbstractButton* button)
 		{
 			qDebug() << item->row();
 		}
-	}
+	}*/
 }
 
 void UnsavedChangesDialog::selectionChanged()
 {
-	bool itemsSelected = ui->fileList->selectedItems().length() > 0;
+	/*bool itemsSelected = ui->fileList->selectedItems().length() > 0;
 	ui->buttonBox->button(QDialogButtonBox::Save)->setEnabled(itemsSelected);
-	ui->buttonBox->button(QDialogButtonBox::Discard)->setEnabled(itemsSelected);
+	ui->buttonBox->button(QDialogButtonBox::Discard)->setEnabled(itemsSelected);*/
 }
 
 
