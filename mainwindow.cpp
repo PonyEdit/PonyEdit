@@ -22,11 +22,14 @@
 #include "searchbar.h"
 #include "unsavedchangesdialog.h"
 #include "openfilemanager.h"
+#include "syntaxdefinition.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
 	mUnsavedChangesDialog = NULL;
+
+	new SyntaxDefinition("syntaxdefs/perl.xml");
 
 	mEditorStack = new QStackedWidget(this);
 	mEditorStack->setMinimumWidth(200);

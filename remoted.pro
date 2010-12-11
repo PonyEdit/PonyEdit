@@ -20,7 +20,7 @@ macx {
 
 LIBS	+= -lssh2
 
-QT       += core gui network
+QT       += core gui network xml
 
 TARGET = remoted
 TEMPLATE = app
@@ -51,7 +51,9 @@ SOURCES += main.cpp\
     openfilemanager.cpp \
     openfiletreemodel.cpp \
     openfileitemdelegate.cpp \
-    openfiletreeview.cpp
+    openfiletreeview.cpp \
+    syntaxdefinition.cpp \
+    syntaxrule.cpp
 
 HEADERS  += mainwindow.h \
     sshconnection.h \
@@ -78,7 +80,9 @@ HEADERS  += mainwindow.h \
     openfilemanager.h \
     openfiletreemodel.h \
     openfileitemdelegate.h \
-    openfiletreeview.h
+    openfiletreeview.h \
+    syntaxdefinition.h \
+    syntaxrule.h
 
 OTHER_FILES += \
     slave.py \

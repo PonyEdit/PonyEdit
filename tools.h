@@ -6,6 +6,8 @@
 #include <QMap>
 
 class QThread;
+class QDomElement;
+
 class Tools
 {
 public:
@@ -17,6 +19,11 @@ public:
 	static void initialize();
 
 	static QString squashLabel(const QString& label, const QFontMetrics& metrics, int width);
+
+	static QString getStringXmlAttribute(const QDomElement* node, const QString& attribute);
+	static QChar getCharXmlAttribute(const QDomElement* node, const QString& attribute);
+	static int getIntXmlAttribute(const QDomElement* node, const QString& attribute, int defaultValue);
+	static bool getBoolXmlAttribute(const QDomElement* node, const QString& attribute, bool defaultValue);
 };
 
 #endif // TOOLS_H

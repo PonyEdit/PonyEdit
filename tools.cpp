@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QThread>
 #include <QRegExp>
+#include <QtXml>
 
 #define TERABYTE_MULTIPLIER	1099511627776ll
 #define GIGABYTE_MULTIPLIER 1073741824
@@ -112,5 +113,45 @@ QString Tools::squashLabel(const QString& label, const QFontMetrics& metrics, in
 
 	return result;
 }
+
+QChar Tools::getCharXmlAttribute(const QDomElement* node, const QString& attribute)
+{
+	QString value = getStringXmlAttribute(node, attribute);
+	if (value.isEmpty()) return QChar();
+	return value.at(0);
+}
+
+QString Tools::getStringXmlAttribute(const QDomElement* node, const QString& attribute)
+{
+	QDomNode attributeNode = node->attributes().namedItem(attribute);
+	if (attributeNode.isNull()) return QString();
+	return attributeNode.nodeValue();
+}
+
+int Tools::getIntXmlAttribute(const QDomElement* node, const QString& attribute, int defaultValue)
+{
+	bool ok;
+	int value = getStringXmlAttribute(node, attribute).toInt(&ok);
+	if (ok) return value;
+	return defaultValue;
+}
+
+bool Tools::getBoolXmlAttribute(const QDomElement* node, const QString& attribute, bool defaultValue)
+{
+	return static_cast<bool>(getIntXmlAttribute(node, attribute, defaultValue));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
