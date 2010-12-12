@@ -26,8 +26,9 @@ public:
 		bool fallthrough;
 		QString fallthroughContext;
 		bool dynamic;
-
 		QList<SyntaxRule*> rules;
+
+		int listIndex;
 	};
 
 	struct ItemData
@@ -45,6 +46,9 @@ public:
 	SyntaxDefinition(const QString& filename);
 
 	inline bool isValid() const { return mValid; }
+	inline Context* getContextByIndex(int index) const { return mContextList.at(index); }
+	inline Context* getDefaultContext() const { return mDefaultContext; }
+	QStringList getKeywordList(const QString& type) const { return mKeywords.value(type); }
 
 private:
 	void readContext(const QDomElement& contextNode);
@@ -58,8 +62,11 @@ private:
 	QStringList mExtensions;
 
 	QMap<QString, QStringList> mKeywords;
-	QMap<QString, Context*> mContexts;
 	QMap<QString, ItemData*> mItemDatas;
+
+	QList<Context*> mContextList;
+	QMap<QString, Context*> mContextMap;
+	Context* mDefaultContext;
 
 	bool mIndentationSensitive;
 	bool mCaseSensitiveKeywords;
@@ -68,5 +75,7 @@ private:
 	QString mWordWrapDeliminator;
 	QList<CommentStyle> mCommentStyles;
 };
+
+extern SyntaxDefinition* gTestSyntaxDef;
 
 #endif // SYNTAXDEFINITION_H

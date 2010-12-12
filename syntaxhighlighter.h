@@ -7,34 +7,20 @@
 #include <QTextCharFormat>
 
 class QTextDocument;
+class SyntaxDefinition;
 
 class SyntaxHighlighter : public QSyntaxHighlighter
 {
 	Q_OBJECT
 
 public:
-	SyntaxHighlighter(QTextDocument *parent = 0);
+	SyntaxHighlighter(QTextDocument* parent, SyntaxDefinition* syntaxDef);
 
 protected:
-	void highlightBlock(const QString &text);
+	void highlightBlock(const QString& text);
 
 private:
-	struct HighlightingRule
-	{
-		QRegExp pattern;
-		QTextCharFormat format;
-	};
-	QVector<HighlightingRule> highlightingRules;
-
-	QRegExp commentStartExpression;
-	QRegExp commentEndExpression;
-
-	QTextCharFormat keywordFormat;
-	QTextCharFormat classFormat;
-	QTextCharFormat singleLineCommentFormat;
-	QTextCharFormat multiLineCommentFormat;
-	QTextCharFormat quotationFormat;
-	QTextCharFormat functionFormat;
+	SyntaxDefinition* mSyntaxDefinition;
 };
 
 #endif // SYNTAXHIGHLIGHTER_H

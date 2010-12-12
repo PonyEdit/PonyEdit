@@ -29,8 +29,6 @@ MainWindow::MainWindow(QWidget *parent)
 {
 	mUnsavedChangesDialog = NULL;
 
-	new SyntaxDefinition("syntaxdefs/perl.xml");
-
 	mEditorStack = new QStackedWidget(this);
 	mEditorStack->setMinimumWidth(200);
 	setCentralWidget(mEditorStack);

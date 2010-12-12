@@ -4,9 +4,12 @@
 #include "tools.h"
 #include "syntaxrule.h"
 
+SyntaxDefinition* gTestSyntaxDef = new SyntaxDefinition("syntaxdefs/perl.xml");
+
 SyntaxDefinition::SyntaxDefinition(const QString& filename)
 {
 	mValid = false;
+	mDefaultContext = NULL;
 
 	QFile file(filename);
 	if (file.open(QFile::ReadOnly))
@@ -60,10 +63,21 @@ void SyntaxDefinition::readContext(const QDomElement& contextNode)
 	for (unsigned int i = 0; i < contextNode.childNodes().length(); i++)
 	{
 		QDomElement element = contextNode.childNodes().at(i).toElement();
-		context->rules.append(new SyntaxRule(&element));
+		SyntaxRule* newRule = new SyntaxRule(&element, this);
+		if (newRule->isValid())
+			context->rules.append(newRule);
+		else
+		{
+			qDebug() << "WARNING: Invalid context rule: " << contextNode.nodeName();
+			delete newRule;
+		}
 	}
 
-	mContexts.insert(context->name, context);
+	if (!mDefaultContext) mDefaultContext = context;
+	mContextMap.insert(context->name, context);
+
+	context->listIndex = mContextList.length();
+	mContextList.append(context);
 }
 
 void SyntaxDefinition::readHighlightingNode(const QDomElement& highlightingNode)

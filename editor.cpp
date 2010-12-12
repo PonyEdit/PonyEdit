@@ -5,6 +5,7 @@
 #include <QDebug>
 #include "basefile.h"
 #include "syntaxhighlighter.h"
+#include "syntaxdefinition.h"
 
 Editor::Editor(BaseFile* file) : QStackedWidget()
 {
@@ -38,7 +39,7 @@ Editor::Editor(BaseFile* file) : QStackedWidget()
 	openStatusChanged(mFile->getOpenStatus());
 
 	mEditor->setDocument(mFile->getTextDocument());
-	new SyntaxHighlighter(mEditor->document());
+	new SyntaxHighlighter(mEditor->document(), gTestSyntaxDef);
 	mEditor->setFont(QFont("inconsolata", 11));
 }
 

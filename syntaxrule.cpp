@@ -4,7 +4,7 @@
 QMap<QString, SyntaxRule::Type> SyntaxRule::sTypeMap;
 bool SyntaxRule::sTypeMapInitialized = false;
 
-SyntaxRule::SyntaxRule(QDomElement* element)
+SyntaxRule::SyntaxRule(QDomElement* element, SyntaxDefinition* def)
 {
 	if (!sTypeMapInitialized)
 	{
@@ -27,6 +27,10 @@ SyntaxRule::SyntaxRule(QDomElement* element)
 		sTypeMap.insert("detectidentifier", DetectIdentifier);
 	}
 
+	mRegExp = NULL;
+	mFirstUse = true;
+
+	mDefinition = def;
 	mValid = false;
 	QString type = element->nodeName().toLower();
 	if (sTypeMap.contains(type))
@@ -49,3 +53,117 @@ SyntaxRule::SyntaxRule(QDomElement* element)
 		mValid = true;
 	}
 }
+
+SyntaxRule::~SyntaxRule()
+{
+	if (mRegExp) delete mRegExp;
+}
+
+int SyntaxRule::match(const QString &string, int position)
+{
+	int match = 0;
+
+	switch (mType)
+	{
+	case DetectChar:
+		break;
+
+	case Detect2Chars:
+		break;
+
+	case AnyChar:
+		break;
+
+	case StringDetect:
+		break;
+
+	case WordDetect:
+		break;
+
+	case RegExpr:
+	{
+		if (!mRegExp) mRegExp = new QRegExp(mString, mCaseInsensitive ? Qt::CaseInsensitive : Qt::CaseSensitive);
+		int index = mRegExp->indexIn(string, position, QRegExp::CaretAtZero);
+		if (index > -1)
+			match = mRegExp->matchedLength();
+		break;
+	}
+
+	case Keyword:
+	{
+		if (mFirstUse) mKeywords = mDefinition->getKeywordList(mString);
+		QString substr = string.mid(position);
+		foreach (QString keyword, mKeywords)
+		{
+			if (substr.startsWith(keyword))
+			{
+				match = keyword.length();
+				break;
+			}
+		}
+		break;
+	}
+
+	case Int:
+		break;
+
+	case Float:
+		break;
+
+	case HICOct:
+		break;
+
+	case HICHex:
+		break;
+
+	case HICStringChar:
+		break;
+
+	case HICChar:
+		break;
+
+	case RangeDetect:
+		break;
+
+	case LineContinue:
+		break;
+
+	case DetectSpaces:
+		break;
+
+	case DetectIdentifier:
+		break;
+	}
+
+	mFirstUse = false;
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

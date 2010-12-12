@@ -4,6 +4,7 @@
 #include <QtXml>
 #include <QString>
 #include <QMap>
+#include "syntaxdefinition.h"
 
 class SyntaxRule
 {
@@ -31,9 +32,14 @@ public:
 	static QMap<QString, Type> sTypeMap;
 	static bool sTypeMapInitialized;
 
-	SyntaxRule(QDomElement* element);
+	SyntaxRule(QDomElement* element, SyntaxDefinition* def);
+	~SyntaxRule();
+
+	inline bool isValid() const { return mValid; }
+	int match(const QString& string, int position);
 
 private:
+	SyntaxDefinition* mDefinition;
 	Type mType;
 	bool mValid;
 
@@ -53,6 +59,11 @@ private:
 	bool mMinimal;
 
 	QList<SyntaxRule*> mChildRules;
+
+	//	Duplicate information prepared for faster lookups and the like
+	bool mFirstUse;
+	QRegExp* mRegExp;
+	QStringList mKeywords;
 };
 
 #endif // SYNTAXRULE_H
