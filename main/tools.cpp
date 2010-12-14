@@ -1,5 +1,5 @@
-#include "tools.h"
-#include "sshhost.h"
+#include "main/tools.h"
+#include "ssh/sshhost.h"
 #include <QSettings>
 #include <QDebug>
 #include <QThread>

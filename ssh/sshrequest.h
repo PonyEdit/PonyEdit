@@ -4,8 +4,8 @@
 #include <QByteArray>
 #include <QRunnable>
 
-#include "location.h"
-#include "sshconnection.h"
+#include "file/location.h"
+#include "ssh/sshconnection.h"
 
 enum DataType
 {

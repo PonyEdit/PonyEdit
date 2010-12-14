@@ -2,11 +2,11 @@
 #include <QDebug>
 #include <QMap>
 
-#include "openfiletreeview.h"
-#include "globaldispatcher.h"
-#include "basefile.h"
-#include "filelist.h"
-#include "editor.h"
+#include "file/openfiletreeview.h"
+#include "main/globaldispatcher.h"
+#include "file/basefile.h"
+#include "file/filelist.h"
+#include "editor/editor.h"
 
 FileList::FileList(QWidget *parent) :
     QDockWidget(parent)

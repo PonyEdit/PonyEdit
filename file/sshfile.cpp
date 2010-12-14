@@ -1,9 +1,9 @@
 #include <QDebug>
-#include "sshhost.h"
-#include "sshfile.h"
-#include "sshrequest.h"
-#include "sshremotecontroller.h"
-#include "tools.h"
+#include "ssh/sshhost.h"
+#include "file/sshfile.h"
+#include "ssh/sshrequest.h"
+#include "ssh/sshremotecontroller.h"
+#include "main/tools.h"
 
 SshFile::SshFile(const Location& location) : BaseFile(location)
 {

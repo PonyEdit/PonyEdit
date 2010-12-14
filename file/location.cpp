@@ -1,9 +1,9 @@
-#include "location.h"
-#include "sshremotecontroller.h"
-#include "sshrequest.h"
-#include "sshhost.h"
-#include "sshfile.h"
-#include "globaldispatcher.h"
+#include "file/location.h"
+#include "ssh/sshremotecontroller.h"
+#include "ssh/sshrequest.h"
+#include "ssh/sshhost.h"
+#include "file/sshfile.h"
+#include "main/globaldispatcher.h"
 #include <QFileIconProvider>
 #include <QMetaMethod>
 #include <QObject>

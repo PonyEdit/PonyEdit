@@ -1,9 +1,9 @@
-#include "sshhost.h"
-#include "serverconfigdlg.h"
-#include "tools.h"
+#include "ssh/sshhost.h"
+#include "ssh/serverconfigdlg.h"
+#include "main/tools.h"
 #include <QMessageBox>
-#include "globaldispatcher.h"
-#include "sshconnectingdialog.h"
+#include "main/globaldispatcher.h"
+#include "ssh/sshconnectingdialog.h"
 #include <QDebug>
 
 QList<SshHost*> SshHost::sKnownHosts;

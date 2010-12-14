@@ -1,5 +1,5 @@
-#include "syntaxrule.h"
-#include "tools.h"
+#include "syntax/syntaxrule.h"
+#include "main/tools.h"
 
 QMap<QString, SyntaxRule::Type> SyntaxRule::sTypeMap;
 bool SyntaxRule::sTypeMapInitialized = false;
@@ -45,12 +45,19 @@ SyntaxRule::SyntaxRule(QDomElement* element, SyntaxDefinition* def)
 		mColumn = Tools::getIntXmlAttribute(element, "", -1);
 		mCharacterA = Tools::getCharXmlAttribute(element, "char");
 		mCharacterB = Tools::getCharXmlAttribute(element, "char1");
-		mString = Tools::getStringXmlAttribute(element, "string");
+
+		mString = Tools::getStringXmlAttribute(element, "String");
+		qDebug() << mType << " string = " << mString;
+
 		mCaseInsensitive = Tools::getBoolXmlAttribute(element, "insensitive", false);
 		mDynamic = Tools::getBoolXmlAttribute(element, "dynamic", false);
 		mMinimal = Tools::getBoolXmlAttribute(element, "minimal", false);
 
 		mValid = true;
+	}
+	else
+	{
+		qDebug() << "Non-existent type: " << type;
 	}
 }
 

@@ -1,12 +1,12 @@
 #include <QDebug>
 #include <QCryptographicHash>
 
-#include "sshfile.h"
-#include "basefile.h"
-#include "tools.h"
-#include "globaldispatcher.h"
-#include "openfilemanager.h"
-#include "editor.h"
+#include "file/sshfile.h"
+#include "file/basefile.h"
+#include "main/tools.h"
+#include "main/globaldispatcher.h"
+#include "file/openfilemanager.h"
+#include "editor/editor.h"
 
 const char* BaseFile::sStatusLabels[] =  { "Closed", "Loading...", "Error while loading", "Ready", "Disconnected", "Reconnecting...", "Lost Synchronization; Repairing", "Syncronization Error", "Closing" };
 

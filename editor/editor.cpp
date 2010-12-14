@@ -3,9 +3,9 @@
 #include <QSpacerItem>
 #include <QTextCursor>
 #include <QDebug>
-#include "basefile.h"
-#include "syntaxhighlighter.h"
-#include "syntaxdefinition.h"
+#include "file/basefile.h"
+#include "syntax/syntaxhighlighter.h"
+#include "syntax/syntaxdefinition.h"
 
 Editor::Editor(BaseFile* file) : QStackedWidget()
 {

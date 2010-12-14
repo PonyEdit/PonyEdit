@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QString>
-#include "location.h"
+#include "file/location.h"
 
 //
 //	The global dispatch object (gDispatcher) is used to dispatch globally interesting signals

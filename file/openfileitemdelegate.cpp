@@ -1,7 +1,7 @@
-#include "openfileitemdelegate.h"
-#include "openfiletreemodel.h"
-#include "basefile.h"
-#include "tools.h"
+#include "file/openfileitemdelegate.h"
+#include "file/openfiletreemodel.h"
+#include "file/basefile.h"
+#include "main/tools.h"
 #include <QApplication>
 #include <QStylePainter>
 #include <QStyleOption>

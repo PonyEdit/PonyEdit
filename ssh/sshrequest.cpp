@@ -1,9 +1,9 @@
 #include <QDebug>
 #include <QCryptographicHash>
-#include "sshrequest.h"
-#include "sshfile.h"
-#include "sshconnection.h"
-#include "globaldispatcher.h"
+#include "ssh/sshrequest.h"
+#include "file/sshfile.h"
+#include "ssh/sshconnection.h"
+#include "main/globaldispatcher.h"
 
 //////////////////
 //  Base class  //

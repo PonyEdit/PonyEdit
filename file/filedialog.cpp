@@ -1,8 +1,8 @@
-#include "filedialog.h"
+#include "file/filedialog.h"
 #include "ui_filedialog.h"
-#include "tools.h"
-#include "sshhost.h"
-#include "globaldispatcher.h"
+#include "main/tools.h"
+#include "ssh/sshhost.h"
+#include "main/globaldispatcher.h"
 
 #include <QDir>
 #include <QDebug>

@@ -1,9 +1,9 @@
 #include <QPainter>
 #include <QTextBlock>
 
-#include "codeeditor.h"
-#include "linenumberwidget.h"
-#include "syntaxhighlighter.h"
+#include "editor/codeeditor.h"
+#include "editor/linenumberwidget.h"
+#include "syntax/syntaxhighlighter.h"
 
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 {

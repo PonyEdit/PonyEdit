@@ -6,10 +6,10 @@
 #include <QStackedWidget>
 #include <QProgressBar>
 
-#include "location.h"
-#include "basefile.h"
+#include "file/location.h"
+#include "file/basefile.h"
 
-#include "codeeditor.h"
+#include "editor/codeeditor.h"
 
 class Editor : public QStackedWidget
 {

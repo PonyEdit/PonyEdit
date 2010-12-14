@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "main/mainwindow.h"
 
 #include <QDebug>
 #include <QTextEdit>
@@ -14,15 +14,15 @@
 #include <QCoreApplication>
 #include <QSettings>
 
-#include "filedialog.h"
-#include "filelist.h"
-#include "editor.h"
-#include "optionsdialog.h"
-#include "globaldispatcher.h"
-#include "searchbar.h"
-#include "unsavedchangesdialog.h"
-#include "openfilemanager.h"
-#include "syntaxdefinition.h"
+#include "file/filedialog.h"
+#include "file/filelist.h"
+#include "editor/editor.h"
+#include "options/optionsdialog.h"
+#include "main/globaldispatcher.h"
+#include "main/searchbar.h"
+#include "file/unsavedchangesdialog.h"
+#include "file/openfilemanager.h"
+#include "syntax/syntaxdefinition.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)

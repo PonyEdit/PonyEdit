@@ -1,8 +1,8 @@
-#include "syntaxdefinition.h"
+#include "syntax/syntaxdefinition.h"
 #include <QtXml>
 #include <QFile>
-#include "tools.h"
-#include "syntaxrule.h"
+#include "main/tools.h"
+#include "syntax/syntaxrule.h"
 
 SyntaxDefinition* gTestSyntaxDef = new SyntaxDefinition("syntaxdefs/perl.xml");
 

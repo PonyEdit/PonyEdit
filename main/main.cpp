@@ -4,11 +4,11 @@
 #include <QMetaType>
 #include <QFont>
 
-#include "globaldispatcher.h"
-#include "sshconnection.h"
-#include "location.h"
-#include "tools.h"
-#include "mainwindow.h"
+#include "main/globaldispatcher.h"
+#include "ssh/sshconnection.h"
+#include "file/location.h"
+#include "main/tools.h"
+#include "main/mainwindow.h"
 
 GlobalDispatcher* gDispatcher = NULL;
 

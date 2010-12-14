@@ -7,10 +7,10 @@
 #include <QFile>
 #include <QRegExp>
 #include <QTimer>
-#include "sshhost.h"
-#include "sshrequest.h"
-#include "sshconnection.h"
-#include "sshfile.h"
+#include "ssh/sshhost.h"
+#include "ssh/sshrequest.h"
+#include "ssh/sshconnection.h"
+#include "file/sshfile.h"
 
 const char* SshRemoteController::sStatusStrings[] = { "not connected", "connecting", "password required", "negotiating with remote host", "uploading slave script", "starting slave script", "pushing buffers", "connected", "error" };
 
@@ -156,7 +156,7 @@ void SshControllerThread::loadScript(SshRemoteController::ScriptType type)
 
 	if (!sSlaveLoaded[type])
 	{
-		QFile f(sSlaveScriptNames[type]);
+		QFile f(QString("slaves/") + sSlaveScriptNames[type]);
 		f.open(QFile::ReadOnly);
 		sSlaveScript[type] = f.readAll();
 

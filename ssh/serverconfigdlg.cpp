@@ -1,7 +1,7 @@
-#include "serverconfigdlg.h"
+#include "ssh/serverconfigdlg.h"
 #include "ui_serverconfigdlg.h"
-#include "tools.h"
-#include "sshhost.h"
+#include "main/tools.h"
+#include "ssh/sshhost.h"
 #include <QFileDialog>
 
 ServerConfigDlg::ServerConfigDlg(QWidget *parent) :

@@ -6,7 +6,6 @@
 
 win32 {
 	INCLUDEPATH += $$PWD/../libssh2-1.2.7/include/
-
 	LIBS     += -L$$PWD/../libssh2-1.2.7/lib/ -llibgpg-error -lwsock32
 }
 
@@ -26,75 +25,78 @@ TARGET = remoted
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    sshconnection.cpp \
-    sshremotecontroller.cpp \
-    serverconfigdlg.cpp \
-    filedialog.cpp \
-    location.cpp \
-    sshhost.cpp \
-    sshrequest.cpp \
-    tools.cpp \
-    passworddialog.cpp \
-    sshconnectingdialog.cpp \
-    editor.cpp \
-    sshfile.cpp \
-    filelist.cpp \
-    basefile.cpp \
-    codeeditor.cpp \
-    linenumberwidget.cpp \
-    optionsdialog.cpp \
-    syntaxhighlighter.cpp \
-    searchbar.cpp \
-    unsavedchangesdialog.cpp \
-    openfilemanager.cpp \
-    openfiletreemodel.cpp \
-    openfileitemdelegate.cpp \
-    openfiletreeview.cpp \
-    syntaxdefinition.cpp \
-    syntaxrule.cpp
+SOURCES += \
+    editor/linenumberwidget.cpp \
+    editor/editor.cpp \
+    editor/codeeditor.cpp \
+    file/unsavedchangesdialog.cpp \
+    file/sshfile.cpp \
+    file/openfiletreeview.cpp \
+    file/openfiletreemodel.cpp \
+    file/openfilemanager.cpp \
+    file/openfileitemdelegate.cpp \
+    file/location.cpp \
+    file/filelist.cpp \
+    file/filedialog.cpp \
+    file/basefile.cpp \
+    main/tools.cpp \
+    main/searchbar.cpp \
+    main/mainwindow.cpp \
+    main/main.cpp \
+    options/optionsdialog.cpp \
+    ssh/passworddialog.cpp \
+    syntax/definition.cpp \
+    syntax/highlighter.cpp \
+    syntax/rule.cpp \
+    ssh/sshconnectingdialog.cpp \
+    ssh/sshconnection.cpp \
+    ssh/sshhost.cpp \
+    ssh/sshremotecontroller.cpp \
+    ssh/sshrequest.cpp \
+    ssh/serverconfigdlg.cpp
 
-HEADERS  += mainwindow.h \
-    sshconnection.h \
-    sshremotecontroller.h \
-    serverconfigdlg.h \
-    filedialog.h \
-    location.h \
-    sshhost.h \
-    sshrequest.h \
-    tools.h \
-    globaldispatcher.h \
-    passworddialog.h \
-    sshconnectingdialog.h \
-    editor.h \
-    sshfile.h \
-    filelist.h \
-    basefile.h \
-	codeeditor.h \
-	linenumberwidget.h \
-    optionsdialog.h \
-    syntaxhighlighter.h \
-    searchbar.h \
-    unsavedchangesdialog.h \
-    openfilemanager.h \
-    openfiletreemodel.h \
-    openfileitemdelegate.h \
-    openfiletreeview.h \
-    syntaxdefinition.h \
-    syntaxrule.h
+HEADERS  += \
+    editor/linenumberwidget.h \
+    editor/editor.h \
+    editor/codeeditor.h \
+    file/unsavedchangesdialog.h \
+    file/sshfile.h \
+    file/openfiletreeview.h \
+    file/openfiletreemodel.h \
+    file/openfilemanager.h \
+    file/openfileitemdelegate.h \
+    file/location.h \
+    file/filelist.h \
+    file/filedialog.h \
+    file/basefile.h \
+    main/tools.h \
+    main/searchbar.h \
+    main/mainwindow.h \
+    main/globaldispatcher.h \
+    options/optionsdialog.h \
+    ssh/sshrequest.h \
+    ssh/sshremotecontroller.h \
+    ssh/sshhost.h \
+    ssh/sshconnection.h \
+    ssh/sshconnectingdialog.h \
+    ssh/serverconfigdlg.h \
+    ssh/passworddialog.h \
+    syntax/syntaxrule.h \
+    syntax/syntaxhighlighter.h \
+    syntax/syntaxdefinition.h
 
 OTHER_FILES += \
-    slave.py \
-    slave.pl
+    slaves/slave.py \
+    slaves/slave.pl \
+    syntaxdefs/perl.xml
 
 FORMS += \
-    serverconfigdlg.ui \
-    filedialog.ui \
-    passworddialog.ui \
-    sshconnectingdialog.ui \
-    optionsdialog.ui \
-    searchbar.ui
+    file/filedialog.ui \
+    main/searchbar.ui \
+    options/optionsdialog.ui \
+    ssh/sshconnectingdialog.ui \
+    ssh/serverconfigdlg.ui \
+    ssh/passworddialog.ui
 
 RESOURCES += \
-    resources.qrc
+	resources.qrc

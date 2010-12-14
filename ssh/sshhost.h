@@ -3,8 +3,8 @@
 
 #include <QString>
 
-#include "location.h"
-#include "sshremotecontroller.h"
+#include "file/location.h"
+#include "ssh/sshremotecontroller.h"
 
 class SshFile;
 class SshHost
