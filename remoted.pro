@@ -45,15 +45,15 @@ SOURCES += \
     main/main.cpp \
     options/optionsdialog.cpp \
     ssh/passworddialog.cpp \
-    syntax/definition.cpp \
-    syntax/highlighter.cpp \
-    syntax/rule.cpp \
     ssh/sshconnectingdialog.cpp \
     ssh/sshconnection.cpp \
     ssh/sshhost.cpp \
     ssh/sshremotecontroller.cpp \
     ssh/sshrequest.cpp \
-    ssh/serverconfigdlg.cpp
+    ssh/serverconfigdlg.cpp \
+    syntax/syntaxdefinition.cpp \
+    syntax/syntaxrule.cpp \
+    syntax/syntaxhighlighter.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
