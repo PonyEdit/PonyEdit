@@ -25,6 +25,7 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttrib
 		sTypeMap.insert("linecontinue", LineContinue);
 		sTypeMap.insert("detectspaces", DetectSpaces);
 		sTypeMap.insert("detectidentifier", DetectIdentifier);
+		sTypeMap.insert("includerules", IncludeRules);
 		sTypeMapInitialized = true;
 	}
 
@@ -97,6 +98,9 @@ int SyntaxRule::match(const QString &string, int position)
 		int index = mRegExp->indexIn(string, position, QRegExp::CaretAtZero);
 		if (index > -1)
 			match = mRegExp->matchedLength();*/
+		break;
+
+	case IncludeRules:
 		break;
 	}
 

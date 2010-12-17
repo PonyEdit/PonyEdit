@@ -27,7 +27,8 @@ public:
 		RangeDetect,
 		LineContinue,
 		DetectSpaces,
-		DetectIdentifier
+		DetectIdentifier,
+		IncludeRules
 	};
 	static QMap<QString, Type> sTypeMap;
 	static bool sTypeMapInitialized;

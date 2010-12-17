@@ -42,7 +42,10 @@ void SyntaxDefinition::addRule(SyntaxRule* rule)
 	mRules.append(rule);
 }
 
-
+void SyntaxDefinition::addItemData(ItemData* itemData)
+{
+	mItemDatas.insert(itemData->name, itemData);
+}
 
 
 

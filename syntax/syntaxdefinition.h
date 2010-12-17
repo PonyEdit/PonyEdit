@@ -54,11 +54,17 @@ public:
 	inline bool isValid() const { return mValid; }
 	inline Context* getContextByIndex(int index) const { return mContextList.at(index); }
 	inline Context* getDefaultContext() const { return mDefaultContext; }
-	QStringList getKeywordList(const QString& type) const { return mKeywords.value(type); }
 
 	void addKeywordList(KeywordList* list);
 	void addContext(Context* context);
 	void addRule(SyntaxRule* rule);
+	void addItemData(ItemData* itemData);
+
+	void setIndentationSensitive(bool v) { mIndentationSensitive = v; }
+	void setCaseSensitiveKeywords(bool v) { mCaseSensitiveKeywords = v; }
+	void setWeakDeliminators(const QString& v) { mWeakDeliminators = v; }
+	void setAdditionalDeliminators(const QString& v) { mAdditionalDeliminators = v; }
+	void setWordWrapDeliminator(const QString& v) { mWordWrapDeliminator = v; }
 
 private:
 	bool mValid;
@@ -70,10 +76,8 @@ private:
 	QMap<QString, Context*> mContextMap;
 	Context* mDefaultContext;
 	QList<SyntaxRule*> mRules;
-
-	// old
-	QMap<QString, QStringList> mKeywords;
 	QMap<QString, ItemData*> mItemDatas;
+
 	QList<Context*> mContextList;
 
 	bool mIndentationSensitive;

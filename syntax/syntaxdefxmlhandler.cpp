@@ -80,8 +80,6 @@ bool SyntaxDefXmlHandler::startElement(const QString &namespaceURI, const QStrin
 				else
 					mRule->addChildRule(rule);
 
-				qDebug() << "Added rule: " << rule->getName() << " Is child = " << (mRule != NULL);
-
 				mRule = rule;
 				mCurrentBlocks |= Rule;
 			}
@@ -89,6 +87,47 @@ bool SyntaxDefXmlHandler::startElement(const QString &namespaceURI, const QStrin
 				delete rule;
 			break;
 		}
+
+		case Language|Highlighting|ItemDatas:
+			//	Inside an <ItemDatas> block. Just expect a bunch of <itemdata> entries
+			if (localName.compare("context", Qt::CaseInsensitive) == 0)
+			{
+				SyntaxDefinition::ItemData* itemData = new SyntaxDefinition::ItemData();
+				itemData->name = Tools::getStringXmlAttribute(atts, "name");
+				itemData->styleName = Tools::getStringXmlAttribute(atts, "defStyleNum");
+				itemData->color = Tools::getStringXmlAttribute(atts, "color");
+				itemData->selColor = Tools::getStringXmlAttribute(atts, "selColor");
+				itemData->italic = Tools::getIntXmlAttribute(atts, "italic", 0);
+				itemData->bold = Tools::getIntXmlAttribute(atts, "bold", 0);
+				itemData->underline = Tools::getIntXmlAttribute(atts, "underline", 0);
+				itemData->strikeout = Tools::getIntXmlAttribute(atts, "strikeout", 0);
+				mDefinition->addItemData(itemData);
+			}
+			break;
+
+		case Language|General:
+			if (localName.compare("comments", Qt::CaseInsensitive) == 0)
+				mCurrentBlocks |= Comments;
+			else if (localName.compare("folding", Qt::CaseInsensitive) == 0)
+				mDefinition->setIndentationSensitive(Tools::getIntXmlAttribute(atts, "indentationsensitive", 0));
+			else if (localName.compare("keywords", Qt::CaseInsensitive) == 0)
+			{
+				mDefinition->setCaseSensitiveKeywords(Tools::getIntXmlAttribute(atts, "casesensitive", 1));
+				mDefinition->setWeakDeliminators(Tools::getStringXmlAttribute(atts, "weakdeliminators"));
+				mDefinition->setAdditionalDeliminators(Tools::getStringXmlAttribute(atts, "additionaldeliminators"));
+				mDefinition->setWordWrapDeliminator(Tools::getStringXmlAttribute(atts, "wordwrapdeliminator"));
+			}
+			break;
+
+		case Language|General|Comments:
+			if (localName.compare("comment", Qt::CaseInsensitive) == 0)
+			{
+				SyntaxDefinition::CommentStyle* style = new SyntaxDefinition::CommentStyle();
+				style->multiline = (Tools::getStringXmlAttribute(atts, "name").compare("multiline", Qt::CaseInsensitive) == 0);
+				style->start = Tools::getStringXmlAttribute(atts, "start");
+				style->end = Tools::getStringXmlAttribute(atts, "end");
+			}
+			break;
 	}
 
 	return true;
@@ -135,6 +174,21 @@ bool SyntaxDefXmlHandler::endElement(const QString &namespaceURI, const QString 
 				if (mRule == NULL)
 					mCurrentBlocks &= ~Rule;
 			}
+			break;
+
+		case Language|Highlighting|ItemDatas:
+			if (localName.compare("itemdatas", Qt::CaseInsensitive) == 0)
+				mCurrentBlocks &= ~ItemDatas;
+			break;
+
+		case Language|General:
+			if (localName.compare("general", Qt::CaseInsensitive) == 0)
+				mCurrentBlocks &= ~General;
+			break;
+
+		case Language|General|Comments:
+			if (localName.compare("comments", Qt::CaseInsensitive) == 0)
+				mCurrentBlocks &= ~Comments;
 			break;
 	}
 
