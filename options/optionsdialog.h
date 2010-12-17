@@ -25,16 +25,10 @@ public:
 	explicit OptionsDialog(QWidget *parent = 0);
     ~OptionsDialog();
 
-	void setupSyntaxHilighterOptions();
-	void downloadSyntaxHilighterFilesList();
-	QList<QUrl> parseSyntaxHilighterFilesListXML(QNetworkReply *filesListReply);
-
 private slots:
 	void updateSelectedOption(int newOption);
 	void buttonClicked(QAbstractButton *button);
 	void saveOptions();
-
-	void downloadSyntaxHilighterFiles();
 
 private:
     Ui::OptionsDialog *ui;

@@ -77,68 +77,7 @@
         <number>0</number>
        </property>
        <widget class="QWidget" name="page">
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <item>
-          <widget class="QTabWidget" name="tabWidget">
-           <property name="currentIndex">
-            <number>0</number>
-           </property>
-           <widget class="QWidget" name="tab">
-            <attribute name="title">
-             <string>Syntax Highlighter</string>
-            </attribute>
-            <layout class="QVBoxLayout" name="verticalLayout_3">
-             <item>
-              <widget class="QGroupBox" name="groupBox">
-               <property name="title">
-                <string>Definition Files</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_2">
-                <item row="0" column="0">
-                 <widget class="QLabel" name="ediLabel">
-                  <property name="text">
-                   <string>Location:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QLineEdit" name="ediLocation"/>
-                </item>
-                <item row="0" column="2">
-                 <widget class="QPushButton" name="ediBrowseButton">
-                  <property name="text">
-                   <string>Browse...</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="2">
-                 <widget class="QPushButton" name="ediDownloadButton">
-                  <property name="text">
-                   <string>Download Definitions</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0" colspan="3">
-                 <widget class="QTableWidget" name="ediLanguagesTable">
-                  <property name="horizontalScrollBarPolicy">
-                   <enum>Qt::ScrollBarAlwaysOff</enum>
-                  </property>
-                  <property name="columnCount">
-                   <number>3</number>
-                  </property>
-                  <column/>
-                  <column/>
-                  <column/>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </widget>
-         </item>
-        </layout>
+        <layout class="QVBoxLayout" name="verticalLayout_2"/>
        </widget>
       </widget>
      </item>

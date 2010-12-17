@@ -58,38 +58,3 @@ void OptionsDialog::buttonClicked(QAbstractButton *button)
 void OptionsDialog::saveOptions()
 {
 }
-
-void OptionsDialog::setupSyntaxHilighterOptions()
-{
-	QStringList langTableHeaders;
-	langTableHeaders << "Language" << "Installed Version" << "Available Version";
-	ui->ediLanguagesTable->setHorizontalHeaderLabels(langTableHeaders);
-
-	ui->ediLanguagesTable->setColumnWidth(0, 160);
-	ui->ediLanguagesTable->setColumnWidth(1, 110);
-	ui->ediLanguagesTable->setColumnWidth(2, 110);
-}
-
-void OptionsDialog::downloadSyntaxHilighterFilesList()
-{
-	QUrl filesList = QUrl("http://www.kate-editor.org/syntax/update-3.2.xml");
-	QNetworkRequest filesListRequest(filesList);
-
-	QNetworkReply *filesListReply = mNetworkManager->get(filesListRequest);
-
-	connect(filesListReply, SIGNAL(finished()), this, SLOT(downloadSyntaxHilighterFiles()));
-}
-
-void OptionsDialog::downloadSyntaxHilighterFiles()
-{
-        QNetworkReply *filesListReply = qobject_cast<QNetworkReply*>(sender());
-
-	QList<QUrl> fileUrls = parseSyntaxHilighterFilesListXML(filesListReply);
-}
-
-QList<QUrl> OptionsDialog::parseSyntaxHilighterFilesListXML(QNetworkReply* /*filesListReply*/)
-{
-	QList<QUrl> languageUrls;
-
-	return languageUrls;
-}
