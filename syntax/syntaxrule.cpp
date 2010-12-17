@@ -137,7 +137,7 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 
 int SyntaxRule::match(const QString &string, int position)
 {
-//	int match = 0;
+	int match = 0;
 
 	switch (mType)
 	{
@@ -158,28 +158,25 @@ int SyntaxRule::match(const QString &string, int position)
 
 	case RegExpr:
 	{
-/*		if (!mRegExp) mRegExp = new QRegExp(mString, mCaseInsensitive ? Qt::CaseInsensitive : Qt::CaseSensitive);
-		int index = mRegExp->indexIn(string, position, QRegExp::CaretAtZero);
-		if (index > -1)
-			match = mRegExp->matchedLength();*/
-		break;
-
-	case IncludeRules:
+		int index = mRegExp.indexIn(string, position, QRegExp::CaretAtZero);
+		if (index > -1) match = mRegExp.matchedLength();
 		break;
 	}
 
+	case IncludeRules:
+		break;
+
 	case Keyword:
 	{
-/*		if (mFirstUse) mKeywords = mDefinition->getKeywordList(mString);
 		QString substr = string.mid(position);
-		foreach (QString keyword, mKeywords)
+		foreach (QString keyword, mKeywordLink->items)
 		{
 			if (substr.startsWith(keyword))
 			{
 				match = keyword.length();
 				break;
 			}
-		}*/
+		}
 		break;
 	}
 
@@ -214,8 +211,7 @@ int SyntaxRule::match(const QString &string, int position)
 		break;
 	}
 
-//	mFirstUse = false;
-	return 0;
+	return match;
 }
 
 
