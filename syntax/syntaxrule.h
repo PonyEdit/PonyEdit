@@ -42,6 +42,7 @@ public:
 	int match(const QString& string, int position);
 
 	void addChildRule(SyntaxRule* rule);
+	bool link(SyntaxDefinition* def);
 
 private:
 	SyntaxRule* mParent;
@@ -67,8 +68,11 @@ private:
 	QList<SyntaxRule*> mChildRules;
 
 	//	Duplicate information prepared for faster lookups and the like
-	QRegExp* mRegExp;
-	QStringList mKeywords;
+	SyntaxDefinition::ItemData* mAttributeLink;
+	SyntaxDefinition::Context* mContextLink;
+	int mContextPopCount;
+	QRegExp mRegExp;
+	SyntaxDefinition::KeywordList* mKeywordLink;
 };
 
 #endif // SYNTAXRULE_H

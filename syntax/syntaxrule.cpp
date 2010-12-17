@@ -31,7 +31,6 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttrib
 
 	mName = name;
 	mParent = parent;
-	mRegExp = NULL;
 	mValid = false;
 
 	QString lcName = name.toLower();
@@ -63,12 +62,53 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttrib
 
 SyntaxRule::~SyntaxRule()
 {
-	if (mRegExp) delete mRegExp;
 }
 
 void SyntaxRule::addChildRule(SyntaxRule* rule)
 {
 	mChildRules.append(rule);
+}
+
+bool SyntaxRule::link(SyntaxDefinition* def)
+{
+	mAttributeLink = def->getItemData(mAttribute);
+	if (!mAttributeLink) return false;
+
+	//	Context can be "#stay" (no change), "#pop#pop..." (pop x times), or a context name
+	mContextLink = NULL;
+	mContextPopCount = 0;
+	if (mContext.startsWith('#'))
+	{
+		if (mContext.startsWith("#pop", Qt::CaseInsensitive) == 0)
+			mContextPopCount = mContext.count('#');
+	}
+	else
+	{
+		mContextLink = def->getContext(mContext);
+		if (!mContextLink) return false;
+	}
+
+	//	Link all children too
+	foreach (SyntaxRule* rule, mChildRules)
+		if (!rule->link(def))
+			return false;
+
+	//	Rule specific link-ups
+	switch (mType)
+	{
+	case RegExpr:
+		mRegExp = QRegExp(mString, mCaseInsensitive ? Qt::CaseInsensitive : Qt::CaseSensitive);
+		break;
+
+	case Keyword:
+		mKeywordLink = def->getKeywordList(mString);
+		if (!mKeywordLink) return false;
+		break;
+
+	default:break;
+	}
+
+	return true;
 }
 
 int SyntaxRule::match(const QString &string, int position)

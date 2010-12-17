@@ -21,8 +21,21 @@ SyntaxDefinition::SyntaxDefinition(const QString& filename)
 		reader.setErrorHandler(&handler);
 
 		if (reader.parse(&file))
-			mValid = true;
+			if (link())
+				mValid = true;
 	}
+}
+
+bool SyntaxDefinition::link()
+{
+	//	Go through the rules linking context, include, etc references
+	foreach (SyntaxRule* rule, mRules)
+	{
+		if (!rule->link(this))
+			return false;
+	}
+
+	return true;
 }
 
 void SyntaxDefinition::addKeywordList(KeywordList* list)

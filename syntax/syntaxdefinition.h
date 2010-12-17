@@ -54,6 +54,9 @@ public:
 	inline bool isValid() const { return mValid; }
 	inline Context* getContextByIndex(int index) const { return mContextList.at(index); }
 	inline Context* getDefaultContext() const { return mDefaultContext; }
+	inline Context* getContext(const QString& name) const { return mContextMap.value(name); }
+	inline KeywordList* getKeywordList(const QString& name) const { return mKeywordLists.value(name); }
+	inline ItemData* getItemData(const QString& name) const { return mItemDatas.value(name); }
 
 	void addKeywordList(KeywordList* list);
 	void addContext(Context* context);
@@ -67,6 +70,8 @@ public:
 	void setWordWrapDeliminator(const QString& v) { mWordWrapDeliminator = v; }
 
 private:
+	bool link();
+
 	bool mValid;
 	QString mName;
 	QString mSection;
