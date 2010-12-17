@@ -20,10 +20,10 @@ public:
 		Keyword,
 		Int,
 		Float,
-		HICOct,
-		HICHex,
-		HICStringChar,
-		HICChar,
+		HlCOct,
+		HlCHex,
+		HlCStringChar,
+		HlCChar,
 		RangeDetect,
 		LineContinue,
 		DetectSpaces,
@@ -32,14 +32,19 @@ public:
 	static QMap<QString, Type> sTypeMap;
 	static bool sTypeMapInitialized;
 
-	SyntaxRule(const QString& name, const QXmlAttributes& attributes);
+	SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttributes& attributes);
 	~SyntaxRule();
 
+	SyntaxRule* getParent() const { return mParent; }
+	const QString& getName() const { return mName; }
 	inline bool isValid() const { return mValid; }
 	int match(const QString& string, int position);
 
+	void addChildRule(SyntaxRule* rule);
+
 private:
-	SyntaxDefinition* mDefinition;
+	SyntaxRule* mParent;
+	QString mName;
 	Type mType;
 	bool mValid;
 

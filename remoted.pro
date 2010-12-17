@@ -24,7 +24,6 @@ QT       += core gui network xml
 TARGET = remoted
 TEMPLATE = app
 
-
 SOURCES += \
     editor/linenumberwidget.cpp \
     editor/editor.cpp \

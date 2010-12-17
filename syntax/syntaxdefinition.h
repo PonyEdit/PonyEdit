@@ -58,6 +58,7 @@ public:
 
 	void addKeywordList(KeywordList* list);
 	void addContext(Context* context);
+	void addRule(SyntaxRule* rule);
 
 private:
 	bool mValid;
@@ -68,6 +69,7 @@ private:
 	QMap<QString, KeywordList*> mKeywordLists;
 	QMap<QString, Context*> mContextMap;
 	Context* mDefaultContext;
+	QList<SyntaxRule*> mRules;
 
 	// old
 	QMap<QString, QStringList> mKeywords;

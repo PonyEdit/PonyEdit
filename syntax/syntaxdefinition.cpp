@@ -5,7 +5,7 @@
 #include "syntax/syntaxdefinition.h"
 #include "syntax/syntaxdefxmlhandler.h"
 
-SyntaxDefinition* gTestSyntaxDef = NULL;//new SyntaxDefinition("syntaxdefs/perl.xml");
+SyntaxDefinition* gTestSyntaxDef = new SyntaxDefinition("syntaxdefs/perl.xml");
 
 SyntaxDefinition::SyntaxDefinition(const QString& filename)
 {
@@ -35,6 +35,11 @@ void SyntaxDefinition::addContext(Context* context)
 	if (mDefaultContext == NULL)
 		mDefaultContext = context;
 	mContextMap.insert(context->name, context);
+}
+
+void SyntaxDefinition::addRule(SyntaxRule* rule)
+{
+	mRules.append(rule);
 }
 
 

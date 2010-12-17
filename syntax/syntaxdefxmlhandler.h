@@ -35,6 +35,7 @@ private:
 
 	SyntaxDefinition::KeywordList* mKeywordList;
 	SyntaxDefinition::Context* mContext;
+	SyntaxRule* mRule;
 };
 
 #endif // SYNTAXDEFXMLHANDLER_H

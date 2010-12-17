@@ -4,9 +4,9 @@
 QMap<QString, SyntaxRule::Type> SyntaxRule::sTypeMap;
 bool SyntaxRule::sTypeMapInitialized = false;
 
-SyntaxRule::SyntaxRule(const QString& name, const QXmlAttributes& attributes)
+SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttributes& attributes)
 {
-	/*if (!sTypeMapInitialized)
+	if (!sTypeMapInitialized)
 	{
 		sTypeMap.insert("detectchar", DetectChar);
 		sTypeMap.insert("detect2chars", Detect2Chars);
@@ -17,51 +17,57 @@ SyntaxRule::SyntaxRule(const QString& name, const QXmlAttributes& attributes)
 		sTypeMap.insert("keyword", Keyword);
 		sTypeMap.insert("int", Int);
 		sTypeMap.insert("float", Float);
-		sTypeMap.insert("hicoct", HICOct);
-		sTypeMap.insert("hichex", HICHex);
-		sTypeMap.insert("hicstringchar", HICStringChar);
-		sTypeMap.insert("hicchar", HICChar);
+		sTypeMap.insert("hlcoct", HlCOct);
+		sTypeMap.insert("hlchex", HlCHex);
+		sTypeMap.insert("hlcstringchar", HlCStringChar);
+		sTypeMap.insert("hlcchar", HlCChar);
 		sTypeMap.insert("rangedetect", RangeDetect);
 		sTypeMap.insert("linecontinue", LineContinue);
 		sTypeMap.insert("detectspaces", DetectSpaces);
 		sTypeMap.insert("detectidentifier", DetectIdentifier);
+		sTypeMapInitialized = true;
 	}
 
+	mName = name;
+	mParent = parent;
 	mRegExp = NULL;
-	mDefinition = def;
 	mValid = false;
-	QString type = element->nodeName().toLower();
-	if (sTypeMap.contains(type))
+
+	QString lcName = name.toLower();
+	if (sTypeMap.contains(lcName))
 	{
-		mType = sTypeMap.value(type);
-		mAttribute = Tools::getStringXmlAttribute(element, "attribute");
-		mContext = Tools::getStringXmlAttribute(element, "context");
-		mBeginRegion = Tools::getStringXmlAttribute(element, "beginregion");
-		mEndRegion = Tools::getStringXmlAttribute(element, "");
-		mLookAhead = Tools::getBoolXmlAttribute(element, "", false);
-		mFirstNonSpace = Tools::getBoolXmlAttribute(element, "", false);
-		mColumn = Tools::getIntXmlAttribute(element, "", -1);
-		mCharacterA = Tools::getCharXmlAttribute(element, "char");
-		mCharacterB = Tools::getCharXmlAttribute(element, "char1");
+		mType  = sTypeMap.value(lcName);
 
-		mString = Tools::getStringXmlAttribute(element, "String");
-		qDebug() << mType << " string = " << mString;
-
-		mCaseInsensitive = Tools::getBoolXmlAttribute(element, "insensitive", false);
-		mDynamic = Tools::getBoolXmlAttribute(element, "dynamic", false);
-		mMinimal = Tools::getBoolXmlAttribute(element, "minimal", false);
+		mAttribute = Tools::getStringXmlAttribute(attributes, "attribute");
+		mContext = Tools::getStringXmlAttribute(attributes, "context");
+		mBeginRegion = Tools::getStringXmlAttribute(attributes, "beginregion");
+		mEndRegion = Tools::getStringXmlAttribute(attributes, "endregion");
+		mLookAhead = Tools::getIntXmlAttribute(attributes, "lookahead", 0);
+		mFirstNonSpace = Tools::getIntXmlAttribute(attributes, "firstnonspace", 0);
+		mColumn = Tools::getIntXmlAttribute(attributes, "column", 0);
+		mCharacterA = Tools::getCharXmlAttribute(attributes, "char");
+		mCharacterB = Tools::getCharXmlAttribute(attributes, "char1");
+		mString = Tools::getStringXmlAttribute(attributes, "string");
+		mCaseInsensitive = Tools::getIntXmlAttribute(attributes, "insensitive", 0);
+		mDynamic = Tools::getIntXmlAttribute(attributes, "dynamic", 0);
+		mMinimal = Tools::getIntXmlAttribute(attributes, "minimal", 0);
 
 		mValid = true;
 	}
 	else
 	{
-		qDebug() << "Non-existent type: " << type;
-	}*/
+		qDebug() << "Unrecognized rule type: " << name;
+	}
 }
 
 SyntaxRule::~SyntaxRule()
 {
 	if (mRegExp) delete mRegExp;
+}
+
+void SyntaxRule::addChildRule(SyntaxRule* rule)
+{
+	mChildRules.append(rule);
 }
 
 int SyntaxRule::match(const QString &string, int position)
@@ -115,16 +121,16 @@ int SyntaxRule::match(const QString &string, int position)
 	case Float:
 		break;
 
-	case HICOct:
+	case HlCOct:
 		break;
 
-	case HICHex:
+	case HlCHex:
 		break;
 
-	case HICStringChar:
+	case HlCStringChar:
 		break;
 
-	case HICChar:
+	case HlCChar:
 		break;
 
 	case RangeDetect:

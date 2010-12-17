@@ -10,6 +10,7 @@ SyntaxDefXmlHandler::SyntaxDefXmlHandler(SyntaxDefinition* definition)
 
 	mKeywordList = NULL;
 	mContext = NULL;
+	mRule = NULL;
 }
 
 bool SyntaxDefXmlHandler::startElement(const QString &namespaceURI, const QString &localName, const QString &qName, const QXmlAttributes &atts)
@@ -68,9 +69,26 @@ bool SyntaxDefXmlHandler::startElement(const QString &namespaceURI, const QStrin
 			break;
 
 		case Language|Highlighting|Contexts|Context:
-			//	Inside a <context>. Should be a big pile of rules.
-			new SyntaxRule(localName, atts);
+		case Language|Highlighting|Contexts|Context|Rule:
+		{
+			//	Inside a <context> or a <rule>. Should be a big pile of rules.
+			SyntaxRule* rule = new SyntaxRule(mRule, localName, atts);
+			if (rule->isValid())
+			{
+				if (mRule == NULL)
+					mDefinition->addRule(rule);
+				else
+					mRule->addChildRule(rule);
+
+				qDebug() << "Added rule: " << rule->getName() << " Is child = " << (mRule != NULL);
+
+				mRule = rule;
+				mCurrentBlocks |= Rule;
+			}
+			else
+				delete rule;
 			break;
+		}
 	}
 
 	return true;
@@ -109,6 +127,15 @@ bool SyntaxDefXmlHandler::endElement(const QString &namespaceURI, const QString 
 			if (localName.compare("context", Qt::CaseInsensitive) == 0)
 				mCurrentBlocks &= ~Context;
 			break;
+
+		case Language|Highlighting|Contexts|Context|Rule:
+			if (localName.compare(mRule->getName(), Qt::CaseInsensitive) == 0)
+			{
+				mRule = mRule->getParent();
+				if (mRule == NULL)
+					mCurrentBlocks &= ~Rule;
+			}
+			break;
 	}
 
 	return true;
@@ -120,10 +147,7 @@ bool SyntaxDefXmlHandler::characters(const QString &ch)
 	{
 		QString trimmed = ch.trimmed();
 		if (!trimmed.isEmpty())
-		{
 			mKeywordList->items.append(trimmed);
-			qDebug() << "Adding keyword: " << trimmed << " to list " << mKeywordList->name;
-		}
 	}
 
 	return true;

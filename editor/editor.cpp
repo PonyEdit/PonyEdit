@@ -39,7 +39,7 @@ Editor::Editor(BaseFile* file) : QStackedWidget()
 	openStatusChanged(mFile->getOpenStatus());
 
 	mEditor->setDocument(mFile->getTextDocument());
-//	new SyntaxHighlighter(mEditor->document(), gTestSyntaxDef);
+	new SyntaxHighlighter(mEditor->document(), gTestSyntaxDef);
 	mEditor->setFont(QFont("inconsolata", 11));
 }
 
