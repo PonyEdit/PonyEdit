@@ -8,6 +8,17 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent, SyntaxDefinition* sy
 	: QSyntaxHighlighter(parent)
 {
 	mSyntaxDefinition = syntaxDef;
+
+	mDefaultColors.insert("dsnormal", QColor("black"));
+	mDefaultColors.insert("dskeyword", QColor("blue"));
+	mDefaultColors.insert("dsfunction", QColor("cornflowerblue"));
+	mDefaultColors.insert("dsdatatype", QColor("magenta"));
+	mDefaultColors.insert("dsdecval", QColor("red"));
+	mDefaultColors.insert("dsbasen", QColor("red"));
+	mDefaultColors.insert("dsfloat", QColor("red"));
+	mDefaultColors.insert("dsstring", QColor("red"));
+	mDefaultColors.insert("dschar", QColor("red"));
+	mDefaultColors.insert("dscomment", QColor("green"));
 }
 
 void SyntaxHighlighter::highlightBlock(const QString &text)
@@ -25,7 +36,15 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 			int matchLength = rule->match(text, position);
 			if (matchLength > 0)
 			{
-				setFormat(position, matchLength, QColor(Qt::red));
+				QColor color;
+
+				SyntaxDefinition::ItemData* id = rule->getAttributeLink();
+				if (id)
+					color = mDefaultColors.value(id->styleName.toLower());
+				else
+					color = QColor("lightslategray");
+
+				setFormat(position, matchLength, color);
 				position += matchLength - 1;
 				break;
 			}

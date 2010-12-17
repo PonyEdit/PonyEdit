@@ -21,6 +21,7 @@ protected:
 
 private:
 	SyntaxDefinition* mSyntaxDefinition;
+	QMap<QString, QColor> mDefaultColors;
 };
 
 #endif // SYNTAXHIGHLIGHTER_H

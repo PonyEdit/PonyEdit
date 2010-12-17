@@ -43,6 +43,7 @@ public:
 	inline const QString& getStringAttribute() const { return mString; }
 	inline const bool getIncludeAttrib() const { return mIncludeAttrib; }
 	inline const QString& getContext() const { return mContext; }
+	inline SyntaxDefinition::ItemData* getAttributeLink() const { return mAttributeLink; }
 
 	int match(const QString& string, int position);
 	void addChildRule(SyntaxRule* rule);
