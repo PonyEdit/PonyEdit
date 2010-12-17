@@ -48,7 +48,12 @@ void OpenFileItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 				{
 					//	Show a progress bar while loading the file...
 					QStyleOptionProgressBar so;
-					so.rect = QRect(labelRect.right() - 32, labelRect.top() + 2, 32, labelRect.height() - 4);
+					#ifdef Q_OS_MAC
+						int topOffset = 0;
+					#else
+						int topOffset = 2;
+					#endif
+					so.rect = QRect(labelRect.right() - 32, labelRect.top() + topOffset, 32, labelRect.height() - 4);
 					so.direction = Qt::LeftToRight;
 					so.minimum = 0;
 					so.maximum = 100;

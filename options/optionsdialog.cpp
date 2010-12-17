@@ -32,8 +32,6 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
 		ui->optionList->addItem(sOptionsStrings[ii]);
 	}
 
-	setupSyntaxHilighterOptions();
-
 	ui->optionList->setCurrentRow(0);
 	updateSelectedOption(0);
 }

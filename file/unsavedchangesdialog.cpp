@@ -60,7 +60,7 @@ void UnsavedChangesDialog::buttonClicked(QAbstractButton* button)
 	}
 }
 
-void UnsavedChangesDialog::selectionChanged(QItemSelection before, QItemSelection after)
+void UnsavedChangesDialog::selectionChanged(QItemSelection /* before */, QItemSelection /* after */)
 {
 	bool itemsSelected = mTreeView->selectionModel()->selectedRows().count() > 0;
 	mButtonBox->button(QDialogButtonBox::Save)->setEnabled(itemsSelected);

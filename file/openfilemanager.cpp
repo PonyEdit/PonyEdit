@@ -34,7 +34,7 @@ const QList<BaseFile*> OpenFileManager::getOpenFiles() const
 	return mOpenFiles;
 }
 
-bool OpenFileManager::closeFiles(const QList<BaseFile*>& files, bool force)
+bool OpenFileManager::closeFiles(const QList<BaseFile*>& files, bool /* force */)
 {
 	QList<BaseFile*> unsavedFiles = getUnsavedFiles();
 	if (unsavedFiles.length() > 0)
