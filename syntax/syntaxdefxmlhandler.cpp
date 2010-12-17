@@ -76,7 +76,7 @@ bool SyntaxDefXmlHandler::startElement(const QString &namespaceURI, const QStrin
 			if (rule->isValid())
 			{
 				if (mRule == NULL)
-					mDefinition->addRule(rule);
+					mContext->rules.append(rule);
 				else
 					mRule->addChildRule(rule);
 
@@ -90,7 +90,7 @@ bool SyntaxDefXmlHandler::startElement(const QString &namespaceURI, const QStrin
 
 		case Language|Highlighting|ItemDatas:
 			//	Inside an <ItemDatas> block. Just expect a bunch of <itemdata> entries
-			if (localName.compare("context", Qt::CaseInsensitive) == 0)
+			if (localName.compare("itemdata", Qt::CaseInsensitive) == 0)
 			{
 				SyntaxDefinition::ItemData* itemData = new SyntaxDefinition::ItemData();
 				itemData->name = Tools::getStringXmlAttribute(atts, "name");

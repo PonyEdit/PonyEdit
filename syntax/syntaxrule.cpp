@@ -38,6 +38,12 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttrib
 	{
 		mType  = sTypeMap.value(lcName);
 
+		if (mType == IncludeRules && mParent != NULL)
+		{
+			qDebug() << "Warning: Include inside parent rule; disregarding!";
+			return;
+		}
+
 		mAttribute = Tools::getStringXmlAttribute(attributes, "attribute");
 		mContext = Tools::getStringXmlAttribute(attributes, "context");
 		mBeginRegion = Tools::getStringXmlAttribute(attributes, "beginregion");
@@ -51,6 +57,7 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttrib
 		mCaseInsensitive = Tools::getIntXmlAttribute(attributes, "insensitive", 0);
 		mDynamic = Tools::getIntXmlAttribute(attributes, "dynamic", 0);
 		mMinimal = Tools::getIntXmlAttribute(attributes, "minimal", 0);
+		mIncludeAttrib = Tools::getIntXmlAttribute(attributes, "includeAttrib", 0);
 
 		mValid = true;
 	}
@@ -71,13 +78,22 @@ void SyntaxRule::addChildRule(SyntaxRule* rule)
 
 bool SyntaxRule::link(SyntaxDefinition* def)
 {
-	mAttributeLink = def->getItemData(mAttribute);
-	if (!mAttributeLink) return false;
+	if (mAttribute.isEmpty())
+		mAttributeLink = NULL;
+	else
+	{
+		mAttributeLink = def->getItemData(mAttribute);
+		if (!mAttributeLink)
+		{
+			qDebug() << "Failed to link attribute: " << mAttribute;
+			return false;
+		}
+	}
 
 	//	Context can be "#stay" (no change), "#pop#pop..." (pop x times), or a context name
 	mContextLink = NULL;
 	mContextPopCount = 0;
-	if (mContext.startsWith('#'))
+	if (mContext.startsWith('#') || mContext.isEmpty())
 	{
 		if (mContext.startsWith("#pop", Qt::CaseInsensitive) == 0)
 			mContextPopCount = mContext.count('#');
@@ -85,7 +101,11 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 	else
 	{
 		mContextLink = def->getContext(mContext);
-		if (!mContextLink) return false;
+		if (!mContextLink)
+		{
+			qDebug() << "Failed to link context: " << mContext;
+			return false;
+		}
 	}
 
 	//	Link all children too
@@ -102,7 +122,11 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 
 	case Keyword:
 		mKeywordLink = def->getKeywordList(mString);
-		if (!mKeywordLink) return false;
+		if (!mKeywordLink)
+		{
+			qDebug() << "Failed to link keyword list: " << mString;
+			return false;
+		}
 		break;
 
 	default:break;

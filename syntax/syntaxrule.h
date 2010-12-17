@@ -39,8 +39,12 @@ public:
 	SyntaxRule* getParent() const { return mParent; }
 	const QString& getName() const { return mName; }
 	inline bool isValid() const { return mValid; }
-	int match(const QString& string, int position);
+	inline Type getType() const { return mType; }
+	inline const QString& getStringAttribute() const { return mString; }
+	inline const bool getIncludeAttrib() const { return mIncludeAttrib; }
+	inline const QString& getContext() const { return mContext; }
 
+	int match(const QString& string, int position);
 	void addChildRule(SyntaxRule* rule);
 	bool link(SyntaxDefinition* def);
 
@@ -64,6 +68,7 @@ private:
 	bool mCaseInsensitive;
 	bool mDynamic;
 	bool mMinimal;
+	bool mIncludeAttrib;
 
 	QList<SyntaxRule*> mChildRules;
 
