@@ -1,5 +1,4 @@
 #include "unsavedchangesdialog.h"
-#include "ui_unsavedchangesdialog.h"
 
 #include "basefile.h"
 #include <QDebug>

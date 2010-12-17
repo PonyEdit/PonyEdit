@@ -43,6 +43,12 @@ public:
 		bool strikeout;
 	};
 
+	struct KeywordList
+	{
+		QString name;
+		QStringList items;
+	};
+
 	SyntaxDefinition(const QString& filename);
 
 	inline bool isValid() const { return mValid; }
@@ -50,23 +56,23 @@ public:
 	inline Context* getDefaultContext() const { return mDefaultContext; }
 	QStringList getKeywordList(const QString& type) const { return mKeywords.value(type); }
 
-private:
-	void readContext(const QDomElement& contextNode);
-	void readHighlightingNode(const QDomElement& highlightingNode);
-	void readGeneralNode(const QDomElement& generalNode);
-	bool readXml(QDomDocument* document);
+	void addKeywordList(KeywordList* list);
+	void addContext(Context* context);
 
+private:
 	bool mValid;
 	QString mName;
 	QString mSection;
 	QStringList mExtensions;
 
-	QMap<QString, QStringList> mKeywords;
-	QMap<QString, ItemData*> mItemDatas;
-
-	QList<Context*> mContextList;
+	QMap<QString, KeywordList*> mKeywordLists;
 	QMap<QString, Context*> mContextMap;
 	Context* mDefaultContext;
+
+	// old
+	QMap<QString, QStringList> mKeywords;
+	QMap<QString, ItemData*> mItemDatas;
+	QList<Context*> mContextList;
 
 	bool mIndentationSensitive;
 	bool mCaseSensitiveKeywords;

@@ -3,10 +3,10 @@
 
 #include <QFontMetrics>
 #include <QString>
+#include <QtXml>
 #include <QMap>
 
 class QThread;
-class QDomElement;
 
 class Tools
 {
@@ -20,10 +20,9 @@ public:
 
 	static QString squashLabel(const QString& label, const QFontMetrics& metrics, int width);
 
-	static QString getStringXmlAttribute(const QDomElement* node, const QString& attribute);
-	static QChar getCharXmlAttribute(const QDomElement* node, const QString& attribute);
-	static int getIntXmlAttribute(const QDomElement* node, const QString& attribute, int defaultValue);
-	static bool getBoolXmlAttribute(const QDomElement* node, const QString& attribute, bool defaultValue);
+	static QString getStringXmlAttribute(const QXmlAttributes& attribs, const QString& key);
+	static QChar getCharXmlAttribute(const QXmlAttributes& attribs, const QString& key);
+	static int getIntXmlAttribute(const QXmlAttributes& attribs, const QString& key, int defaulVal);
 };
 
 #endif // TOOLS_H

@@ -53,7 +53,8 @@ SOURCES += \
     ssh/serverconfigdlg.cpp \
     syntax/syntaxdefinition.cpp \
     syntax/syntaxrule.cpp \
-    syntax/syntaxhighlighter.cpp
+    syntax/syntaxhighlighter.cpp \
+    syntax/syntaxdefxmlhandler.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -83,7 +84,8 @@ HEADERS  += \
     ssh/passworddialog.h \
     syntax/syntaxrule.h \
     syntax/syntaxhighlighter.h \
-    syntax/syntaxdefinition.h
+    syntax/syntaxdefinition.h \
+    syntax/syntaxdefxmlhandler.h
 
 OTHER_FILES += \
     slaves/slave.py \

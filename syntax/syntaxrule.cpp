@@ -4,9 +4,9 @@
 QMap<QString, SyntaxRule::Type> SyntaxRule::sTypeMap;
 bool SyntaxRule::sTypeMapInitialized = false;
 
-SyntaxRule::SyntaxRule(QDomElement* element, SyntaxDefinition* def)
+SyntaxRule::SyntaxRule(const QString& name, const QXmlAttributes& attributes)
 {
-	if (!sTypeMapInitialized)
+	/*if (!sTypeMapInitialized)
 	{
 		sTypeMap.insert("detectchar", DetectChar);
 		sTypeMap.insert("detect2chars", Detect2Chars);
@@ -28,8 +28,6 @@ SyntaxRule::SyntaxRule(QDomElement* element, SyntaxDefinition* def)
 	}
 
 	mRegExp = NULL;
-	mFirstUse = true;
-
 	mDefinition = def;
 	mValid = false;
 	QString type = element->nodeName().toLower();
@@ -58,7 +56,7 @@ SyntaxRule::SyntaxRule(QDomElement* element, SyntaxDefinition* def)
 	else
 	{
 		qDebug() << "Non-existent type: " << type;
-	}
+	}*/
 }
 
 SyntaxRule::~SyntaxRule()
@@ -68,7 +66,7 @@ SyntaxRule::~SyntaxRule()
 
 int SyntaxRule::match(const QString &string, int position)
 {
-	int match = 0;
+//	int match = 0;
 
 	switch (mType)
 	{
@@ -89,16 +87,16 @@ int SyntaxRule::match(const QString &string, int position)
 
 	case RegExpr:
 	{
-		if (!mRegExp) mRegExp = new QRegExp(mString, mCaseInsensitive ? Qt::CaseInsensitive : Qt::CaseSensitive);
+/*		if (!mRegExp) mRegExp = new QRegExp(mString, mCaseInsensitive ? Qt::CaseInsensitive : Qt::CaseSensitive);
 		int index = mRegExp->indexIn(string, position, QRegExp::CaretAtZero);
 		if (index > -1)
-			match = mRegExp->matchedLength();
+			match = mRegExp->matchedLength();*/
 		break;
 	}
 
 	case Keyword:
 	{
-		if (mFirstUse) mKeywords = mDefinition->getKeywordList(mString);
+/*		if (mFirstUse) mKeywords = mDefinition->getKeywordList(mString);
 		QString substr = string.mid(position);
 		foreach (QString keyword, mKeywords)
 		{
@@ -107,7 +105,7 @@ int SyntaxRule::match(const QString &string, int position)
 				match = keyword.length();
 				break;
 			}
-		}
+		}*/
 		break;
 	}
 
@@ -142,7 +140,7 @@ int SyntaxRule::match(const QString &string, int position)
 		break;
 	}
 
-	mFirstUse = false;
+//	mFirstUse = false;
 	return 0;
 }
 

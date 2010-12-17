@@ -114,32 +114,29 @@ QString Tools::squashLabel(const QString& label, const QFontMetrics& metrics, in
 	return result;
 }
 
-QChar Tools::getCharXmlAttribute(const QDomElement* node, const QString& attribute)
+QString Tools::getStringXmlAttribute(const QXmlAttributes& attribs, const QString& key)
 {
-	QString value = getStringXmlAttribute(node, attribute);
+	for (int i = 0; i < attribs.length(); i++)
+		if (attribs.localName(i).compare(key, Qt::CaseInsensitive) == 0)
+			return attribs.value(i);
+	return QString();
+}
+
+QChar Tools::getCharXmlAttribute(const QXmlAttributes& attribs, const QString& key)
+{
+	QString value = getStringXmlAttribute(attribs, key);
 	if (value.isEmpty()) return QChar();
 	return value.at(0);
 }
 
-QString Tools::getStringXmlAttribute(const QDomElement* node, const QString& attribute)
-{
-	QDomNode attributeNode = node->attributes().namedItem(attribute);
-	if (attributeNode.isNull()) return QString();
-	return attributeNode.nodeValue();
-}
-
-int Tools::getIntXmlAttribute(const QDomElement* node, const QString& attribute, int defaultValue)
+int Tools::getIntXmlAttribute(const QXmlAttributes& attribs, const QString& key, int defaulVal)
 {
 	bool ok;
-	int value = getStringXmlAttribute(node, attribute).toInt(&ok);
+	int value = getStringXmlAttribute(attribs, key).toInt(&ok);
 	if (ok) return value;
-	return defaultValue;
+	return defaulVal;
 }
 
-bool Tools::getBoolXmlAttribute(const QDomElement* node, const QString& attribute, bool defaultValue)
-{
-	return static_cast<bool>(getIntXmlAttribute(node, attribute, defaultValue));
-}
 
 
 

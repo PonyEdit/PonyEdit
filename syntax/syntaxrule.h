@@ -32,7 +32,7 @@ public:
 	static QMap<QString, Type> sTypeMap;
 	static bool sTypeMapInitialized;
 
-	SyntaxRule(QDomElement* element, SyntaxDefinition* def);
+	SyntaxRule(const QString& name, const QXmlAttributes& attributes);
 	~SyntaxRule();
 
 	inline bool isValid() const { return mValid; }
@@ -61,7 +61,6 @@ private:
 	QList<SyntaxRule*> mChildRules;
 
 	//	Duplicate information prepared for faster lookups and the like
-	bool mFirstUse;
 	QRegExp* mRegExp;
 	QStringList mKeywords;
 };
