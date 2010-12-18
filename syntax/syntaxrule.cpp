@@ -132,6 +132,13 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 	default:break;
 	}
 
+	if (mCaseInsensitive)
+	{
+		mString = mString.toLower();
+		mCharacterA = mCharacterA.toLower();
+		mCharacterB = mCharacterB.toLower();
+	}
+
 	return true;
 }
 
@@ -142,20 +149,37 @@ int SyntaxRule::match(const QString &string, int position)
 	switch (mType)
 	{
 	case DetectChar:
+		if (mCaseInsensitive)
+			match = (string.at(position).toLower() == mCharacterA ? 1 : 0);
+		else
+			match = (string.at(position) == mCharacterA ? 1 : 0);
 		break;
 
 	case Detect2Chars:
+		if (position < string.length() - 1)
+		{
+			if (mCaseInsensitive)
+				match = (string.at(position).toLower() == mCharacterA && string.at(position + 1).toLower() == mCharacterB ? 2 : 0);
+			else
+				match = (string.at(position) == mCharacterA && string.at(position + 1) == mCharacterB ? 2 : 0);
+		}
 		break;
 
 	case AnyChar:
 		if (mString.contains(string.at(position)))
-			return 1;
+			match = 1;
 		break;
 
 	case StringDetect:
+		if (Tools::compareSubstring(string, mString, position, mCaseInsensitive?Qt::CaseInsensitive:Qt::CaseSensitive))
+			match = mString.length();
 		break;
 
 	case WordDetect:
+		if (position == 0 || string.at(position - 1).isSpace())	// space before
+			if (position == string.length() - mString.length() || string.at(position + mString.length()).isSpace())
+				if (Tools::compareSubstring(string, mString, position, mCaseInsensitive?Qt::CaseInsensitive:Qt::CaseSensitive))
+					match = mString.length();
 		break;
 
 	case RegExpr:
@@ -166,14 +190,14 @@ int SyntaxRule::match(const QString &string, int position)
 	}
 
 	case IncludeRules:
+		qDebug() << "Warning: IncludeRules left in the SyntaxDefinition after linking! :(";
 		break;
 
 	case Keyword:
 	{
-		QString substr = string.mid(position);
 		foreach (QString keyword, mKeywordLink->items)
 		{
-			if (substr.startsWith(keyword))
+			if (Tools::compareSubstring(string, keyword, position, mCaseInsensitive?Qt::CaseInsensitive:Qt::CaseSensitive))
 			{
 				match = keyword.length();
 				break;

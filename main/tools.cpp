@@ -142,17 +142,28 @@ int Tools::getIntXmlAttribute(const QXmlAttributes& attribs, const QString& key,
 	return defaulVal;
 }
 
+bool Tools::compareSubstring(const QString& superstring, const QString& substring, int superstringIndex, Qt::CaseSensitivity caseSensitivity)
+{
+	int l = substring.length();
+	if (superstring.length() - superstringIndex < l)
+		return false;
 
+	const QChar* a = superstring.constData() + superstringIndex;
+	const QChar* b = substring.constData();
 
+	if (caseSensitivity == Qt::CaseInsensitive)
+	{
+		while (l-- && a->toLower() == b->toLower())
+			a++,b++;
+	}
+	else
+	{
+		while (l-- && *a == *b)
+			a++,b++;
+	}
 
-
-
-
-
-
-
-
-
+	return (l == -1);
+}
 
 
 

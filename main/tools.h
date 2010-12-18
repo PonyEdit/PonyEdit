@@ -23,6 +23,8 @@ public:
 	static QString getStringXmlAttribute(const QXmlAttributes& attribs, const QString& key);
 	static QChar getCharXmlAttribute(const QXmlAttributes& attribs, const QString& key);
 	static int getIntXmlAttribute(const QXmlAttributes& attribs, const QString& key, int defaulVal);
+
+	static bool compareSubstring(const QString& superstring, const QString& substring, int superstringIndex, Qt::CaseSensitivity caseSensitivity);
 };
 
 #endif // TOOLS_H
