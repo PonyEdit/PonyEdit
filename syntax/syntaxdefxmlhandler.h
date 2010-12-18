@@ -34,7 +34,7 @@ private:
 	int mCurrentBlocks;
 
 	SyntaxDefinition::KeywordList* mKeywordList;
-	SyntaxDefinition::Context* mContext;
+	SyntaxDefinition::ContextDef* mContext;
 	SyntaxRule* mRule;
 };
 

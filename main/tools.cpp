@@ -132,8 +132,13 @@ QChar Tools::getCharXmlAttribute(const QXmlAttributes& attribs, const QString& k
 int Tools::getIntXmlAttribute(const QXmlAttributes& attribs, const QString& key, int defaulVal)
 {
 	bool ok;
-	int value = getStringXmlAttribute(attribs, key).toInt(&ok);
+	QString stringValue = getStringXmlAttribute(attribs, key);
+	int value = stringValue.toInt(&ok);
 	if (ok) return value;
+
+	if (stringValue.compare("true", Qt::CaseInsensitive) == 0)
+		return 1;
+
 	return defaulVal;
 }
 

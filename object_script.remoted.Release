@@ -28,6 +28,7 @@ INPUT(
 ./release\syntaxrule.o
 ./release\syntaxhighlighter.o
 ./release\syntaxdefxmlhandler.o
+./release\syntaxblockdata.o
 ./release\moc_editor.o
 ./release\moc_codeeditor.o
 ./release\moc_unsavedchangesdialog.o
@@ -48,5 +49,6 @@ INPUT(
 ./release\moc_serverconfigdlg.o
 ./release\moc_passworddialog.o
 ./release\moc_syntaxhighlighter.o
+./release\moc_syntaxblockdata.o
 ./release\qrc_resources.o
 );

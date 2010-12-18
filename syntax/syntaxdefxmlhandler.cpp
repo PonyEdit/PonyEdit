@@ -57,7 +57,7 @@ bool SyntaxDefXmlHandler::startElement(const QString &namespaceURI, const QStrin
 			if (localName.compare("context", Qt::CaseInsensitive) == 0)
 			{
 				mCurrentBlocks |= Context;
-				mContext = new SyntaxDefinition::Context();
+				mContext = new SyntaxDefinition::ContextDef();
 				mContext->name = Tools::getStringXmlAttribute(atts, "name");
 				mContext->lineEndContext = Tools::getStringXmlAttribute(atts, "lineendcontext");
 				mContext->lineBeginContext = Tools::getStringXmlAttribute(atts, "linebegincontext");

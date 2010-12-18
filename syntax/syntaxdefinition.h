@@ -17,7 +17,7 @@ public:
 		QString end;
 	};
 
-	struct Context
+	struct ContextDef
 	{
 		QString attribute;
 		QString name;
@@ -52,14 +52,14 @@ public:
 	SyntaxDefinition(const QString& filename);
 
 	inline bool isValid() const { return mValid; }
-	inline Context* getContextByIndex(int index) const { return mContextList.at(index); }
-	inline Context* getDefaultContext() const { return mDefaultContext; }
-	inline Context* getContext(const QString& name) const { return mContextMap.value(name.toLower()); }
+	inline ContextDef* getContextByIndex(int index) const { return mContextList.at(index); }
+	inline ContextDef* getDefaultContext() const { return mDefaultContext; }
+	inline ContextDef* getContext(const QString& name) const { return mContextMap.value(name.toLower()); }
 	inline KeywordList* getKeywordList(const QString& name) const { return mKeywordLists.value(name.toLower()); }
 	inline ItemData* getItemData(const QString& name) const { return mItemDatas.value(name.toLower()); }
 
 	void addKeywordList(KeywordList* list);
-	void addContext(Context* context);
+	void addContext(ContextDef* context);
 	void addItemData(ItemData* itemData);
 
 	void setIndentationSensitive(bool v) { mIndentationSensitive = v; }
@@ -77,11 +77,11 @@ private:
 	QStringList mExtensions;
 
 	QMap<QString, KeywordList*> mKeywordLists;
-	QMap<QString, Context*> mContextMap;
-	Context* mDefaultContext;
+	QMap<QString, ContextDef*> mContextMap;
+	ContextDef* mDefaultContext;
 	QMap<QString, ItemData*> mItemDatas;
 
-	QList<Context*> mContextList;
+	QList<ContextDef*> mContextList;
 
 	bool mIndentationSensitive;
 	bool mCaseSensitiveKeywords;

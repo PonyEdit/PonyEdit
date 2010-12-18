@@ -53,7 +53,8 @@ SOURCES += \
     syntax/syntaxdefinition.cpp \
     syntax/syntaxrule.cpp \
     syntax/syntaxhighlighter.cpp \
-    syntax/syntaxdefxmlhandler.cpp
+    syntax/syntaxdefxmlhandler.cpp \
+    syntax/syntaxblockdata.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -84,7 +85,8 @@ HEADERS  += \
     syntax/syntaxrule.h \
     syntax/syntaxhighlighter.h \
     syntax/syntaxdefinition.h \
-    syntax/syntaxdefxmlhandler.h
+    syntax/syntaxdefxmlhandler.h \
+    syntax/syntaxblockdata.h
 
 OTHER_FILES += \
     slaves/slave.py \

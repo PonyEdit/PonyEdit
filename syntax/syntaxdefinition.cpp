@@ -32,7 +32,7 @@ SyntaxDefinition::SyntaxDefinition(const QString& filename)
 bool SyntaxDefinition::link()
 {
 	//	Go through the rules in all contexts, linking <IncludeRules>, context="", etc.
-	foreach (Context* context, mContextList)
+	foreach (ContextDef* context, mContextList)
 	{
 		for (int i = 0; i < context->rules.length(); i++)
 		{
@@ -53,7 +53,7 @@ bool SyntaxDefinition::link()
 					qDebug() << "Warning: Include from another file; ignored";
 				else
 				{
-					Context* otherContext = getContext(source);
+					ContextDef* otherContext = getContext(source);
 					if (!otherContext)
 						qDebug() << "Warning: IncludeRule names non-existent context: " << source;
 					else
@@ -79,7 +79,7 @@ void SyntaxDefinition::addKeywordList(KeywordList* list)
 	mKeywordLists.insert(list->name.toLower(), list);
 }
 
-void SyntaxDefinition::addContext(Context* context)
+void SyntaxDefinition::addContext(ContextDef* context)
 {
 	if (mDefaultContext == NULL)
 		mDefaultContext = context;

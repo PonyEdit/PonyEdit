@@ -5,15 +5,20 @@
 
 #include <QHash>
 #include <QTextCharFormat>
+#include "syntaxdefinition.h"
 
 class QTextDocument;
-class SyntaxDefinition;
 
 class SyntaxHighlighter : public QSyntaxHighlighter
 {
 	Q_OBJECT
 
 public:
+	struct Context
+	{
+		SyntaxDefinition::ContextDef* definition;
+	};
+
 	SyntaxHighlighter(QTextDocument* parent, SyntaxDefinition* syntaxDef);
 
 protected:

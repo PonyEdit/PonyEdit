@@ -95,7 +95,7 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 	mContextPopCount = 0;
 	if (mContext.startsWith('#') || mContext.isEmpty())
 	{
-		if (mContext.startsWith("#pop", Qt::CaseInsensitive) == 0)
+		if (mContext.startsWith("#pop", Qt::CaseInsensitive))
 			mContextPopCount = mContext.count('#');
 	}
 	else
@@ -148,6 +148,8 @@ int SyntaxRule::match(const QString &string, int position)
 		break;
 
 	case AnyChar:
+		if (mString.contains(string.at(position)))
+			return 1;
 		break;
 
 	case StringDetect:
@@ -159,7 +161,7 @@ int SyntaxRule::match(const QString &string, int position)
 	case RegExpr:
 	{
 		int index = mRegExp.indexIn(string, position, QRegExp::CaretAtZero);
-		if (index > -1) match = mRegExp.matchedLength();
+		if (index == position) match = mRegExp.matchedLength();
 		break;
 	}
 
@@ -179,6 +181,11 @@ int SyntaxRule::match(const QString &string, int position)
 		}
 		break;
 	}
+
+	case DetectSpaces:
+		while (position + match < string.length() && string.at(position + match).isSpace())
+			match++;
+		break;
 
 	case Int:
 		break;
@@ -202,9 +209,6 @@ int SyntaxRule::match(const QString &string, int position)
 		break;
 
 	case LineContinue:
-		break;
-
-	case DetectSpaces:
 		break;
 
 	case DetectIdentifier:
