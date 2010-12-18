@@ -78,6 +78,8 @@ void SyntaxRule::addChildRule(SyntaxRule* rule)
 
 bool SyntaxRule::link(SyntaxDefinition* def)
 {
+	mDefinition = def;
+
 	if (mAttribute.isEmpty())
 		mAttributeLink = NULL;
 	else
@@ -176,8 +178,8 @@ int SyntaxRule::match(const QString &string, int position)
 		break;
 
 	case WordDetect:
-		if (position == 0 || string.at(position - 1).isSpace())	// space before
-			if (position == string.length() - mString.length() || string.at(position + mString.length()).isSpace())
+		if (position == 0 || mDefinition->isDeliminator(string.at(position - 1)))
+			if (position == string.length() - mString.length() || mDefinition->isDeliminator(string.at(position + mString.length())))
 				if (Tools::compareSubstring(string, mString, position, mCaseInsensitive?Qt::CaseInsensitive:Qt::CaseSensitive))
 					match = mString.length();
 		break;
@@ -199,7 +201,8 @@ int SyntaxRule::match(const QString &string, int position)
 		{
 			if (Tools::compareSubstring(string, keyword, position, mCaseInsensitive?Qt::CaseInsensitive:Qt::CaseSensitive))
 			{
-				match = keyword.length();
+				if (position + keyword.length() >= string.length() || mDefinition->isDeliminator(string.at(position + keyword.length())))
+					match = keyword.length();
 				break;
 			}
 		}
@@ -211,31 +214,49 @@ int SyntaxRule::match(const QString &string, int position)
 			match++;
 		break;
 
-	case Int:
-		break;
-
-	case Float:
-		break;
-
 	case HlCOct:
+		//	Octals start with 0, but have no x like hex. eg; 01562 is octal.
+		if (string.at(position) == '0')
+		{
+			int lookahead = 1;
+			const QChar* s = string.constData() + position + 1;
+			while (position + lookahead < string.length() && (*s >= '0') && (*s <= '7'))
+				s++,lookahead++;
+
+			if (lookahead > 1)
+				match = lookahead;
+		}
 		break;
 
-	case HlCHex:
+	case Int:
+	{
+		//	Ints are any numbers 0-9
+		const QChar* s = string.constData() + position;
+		while (position + match < string.length() && (*s >= '0') && (*s <= '9'))
+			s++,match++;
 		break;
-
-	case HlCStringChar:
-		break;
-
-	case HlCChar:
-		break;
-
-	case RangeDetect:
-		break;
-
-	case LineContinue:
-		break;
+	}
 
 	case DetectIdentifier:
+	{
+		//	[a-zA-Z_][a-zA-Z0-9_]*
+		const QChar* s = string.constData() + position;
+		if ((*s >= 'a' && *s <= 'z') || (*s >= 'A' &&  *s <= 'Z') || *s == '_')
+		{
+			match = 1;
+			while (position + match < string.length() && ((*s >= 'a' && *s <= 'z') || (*s >= 'A' &&  *s <= 'Z') || *s == '_' || (*s >= '0' && *s <= '9')))
+				s++,match++;
+		}
+		break;
+	}
+
+	case Float:
+	case HlCHex:
+	case HlCStringChar:
+	case HlCChar:
+	case RangeDetect:
+	case LineContinue:
+		qDebug() << "Rule not honoured: " << mName;
 		break;
 	}
 

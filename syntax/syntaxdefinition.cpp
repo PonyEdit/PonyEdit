@@ -11,6 +11,7 @@ SyntaxDefinition::SyntaxDefinition(const QString& filename)
 {
 	mValid = false;
 	mDefaultContext = NULL;
+	mDeliminators = ".():!+,-<=>%&/;?[]^{|}~\\*, \t";
 
 	QFile file(filename);
 	if (file.open(QFile::ReadOnly))
@@ -91,8 +92,6 @@ void SyntaxDefinition::addItemData(ItemData* itemData)
 {
 	mItemDatas.insert(itemData->name.toLower(), itemData);
 }
-
-
 
 
 

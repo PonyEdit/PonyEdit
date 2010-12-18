@@ -62,11 +62,13 @@ public:
 	void addContext(ContextDef* context);
 	void addItemData(ItemData* itemData);
 
-	void setIndentationSensitive(bool v) { mIndentationSensitive = v; }
-	void setCaseSensitiveKeywords(bool v) { mCaseSensitiveKeywords = v; }
-	void setWeakDeliminators(const QString& v) { mWeakDeliminators = v; }
-	void setAdditionalDeliminators(const QString& v) { mAdditionalDeliminators = v; }
-	void setWordWrapDeliminator(const QString& v) { mWordWrapDeliminator = v; }
+	inline void setIndentationSensitive(bool v) { mIndentationSensitive = v; }
+	inline void setCaseSensitiveKeywords(bool v) { mCaseSensitiveKeywords = v; }
+	inline void setWeakDeliminators(const QString& v) { mWeakDeliminators = v; }
+	inline void setAdditionalDeliminators(const QString& v) { mAdditionalDeliminators = v; mDeliminators.append(v); }
+	inline void setWordWrapDeliminator(const QString& v) { mWordWrapDeliminator = v; }
+
+	inline bool isDeliminator(const QChar& c) { return mDeliminators.contains(c); }
 
 private:
 	bool link();
@@ -88,6 +90,7 @@ private:
 	QString mWeakDeliminators;
 	QString mAdditionalDeliminators;
 	QString mWordWrapDeliminator;
+	QString mDeliminators;
 	QList<CommentStyle> mCommentStyles;
 };
 

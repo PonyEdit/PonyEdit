@@ -53,6 +53,7 @@ public:
 	bool link(SyntaxDefinition* def);
 
 private:
+	SyntaxDefinition* mDefinition;
 	SyntaxRule* mParent;
 	QString mName;
 	Type mType;
