@@ -17,6 +17,14 @@ public:
 		QString end;
 	};
 
+	struct ContextDef;
+	struct ContextLink
+	{
+		ContextLink() : popCount(0), contextDef(NULL) {}
+		int popCount;
+		ContextDef* contextDef;
+	};
+
 	struct ContextDef
 	{
 		QString attribute;
@@ -27,6 +35,8 @@ public:
 		QString fallthroughContext;
 		bool dynamic;
 		QList<SyntaxRule*> rules;
+
+		ContextLink fallthroughContextLink;
 
 		int listIndex;
 	};
@@ -69,6 +79,8 @@ public:
 	inline void setWordWrapDeliminator(const QString& v) { mWordWrapDeliminator = v; }
 
 	inline bool isDeliminator(const QChar& c) { return mDeliminators.contains(c); }
+
+	bool linkContext(const QString& context, ContextLink* link);
 
 private:
 	bool link();

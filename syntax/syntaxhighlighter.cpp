@@ -48,6 +48,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 		SyntaxDefinition::ContextDef* contextDef = context->definition;
 
 		//	Cycle through all the rules in the context, looking for a match...
+		bool matchFound = false;
 		foreach (SyntaxRule* rule, contextDef->rules)
 		{
 			int matchLength = rule->match(text, position);
@@ -58,26 +59,40 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 				QColor color = id ? mDefaultColors.value(id->styleName.toLower()) : QColor("lightslategray");
 				setFormat(position, matchLength, color);
 
-				//	Change context (if the rule specifies one)
-				if (rule->getContextLink())
-				{
-					Context newContext;
-					newContext.definition = rule->getContextLink();
-					contextStack.push(newContext);
-				}
-
-				//	Pop contexts (if the rule says to)
-				for (int i = 0; i < rule->getPopCount(); i++)
-					contextStack.pop();
+				//	Change context (if the rules say to)
+				applyContextLink(rule->getContextLink(), &contextStack);
 
 				//	Move cursor (if rule is not lookahead)
 				if (!rule->isLookAhead())
 					position += matchLength;
-				position--;
+
+				matchFound = true;
 				break;
 			}
 		}
 
-		position++;
+		//	If no match was found, check for a fallthrough context. If none specified, just move over and try again :-/
+		if (!matchFound)
+		{
+			if (contextDef->fallthrough)
+				applyContextLink(contextDef->fallthroughContextLink, &contextStack);
+			else
+				position++;
+		}
 	}
 }
+
+void SyntaxHighlighter::applyContextLink(const SyntaxDefinition::ContextLink& link, QStack<Context>* contextStack)
+{
+	if (link.contextDef)
+	{
+		Context newContext;
+		newContext.definition = link.contextDef;
+		contextStack->push(newContext);
+	}
+	else for (int i = 0; i < link.popCount; i++)
+		contextStack->pop();
+}
+
+
+

@@ -46,7 +46,7 @@ public:
 	inline SyntaxDefinition::ItemData* getAttributeLink() const { return mAttributeLink; }
 	inline bool isLookAhead() const { return mLookAhead; }
 	inline bool getPopCount() const { return mContextPopCount; }
-	inline SyntaxDefinition::ContextDef* getContextLink() const { return mContextLink; }
+	inline const SyntaxDefinition::ContextLink& getContextLink() const { return mContextLink; }
 
 	int match(const QString& string, int position);
 	void addChildRule(SyntaxRule* rule);
@@ -79,10 +79,10 @@ private:
 
 	//	Duplicate information prepared for faster lookups and the like
 	SyntaxDefinition::ItemData* mAttributeLink;
-	SyntaxDefinition::ContextDef* mContextLink;
 	int mContextPopCount;
 	QRegExp mRegExp;
 	SyntaxDefinition::KeywordList* mKeywordLink;
+	SyntaxDefinition::ContextLink mContextLink;
 };
 
 #endif // SYNTAXRULE_H

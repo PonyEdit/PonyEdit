@@ -32,9 +32,16 @@ SyntaxDefinition::SyntaxDefinition(const QString& filename)
 
 bool SyntaxDefinition::link()
 {
-	//	Go through the rules in all contexts, linking <IncludeRules>, context="", etc.
+	//	Go through the rules in all contexts
 	foreach (ContextDef* context, mContextList)
 	{
+		//	Link up this context's fallthough reference (if there is one)
+		if (context->fallthrough)
+		{
+			linkContext(context->fallthroughContext, &context->fallthroughContextLink);
+		}
+
+		//	Pick through the rules in this context, linking <IncludeRules>, context="", etc.
 		for (int i = 0; i < context->rules.length(); i++)
 		{
 			SyntaxRule* rule = context->rules[i];
@@ -60,8 +67,9 @@ bool SyntaxDefinition::link()
 					else
 					{
 						//	Copy all the rules from the other context to this one
+						int insertionOffset = 0;
 						foreach (SyntaxRule* copyRule, otherContext->rules)
-							context->rules.insert(i, new SyntaxRule(*copyRule));
+							context->rules.insert(i + (insertionOffset++), new SyntaxRule(*copyRule));
 					}
 				}
 
@@ -69,6 +77,26 @@ bool SyntaxDefinition::link()
 			}
 			else if (!rule->link(this))
 				return false;
+		}
+	}
+
+	return true;
+}
+
+bool SyntaxDefinition::linkContext(const QString& context, ContextLink* link)
+{
+	if (context.startsWith('#') || context.isEmpty())
+	{
+		if (context.startsWith("#pop", Qt::CaseInsensitive))
+			link->popCount = context.count('#');
+	}
+	else
+	{
+		link->contextDef = getContext(context);
+		if (!link->contextDef)
+		{
+			qDebug() << "Failed to link context: " << context;
+			return false;
 		}
 	}
 

@@ -92,23 +92,8 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 		}
 	}
 
-	//	Context can be "#stay" (no change), "#pop#pop..." (pop x times), or a context name
-	mContextLink = NULL;
-	mContextPopCount = 0;
-	if (mContext.startsWith('#') || mContext.isEmpty())
-	{
-		if (mContext.startsWith("#pop", Qt::CaseInsensitive))
-			mContextPopCount = mContext.count('#');
-	}
-	else
-	{
-		mContextLink = def->getContext(mContext);
-		if (!mContextLink)
-		{
-			qDebug() << "Failed to link context: " << mContext;
-			return false;
-		}
-	}
+	if (!def->linkContext(mContext, &mContextLink))
+		return false;
 
 	//	Link all children too
 	foreach (SyntaxRule* rule, mChildRules)
