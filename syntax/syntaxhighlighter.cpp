@@ -56,7 +56,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 			{
 				//	Match! Apply a colour to the text...
 				SyntaxDefinition::ItemData* id = rule->getAttributeLink();
-				QColor color = id ? mDefaultColors.value(id->styleName.toLower()) : QColor("lightslategray");
+				QColor color = id ? mDefaultColors.value(id->styleName.toLower()) : QColor("orange");
 				setFormat(position, matchLength, color);
 
 				//	Change context (if the rules say to)

@@ -228,6 +228,7 @@ int SyntaxRule::match(const QString &string, int position)
 		const QChar* s = string.constData() + position;
 		if ((*s >= 'a' && *s <= 'z') || (*s >= 'A' &&  *s <= 'Z') || *s == '_')
 		{
+			s++;
 			match = 1;
 			while (position + match < string.length() && ((*s >= 'a' && *s <= 'z') || (*s >= 'A' &&  *s <= 'Z') || *s == '_' || (*s >= '0' && *s <= '9')))
 				s++,match++;
