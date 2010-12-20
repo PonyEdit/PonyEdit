@@ -52,60 +52,72 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 		SyntaxDefinition::ContextDef* contextDef = context->definition;
 
 		//	Cycle through all the rules in the context, looking for a match...
-		bool matchFound = false;
+		int matchLength = 0;
+		SyntaxDefinition::ItemData* attributeLink = NULL;
+		const SyntaxDefinition::ContextLink* contextLink = NULL;
+		bool isLookAhead = false;
 		foreach (SyntaxRule* rule, contextDef->rules)
 		{
-			int matchLength = rule->match(text, position);
+			matchLength = rule->match(text, position);
 			if (matchLength > 0)
 			{
-				//	Match! Apply a colour to the text...
-				SyntaxDefinition::ItemData* id = rule->getAttributeLink();
-
-				QColor color = id ? mDefaultColors.value(id->styleName.toLower()) : QColor("orange");
-				setFormat(position, matchLength, color);
-
-				//	Change context (if the rules say to)
-				applyContextLink(rule->getContextLink(), &contextStack);
-
-				//	Move cursor (if rule is not lookahead)
-				if (!rule->isLookAhead())
-					position += matchLength;
-
-				matchFound = true;
+				//	Match! Take note of the attribute and context links
+				attributeLink = rule->getAttributeLink();
+				contextLink = &rule->getContextLink();
+				isLookAhead = rule->isLookAhead();
 				break;
 			}
 		}
 
-		//	If no match was found, check for a fallthrough context. If none specified, just move over and try again :-/
-		if (!matchFound)
+		//	If no match was found, check for any fallthrough rules. Force a match length of at least 1 at this point.
+		if (matchLength == 0)
 		{
 			if (contextDef->fallthrough)
-				applyContextLink(contextDef->fallthroughContextLink, &contextStack);
-			else
+				contextLink = &contextDef->fallthroughContextLink;
+			matchLength = 1;
+		}
+
+		//	If no attribute link was found, search through the context stack for one
+		if (!attributeLink)
+		{
+			QStack<Context>::iterator it = contextStack.end();
+			while (it != contextStack.begin())
 			{
-				if (contextDef->attributeLink != NULL)
-				{
-					if (!mDefaultColors.contains(contextDef->attributeLink->styleName.toLower()))
-						qDebug() << "No style name: " << contextDef->attributeLink->styleName;
-					setFormat(position, 1, mDefaultColors.value(contextDef->attributeLink->styleName.toLower()));
-				}
-				else if (contextStack.size() > 1)
-					qDebug() << "No Attribute :(";
-				position++;
+				--it;
+				const Context& scanContext = *it;
+				if ((attributeLink = scanContext.definition->attributeLink) != NULL)
+					break;
 			}
 		}
+
+		//	If an attribute link was found, apply it to the text
+		if (attributeLink)
+		{
+			if (mDefaultColors.contains(attributeLink->styleName.toLower()))
+				setFormat(position, matchLength, mDefaultColors.value(attributeLink->styleName.toLower()));
+			else
+				qDebug() << "No style name: " << attributeLink->styleName;
+		}
+
+		//	If there is a context link (either from a rule, or from a fallthrough context)
+		if (contextLink)
+			applyContextLink(contextLink, &contextStack);
+
+		//	Move cursor (if rule is not lookahead)
+		if (!isLookAhead)
+			position += matchLength;
 	}
 }
 
-void SyntaxHighlighter::applyContextLink(const SyntaxDefinition::ContextLink& link, QStack<Context>* contextStack)
+void SyntaxHighlighter::applyContextLink(const SyntaxDefinition::ContextLink* link, QStack<Context>* contextStack)
 {
-	if (link.contextDef)
+	if (link->contextDef)
 	{
 		Context newContext;
-		newContext.definition = link.contextDef;
+		newContext.definition = link->contextDef;
 		contextStack->push(newContext);
 	}
-	else for (int i = 0; i < link.popCount; i++)
+	else for (int i = 0; i < link->popCount; i++)
 		contextStack->pop();
 }
 
