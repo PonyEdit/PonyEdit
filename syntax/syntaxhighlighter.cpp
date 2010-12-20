@@ -61,6 +61,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 				attributeLink = rule->getAttributeLink();
 				contextLink = &rule->getContextLink();
 				isLookAhead = rule->isLookAhead();
+				dynamicCaptures = rule->getDynamicCaptures();
 				break;
 			}
 		}
@@ -100,7 +101,12 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 		if (contextLink)
 		{
 			if (contextLink->contextDef)
-				contextStack.push(contextLink->contextDef);
+			{
+				if (contextLink->contextDef->dynamic && dynamicCaptures.length())
+					contextStack.push(duplicateDynamicContext(contextLink->contextDef, dynamicCaptures));
+				else
+					contextStack.push(contextLink->contextDef);
+			}
 			else for (int i = 0; i < contextLink->popCount; i++)
 				contextStack.pop();
 		}
@@ -110,6 +116,38 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 			position += matchLength;
 	}
 }
+
+ContextDefLink SyntaxHighlighter::duplicateDynamicContext(const ContextDefLink& source, const QStringList& captures) const
+{
+	SyntaxDefinition::ContextDef* newContext = new SyntaxDefinition::ContextDef(*source.data());
+	replaceDynamicRules(NULL, &newContext->rules, captures);
+	return ContextDefLink(newContext);
+}
+
+void SyntaxHighlighter::replaceDynamicRules(SyntaxRule* parent, QList<QSharedPointer<SyntaxRule> >* ruleList, const QStringList& captures) const
+{
+	for (int i = 0; i < ruleList->length(); i++)
+	{
+		QSharedPointer<SyntaxRule> rule = ruleList->at(i);
+
+		if (rule->isDynamic())
+		{
+			SyntaxRule* newRule = new SyntaxRule(parent, rule, false, true);
+			newRule->applyDynamicCaptures(captures);
+			rule = QSharedPointer<SyntaxRule>(newRule);
+			ruleList->replace(i, rule);
+		}
+
+		replaceDynamicRules(rule.data(), rule->getChildRules(), captures);
+	}
+}
+
+
+
+
+
+
+
 
 
 

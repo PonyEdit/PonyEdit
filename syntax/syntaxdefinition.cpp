@@ -73,7 +73,7 @@ bool SyntaxDefinition::link()
 						//	Copy all the rules from the other context to this one
 						int insertionOffset = 0;
 						foreach (const QSharedPointer<SyntaxRule>& copyRule, otherContext->rules)
-							context->rules.insert(i + insertionOffset++, QSharedPointer<SyntaxRule>(new SyntaxRule(NULL, copyRule)));
+							context->rules.insert(i + insertionOffset++, QSharedPointer<SyntaxRule>(new SyntaxRule(NULL, copyRule, true, false)));
 					}
 				}
 

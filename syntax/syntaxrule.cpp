@@ -3,6 +3,7 @@
 
 QMap<QString, SyntaxRule::Type> SyntaxRule::sTypeMap;
 bool SyntaxRule::sTypeMapInitialized = false;
+QRegExp SyntaxRule::sDynamicRegExp("%[0-9]+");
 
 SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttributes& attributes)
 {
@@ -67,9 +68,10 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttrib
 	}
 }
 
-SyntaxRule::SyntaxRule(SyntaxRule* parent, const QSharedPointer<SyntaxRule>& other)
+SyntaxRule::SyntaxRule(SyntaxRule* parent, const QSharedPointer<SyntaxRule>& other, bool duplicateChildren, bool maintainLinks)
 {
 	mParent = parent;
+
 	mName = other->mName;
 	mType = other->mType;
 	mValid = other->mValid;
@@ -90,8 +92,23 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QSharedPointer<SyntaxRule>& oth
 	mMinimal = other->mMinimal;
 	mIncludeAttrib = other->mIncludeAttrib;
 
-	foreach (const QSharedPointer<SyntaxRule>& otherChild, other->mChildRules)
-		mChildRules.append(QSharedPointer<SyntaxRule>(new SyntaxRule(this, otherChild)));
+	if (maintainLinks)
+	{
+		mAttributeLink = other->mAttributeLink;
+		mRegExp = other->mRegExp;
+		mKeywordLink = other->mKeywordLink;
+		mContextLink = other->mContextLink;
+		mDynamicCharIndex = other->mDynamicCharIndex;
+		mDynamicStringSlots = other->mDynamicStringSlots;
+	}
+
+	if (duplicateChildren)
+	{
+		foreach (const QSharedPointer<SyntaxRule>& otherChild, other->mChildRules)
+			mChildRules.append(QSharedPointer<SyntaxRule>(new SyntaxRule(this, otherChild, duplicateChildren, maintainLinks)));
+	}
+	else
+		mChildRules = other->mChildRules;
 }
 
 SyntaxRule::~SyntaxRule()
@@ -101,6 +118,21 @@ SyntaxRule::~SyntaxRule()
 void SyntaxRule::addChildRule(QSharedPointer<SyntaxRule> rule)
 {
 	mChildRules.append(rule);
+}
+
+void SyntaxRule::applyDynamicCaptures(const QStringList& captures)
+{
+	if (mType == DetectChar || mType == Detect2Chars)
+	{
+		if (captures.length() > mDynamicCharIndex)
+			mCharacterA = captures[mDynamicCharIndex][0];
+	}
+	else
+	{
+		foreach (DynamicSlot slot, mDynamicStringSlots)
+			if (captures.length() > slot.id)
+				mString.insert(slot.pos, captures[slot.id]);
+	}
 }
 
 bool SyntaxRule::link(SyntaxDefinition* def)
@@ -151,6 +183,27 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 		mString = mString.toLower();
 		mCharacterA = mCharacterA.toLower();
 		mCharacterB = mCharacterB.toLower();
+	}
+
+	//	If this is dynamic, pre-calculate the dynamic replacement goop
+	if (mDynamic)
+	{
+		mDynamicCharIndex = 0;
+		if (mType == DetectChar || mType == Detect2Chars)
+			mDynamicCharIndex = (mCharacterA >= '1' && mCharacterA <= '9' ? mCharacterA.toAscii() - '1' : 0);
+		else
+		{
+			int index = 0;
+			while ((index = sDynamicRegExp.indexIn(mString, index)) > -1)
+			{
+				int matchedLength = sDynamicRegExp.matchedLength();
+				bool ok = false;
+				int id = mString.mid(index + 1, matchedLength - 1).toInt(&ok);
+				if (ok)
+					this->mDynamicStringSlots.push_front(DynamicSlot(index, id));
+				mString.remove(index, sDynamicRegExp.matchedLength());
+			}
+		}
 	}
 
 	return true;
@@ -275,6 +328,7 @@ int SyntaxRule::match(const QString &string, int position)
 
 	return match;
 }
+
 
 
 

@@ -32,9 +32,10 @@ public:
 	};
 	static QMap<QString, Type> sTypeMap;
 	static bool sTypeMapInitialized;
+	static QRegExp sDynamicRegExp;
 
 	SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttributes& attributes);
-	SyntaxRule(SyntaxRule* parent, const QSharedPointer<SyntaxRule>& other);
+	SyntaxRule(SyntaxRule* parent, const QSharedPointer<SyntaxRule>& other, bool duplicateChildren, bool maintainLinks);
 	~SyntaxRule();
 
 	SyntaxRule* getParent() const { return mParent; }
@@ -48,12 +49,24 @@ public:
 	inline bool isLookAhead() const { return mLookAhead; }
 	inline const SyntaxDefinition::ContextLink& getContextLink() const { return mContextLink; }
 	inline QStringList getDynamicCaptures() const { return mRegExp.capturedTexts(); }
+	inline bool isDynamic() const { return mDynamic; }
+	inline QList<QSharedPointer<SyntaxRule> >* getChildRules() { return &mChildRules; }
 
 	int match(const QString& string, int position);
 	void addChildRule(QSharedPointer<SyntaxRule> rule);
 	bool link(SyntaxDefinition* def);
 
+	void applyDynamicCaptures(const QStringList& captures);
+
 private:
+	struct DynamicSlot
+	{
+		DynamicSlot(int p, int i) { pos = p; id = i; }
+		int pos; int id;
+	};
+
+	void copyBaseProperties(const SyntaxRule* other);
+
 	SyntaxDefinition* mDefinition;
 	SyntaxRule* mParent;
 	QString mName;
@@ -83,6 +96,8 @@ private:
 	QRegExp mRegExp;
 	SyntaxDefinition::KeywordList* mKeywordLink;
 	SyntaxDefinition::ContextLink mContextLink;
+	int mDynamicCharIndex;
+	QList<DynamicSlot> mDynamicStringSlots;
 };
 
 #endif // SYNTAXRULE_H
