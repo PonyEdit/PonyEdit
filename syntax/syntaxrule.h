@@ -34,6 +34,7 @@ public:
 	static bool sTypeMapInitialized;
 
 	SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttributes& attributes);
+	SyntaxRule(SyntaxRule* parent, const QSharedPointer<SyntaxRule>& other);
 	~SyntaxRule();
 
 	SyntaxRule* getParent() const { return mParent; }
@@ -45,11 +46,11 @@ public:
 	inline const QString& getContext() const { return mContext; }
 	inline SyntaxDefinition::ItemData* getAttributeLink() const { return mAttributeLink; }
 	inline bool isLookAhead() const { return mLookAhead; }
-	inline bool getPopCount() const { return mContextPopCount; }
 	inline const SyntaxDefinition::ContextLink& getContextLink() const { return mContextLink; }
+	inline QStringList getDynamicCaptures() const { return mRegExp.capturedTexts(); }
 
 	int match(const QString& string, int position);
-	void addChildRule(SyntaxRule* rule);
+	void addChildRule(QSharedPointer<SyntaxRule> rule);
 	bool link(SyntaxDefinition* def);
 
 private:
@@ -75,11 +76,10 @@ private:
 	bool mMinimal;
 	bool mIncludeAttrib;
 
-	QList<SyntaxRule*> mChildRules;
+	QList<QSharedPointer<SyntaxRule> > mChildRules;
 
 	//	Duplicate information prepared for faster lookups and the like
 	SyntaxDefinition::ItemData* mAttributeLink;
-	int mContextPopCount;
 	QRegExp mRegExp;
 	SyntaxDefinition::KeywordList* mKeywordLink;
 	SyntaxDefinition::ContextLink mContextLink;

@@ -5,6 +5,7 @@
 #include <QtXml>
 #include <QString>
 #include <QStringList>
+#include <QSharedPointer>
 
 class SyntaxRule;
 class SyntaxDefinition
@@ -22,7 +23,7 @@ public:
 	{
 		ContextLink() : popCount(0), contextDef(NULL) {}
 		int popCount;
-		ContextDef* contextDef;
+		QSharedPointer<ContextDef> contextDef;
 	};
 
 	struct ItemData
@@ -39,7 +40,8 @@ public:
 
 	struct ContextDef
 	{
-		ContextDef() : fallthrough(false), dynamic(false), listIndex(0), attributeLink(NULL) {}
+		ContextDef();
+		~ContextDef();
 
 		QString attribute;
 		QString name;
@@ -48,7 +50,7 @@ public:
 		bool fallthrough;
 		QString fallthroughContext;
 		bool dynamic;
-		QList<SyntaxRule*> rules;
+		QList<QSharedPointer<SyntaxRule> > rules;
 
 		ContextLink fallthroughContextLink;
 
@@ -65,9 +67,9 @@ public:
 	SyntaxDefinition(const QString& filename);
 
 	inline bool isValid() const { return mValid; }
-	inline ContextDef* getContextByIndex(int index) const { return mContextList.at(index); }
-	inline ContextDef* getDefaultContext() const { return mDefaultContext; }
-	inline ContextDef* getContext(const QString& name) const { return mContextMap.value(name.toLower()); }
+	inline const QSharedPointer<ContextDef>& getContextByIndex(int index) const { return mContextList.at(index); }
+	inline const QSharedPointer<ContextDef>& getDefaultContext() const { return mDefaultContext; }
+	inline QSharedPointer<ContextDef> getContext(const QString& name) const { return mContextMap.value(name.toLower()); }
 	inline KeywordList* getKeywordList(const QString& name) const { return mKeywordLists.value(name.toLower()); }
 	inline ItemData* getItemData(const QString& name) const { return mItemDatas.value(name.toLower()); }
 
@@ -94,11 +96,11 @@ private:
 	QStringList mExtensions;
 
 	QMap<QString, KeywordList*> mKeywordLists;
-	QMap<QString, ContextDef*> mContextMap;
-	ContextDef* mDefaultContext;
+	QMap<QString, QSharedPointer<ContextDef> > mContextMap;
+	QSharedPointer<ContextDef> mDefaultContext;
 	QMap<QString, ItemData*> mItemDatas;
 
-	QList<ContextDef*> mContextList;
+	QList<QSharedPointer<ContextDef> > mContextList;
 
 	bool mIndentationSensitive;
 	bool mCaseSensitiveKeywords;
@@ -109,6 +111,7 @@ private:
 	QList<CommentStyle> mCommentStyles;
 };
 
+typedef QSharedPointer<SyntaxDefinition::ContextDef> ContextDefLink;
 extern SyntaxDefinition* gTestSyntaxDef;
 
 #endif // SYNTAXDEFINITION_H

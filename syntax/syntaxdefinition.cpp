@@ -1,16 +1,18 @@
 #include <QtXml>
 #include <QFile>
 #include "main/tools.h"
-#include "syntax/syntaxrule.h"
-#include "syntax/syntaxdefinition.h"
-#include "syntax/syntaxdefxmlhandler.h"
+#include "syntaxrule.h"
+#include "syntaxdefinition.h"
+#include "syntaxdefxmlhandler.h"
 
 SyntaxDefinition* gTestSyntaxDef = new SyntaxDefinition("syntaxdefs/perl.xml");
+
+SyntaxDefinition::ContextDef::ContextDef() : fallthrough(false), dynamic(false), listIndex(0), attributeLink(NULL) {};
+SyntaxDefinition::ContextDef::~ContextDef() {}
 
 SyntaxDefinition::SyntaxDefinition(const QString& filename)
 {
 	mValid = false;
-	mDefaultContext = NULL;
 	mDeliminators = ".():!+,-<=>%&/;?[]^{|}~\\*, \t";
 
 	QFile file(filename);
@@ -33,7 +35,7 @@ SyntaxDefinition::SyntaxDefinition(const QString& filename)
 bool SyntaxDefinition::link()
 {
 	//	Go through the rules in all contexts
-	foreach (ContextDef* context, mContextList)
+	foreach (QSharedPointer<ContextDef> context, mContextList)
 	{
 		//	Link up this context's fallthough reference (if there is one)
 		if (context->fallthrough)
@@ -46,7 +48,7 @@ bool SyntaxDefinition::link()
 		//	Pick through the rules in this context, linking <IncludeRules>, context="", etc.
 		for (int i = 0; i < context->rules.length(); i++)
 		{
-			SyntaxRule* rule = context->rules[i];
+			QSharedPointer<SyntaxRule> rule = context->rules[i];
 
 			//	Deal with <IncludeRules> tags
 			if (rule->getType() == SyntaxRule::IncludeRules)
@@ -63,15 +65,15 @@ bool SyntaxDefinition::link()
 					qDebug() << "Warning: Include from another file; ignored";
 				else
 				{
-					ContextDef* otherContext = getContext(source);
+					QSharedPointer<ContextDef> otherContext = getContext(source);
 					if (!otherContext)
 						qDebug() << "Warning: IncludeRule names non-existent context: " << source;
 					else
 					{
 						//	Copy all the rules from the other context to this one
 						int insertionOffset = 0;
-						foreach (SyntaxRule* copyRule, otherContext->rules)
-							context->rules.insert(i + (insertionOffset++), new SyntaxRule(*copyRule));
+						foreach (const QSharedPointer<SyntaxRule>& copyRule, otherContext->rules)
+							context->rules.insert(i + insertionOffset++, QSharedPointer<SyntaxRule>(new SyntaxRule(NULL, copyRule)));
 					}
 				}
 
@@ -112,10 +114,12 @@ void SyntaxDefinition::addKeywordList(KeywordList* list)
 
 void SyntaxDefinition::addContext(ContextDef* context)
 {
-	if (mDefaultContext == NULL)
-		mDefaultContext = context;
-	mContextMap.insert(context->name.toLower(), context);
-	mContextList.append(context);
+	QSharedPointer<ContextDef> wrappedContext = QSharedPointer<ContextDef>(context);
+
+	if (mDefaultContext.isNull())
+		mDefaultContext = wrappedContext;
+	mContextMap.insert(context->name.toLower(), wrappedContext);
+	mContextList.append(wrappedContext);
 }
 
 void SyntaxDefinition::addItemData(ItemData* itemData)

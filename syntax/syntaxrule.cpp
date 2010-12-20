@@ -67,11 +67,38 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttrib
 	}
 }
 
+SyntaxRule::SyntaxRule(SyntaxRule* parent, const QSharedPointer<SyntaxRule>& other)
+{
+	mParent = parent;
+	mName = other->mName;
+	mType = other->mType;
+	mValid = other->mValid;
+
+	mAttribute = other->mAttribute;
+	mContext = other->mContext;
+	mBeginRegion = other->mBeginRegion;
+	mEndRegion = other->mEndRegion;
+	mLookAhead = other->mLookAhead;
+	mFirstNonSpace = other->mFirstNonSpace;
+	mColumn = other->mColumn;
+
+	mCharacterA = other->mCharacterA;
+	mCharacterB = other->mCharacterB;
+	mString = other->mString;
+	mCaseInsensitive = other->mCaseInsensitive;
+	mDynamic = other->mDynamic;
+	mMinimal = other->mMinimal;
+	mIncludeAttrib = other->mIncludeAttrib;
+
+	foreach (const QSharedPointer<SyntaxRule>& otherChild, other->mChildRules)
+		mChildRules.append(QSharedPointer<SyntaxRule>(new SyntaxRule(this, otherChild)));
+}
+
 SyntaxRule::~SyntaxRule()
 {
 }
 
-void SyntaxRule::addChildRule(SyntaxRule* rule)
+void SyntaxRule::addChildRule(QSharedPointer<SyntaxRule> rule)
 {
 	mChildRules.append(rule);
 }
@@ -96,7 +123,7 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 		return false;
 
 	//	Link all children too
-	foreach (SyntaxRule* rule, mChildRules)
+	foreach (QSharedPointer<SyntaxRule> rule, mChildRules)
 		if (!rule->link(def))
 			return false;
 

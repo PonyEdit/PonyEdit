@@ -77,9 +77,9 @@ bool SyntaxDefXmlHandler::startElement(const QString &namespaceURI, const QStrin
 			if (rule->isValid())
 			{
 				if (mRule == NULL)
-					mContext->rules.append(rule);
+					mContext->rules.append(QSharedPointer<SyntaxRule>(rule));
 				else
-					mRule->addChildRule(rule);
+					mRule->addChildRule(QSharedPointer<SyntaxRule>(rule));
 
 				mRule = rule;
 				mCurrentBlocks |= Rule;

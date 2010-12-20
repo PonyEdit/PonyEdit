@@ -28,7 +28,7 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent, SyntaxDefinition* sy
 
 void SyntaxHighlighter::highlightBlock(const QString &text)
 {
-	QStack<Context> contextStack;
+	QStack<ContextDefLink> contextStack;
 
 	/*
 		//	Get a copy of the context stack leftover from the last block
@@ -41,22 +41,18 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 	{
 		//	If there is no current context, create a default one
 		if (contextStack.isEmpty())
-		{
-			Context defaultContext;
-			defaultContext.definition = mSyntaxDefinition->getDefaultContext();
-			contextStack.push(defaultContext);
-		}
+			contextStack.push(mSyntaxDefinition->getDefaultContext());
 
 		//	Take the topmost context
-		Context* context = &contextStack.top();
-		SyntaxDefinition::ContextDef* contextDef = context->definition;
+		ContextDefLink context = contextStack.top();
 
 		//	Cycle through all the rules in the context, looking for a match...
 		int matchLength = 0;
 		SyntaxDefinition::ItemData* attributeLink = NULL;
 		const SyntaxDefinition::ContextLink* contextLink = NULL;
 		bool isLookAhead = false;
-		foreach (SyntaxRule* rule, contextDef->rules)
+		QStringList dynamicCaptures;
+		foreach (QSharedPointer<SyntaxRule> rule, context->rules)
 		{
 			matchLength = rule->match(text, position);
 			if (matchLength > 0)
@@ -72,26 +68,27 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 		//	If no match was found, check for any fallthrough rules. Force a match length of at least 1 at this point.
 		if (matchLength == 0)
 		{
-			if (contextDef->fallthrough)
-				contextLink = &contextDef->fallthroughContextLink;
-			matchLength = 1;
+			if (context->fallthrough)
+				contextLink = &context->fallthroughContextLink;
+			else
+				matchLength = 1;
 		}
 
 		//	If no attribute link was found, search through the context stack for one
-		if (!attributeLink)
+		if (!attributeLink && matchLength)
 		{
-			QStack<Context>::iterator it = contextStack.end();
+			QStack<ContextDefLink>::iterator it = contextStack.end();
 			while (it != contextStack.begin())
 			{
 				--it;
-				const Context& scanContext = *it;
-				if ((attributeLink = scanContext.definition->attributeLink) != NULL)
+				const ContextDefLink& scanContext = *it;
+				if ((attributeLink = scanContext->attributeLink) != NULL)
 					break;
 			}
 		}
 
 		//	If an attribute link was found, apply it to the text
-		if (attributeLink)
+		if (attributeLink && matchLength)
 		{
 			if (mDefaultColors.contains(attributeLink->styleName.toLower()))
 				setFormat(position, matchLength, mDefaultColors.value(attributeLink->styleName.toLower()));
@@ -101,7 +98,12 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 
 		//	If there is a context link (either from a rule, or from a fallthrough context)
 		if (contextLink)
-			applyContextLink(contextLink, &contextStack);
+		{
+			if (contextLink->contextDef)
+				contextStack.push(contextLink->contextDef);
+			else for (int i = 0; i < contextLink->popCount; i++)
+				contextStack.pop();
+		}
 
 		//	Move cursor (if rule is not lookahead)
 		if (!isLookAhead)
@@ -109,17 +111,6 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 	}
 }
 
-void SyntaxHighlighter::applyContextLink(const SyntaxDefinition::ContextLink* link, QStack<Context>* contextStack)
-{
-	if (link->contextDef)
-	{
-		Context newContext;
-		newContext.definition = link->contextDef;
-		contextStack->push(newContext);
-	}
-	else for (int i = 0; i < link->popCount; i++)
-		contextStack->pop();
-}
 
 
 
