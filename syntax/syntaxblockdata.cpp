@@ -1,6 +1,7 @@
 #include "syntaxblockdata.h"
 
-SyntaxBlockData::SyntaxBlockData() :
+SyntaxBlockData::SyntaxBlockData(const QStack<ContextDefLink> stack) :
 	QTextBlockUserData()
 {
+	mStack = stack;
 }

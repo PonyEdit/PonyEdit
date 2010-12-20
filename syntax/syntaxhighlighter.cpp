@@ -30,11 +30,11 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 {
 	QStack<ContextDefLink> contextStack;
 
-	/*
-		//	Get a copy of the context stack leftover from the last block
-		QTextBlock previousBlock = currentBlock().previous();
-		SyntaxBlockData* previousBlockData = (previousBlock.isValid() ? static_cast<SyntaxBlockData*>(previousBlock.userData()) : NULL);
-	*/
+	//	Get a copy of the context stack leftover from the last block
+	QTextBlock previousBlock = currentBlock().previous();
+	SyntaxBlockData* previousBlockData = (previousBlock.isValid() ? static_cast<SyntaxBlockData*>(previousBlock.userData()) : NULL);
+	if (previousBlockData)
+		contextStack = previousBlockData->mStack;
 
 	int position = 0;
 	while (position < text.length())
@@ -115,6 +115,8 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 		if (!isLookAhead)
 			position += matchLength;
 	}
+
+	currentBlock().setUserData(new SyntaxBlockData(contextStack));
 }
 
 ContextDefLink SyntaxHighlighter::duplicateDynamicContext(const ContextDefLink& source, const QStringList& captures) const
