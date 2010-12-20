@@ -25,8 +25,22 @@ public:
 		ContextDef* contextDef;
 	};
 
+	struct ItemData
+	{
+		QString name;
+		QString styleName;
+		QString color;
+		QString selColor;
+		bool italic;
+		bool bold;
+		bool underline;
+		bool strikeout;
+	};
+
 	struct ContextDef
 	{
+		ContextDef() : fallthrough(false), dynamic(false), listIndex(0), attributeLink(NULL) {}
+
 		QString attribute;
 		QString name;
 		QString lineEndContext;
@@ -39,18 +53,7 @@ public:
 		ContextLink fallthroughContextLink;
 
 		int listIndex;
-	};
-
-	struct ItemData
-	{
-		QString name;
-		QString styleName;
-		QString color;
-		QString selColor;
-		bool italic;
-		bool bold;
-		bool underline;
-		bool strikeout;
+		ItemData* attributeLink;
 	};
 
 	struct KeywordList

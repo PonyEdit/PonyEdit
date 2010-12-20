@@ -11,15 +11,19 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent, SyntaxDefinition* sy
 	mSyntaxDefinition = syntaxDef;
 
 	mDefaultColors.insert("dsnormal", QColor("black"));
-	mDefaultColors.insert("dskeyword", QColor("blue"));
-	mDefaultColors.insert("dsfunction", QColor("cornflowerblue"));
-	mDefaultColors.insert("dsdatatype", QColor("magenta"));
-	mDefaultColors.insert("dsdecval", QColor("red"));
-	mDefaultColors.insert("dsbasen", QColor("red"));
-	mDefaultColors.insert("dsfloat", QColor("red"));
-	mDefaultColors.insert("dsstring", QColor("red"));
-	mDefaultColors.insert("dschar", QColor("red"));
-	mDefaultColors.insert("dscomment", QColor("green"));
+	mDefaultColors.insert("dskeyword", QColor("steelblue"));
+	mDefaultColors.insert("dsdatatype", QColor("dodgerblue"));
+	mDefaultColors.insert("dsdecval", QColor("firebrick"));
+	mDefaultColors.insert("dsbasen", QColor("firebrick"));
+	mDefaultColors.insert("dsfloat", QColor("firebrick"));
+	mDefaultColors.insert("dschar", QColor("firebrick"));
+	mDefaultColors.insert("dsstring", QColor("firebrick"));
+	mDefaultColors.insert("dscomment", QColor("limegreen"));
+	mDefaultColors.insert("dsothers", QColor("purple"));
+	mDefaultColors.insert("dsalert", QColor("red"));
+	mDefaultColors.insert("dsfunction", QColor("purple"));
+	mDefaultColors.insert("dsregionmarker", QColor("chocolate"));
+	mDefaultColors.insert("dserror", QColor("red"));
 }
 
 void SyntaxHighlighter::highlightBlock(const QString &text)
@@ -56,6 +60,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 			{
 				//	Match! Apply a colour to the text...
 				SyntaxDefinition::ItemData* id = rule->getAttributeLink();
+
 				QColor color = id ? mDefaultColors.value(id->styleName.toLower()) : QColor("orange");
 				setFormat(position, matchLength, color);
 
@@ -77,7 +82,17 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 			if (contextDef->fallthrough)
 				applyContextLink(contextDef->fallthroughContextLink, &contextStack);
 			else
+			{
+				if (contextDef->attributeLink != NULL)
+				{
+					if (!mDefaultColors.contains(contextDef->attributeLink->styleName.toLower()))
+						qDebug() << "No style name: " << contextDef->attributeLink->styleName;
+					setFormat(position, 1, mDefaultColors.value(contextDef->attributeLink->styleName.toLower()));
+				}
+				else if (contextStack.size() > 1)
+					qDebug() << "No Attribute :(";
 				position++;
+			}
 		}
 	}
 }

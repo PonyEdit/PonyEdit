@@ -59,6 +59,7 @@ bool SyntaxDefXmlHandler::startElement(const QString &namespaceURI, const QStrin
 				mCurrentBlocks |= Context;
 				mContext = new SyntaxDefinition::ContextDef();
 				mContext->name = Tools::getStringXmlAttribute(atts, "name");
+				mContext->attribute = Tools::getStringXmlAttribute(atts, "attribute");
 				mContext->lineEndContext = Tools::getStringXmlAttribute(atts, "lineendcontext");
 				mContext->lineBeginContext = Tools::getStringXmlAttribute(atts, "linebegincontext");
 				mContext->fallthrough = Tools::getIntXmlAttribute(atts, "fallthrough", 0);

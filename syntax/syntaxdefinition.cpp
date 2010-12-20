@@ -37,9 +37,11 @@ bool SyntaxDefinition::link()
 	{
 		//	Link up this context's fallthough reference (if there is one)
 		if (context->fallthrough)
-		{
 			linkContext(context->fallthroughContext, &context->fallthroughContextLink);
-		}
+
+		//	Link up this context's attribute property (if there is one)
+		if (!context->attribute.isEmpty())
+			context->attributeLink = getItemData(context->attribute);
 
 		//	Pick through the rules in this context, linking <IncludeRules>, context="", etc.
 		for (int i = 0; i < context->rules.length(); i++)
