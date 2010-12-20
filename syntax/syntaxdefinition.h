@@ -53,6 +53,8 @@ public:
 		QList<QSharedPointer<SyntaxRule> > rules;
 
 		ContextLink fallthroughContextLink;
+		ContextLink lineBeginContextLink;
+		ContextLink lineEndContextLink;
 
 		int listIndex;
 		ItemData* attributeLink;

@@ -37,9 +37,13 @@ bool SyntaxDefinition::link()
 	//	Go through the rules in all contexts
 	foreach (QSharedPointer<ContextDef> context, mContextList)
 	{
-		//	Link up this context's fallthough reference (if there is one)
+		//	Link up this context's fallthough, lineEnd, lineBegin references (if there is one)
 		if (context->fallthrough)
 			linkContext(context->fallthroughContext, &context->fallthroughContextLink);
+		if (!context->lineBeginContext.isEmpty())
+			linkContext(context->lineBeginContext, &context->lineBeginContextLink);
+		if (!context->lineEndContext.isEmpty())
+			linkContext(context->lineEndContext, &context->lineEndContextLink);
 
 		//	Link up this context's attribute property (if there is one)
 		if (!context->attribute.isEmpty())

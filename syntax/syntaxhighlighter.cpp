@@ -28,6 +28,8 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent, SyntaxDefinition* sy
 
 void SyntaxHighlighter::highlightBlock(const QString &text)
 {
+	qDebug() << "Highlighting: " << text;
+
 	QStack<ContextDefLink> contextStack;
 
 	//	Get a copy of the context stack leftover from the last block
@@ -37,6 +39,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 		contextStack = previousBlockData->mStack;
 
 	int position = 0;
+	bool firstIteration = true;
 	while (position < text.length())
 	{
 		//	If there is no current context, create a default one
@@ -45,6 +48,14 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 
 		//	Take the topmost context
 		ContextDefLink context = contextStack.top();
+
+		//	Change contexts for lineBegin.
+		if (firstIteration)
+		{
+			applyContextLink(&context->lineBeginContextLink, &contextStack, NULL);
+			firstIteration = false;
+			continue;
+		}
 
 		//	Cycle through all the rules in the context, looking for a match...
 		int matchLength = 0;
@@ -97,26 +108,47 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 				qDebug() << "No style name: " << attributeLink->styleName;
 		}
 
-		//	If there is a context link (either from a rule, or from a fallthrough context)
 		if (contextLink)
-		{
-			if (contextLink->contextDef)
-			{
-				if (contextLink->contextDef->dynamic && dynamicCaptures.length())
-					contextStack.push(duplicateDynamicContext(contextLink->contextDef, dynamicCaptures));
-				else
-					contextStack.push(contextLink->contextDef);
-			}
-			else for (int i = 0; i < contextLink->popCount; i++)
-				contextStack.pop();
-		}
+			applyContextLink(contextLink, &contextStack, &dynamicCaptures);
 
 		//	Move cursor (if rule is not lookahead)
 		if (!isLookAhead)
 			position += matchLength;
 	}
 
-	currentBlock().setUserData(new SyntaxBlockData(contextStack));
+	//	Change contexts for line end
+	if (contextStack.size())
+	{
+		ContextDefLink context = contextStack.top();
+		applyContextLink(&context->lineEndContextLink, &contextStack, NULL);
+	}
+
+	//	Check if this highlight block is ending on a different stack to the last time
+	SyntaxBlockData* oldBlockData = static_cast<SyntaxBlockData*>(currentBlock().userData());
+	bool changed = true;
+	if (oldBlockData)
+	{
+		changed = (contextStack == oldBlockData->mStack);
+		qDebug() << "Block data changed.";
+	}
+	if (changed)
+	{
+		setCurrentBlockUserData(new SyntaxBlockData(contextStack));
+		setCurrentBlockState(currentBlockState() + 1);
+	}
+}
+
+void SyntaxHighlighter::applyContextLink(const SyntaxDefinition::ContextLink* contextLink, QStack<ContextDefLink>* contextStack, QStringList* dynamicCaptures)
+{
+	if (contextLink->contextDef)
+	{
+		if (contextLink->contextDef->dynamic && dynamicCaptures && dynamicCaptures->length())
+			contextStack->push(duplicateDynamicContext(contextLink->contextDef, *dynamicCaptures));
+		else
+			contextStack->push(contextLink->contextDef);
+	}
+	else for (int i = 0; i < contextLink->popCount; i++)
+		contextStack->pop();
 }
 
 ContextDefLink SyntaxHighlighter::duplicateDynamicContext(const ContextDefLink& source, const QStringList& captures) const
