@@ -91,7 +91,8 @@ HEADERS  += \
 OTHER_FILES += \
     slaves/slave.py \
     slaves/slave.pl \
-    syntaxdefs/perl.xml
+    syntaxdefs/perl.xml \
+    syntax/test.pl
 
 FORMS += \
     file/filedialog.ui \

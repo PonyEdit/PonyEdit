@@ -49,6 +49,5 @@ INPUT(
 ./debug\moc_serverconfigdlg.o
 ./debug\moc_passworddialog.o
 ./debug\moc_syntaxhighlighter.o
-./debug\moc_syntaxblockdata.o
 ./debug\qrc_resources.o
 );

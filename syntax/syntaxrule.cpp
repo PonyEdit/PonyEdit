@@ -3,7 +3,6 @@
 
 QMap<QString, SyntaxRule::Type> SyntaxRule::sTypeMap;
 bool SyntaxRule::sTypeMapInitialized = false;
-QRegExp SyntaxRule::sDynamicRegExp("%[0-9]+");
 
 SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttributes& attributes)
 {
@@ -130,8 +129,20 @@ void SyntaxRule::applyDynamicCaptures(const QStringList& captures)
 	else
 	{
 		foreach (DynamicSlot slot, mDynamicStringSlots)
+		{
 			if (captures.length() > slot.id)
-				mString.insert(slot.pos, captures[slot.id]);
+			{
+				QString insert = captures[slot.id];
+				insert.replace(QRegExp("(\\W)"), "\\\\1");
+				mString.insert(slot.pos, insert);
+			}
+		}
+
+		if (mType == RegExpr)
+			prepareRegExp();
+
+		qDebug() << mString;
+		qDebug() << mRegExp.pattern();
 	}
 }
 
@@ -163,7 +174,7 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 	switch (mType)
 	{
 	case RegExpr:
-		mRegExp = QRegExp(mString, mCaseInsensitive ? Qt::CaseInsensitive : Qt::CaseSensitive);
+		if (!mDynamic) prepareRegExp();
 		break;
 
 	case Keyword:
@@ -190,23 +201,34 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 	{
 		mDynamicCharIndex = 0;
 		if (mType == DetectChar || mType == Detect2Chars)
-			mDynamicCharIndex = (mCharacterA >= '1' && mCharacterA <= '9' ? mCharacterA.toAscii() - '1' : 0);
+			mDynamicCharIndex = (mCharacterA >= '0' && mCharacterA <= '9' ? mCharacterA.toAscii() - '0' : 0);
 		else
 		{
 			int index = 0;
-			while ((index = sDynamicRegExp.indexIn(mString, index)) > -1)
+			while ((index = mString.indexOf('%', index)) > -1)
 			{
-				int matchedLength = sDynamicRegExp.matchedLength();
-				bool ok = false;
-				int id = mString.mid(index + 1, matchedLength - 1).toInt(&ok);
-				if (ok)
-					this->mDynamicStringSlots.push_front(DynamicSlot(index, id));
-				mString.remove(index, sDynamicRegExp.matchedLength());
+				if (index == mString.length() - 1) break;
+				char c = mString[index + 1].toLatin1();
+
+				if (c == '%')
+					mString.remove(index, 1);
+				else
+				{
+					if (c >= '0' && c <= '9')
+						this->mDynamicStringSlots.push_front(DynamicSlot(index, c - '0'));
+					mString.remove(index, 2);
+				}
+				index++;
 			}
 		}
 	}
 
 	return true;
+}
+
+void SyntaxRule::prepareRegExp()
+{
+	mRegExp = QRegExp(mString, mCaseInsensitive ? Qt::CaseInsensitive : Qt::CaseSensitive);
 }
 
 int SyntaxRule::match(const QString &string, int position)

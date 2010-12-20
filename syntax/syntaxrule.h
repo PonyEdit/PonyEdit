@@ -32,7 +32,6 @@ public:
 	};
 	static QMap<QString, Type> sTypeMap;
 	static bool sTypeMapInitialized;
-	static QRegExp sDynamicRegExp;
 
 	SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttributes& attributes);
 	SyntaxRule(SyntaxRule* parent, const QSharedPointer<SyntaxRule>& other, bool duplicateChildren, bool maintainLinks);
@@ -57,6 +56,7 @@ public:
 	bool link(SyntaxDefinition* def);
 
 	void applyDynamicCaptures(const QStringList& captures);
+	void prepareRegExp();
 
 private:
 	struct DynamicSlot
