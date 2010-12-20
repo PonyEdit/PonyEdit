@@ -1,31 +1,32 @@
 #include "syntax/syntaxrule.h"
 #include "main/tools.h"
 
-QMap<QString, SyntaxRule::Type> SyntaxRule::sTypeMap;
+QMap<QString, SyntaxRule::Type> *SyntaxRule::sTypeMap;
 bool SyntaxRule::sTypeMapInitialized = false;
 
 SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttributes& attributes)
 {
 	if (!sTypeMapInitialized)
 	{
-		sTypeMap.insert("detectchar", DetectChar);
-		sTypeMap.insert("detect2chars", Detect2Chars);
-		sTypeMap.insert("anychar", AnyChar);
-		sTypeMap.insert("stringdetect", StringDetect);
-		sTypeMap.insert("worddetect", WordDetect);
-		sTypeMap.insert("regexpr", RegExpr);
-		sTypeMap.insert("keyword", Keyword);
-		sTypeMap.insert("int", Int);
-		sTypeMap.insert("float", Float);
-		sTypeMap.insert("hlcoct", HlCOct);
-		sTypeMap.insert("hlchex", HlCHex);
-		sTypeMap.insert("hlcstringchar", HlCStringChar);
-		sTypeMap.insert("hlcchar", HlCChar);
-		sTypeMap.insert("rangedetect", RangeDetect);
-		sTypeMap.insert("linecontinue", LineContinue);
-		sTypeMap.insert("detectspaces", DetectSpaces);
-		sTypeMap.insert("detectidentifier", DetectIdentifier);
-		sTypeMap.insert("includerules", IncludeRules);
+		sTypeMap = new QMap<QString, Type>();
+		sTypeMap->insert("detectchar", DetectChar);
+		sTypeMap->insert("detect2chars", Detect2Chars);
+		sTypeMap->insert("anychar", AnyChar);
+		sTypeMap->insert("stringdetect", StringDetect);
+		sTypeMap->insert("worddetect", WordDetect);
+		sTypeMap->insert("regexpr", RegExpr);
+		sTypeMap->insert("keyword", Keyword);
+		sTypeMap->insert("int", Int);
+		sTypeMap->insert("float", Float);
+		sTypeMap->insert("hlcoct", HlCOct);
+		sTypeMap->insert("hlchex", HlCHex);
+		sTypeMap->insert("hlcstringchar", HlCStringChar);
+		sTypeMap->insert("hlcchar", HlCChar);
+		sTypeMap->insert("rangedetect", RangeDetect);
+		sTypeMap->insert("linecontinue", LineContinue);
+		sTypeMap->insert("detectspaces", DetectSpaces);
+		sTypeMap->insert("detectidentifier", DetectIdentifier);
+		sTypeMap->insert("includerules", IncludeRules);
 		sTypeMapInitialized = true;
 	}
 
@@ -34,9 +35,9 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttrib
 	mValid = false;
 
 	QString lcName = name.toLower();
-	if (sTypeMap.contains(lcName))
+	if (sTypeMap->contains(lcName))
 	{
-		mType  = sTypeMap.value(lcName);
+		mType  = sTypeMap->value(lcName);
 
 		if (mType == IncludeRules && mParent != NULL)
 		{
@@ -112,6 +113,9 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QSharedPointer<SyntaxRule>& oth
 
 SyntaxRule::~SyntaxRule()
 {
+	if(sTypeMap)
+		delete sTypeMap;
+	sTypeMap = NULL;
 }
 
 void SyntaxRule::addChildRule(QSharedPointer<SyntaxRule> rule)

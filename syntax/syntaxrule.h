@@ -30,7 +30,7 @@ public:
 		DetectIdentifier,
 		IncludeRules
 	};
-	static QMap<QString, Type> sTypeMap;
+	static QMap<QString, Type> *sTypeMap;
 	static bool sTypeMapInitialized;
 
 	SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttributes& attributes);
