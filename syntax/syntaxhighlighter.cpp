@@ -127,10 +127,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 	SyntaxBlockData* oldBlockData = static_cast<SyntaxBlockData*>(currentBlock().userData());
 	bool changed = true;
 	if (oldBlockData)
-	{
-		changed = (contextStack == oldBlockData->mStack);
-		qDebug() << "Block data changed.";
-	}
+		changed = (contextStack != oldBlockData->mStack);
 	if (changed)
 	{
 		setCurrentBlockUserData(new SyntaxBlockData(contextStack));
