@@ -1,8 +1,9 @@
 #include <QDebug>
 #include <QCryptographicHash>
 
-#include "file/sshfile.h"
-#include "file/basefile.h"
+#include "sshfile.h"
+#include "localfile.h"
+#include "basefile.h"
 #include "main/tools.h"
 #include "main/globaldispatcher.h"
 #include "file/openfilemanager.h"
@@ -27,7 +28,7 @@ BaseFile* BaseFile::getFile(const Location& location)
 		break;
 
 	default:
-		throw(QString("Opening local files is not yet supported."));
+		newFile = new LocalFile(location);
 	}
 
 	if (newFile)
@@ -53,7 +54,7 @@ BaseFile::BaseFile(const Location& location)
 
 	mIgnoreChanges = 0;
 
-	mDocument = new QTextDocument();
+	mDocument = new QTextDocument(this);
 	mDocumentLayout = new QPlainTextDocumentLayout(mDocument);
 	mDocument->setDocumentLayout(mDocumentLayout);
 
