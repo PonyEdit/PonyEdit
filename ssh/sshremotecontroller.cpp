@@ -208,6 +208,9 @@ void SshControllerThread::connect()
 
 			setStatus(SshRemoteController::Connecting);
 			authenticated = mConnection->authenticatePassword(mHost->getUserName().toUtf8(), password.toUtf8());
+
+			if(!authenticated)
+				mHost->setPassword("");
 		}
 		if (mCloseDown) return;
 

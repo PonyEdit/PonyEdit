@@ -13,7 +13,7 @@ SyntaxDefXmlHandler::SyntaxDefXmlHandler(SyntaxDefinition* definition)
 	mRule = NULL;
 }
 
-bool SyntaxDefXmlHandler::startElement(const QString &namespaceURI, const QString &localName, const QString &qName, const QXmlAttributes &atts)
+bool SyntaxDefXmlHandler::startElement(const QString &/* namespaceURI */, const QString &localName, const QString &/* qName */, const QXmlAttributes &atts)
 {
 	switch (mCurrentBlocks)
 	{
@@ -134,7 +134,7 @@ bool SyntaxDefXmlHandler::startElement(const QString &namespaceURI, const QStrin
 	return true;
 }
 
-bool SyntaxDefXmlHandler::endElement(const QString &namespaceURI, const QString &localName, const QString &qName)
+bool SyntaxDefXmlHandler::endElement(const QString &/* namespaceURI */, const QString &localName, const QString &/* qName */)
 {
 	switch (mCurrentBlocks)
 	{
