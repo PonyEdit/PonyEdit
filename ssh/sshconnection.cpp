@@ -51,6 +51,10 @@ void SshConnection::connect(const char* host, int port)
 
 	qDebug() << "x";
 
+	// Disable SIGPIPE on this socket
+	int set = 1;
+	setsockopt(sock, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
+
 	//	Cycle through all the IP addresses returned by the nslookup, try to connect to each
 	struct sockaddr_in sin;
 	sin.sin_family = AF_INET;
