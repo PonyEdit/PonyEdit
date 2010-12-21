@@ -144,9 +144,6 @@ void SyntaxRule::applyDynamicCaptures(const QStringList& captures)
 
 		if (mType == RegExpr)
 			prepareRegExp();
-
-		qDebug() << mString;
-		qDebug() << mRegExp.pattern();
 	}
 }
 
@@ -323,8 +320,13 @@ int SyntaxRule::match(const QString &string, int position)
 	{
 		//	Ints are any numbers 0-9
 		const QChar* s = string.constData() + position;
-		while (position + match < string.length() && (*s >= '0') && (*s <= '9'))
+
+		int extra = 0;
+		if (*s == '-')
+			extra++,s++;
+		while (position + match < string.length() && (s->isDigit()))
 			s++,match++;
+		if (match) match += extra;
 		break;
 	}
 
@@ -343,7 +345,42 @@ int SyntaxRule::match(const QString &string, int position)
 	}
 
 	case Float:
+	{
+		//	[-][0-9]+.[0-9]+e[0-9]+
+		const QChar* s = string.constData() + position;
+		int extra = 0;
+		if (*s == '-')
+			extra++,s++;
+		if (!s->isNull() && s->isDigit())
+		{
+			match++,s++;
+			while (!s->isNull() && (s->isDigit() || *s == '.' || *s == 'e' || *s == 'E'))
+				match++,s++;
+			match += extra;
+		}
+		break;
+	}
+
 	case HlCHex:
+	{
+		//	[-]0x[0-9]+
+		const QChar* s = string.constData() + position;
+		int extra = 0;
+		if (*s == '-')
+			extra++,s++;
+		if (*(s++) == '0')
+		{
+			if (*(s++) == 'x')
+			{
+				while (!s->isNull() && (s->isDigit() || (*s >= 'A' && *s <= 'F') || (*s >= 'a' && *s <= 'f')))
+					match++,s++;
+				if (match > 0)
+					match += 2 + extra;
+			}
+		}
+		break;
+	}
+
 	case HlCStringChar:
 	case HlCChar:
 	case RangeDetect:

@@ -28,8 +28,6 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent, SyntaxDefinition* sy
 
 void SyntaxHighlighter::highlightBlock(const QString &text)
 {
-	qDebug() << "Highlighting: " << text;
-
 	QStack<ContextDefLink> contextStack;
 
 	//	Get a copy of the context stack leftover from the last block
