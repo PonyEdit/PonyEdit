@@ -71,6 +71,7 @@ void SshConnection::connect(const char* host, int port)
 
 	//	Create an SSH2 session
 	mSession = libssh2_session_init();
+	libssh2_session_flag(mSession, LIBSSH2_FLAG_SIGPIPE, 1);
 	if (libssh2_session_startup(mSession, mSocket))
 	{
 		disconnect();
