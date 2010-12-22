@@ -33,6 +33,7 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttrib
 	mName = name;
 	mParent = parent;
 	mValid = false;
+	mLinked = false;
 
 	QString lcName = name.toLower();
 	if (sTypeMap->contains(lcName))
@@ -146,6 +147,8 @@ void SyntaxRule::applyDynamicCaptures(const QStringList& captures)
 
 bool SyntaxRule::link(SyntaxDefinition* def)
 {
+	if (mLinked) return true;
+
 	mDefinition = def;
 
 	if (mAttribute.isEmpty())
@@ -221,6 +224,7 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 		}
 	}
 
+	mLinked = true;
 	return true;
 }
 

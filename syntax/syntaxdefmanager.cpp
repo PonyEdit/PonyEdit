@@ -97,12 +97,27 @@ void SyntaxDefManager::addRecord(Record *record)
 	mRecordsByName.insert(record->syntaxName, record);
 }
 
-SyntaxDefinition* SyntaxDefManager::getDefinitionFor(const QString& filename)
+SyntaxDefinition* SyntaxDefManager::getDefinitionForFile(const QString& filename)
 {
 	Record* record = getRecordFor(filename);
 	if (record == NULL)
 		return NULL;
 
+	return getDefinition(record);
+}
+
+SyntaxDefinition* SyntaxDefManager::getDefinitionForSyntax(const QString& syntax)
+{
+	Record* record = (mRecordsByName.contains(syntax) ? mRecordsByName.value(syntax) : NULL);
+	if (record == NULL)
+		return NULL;
+
+	return getDefinition(record);
+}
+
+
+SyntaxDefinition* SyntaxDefManager::getDefinition(const Record* record)
+{
 	if (mOpenDefinitionsByName.contains(record->syntaxName))
 		return mOpenDefinitionsByName.value(record->syntaxName);
 
@@ -122,16 +137,9 @@ SyntaxDefinition* SyntaxDefManager::getDefinitionFor(const QString& filename)
 SyntaxDefManager::Record* SyntaxDefManager::getRecordFor(const QString& filename)
 {
 	foreach (Record* record, mRecordList)
-	{
 		foreach (FilePattern pattern, record->patterns)
-		{
 			if (pattern.matches(filename))
-			{
-				qDebug() << "Using syntax def: " << record->syntaxName << " from " << record->filename << " based on rule " << pattern.extension << "/" << pattern.regExp;
 				return record;
-			}
-		}
-	}
 	return NULL;
 }
 

@@ -63,20 +63,29 @@ bool SyntaxDefinition::link()
 					qDebug() << "Warning: Include attrib enabled on includerule block; ignored";
 
 				QString source = rule->getContext();
+				QSharedPointer<ContextDef> sourceContext;
 				if (source.startsWith("##"))
-					qDebug() << "Warning: Include from another file; ignored";
+				{
+					SyntaxDefinition* includedDefinition = gSyntaxDefManager.getDefinitionForSyntax(source.mid(2));
+					if (includedDefinition)
+						sourceContext = includedDefinition->getDefaultContext();
+				}
+				else
+					sourceContext = getContext(source);
+
+				if (sourceContext.isNull())
+					qDebug() << "Warning: IncludeRule names non-existent context: " << source;
 				else
 				{
-					QSharedPointer<ContextDef> otherContext = getContext(source);
-					if (!otherContext)
-						qDebug() << "Warning: IncludeRule names non-existent context: " << source;
-					else
+					if (rule->getIncludeAttrib())
 					{
-						//	Copy all the rules from the other context to this one
-						int insertionOffset = 0;
-						foreach (const QSharedPointer<SyntaxRule>& copyRule, otherContext->rules)
-							context->rules.insert(i + insertionOffset++, QSharedPointer<SyntaxRule>(new SyntaxRule(NULL, copyRule, true, false)));
+						context->attribute = sourceContext->attribute;
+						context->attributeLink = sourceContext->attributeLink;
 					}
+
+					int insertionOffset = 0;
+					foreach (const QSharedPointer<SyntaxRule>& copyRule, sourceContext->rules)
+						context->rules.insert(i + insertionOffset++, copyRule);
 				}
 
 				i--;

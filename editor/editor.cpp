@@ -40,7 +40,7 @@ Editor::Editor(BaseFile* file) : QStackedWidget()
 	openStatusChanged(mFile->getOpenStatus());
 
 	mEditor->setDocument(mFile->getTextDocument());
-	SyntaxDefinition* syntaxdef = gSyntaxDefManager.getDefinitionFor(mFile->getLocation().getPath());
+	SyntaxDefinition* syntaxdef = gSyntaxDefManager.getDefinitionForFile(mFile->getLocation().getPath());
 	if (syntaxdef)
 		new SyntaxHighlighter(mEditor->document(), syntaxdef);
 	mEditor->setFont(QFont("inconsolata", 11));

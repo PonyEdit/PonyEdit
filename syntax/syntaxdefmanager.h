@@ -34,7 +34,9 @@ public:
     SyntaxDefManager();
 	~SyntaxDefManager();
 
-	SyntaxDefinition* getDefinitionFor(const QString& filename);
+	SyntaxDefinition* getDefinitionForFile(const QString& filename);
+	SyntaxDefinition* getDefinitionForSyntax(const QString& syntaxName);
+	SyntaxDefinition* getDefinition(const Record* record);
 
 private:
 	void updateIndex();

@@ -89,6 +89,7 @@ private:
 	bool mDynamic;
 	bool mMinimal;
 	bool mIncludeAttrib;
+	bool mLinked;
 
 	QList<QSharedPointer<SyntaxRule> > mChildRules;
 
