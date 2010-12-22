@@ -95,7 +95,6 @@ void BaseFile::handleDocumentChange(int position, int removeChars, const QByteAr
 	mContent.replace(position, removeChars, insert);
 	mChanged = true;
 
-	qDebug() << "Checksum: " << getChecksum();
 	emit unsavedStatusChanged();
 }
 
