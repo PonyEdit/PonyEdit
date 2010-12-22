@@ -101,6 +101,17 @@ void MainWindow::openFile()
 	if (dlg.exec())
 	{
 		QList<Location> locations = dlg.getSelectedLocations();
+		if(locations.length() > 20)
+		{
+			QMessageBox msgBox;
+			msgBox.setText(tr("You have selected %1 files to open.").arg(locations.length()));
+			msgBox.setInformativeText(tr("This may take some time to complete. Are you sure you want to do this?"));
+			msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+			msgBox.setDefaultButton(QMessageBox::Yes);
+
+			if(msgBox.exec() == QMessageBox::No)
+				return;
+		}
 		foreach (Location location, locations)
 		{
 			if (!location.isDirectory())
