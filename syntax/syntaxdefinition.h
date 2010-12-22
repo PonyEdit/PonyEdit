@@ -114,6 +114,5 @@ private:
 };
 
 typedef QSharedPointer<SyntaxDefinition::ContextDef> ContextDefLink;
-extern SyntaxDefinition* gTestSyntaxDef;
 
 #endif // SYNTAXDEFINITION_H

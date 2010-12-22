@@ -5,6 +5,7 @@
 
 SyntaxDefXmlHandler::SyntaxDefXmlHandler(SyntaxDefinition* definition)
 {
+	mRecord = NULL;
 	mDefinition = definition;
 	mCurrentBlocks = None;
 
@@ -13,6 +14,14 @@ SyntaxDefXmlHandler::SyntaxDefXmlHandler(SyntaxDefinition* definition)
 	mRule = NULL;
 }
 
+SyntaxDefXmlHandler::SyntaxDefXmlHandler(SyntaxDefManager::Record* record)
+{
+	mRecord = record;
+	mDefinition = NULL;
+	mCurrentBlocks = None;
+}
+
+QString SyntaxDefXmlHandler::errorString() const { return QString(); }
 bool SyntaxDefXmlHandler::startElement(const QString &/* namespaceURI */, const QString &localName, const QString &/* qName */, const QXmlAttributes &atts)
 {
 	switch (mCurrentBlocks)
@@ -20,7 +29,16 @@ bool SyntaxDefXmlHandler::startElement(const QString &/* namespaceURI */, const 
 		case None:
 			//	Not inside any blocks, look for a <language> block.
 			if (localName.compare("language", Qt::CaseInsensitive) == 0)
+			{
+				//	If fetching a Manager record only, only care about the language block
+				if (mRecord)
+				{
+					mRecord->pack(atts);
+					return false;
+				}
+
 				mCurrentBlocks |= Language;
+			}
 			break;
 
 		case Language:

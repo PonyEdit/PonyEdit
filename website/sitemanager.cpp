@@ -24,7 +24,7 @@ SiteManager::SiteManager()
 	#endif
 	#ifdef Q_OS_LINUX
 		mOS = "LIN";
-	#endif;
+	#endif
 
 	connect(mManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(handleReply(QNetworkReply*)));
 }

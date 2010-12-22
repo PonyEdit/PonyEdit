@@ -7,6 +7,7 @@
 #include <QPlainTextDocumentLayout>
 
 #include "location.h"
+
 class Editor;
 
 class BaseFile : public QObject

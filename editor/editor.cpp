@@ -6,6 +6,7 @@
 #include "file/basefile.h"
 #include "syntax/syntaxhighlighter.h"
 #include "syntax/syntaxdefinition.h"
+#include "syntax/syntaxdefmanager.h"
 
 Editor::Editor(BaseFile* file) : QStackedWidget()
 {
@@ -39,7 +40,9 @@ Editor::Editor(BaseFile* file) : QStackedWidget()
 	openStatusChanged(mFile->getOpenStatus());
 
 	mEditor->setDocument(mFile->getTextDocument());
-	new SyntaxHighlighter(mEditor->document(), gTestSyntaxDef);
+	SyntaxDefinition* syntaxdef = gSyntaxDefManager.getDefinitionFor(mFile->getLocation().getPath());
+	if (syntaxdef)
+		new SyntaxHighlighter(mEditor->document(), syntaxdef);
 	mEditor->setFont(QFont("inconsolata", 11));
 }
 

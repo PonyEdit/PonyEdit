@@ -5,8 +5,6 @@
 #include "syntaxdefinition.h"
 #include "syntaxdefxmlhandler.h"
 
-SyntaxDefinition* gTestSyntaxDef = new SyntaxDefinition("syntaxdefs/perl.xml");
-
 SyntaxDefinition::ContextDef::ContextDef() : fallthrough(false), dynamic(false), listIndex(0), attributeLink(NULL) {};
 SyntaxDefinition::ContextDef::~ContextDef() {}
 

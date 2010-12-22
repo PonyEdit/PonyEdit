@@ -4,17 +4,26 @@
 #include <QXmlContentHandler>
 #include <QXmlErrorHandler>
 #include "syntaxdefinition.h"
+#include "syntaxdefmanager.h"
 
 class SyntaxDefXmlHandler : public QXmlDefaultHandler
 {
 public:
+	//	Constructor with definition = load full file, into definition
 	SyntaxDefXmlHandler(SyntaxDefinition* definition);
+
+	//	Constructor with manager record = load basic info only, into record
+	SyntaxDefXmlHandler(SyntaxDefManager::Record* record);
 
 	bool startElement(const QString &namespaceURI, const QString &localName, const QString &qName, const QXmlAttributes &atts);
 	bool endElement(const QString &namespaceURI, const QString &localName, const QString &qName);
 	bool characters(const QString &ch);
 
+	QString errorString() const;
+
 private:
+	void packManagerRecord(const QXmlAttributes& atts);
+
 	enum ElementFlags
 	{
 		None         = 0x0000,
@@ -31,6 +40,8 @@ private:
 	};
 
 	SyntaxDefinition* mDefinition;
+	SyntaxDefManager::Record* mRecord;
+
 	int mCurrentBlocks;
 
 	SyntaxDefinition::KeywordList* mKeywordList;
