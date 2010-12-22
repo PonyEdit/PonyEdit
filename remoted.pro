@@ -19,7 +19,7 @@ macx {
 
 LIBS	+= -lssh2
 
-QT       += core gui network xml
+QT       += core gui network xml script
 
 TARGET = remoted
 TEMPLATE = app
@@ -55,7 +55,8 @@ SOURCES += \
     syntax/syntaxhighlighter.cpp \
     syntax/syntaxdefxmlhandler.cpp \
     syntax/syntaxblockdata.cpp \
-    file/localfile.cpp
+    file/localfile.cpp \
+    website/sitemanager.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -88,7 +89,8 @@ HEADERS  += \
     syntax/syntaxdefinition.h \
     syntax/syntaxdefxmlhandler.h \
     syntax/syntaxblockdata.h \
-    file/localfile.h
+    file/localfile.h \
+    website/sitemanager.h
 
 OTHER_FILES += \
     slaves/slave.py \

@@ -9,8 +9,10 @@
 #include "file/location.h"
 #include "main/tools.h"
 #include "main/mainwindow.h"
+#include "website/sitemanager.h"
 
 GlobalDispatcher* gDispatcher = NULL;
+SiteManager* gSiteManager = NULL;
 
 int main(int argc, char *argv[])
 {
@@ -39,6 +41,9 @@ int main(int argc, char *argv[])
 		Tools::loadServers();
 		Tools::initialize();
 
+		gSiteManager = new SiteManager();
+		gSiteManager->checkForUpdates();
+
 		QApplication a(argc, argv);
 		MainWindow w;
 		w.show();
@@ -51,6 +56,7 @@ int main(int argc, char *argv[])
 	}
 
 	delete gDispatcher;
+	delete gSiteManager;
 	LocationShared::cleanupIconProvider();
 	return result;
 }
