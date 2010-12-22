@@ -90,7 +90,7 @@ void SyntaxDefManager::addRecord(Record *record)
 	int i;
 	for (i = 0; i < mRecordList.length(); i++)
 	{
-		if (mRecordList[i]->priority > record->priority)
+		if (mRecordList[i]->priority < record->priority)
 			break;
 	}
 	mRecordList.insert(i, record);
