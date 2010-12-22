@@ -18,6 +18,7 @@ public:
 	explicit Editor(BaseFile* file);
 	~Editor();
 	void save();
+	void close();
 
 	BaseFile* getFile() const { return mFile; }
 	const Location& getLocation() const { return mFile->getLocation(); }

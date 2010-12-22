@@ -26,6 +26,7 @@ public slots:
 	void newFile();
 	void openFile();
 	void saveFile();
+	void closeFile();
 	void fileSelected(BaseFile* file);
 	void showSearchBar();
 	void find(const QString& text, bool backwards);

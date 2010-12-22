@@ -128,6 +128,12 @@ void MainWindow::saveFile()
 	if (current) current->save();
 }
 
+void MainWindow::closeFile()
+{
+	Editor* current = (Editor*)mEditorStack->currentWidget();
+	if (current) current->close();
+}
+
 void MainWindow::fileSelected(BaseFile* file)
 {
 	if (!file) return;
@@ -162,6 +168,9 @@ void MainWindow::createFileMenu()
 
 	fileMenu->addAction(tr("&Save"), this, SLOT(saveFile()),
 						QKeySequence::Save);
+
+	fileMenu->addAction(tr("&Close File"), this, SLOT(closeFile()),
+						QKeySequence::Close);
 
 	fileMenu->addAction(tr("E&xit"), QCoreApplication::instance(), SLOT(quit()),
 						QKeySequence::Quit);

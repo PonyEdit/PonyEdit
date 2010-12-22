@@ -109,6 +109,11 @@ void Editor::save()
 	mFile->save();
 }
 
+void Editor::close()
+{
+	mFile->close();
+}
+
 void Editor::find(const QString& text, bool backwards)
 {
 	mEditor->find(text, (QTextDocument::FindFlags)(backwards ? QTextDocument::FindBackward : 0));
