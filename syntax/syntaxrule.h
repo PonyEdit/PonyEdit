@@ -32,6 +32,7 @@ public:
 	};
 	static QMap<QString, Type> *sTypeMap;
 	static bool sTypeMapInitialized;
+	static void cleanup() { if (sTypeMap) delete sTypeMap; }
 
 	SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttributes& attributes);
 	SyntaxRule(SyntaxRule* parent, const QSharedPointer<SyntaxRule>& other, bool duplicateChildren, bool maintainLinks);

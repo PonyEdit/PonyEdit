@@ -10,6 +10,7 @@
 #include "main/tools.h"
 #include "main/mainwindow.h"
 #include "website/sitemanager.h"
+#include "syntax/syntaxrule.h"
 
 GlobalDispatcher* gDispatcher = NULL;
 SiteManager* gSiteManager = NULL;
@@ -58,5 +59,6 @@ int main(int argc, char *argv[])
 	delete gDispatcher;
 	delete gSiteManager;
 	LocationShared::cleanupIconProvider();
+	SyntaxRule::cleanup();
 	return result;
 }

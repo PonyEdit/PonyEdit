@@ -1,7 +1,7 @@
 #include "syntax/syntaxrule.h"
 #include "main/tools.h"
 
-QMap<QString, SyntaxRule::Type> *SyntaxRule::sTypeMap;
+QMap<QString, SyntaxRule::Type>* SyntaxRule::sTypeMap;
 bool SyntaxRule::sTypeMapInitialized = false;
 
 SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttributes& attributes)
@@ -113,9 +113,6 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QSharedPointer<SyntaxRule>& oth
 
 SyntaxRule::~SyntaxRule()
 {
-	if(sTypeMap)
-		delete sTypeMap;
-	sTypeMap = NULL;
 }
 
 void SyntaxRule::addChildRule(QSharedPointer<SyntaxRule> rule)
