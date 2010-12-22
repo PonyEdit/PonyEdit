@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
 
 		QCoreApplication::setOrganizationName("BananaMonkeyChainsaw");
 		QCoreApplication::setApplicationName("RemoteEditor");
+		QCoreApplication::setApplicationVersion("0.9-prealpha");
 		gDispatcher = new GlobalDispatcher();
 
 		Tools::loadServers();
