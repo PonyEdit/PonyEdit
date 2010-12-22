@@ -42,6 +42,7 @@ SOURCES += \
     main/searchbar.cpp \
     main/mainwindow.cpp \
     main/main.cpp \
+	main/json.cpp \
     options/optionsdialog.cpp \
     ssh/passworddialog.cpp \
     ssh/sshconnectingdialog.cpp \
@@ -76,6 +77,7 @@ HEADERS  += \
     main/searchbar.h \
     main/mainwindow.h \
     main/globaldispatcher.h \
+	main/json.h \
     options/optionsdialog.h \
     ssh/sshrequest.h \
     ssh/sshremotecontroller.h \

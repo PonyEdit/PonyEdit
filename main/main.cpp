@@ -41,12 +41,12 @@ int main(int argc, char *argv[])
 		Tools::loadServers();
 		Tools::initialize();
 
-		gSiteManager = new SiteManager();
-		gSiteManager->checkForUpdates();
-
 		QApplication a(argc, argv);
 		MainWindow w;
 		w.show();
+
+		gSiteManager = new SiteManager();
+		gSiteManager->checkForUpdates();
 
 		result = a.exec();
 	}

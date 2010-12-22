@@ -1,10 +1,14 @@
 #include <QCoreApplication>
 #include <QUrl>
 #include <QNetworkReply>
+#include <QDebug>
+#include <QVariantMap>
+#include <QDate>
 #include <QtScript/QScriptEngine>
 #include <QtScript/QScriptValue>
 
 #include "sitemanager.h"
+#include "main/json.h"
 
 #define SITE_URL "http://localhost/remoted/"
 
@@ -16,7 +20,7 @@ SiteManager::SiteManager()
 		mOS = "WIN";
 	#endif
 	#ifdef Q_OS_MAC
-		mOS = "MAC";
+		mOS = "OSX";
 	#endif
 	#ifdef Q_OS_LINUX
 		mOS = "LIN";
@@ -58,21 +62,27 @@ void SiteManager::handleReply(QNetworkReply *reply)
 	{
 		QByteArray result = reply->readAll();
 
-		QScriptValue data;
-		QScriptEngine engine;
+		bool ok;
+		QVariantMap data = Json::parse(result, ok).toMap();
 
-		data = engine.evaluate(QString(result));
+		if(!ok)
+		{
+			qDebug() << "Parsing error of website JSON";
+			return;
+		}
 
 		QString version;
 
 		switch(mReplyTypes[index])
 		{
 			case UpdateCheck:
-				version = data.property(mOS).toString();
+				version = data[mOS].toString();
 				if(version > QCoreApplication::applicationVersion())
 					emit updateAvailable(version.toUtf8());
 				break;
+
 			case LicenceCheck:
+				emit licenceStatus(data["valid"].toBool());
 				break;
 		}
 
