@@ -183,7 +183,7 @@ void MainWindow::createFileMenu()
 	fileMenu->addAction(tr("&Close File"), this, SLOT(closeFile()),
 						QKeySequence::Close);
 
-	fileMenu->addAction(tr("E&xit"), QCoreApplication::instance(), SLOT(quit()),
+	fileMenu->addAction(tr("E&xit"), this, SLOT(close()),
 						QKeySequence::Quit);
 }
 
