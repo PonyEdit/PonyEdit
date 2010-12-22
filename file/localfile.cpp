@@ -41,4 +41,6 @@ void LocalFile::save()
 
 void LocalFile::close()
 {
+	setOpenStatus(Closing);
+	BaseFile::closeCompleted();
 }
