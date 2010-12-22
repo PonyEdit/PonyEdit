@@ -54,6 +54,10 @@ BaseFile::BaseFile(const Location& location)
 
 	mIgnoreChanges = 0;
 
+	mChanged = false;
+	mRevision = 0;
+	mLastSavedRevision = 0;
+
 	mDocument = new QTextDocument(this);
 	mDocumentLayout = new QPlainTextDocumentLayout(mDocument);
 	mDocument->setDocumentLayout(mDocumentLayout);
@@ -116,10 +120,6 @@ void BaseFile::fileOpened(const QByteArray& content)
 
 	qDebug() << "Time taken scanning document: " << t.elapsed();
 	t.restart();
-
-	mChanged = false;
-	mRevision = 0;
-	mLastSavedRevision = 0;
 
 	ignoreChanges();
 	mDocument->setPlainText(content);
