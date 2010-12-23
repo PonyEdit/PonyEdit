@@ -53,7 +53,7 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttrib
 		mEndRegion = Tools::getStringXmlAttribute(attributes, "endregion");
 		mLookAhead = Tools::getIntXmlAttribute(attributes, "lookahead", 0);
 		mFirstNonSpace = Tools::getIntXmlAttribute(attributes, "firstnonspace", 0);
-		mColumn = Tools::getIntXmlAttribute(attributes, "column", 0);
+		mColumn = Tools::getIntXmlAttribute(attributes, "column", -1);
 		mCharacterA = Tools::getCharXmlAttribute(attributes, "char");
 		mCharacterB = Tools::getCharXmlAttribute(attributes, "char1");
 		mString = Tools::getStringXmlAttribute(attributes, "string");
@@ -240,6 +240,14 @@ void SyntaxRule::prepareRegExp()
 int SyntaxRule::match(const QString &string, int position)
 {
 	int match = 0;
+
+	if (mFirstNonSpace)
+		for(int i = 0; i < position; i++)
+			if (!string[i].isSpace())
+				return 0;
+
+	if (mColumn > -1 && position != mColumn)
+		return 0;
 
 	switch (mType)
 	{
