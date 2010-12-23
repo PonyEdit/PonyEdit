@@ -1,5 +1,6 @@
 #include "syntax/syntaxrule.h"
 #include "main/tools.h"
+#include "syntaxdefmanager.h"
 
 QMap<QString, SyntaxRule::Type>* SyntaxRule::sTypeMap;
 bool SyntaxRule::sTypeMapInitialized = false;

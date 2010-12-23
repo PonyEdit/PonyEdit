@@ -59,9 +59,6 @@ bool SyntaxDefinition::link()
 				context->rules.removeAt(i);
 
 				//	Parse it.
-				if (rule->getIncludeAttrib())
-					qDebug() << "Warning: Include attrib enabled on includerule block; ignored";
-
 				QString source = rule->getContext();
 				QSharedPointer<ContextDef> sourceContext;
 				if (source.startsWith("##"))
@@ -102,6 +99,17 @@ bool SyntaxDefinition::linkContext(const QString& context, ContextLink* link)
 {
 	if (context.startsWith('#') || context.isEmpty())
 	{
+		if (context.startsWith("##"))
+		{
+			SyntaxDefinition* includedDefinition = gSyntaxDefManager.getDefinitionForSyntax(context.mid(2));
+			if (includedDefinition)
+				link->contextDef = includedDefinition->getDefaultContext();
+			else
+			{
+				qDebug() << "Link to non-existant external syntax def: " << context;
+				return false;
+			}
+		}
 		if (context.startsWith("#pop", Qt::CaseInsensitive))
 			link->popCount = context.count('#');
 	}
