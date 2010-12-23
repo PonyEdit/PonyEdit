@@ -20,13 +20,15 @@ public:
 	inline bool continueScan(const Node** node, unsigned char character) { if ((*node)->children[(unsigned int)character]) { *node = (*node)->children[(unsigned int)character]; return true; } else { return false; } }
 	inline bool endScan(const Node* node) { return node->terminator; }
 
+	static void cleanup();
+
 private:
 	Node* allocateNode();
-
 	Node* mRoot;
 
-	QVector<Node> mNodeHeap;
-	int mNodeHeapCursor;
+	static QList<QVector<Node>*> sNodeHeaps;
+	static QVector<Node>* sCurrentNodeHeap;
+	static int sNodeHeapCursor;
 };
 
 #endif // STRINGTRIE_H

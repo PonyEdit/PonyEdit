@@ -161,10 +161,7 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 	{
 		mAttributeLink = def->getItemData(mAttribute);
 		if (!mAttributeLink)
-		{
-			qDebug() << "Failed to link attribute: " << mAttribute;
-			return false;
-		}
+			qDebug() << "Warning: Failed to link attribute: " << mAttribute;
 	}
 
 	if (!def->linkContext(mContext, &mContextLink))

@@ -56,6 +56,7 @@ bool SyntaxDefXmlHandler::startElement(const QString &/* namespaceURI */, const 
 				mCurrentBlocks |= List;
 				mKeywordList = new SyntaxDefinition::KeywordList();
 				mKeywordList->name = Tools::getStringXmlAttribute(atts, "name");
+				qDebug() << (void*)&mKeywordList->items;
 				mDefinition->addKeywordList(mKeywordList);
 			}
 			else if (localName.compare("contexts", Qt::CaseInsensitive) == 0)

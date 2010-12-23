@@ -1,11 +1,19 @@
 #include "stringtrie.h"
-#define ALLOC_SIZE 1024
 #include <QString>
+#include <QDebug>
+#define NODE_HEAP_SIZE 1024
+
+int StringTrie::sNodeHeapCursor = 0;
+QList<QVector<StringTrie::Node>*> StringTrie::sNodeHeaps;
+QVector<StringTrie::Node>* StringTrie::sCurrentNodeHeap;
 
 StringTrie::StringTrie()
 {
-	mNodeHeapCursor = 0;
+	sNodeHeapCursor = NODE_HEAP_SIZE;
 	mRoot = allocateNode();
+
+	qDebug() << (void*)mRoot;
+	qDebug() << mRoot->terminator;
 }
 
 void StringTrie::addWord(const QString& word)
@@ -36,11 +44,19 @@ bool StringTrie::containsWord(const QString& word)
 
 StringTrie::Node* StringTrie::allocateNode()
 {
-	int oldSize = mNodeHeap.size();
-	if (oldSize <= mNodeHeapCursor)
+	if (sNodeHeapCursor >= NODE_HEAP_SIZE)
 	{
-		mNodeHeap.resize(mNodeHeap.size() + ALLOC_SIZE);
-		memset(mNodeHeap.data() + oldSize, 0, ALLOC_SIZE * sizeof(Node));
+		sNodeHeapCursor = 0;
+		QVector<Node>* newVector = new QVector<Node>(NODE_HEAP_SIZE);
+		sNodeHeaps.append(newVector);
+		sCurrentNodeHeap = newVector;
 	}
-	return ((Node*)mNodeHeap.data()) + mNodeHeapCursor++;
+
+	return sCurrentNodeHeap->data() + sNodeHeapCursor++;
+}
+
+void StringTrie::cleanup()
+{
+	foreach (QVector<Node>* vector, sNodeHeaps)
+		delete vector;
 }

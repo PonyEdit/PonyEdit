@@ -11,6 +11,7 @@
 #include "main/mainwindow.h"
 #include "website/sitemanager.h"
 #include "syntax/syntaxrule.h"
+#include "main/stringtrie.h"
 
 GlobalDispatcher* gDispatcher = NULL;
 SiteManager* gSiteManager = NULL;
@@ -59,6 +60,7 @@ int main(int argc, char *argv[])
 	delete gDispatcher;
 	delete gSiteManager;
 	LocationShared::cleanupIconProvider();
+	StringTrie::cleanup();
 	SyntaxRule::cleanup();
 	return result;
 }
