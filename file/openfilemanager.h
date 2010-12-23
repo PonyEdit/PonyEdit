@@ -25,12 +25,15 @@ public:
 	bool closeFiles(const QList<BaseFile*>& files, bool force = false);   // Closes the list of files. If force unspecified or false, it confirms closure of unsaved files.
 	bool closeAllFiles() { return closeFiles(mOpenFiles); }
 
+	int newFileNumber() { return mNewFiles++; }
+
 signals:
 	void fileOpened(BaseFile* file);   // Emitted every time a file is opened
 	void fileClosed(BaseFile* file);   // Emitted as each file is closed; immediately before object deletion
 
 private:
 	QList<BaseFile*> mOpenFiles;
+	int mNewFiles;
 };
 
 extern OpenFileManager gOpenFileManager;

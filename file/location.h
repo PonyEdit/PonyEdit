@@ -18,7 +18,7 @@ class Location
 
 public:
 	enum Type { Unknown = 0, File = 1, Directory = 2 };
-	enum Protocol { Local = 0, Ssh = 1 };
+	enum Protocol { Local = 0, Ssh = 1, Unsaved = 2 };
 
 public:
 	Location();

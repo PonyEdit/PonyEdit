@@ -6,12 +6,13 @@ OpenFileManager gOpenFileManager;
 
 OpenFileManager::OpenFileManager() : QObject(0)
 {
+		mNewFiles = 1;
 }
 
 BaseFile* OpenFileManager::getFile(const Location& location) const
 {
 	foreach (BaseFile* file, mOpenFiles)
-		if (file->getLocation() == location)
+		if (location.getProtocol() != Location::Unsaved && file->getLocation() == location)
 			return file;
 
 	return NULL;

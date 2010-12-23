@@ -101,6 +101,8 @@ void OpenFileItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 			else
 			{
 				label = location.getPath();
+				if(label == "")
+					label = "New Files";
 				label = Tools::squashLabel(label, option.fontMetrics, labelRect.width());
 			}
 			sp.drawText(labelRect, label);

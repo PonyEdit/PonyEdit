@@ -13,6 +13,7 @@ class LocalFile : public BaseFile
 public:
 	LocalFile(const Location& location);
 
+	void newFile();
 	void open();
 	void save();
 	void close();

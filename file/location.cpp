@@ -1,4 +1,5 @@
 #include "file/location.h"
+#include "file/openfilemanager.h"
 #include "ssh/sshremotecontroller.h"
 #include "ssh/sshrequest.h"
 #include "ssh/sshhost.h"
@@ -215,8 +216,13 @@ void LocationShared::setPath(const QString &path)
 	//	Work out what to label this path...
 	int lastSlashIndex = mPath.lastIndexOf('/');
 	mLabel = mPath.mid(lastSlashIndex + 1);
-	if (mLabel.length() == 0)
+	if (mLabel.length() == 0 && mPath.length() > 0)
 		mLabel = "Root (/)";
+	else if(mPath == "New File")
+	{
+		mPath = "";
+		mLabel = QString("New File %1").arg(gOpenFileManager.newFileNumber());
+	}
 
 	//	Work out what kind of path this is. Default if no pattern matches, is local.
 	if (gSshServerRegExp.indexIn(mPath) > -1)
@@ -227,6 +233,8 @@ void LocationShared::setPath(const QString &path)
 		mRemoteHostName = parts[2];
 		mRemotePath = parts[3];
 	}
+	else if(mPath.length() == 0)
+		mProtocol = Location::Unsaved;
 	else
 		mProtocol = Location::Local;
 }
@@ -343,6 +351,9 @@ bool LocationShared::ensureConnected()
 {
 	//	Local locations are always connected
 	if (mProtocol == Location::Local) return true;
+
+	// Unsaved files are always connected
+	if (mProtocol == Location::Unsaved) return true;
 
 	if (mProtocol == Location::Ssh)
 	{

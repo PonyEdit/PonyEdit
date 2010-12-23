@@ -7,6 +7,10 @@ LocalFile::LocalFile(const Location& location) : BaseFile(location)
 	connect(this, SIGNAL(localFileOpened(QByteArray)), this, SLOT(fileOpened(QByteArray)), Qt::QueuedConnection);
 }
 
+void LocalFile::newFile()
+{
+}
+
 void LocalFile::open()
 {
 	QFile fileHandle(mLocation.getPath());

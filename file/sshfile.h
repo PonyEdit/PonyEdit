@@ -9,6 +9,7 @@ class SshFile : public BaseFile
 	Q_OBJECT
 
 public:
+	void newFile();
 	void open();
 	void save();
 	void close();

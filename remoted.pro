@@ -58,7 +58,8 @@ SOURCES += \
     syntax/syntaxblockdata.cpp \
     file/localfile.cpp \
     website/sitemanager.cpp \
-    syntax/syntaxdefmanager.cpp
+    syntax/syntaxdefmanager.cpp \
+    file/unsavedfile.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -94,7 +95,8 @@ HEADERS  += \
     syntax/syntaxblockdata.h \
     file/localfile.h \
     website/sitemanager.h \
-    syntax/syntaxdefmanager.h
+    syntax/syntaxdefmanager.h \
+    file/unsavedfile.h
 
 OTHER_FILES += \
     slaves/slave.py \

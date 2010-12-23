@@ -27,6 +27,10 @@ SshFile::~SshFile()
 	mChangesSinceLastSave.clear();
 }
 
+void SshFile::newFile()
+{
+}
+
 void SshFile::open()
 {
 	if (!mHost->ensureConnection())

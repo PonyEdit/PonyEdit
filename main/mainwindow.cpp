@@ -94,7 +94,20 @@ void MainWindow::createToolbar()
 	toolbar->setObjectName("File Toolbar");
 }
 
-void MainWindow::newFile(){}
+void MainWindow::newFile()
+{
+	QString path = "New File";
+	Location location(path);
+	BaseFile* file = location.getFile();
+
+	Editor* newEditor = new Editor(file);
+	mEditorStack->addWidget(newEditor);
+	mEditorStack->setCurrentWidget(newEditor);
+	mEditors.append(newEditor);
+
+	newEditor->setFocus();
+}
+
 void MainWindow::openFile()
 {
 	FileDialog dlg(this);
@@ -139,6 +152,10 @@ void MainWindow::saveFile()
 	if (current) current->save();
 }
 
+void MainWindow::saveFileAs()
+{
+}
+
 void MainWindow::closeFile()
 {
 	Editor* current = (Editor*)mEditorStack->currentWidget();
@@ -179,6 +196,9 @@ void MainWindow::createFileMenu()
 
 	fileMenu->addAction(tr("&Save"), this, SLOT(saveFile()),
 						QKeySequence::Save);
+
+	fileMenu->addAction(tr("Save &As..."), this, SLOT(saveFileAs()),
+						QKeySequence::SaveAs);
 
 	fileMenu->addAction(tr("&Close File"), this, SLOT(closeFile()),
 						QKeySequence::Close);

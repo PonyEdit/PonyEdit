@@ -3,6 +3,7 @@
 
 #include "sshfile.h"
 #include "localfile.h"
+#include "unsavedfile.h"
 #include "basefile.h"
 #include "main/tools.h"
 #include "main/globaldispatcher.h"
@@ -27,8 +28,12 @@ BaseFile* BaseFile::getFile(const Location& location)
 		newFile = new SshFile(location);
 		break;
 
-	default:
+	case Location::Local:
 		newFile = new LocalFile(location);
+		break;
+
+	default:
+		newFile = new UnsavedFile(location);
 	}
 
 	if (newFile)
@@ -46,7 +51,7 @@ BaseFile::~BaseFile()
 	if (mDocument) delete mDocument;
 }
 
-BaseFile::BaseFile(const Location& location)
+BaseFile::BaseFile(const Location& location = NULL)
 {
 	mLoadingPercent = 0;
 	mOpenStatus = BaseFile::Closed;
