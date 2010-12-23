@@ -384,17 +384,84 @@ int SyntaxRule::match(const QString &string, int position)
 	}
 
 	case HlCStringChar:
+		match = detectStringChar(string, position);
+		break;
+
 	case HlCChar:
+	{
+		const QChar* s = string.constData() + position;
+		if (*s == '\'')
+		{
+			s++;
+			if (s->isNull()) return 0;
+
+			int innerLen = 1;
+			if (*s == '\\')
+				innerLen = detectStringChar(string, position + 1);
+
+			s += innerLen;
+			if (!s->isNull())
+				match = innerLen + 2;
+		}
+		break;
+	}
+
 	case RangeDetect:
+		if (string[position] == mCharacterA)
+		{
+			int end = string.indexOf(mCharacterB, position + 1);
+			if (end > position)
+				match = end - position;
+		}
+		break;
+
 	case LineContinue:
-		qDebug() << "Rule not honoured: " << mName;
+		if (position == string.length() - 1)
+			if (string.at(position) == '\\')
+				match = 1;
 		break;
 	}
 
 	return match;
 }
 
+int SyntaxRule::detectStringChar(const QString& string, int position)
+{
+	const QChar* s = string.constData() + position;
+	if (*s == '\\')
+	{
+		s++;
+		if (s->isNull()) return 0;
 
+		switch (s->toLatin1())
+		{
+		case 'a': case 'b': case 'f': case 'n': case 'r':
+		case 't': case 'v': case '\'': case '"': case '\\':
+		case '?':
+			return 2;
+		}
+
+		int nLength = 0;
+		if (*s == 'x')
+		{
+			while (nLength <= 4 && !s->isNull() && (s->isDigit() || (*s >= '0' && *s <= '9') || (*s >= 'a' && *s <= 'f') || (*s >= 'A' && *s <= 'F')))
+				s++;nLength++;
+			nLength = (nLength & 0x10) + 2;
+		}
+		else
+		{
+			while (nLength <= 3 && !s->isNull() && *s >= '0' && *s <= '9')
+				s++,nLength++;
+			if (nLength != 3)
+				nLength = 0;
+			else
+				nLength++;
+		}
+
+		return nLength;
+	}
+	return 0;
+}
 
 
 

@@ -67,6 +67,7 @@ private:
 	};
 
 	void copyBaseProperties(const SyntaxRule* other);
+	int detectStringChar(const QString& string, int position);
 
 	SyntaxDefinition* mDefinition;
 	SyntaxRule* mParent;

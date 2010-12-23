@@ -38,6 +38,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 
 	int position = 0;
 	bool firstIteration = true;
+	const SyntaxDefinition::ContextLink* lineEndOverrideContextLink = NULL;
 	while (position < text.length())
 	{
 		//	If there is no current context, create a default one
@@ -71,6 +72,13 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 				contextLink = &rule->getContextLink();
 				isLookAhead = rule->isLookAhead();
 				dynamicCaptures = rule->getDynamicCaptures();
+
+				//	Special case: If this rule is a lineContinue, override lineEnd of the current context
+				if (rule->getType() == SyntaxRule::LineContinue)
+				{
+					lineEndOverrideContextLink = contextLink;
+					contextLink = NULL;
+				}
 				break;
 			}
 		}
@@ -118,7 +126,20 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 	if (contextStack.size())
 	{
 		ContextDefLink context = contextStack.top();
-		applyContextLink(&context->lineEndContextLink, &contextStack, NULL);
+		ContextDefLink lastContext;
+
+		if (lineEndOverrideContextLink != NULL)
+			applyContextLink(lineEndOverrideContextLink, &contextStack, NULL);
+		else
+		{
+			while (!context.isNull() && context != lastContext)
+			{
+				applyContextLink(&context->lineEndContextLink, &contextStack, NULL);
+
+				lastContext = context;
+				if (contextStack.size()) context = contextStack.top();
+			}
+		}
 	}
 
 	//	Check if this highlight block is ending on a different stack to the last time
