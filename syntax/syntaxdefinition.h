@@ -81,7 +81,7 @@ public:
 
 	inline void setIndentationSensitive(bool v) { mIndentationSensitive = v; }
 	inline void setCaseSensitiveKeywords(bool v) { mCaseSensitiveKeywords = v; }
-	inline void setWeakDeliminators(const QString& v) { mWeakDeliminators = v; }
+	void setWeakDeliminators(const QString& v);
 	inline void setAdditionalDeliminators(const QString& v) { mAdditionalDeliminators = v; mDeliminators.append(v); }
 	inline void setWordWrapDeliminator(const QString& v) { mWordWrapDeliminator = v; }
 

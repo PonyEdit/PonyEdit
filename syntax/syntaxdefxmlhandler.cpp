@@ -132,7 +132,7 @@ bool SyntaxDefXmlHandler::startElement(const QString &/* namespaceURI */, const 
 			else if (localName.compare("keywords", Qt::CaseInsensitive) == 0)
 			{
 				mDefinition->setCaseSensitiveKeywords(Tools::getIntXmlAttribute(atts, "casesensitive", 1));
-				mDefinition->setWeakDeliminators(Tools::getStringXmlAttribute(atts, "weakdeliminators"));
+				mDefinition->setWeakDeliminators(Tools::getStringXmlAttribute(atts, "weakdeliminator"));
 				mDefinition->setAdditionalDeliminators(Tools::getStringXmlAttribute(atts, "additionaldeliminators"));
 				mDefinition->setWordWrapDeliminator(Tools::getStringXmlAttribute(atts, "wordwrapdeliminator"));
 			}

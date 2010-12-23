@@ -146,6 +146,13 @@ void SyntaxDefinition::addItemData(ItemData* itemData)
 	mItemDatas.insert(itemData->name.toLower(), itemData);
 }
 
+void SyntaxDefinition::setWeakDeliminators(const QString& v)
+{
+	mWeakDeliminators = v;
+	for (int i = 0; i < v.length(); i++)
+		mDeliminators.remove(v[i]);
+}
+
 
 
 

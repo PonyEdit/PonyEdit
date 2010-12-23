@@ -351,7 +351,7 @@ int SyntaxRule::match(const QString &string, int position)
 
 	case Float:
 	{
-		//	[-][0-9]+.[0-9]+e[0-9]+
+		//	[-][0-9]+.[0-9]#+e[0-9]+
 		const QChar* s = string.constData() + position;
 		int extra = 0;
 		if (*s == '-')
