@@ -59,7 +59,8 @@ SOURCES += \
     file/localfile.cpp \
     website/sitemanager.cpp \
     syntax/syntaxdefmanager.cpp \
-    file/unsavedfile.cpp
+    file/unsavedfile.cpp \
+    main/stringtrie.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -96,7 +97,8 @@ HEADERS  += \
     file/localfile.h \
     website/sitemanager.h \
     syntax/syntaxdefmanager.h \
-    file/unsavedfile.h
+    file/unsavedfile.h \
+    main/stringtrie.h
 
 OTHER_FILES += \
     slaves/slave.py \

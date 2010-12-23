@@ -220,14 +220,7 @@ bool SyntaxDefXmlHandler::characters(const QString &ch)
 	{
 		QString trimmed = ch.trimmed();
 		if (!trimmed.isEmpty())
-		{
-			//	Keep KeywordLists sorted in reverse-length order
-			int i;
-			for (i = 0; i < mKeywordList->items.length(); i++)
-				if (mKeywordList->items[i].length() < trimmed.length())
-					break;
-			mKeywordList->items.insert(i, trimmed);
-		}
+			mKeywordList->items.addWord(trimmed);
 	}
 
 	return true;

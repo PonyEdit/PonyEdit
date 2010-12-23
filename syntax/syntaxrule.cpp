@@ -300,15 +300,24 @@ int SyntaxRule::match(const QString &string, int position)
 
 	case Keyword:
 	{
-		foreach (QString keyword, mKeywordLink->items)
+		const QChar* s = string.constData() + position;
+		const StringTrie::Node* scan = mKeywordLink->items.startScan();
+		int length = 0;
+
+		while (!s->isNull() && !mDefinition->isDeliminator(*s))
 		{
-			if (Tools::compareSubstring(string, keyword, position, getCaseSensitivity()))
+			if (mKeywordLink->items.continueScan(&scan, s->toLatin1()))
+				length++;
+			else
 			{
-				if (position + keyword.length() >= string.length() || mDefinition->isDeliminator(string.at(position + keyword.length())))
-					match = keyword.length();
+				length = 0;
 				break;
 			}
+
+			s++;
 		}
+		if (length && mKeywordLink->items.endScan(scan))
+			match = length;
 		break;
 	}
 

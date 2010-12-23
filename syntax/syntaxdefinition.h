@@ -6,6 +6,7 @@
 #include <QString>
 #include <QStringList>
 #include <QSharedPointer>
+#include "main/stringtrie.h"
 
 class SyntaxRule;
 class SyntaxDefinition
@@ -63,7 +64,7 @@ public:
 	struct KeywordList
 	{
 		QString name;
-		QStringList items;
+		StringTrie items;
 	};
 
 	SyntaxDefinition(const QString& filename);
