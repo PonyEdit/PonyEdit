@@ -4845,6 +4845,7 @@ Changes:
       <context name="start" lineEndContext="#stay" attribute="Normal Text">
         <RegExpr context="phpsource" attribute="Keyword" String="&lt;\?(?:=|php)?" insensitive="true" />
         <StringDetect attribute="Keyword" context="#pop" String="?&gt;" />
+		<IncludeRules context="##HTML" />
       </context>
       <context name="phpsource" attribute="PHP Text" lineEndContext="#stay">
         <DetectSpaces />
