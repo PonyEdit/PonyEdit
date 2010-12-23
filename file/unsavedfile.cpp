@@ -21,4 +21,5 @@ void UnsavedFile::save()
 void UnsavedFile::close()
 {
 	setOpenStatus(Closing);
+	BaseFile::closeCompleted();
 }
