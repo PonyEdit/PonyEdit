@@ -306,7 +306,7 @@ int SyntaxRule::match(const QString &string, int position)
 
 		while (!s->isNull() && !mDefinition->isDeliminator(*s))
 		{
-			if (mKeywordLink->items.continueScan(&scan, s->toLatin1()))
+			if (mKeywordLink->items.continueScan(&scan, static_cast<unsigned char>(s->toLatin1())))
 				length++;
 			else
 			{

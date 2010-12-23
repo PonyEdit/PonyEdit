@@ -17,7 +17,7 @@ public:
 	bool containsWord(const QString& word);
 
 	inline const Node* startScan() { return mRoot; }
-	inline bool continueScan(const Node** node, int character) { if ((*node)->children[character]) { *node = (*node)->children[character]; return true; } else { return false; } }
+	inline bool continueScan(const Node** node, unsigned char character) { if ((*node)->children[(unsigned int)character]) { *node = (*node)->children[(unsigned int)character]; return true; } else { return false; } }
 	inline bool endScan(const Node* node) { return node->terminator; }
 
 private:
