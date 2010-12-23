@@ -50,7 +50,10 @@ void UnsavedChangesDialog::buttonClicked(QAbstractButton* button)
 	{
 		//	Save
 		foreach (BaseFile* file, selectedFiles)
+		{
 			file->save();
+			file->close();
+		}
 	}
 	else if (button == (QAbstractButton*)mButtonBox->button(QDialogButtonBox::Discard))
 	{
