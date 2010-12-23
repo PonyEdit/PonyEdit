@@ -235,6 +235,8 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 void SyntaxRule::prepareRegExp()
 {
 	mRegExp = QRegExp(mString, getCaseSensitivity());
+	if (mMinimal)
+		mRegExp.setMinimal(true);
 }
 
 int SyntaxRule::match(const QString &string, int position)
