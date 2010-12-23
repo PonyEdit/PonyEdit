@@ -29,6 +29,7 @@ public:
 		QDateTime lastUpdated;
 		bool valid;
 		int priority;
+		bool hidden;
 	};
 
     SyntaxDefManager();

@@ -68,6 +68,7 @@ private:
 
 	void copyBaseProperties(const SyntaxRule* other);
 	int detectStringChar(const QString& string, int position);
+	Qt::CaseSensitivity getCaseSensitivity() { return (mType == Keyword && mCaseSensitivity < 0 ? mDefinition->getKeywordCaseSensitivity() : (Qt::CaseSensitivity)mCaseSensitivity); }
 
 	SyntaxDefinition* mDefinition;
 	SyntaxRule* mParent;
@@ -86,7 +87,7 @@ private:
 	QChar mCharacterA;
 	QChar mCharacterB;
 	QString mString;
-	bool mCaseInsensitive;
+	int mCaseSensitivity;
 	bool mDynamic;
 	bool mMinimal;
 	bool mIncludeAttrib;

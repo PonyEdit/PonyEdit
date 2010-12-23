@@ -89,13 +89,12 @@ public:
 
 	bool linkContext(const QString& context, ContextLink* link);
 
+	Qt::CaseSensitivity getKeywordCaseSensitivity() { return mCaseSensitiveKeywords ? Qt::CaseSensitive : Qt::CaseInsensitive; }
+
 private:
 	bool link();
 
 	bool mValid;
-	QString mName;
-	QString mSection;
-	QStringList mExtensions;
 
 	QMap<QString, KeywordList*> mKeywordLists;
 	QMap<QString, QSharedPointer<ContextDef> > mContextMap;

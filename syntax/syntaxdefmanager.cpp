@@ -10,6 +10,7 @@ void SyntaxDefManager::Record::pack(const QXmlAttributes& atts)
 	syntaxName = Tools::getStringXmlAttribute(atts, "name");
 	category = Tools::getStringXmlAttribute(atts, "section");
 	priority = Tools::getIntXmlAttribute(atts, "priority", 0);
+	hidden = Tools::getIntXmlAttribute(atts, "hidden", 0);
 
 	QStringList patternStrings = Tools::getStringXmlAttribute(atts, "extensions").split(';');
 	foreach (const QString& pattern, patternStrings)

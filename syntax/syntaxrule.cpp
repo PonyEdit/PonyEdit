@@ -57,7 +57,10 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttrib
 		mCharacterA = Tools::getCharXmlAttribute(attributes, "char");
 		mCharacterB = Tools::getCharXmlAttribute(attributes, "char1");
 		mString = Tools::getStringXmlAttribute(attributes, "string");
-		mCaseInsensitive = Tools::getIntXmlAttribute(attributes, "insensitive", 0);
+
+		int tmpSensitivity = Tools::getIntXmlAttribute(attributes, "insensitive", -1);
+		mCaseSensitivity = tmpSensitivity < 0 ? -1 : (tmpSensitivity ? Qt::CaseInsensitive : Qt::CaseSensitive);
+
 		mDynamic = Tools::getIntXmlAttribute(attributes, "dynamic", 0);
 		mMinimal = Tools::getIntXmlAttribute(attributes, "minimal", 0);
 		mIncludeAttrib = Tools::getIntXmlAttribute(attributes, "includeAttrib", 0);
@@ -89,7 +92,7 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QSharedPointer<SyntaxRule>& oth
 	mCharacterA = other->mCharacterA;
 	mCharacterB = other->mCharacterB;
 	mString = other->mString;
-	mCaseInsensitive = other->mCaseInsensitive;
+	mCaseSensitivity = other->mCaseSensitivity;
 	mDynamic = other->mDynamic;
 	mMinimal = other->mMinimal;
 	mIncludeAttrib = other->mIncludeAttrib;
@@ -191,7 +194,7 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 	default:break;
 	}
 
-	if (mCaseInsensitive)
+	if (getCaseSensitivity() == Qt::CaseSensitive)
 	{
 		mString = mString.toLower();
 		mCharacterA = mCharacterA.toLower();
@@ -231,7 +234,7 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 
 void SyntaxRule::prepareRegExp()
 {
-	mRegExp = QRegExp(mString, mCaseInsensitive ? Qt::CaseInsensitive : Qt::CaseSensitive);
+	mRegExp = QRegExp(mString, getCaseSensitivity());
 }
 
 int SyntaxRule::match(const QString &string, int position)
@@ -241,7 +244,7 @@ int SyntaxRule::match(const QString &string, int position)
 	switch (mType)
 	{
 	case DetectChar:
-		if (mCaseInsensitive)
+		if (getCaseSensitivity() == Qt::CaseInsensitive)
 			match = (string.at(position).toLower() == mCharacterA ? 1 : 0);
 		else
 			match = (string.at(position) == mCharacterA ? 1 : 0);
@@ -250,7 +253,7 @@ int SyntaxRule::match(const QString &string, int position)
 	case Detect2Chars:
 		if (position < string.length() - 1)
 		{
-			if (mCaseInsensitive)
+			if (getCaseSensitivity() == Qt::CaseInsensitive)
 				match = (string.at(position).toLower() == mCharacterA && string.at(position + 1).toLower() == mCharacterB ? 2 : 0);
 			else
 				match = (string.at(position) == mCharacterA && string.at(position + 1) == mCharacterB ? 2 : 0);
@@ -263,14 +266,14 @@ int SyntaxRule::match(const QString &string, int position)
 		break;
 
 	case StringDetect:
-		if (Tools::compareSubstring(string, mString, position, mCaseInsensitive?Qt::CaseInsensitive:Qt::CaseSensitive))
+		if (Tools::compareSubstring(string, mString, position, getCaseSensitivity()))
 			match = mString.length();
 		break;
 
 	case WordDetect:
 		if (position == 0 || mDefinition->isDeliminator(string.at(position - 1)))
 			if (position == string.length() - mString.length() || mDefinition->isDeliminator(string.at(position + mString.length())))
-				if (Tools::compareSubstring(string, mString, position, mCaseInsensitive?Qt::CaseInsensitive:Qt::CaseSensitive))
+				if (Tools::compareSubstring(string, mString, position, getCaseSensitivity()))
 					match = mString.length();
 		break;
 
@@ -289,7 +292,7 @@ int SyntaxRule::match(const QString &string, int position)
 	{
 		foreach (QString keyword, mKeywordLink->items)
 		{
-			if (Tools::compareSubstring(string, keyword, position, mCaseInsensitive?Qt::CaseInsensitive:Qt::CaseSensitive))
+			if (Tools::compareSubstring(string, keyword, position, getCaseSensitivity()))
 			{
 				if (position + keyword.length() >= string.length() || mDefinition->isDeliminator(string.at(position + keyword.length())))
 					match = keyword.length();
