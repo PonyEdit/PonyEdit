@@ -96,6 +96,17 @@ void SyntaxDefManager::addRecord(Record *record)
 	}
 	mRecordList.insert(i, record);
 	mRecordsByName.insert(record->syntaxName, record);
+	if (!record->hidden) mSyntaxesByCategory.insertMulti(record->category, record->syntaxName);
+}
+
+QStringList SyntaxDefManager::getDefinitionCategories() const
+{
+	return mSyntaxesByCategory.uniqueKeys();
+}
+
+QStringList SyntaxDefManager::getSyntaxesInCategory(const QString& category) const
+{
+	return mSyntaxesByCategory.values(category);
 }
 
 SyntaxDefinition* SyntaxDefManager::getDefinitionForFile(const QString& filename)

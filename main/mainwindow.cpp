@@ -22,7 +22,7 @@
 #include "main/searchbar.h"
 #include "file/unsavedchangesdialog.h"
 #include "file/openfilemanager.h"
-#include "syntax/syntaxdefinition.h"
+#include "syntax/syntaxdefmanager.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
 	createToolbar();
 
 	createFileMenu();
+	createViewMenu();
 	createSearchMenu();
 	createToolsMenu();
 	createHelpMenu();
@@ -207,6 +208,28 @@ void MainWindow::createFileMenu()
 						QKeySequence::Quit);
 }
 
+void MainWindow::createViewMenu()
+{
+	QMenu* viewMenu = new QMenu(tr("&View"), this);
+	menuBar()->addMenu(viewMenu);
+
+	QMenu* syntaxCateogiresMenu = new QMenu(tr("&Syntax"), viewMenu);
+	viewMenu->addMenu(syntaxCateogiresMenu);
+	QStringList categories = gSyntaxDefManager.getDefinitionCategories();
+	categories.sort();
+
+	foreach (const QString& category, categories)
+	{
+		QMenu* syntaxSubMenu = new QMenu(category, viewMenu);
+		syntaxCateogiresMenu->addMenu(syntaxSubMenu);
+
+		QStringList syntaxes = gSyntaxDefManager.getSyntaxesInCategory(category);
+		syntaxes.sort();
+		foreach (const QString& syntax, syntaxes)
+			syntaxSubMenu->addAction(syntax, this, SLOT(syntaxSelected()));
+	}
+}
+
 void MainWindow::createSearchMenu()
 {
 	QMenu *searchMenu = new QMenu(tr("&Search"), this);
@@ -280,5 +303,10 @@ void MainWindow::fileClosed(BaseFile* file)
 			delete e;
 		}
 	}
+}
+
+void MainWindow::syntaxSelected()
+{
+
 }
 

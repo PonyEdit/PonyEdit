@@ -39,6 +39,7 @@ public slots:
 	void showStatusMessage(QString message);
 
 	void fileClosed(BaseFile* file);
+	void syntaxSelected();
 
 protected:
 	void closeEvent(QCloseEvent* event);
@@ -46,6 +47,7 @@ protected:
 private:
 	void createToolbar();
 	void createFileMenu();
+	void createViewMenu();
 	void createSearchMenu();
 	void createToolsMenu();
 	void createHelpMenu();

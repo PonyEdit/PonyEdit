@@ -39,6 +39,9 @@ public:
 	SyntaxDefinition* getDefinitionForSyntax(const QString& syntaxName);
 	SyntaxDefinition* getDefinition(const Record* record);
 
+	QStringList getDefinitionCategories() const;
+	QStringList getSyntaxesInCategory(const QString& category) const;
+
 private:
 	void updateIndex();
 	void indexFile(const QFileInfo& fileinfo);
@@ -47,6 +50,7 @@ private:
 
 	QList<Record*> mRecordList;
 	QMap<QString, Record*> mRecordsByName;
+	QMap<QString, QString> mSyntaxesByCategory;
 
 	QList<SyntaxDefinition*> mOpenDefinitionList;
 	QMap<QString, SyntaxDefinition*> mOpenDefinitionsByName;
