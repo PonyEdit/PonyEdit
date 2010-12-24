@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
 	mUnsavedChangesDialog = NULL;
+	mCurrentSyntaxMenuItem = NULL;
 
 	mEditorStack = new QStackedWidget(this);
 	mEditorStack->setMinimumWidth(200);
@@ -56,6 +57,8 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(gDispatcher, SIGNAL(generalStatusMessage(QString)), this, SLOT(showStatusMessage(QString)), Qt::QueuedConnection);
 	connect(gDispatcher, SIGNAL(selectFile(BaseFile*)), this, SLOT(fileSelected(BaseFile*)));
 	connect(&gOpenFileManager, SIGNAL(fileClosed(BaseFile*)), this, SLOT(fileClosed(BaseFile*)), Qt::DirectConnection);
+	connect(mEditorStack, SIGNAL(currentChanged(int)), this, SLOT(currentEditorChanged()));
+	connect(gDispatcher, SIGNAL(syntaxChanged(BaseFile*)), this, SLOT(updateSyntaxSelection()));
 
 	restoreState();
 }
@@ -226,7 +229,12 @@ void MainWindow::createViewMenu()
 		QStringList syntaxes = gSyntaxDefManager.getSyntaxesInCategory(category);
 		syntaxes.sort();
 		foreach (const QString& syntax, syntaxes)
-			syntaxSubMenu->addAction(syntax, this, SLOT(syntaxSelected()));
+		{
+			QAction* action = syntaxSubMenu->addAction(syntax, this, SLOT(syntaxMenuOptionClicked()));
+			action->setData(syntax);
+			action->setCheckable(true);
+			mSyntaxMenuEntries.insert(syntax, action);
+		}
 	}
 }
 
@@ -305,8 +313,46 @@ void MainWindow::fileClosed(BaseFile* file)
 	}
 }
 
-void MainWindow::syntaxSelected()
+void MainWindow::syntaxMenuOptionClicked()
 {
+	QObject* eventSource = QObject::sender();
+	QAction* action = static_cast<QAction*>(eventSource);
+	QString syntaxName = action->data().toString();
 
+	Editor* currentEditor = getCurrentEditor();
+	if (!currentEditor) return;
+	currentEditor->getFile()->setSyntax(syntaxName);
+}
+
+Editor* MainWindow::getCurrentEditor()
+{
+	return static_cast<Editor*>(mEditorStack->currentWidget());
+}
+
+void MainWindow::currentEditorChanged()
+{
+	updateSyntaxSelection();
+}
+
+void MainWindow::updateSyntaxSelection()
+{
+	if (mCurrentSyntaxMenuItem != NULL)
+	{
+		mCurrentSyntaxMenuItem->setChecked(false);
+		mCurrentSyntaxMenuItem = NULL;
+	}
+
+	Editor* editor = getCurrentEditor();
+	if (editor)
+	{
+		BaseFile* file = editor->getFile();
+		QString syntaxName = file->getSyntax();
+		if (!syntaxName.isEmpty())
+		{
+			mCurrentSyntaxMenuItem = mSyntaxMenuEntries.value(syntaxName, NULL);
+			if (mCurrentSyntaxMenuItem != NULL)
+				mCurrentSyntaxMenuItem->setChecked(true);
+		}
+	}
 }
 

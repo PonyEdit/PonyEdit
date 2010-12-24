@@ -192,7 +192,11 @@ void SyntaxHighlighter::replaceDynamicRules(SyntaxRule* parent, QList<QSharedPoi
 	}
 }
 
-
+void SyntaxHighlighter::setSyntaxDefinition(SyntaxDefinition* definition)
+{
+	mSyntaxDefinition = definition;
+	rehighlight();
+}
 
 
 

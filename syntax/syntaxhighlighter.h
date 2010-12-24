@@ -5,7 +5,7 @@
 
 #include <QHash>
 #include <QTextCharFormat>
-#include "syntaxdefinition.h"
+#include "syntax/syntaxdefinition.h"
 
 class QTextDocument;
 
@@ -15,6 +15,9 @@ class SyntaxHighlighter : public QSyntaxHighlighter
 
 public:
 	SyntaxHighlighter(QTextDocument* parent, SyntaxDefinition* syntaxDef);
+
+	inline SyntaxDefinition* getSyntaxDefinition() const { return mSyntaxDefinition; }
+	void setSyntaxDefinition(SyntaxDefinition* definition);
 
 protected:
 	void highlightBlock(const QString& text);

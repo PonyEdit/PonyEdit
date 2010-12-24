@@ -75,6 +75,7 @@ public:
 	inline QSharedPointer<ContextDef> getContext(const QString& name) const { return mContextMap.value(name.toLower()); }
 	inline KeywordList* getKeywordList(const QString& name) const { return mKeywordLists.value(name.toLower()); }
 	inline ItemData* getItemData(const QString& name) const { return mItemDatas.value(name.toLower()); }
+	inline const QString& getSyntaxName() const { return mSyntaxName; }
 
 	void addKeywordList(KeywordList* list);
 	void addContext(ContextDef* context);
@@ -85,6 +86,7 @@ public:
 	void setWeakDeliminators(const QString& v);
 	inline void setAdditionalDeliminators(const QString& v) { mAdditionalDeliminators = v; mDeliminators.append(v); }
 	inline void setWordWrapDeliminator(const QString& v) { mWordWrapDeliminator = v; }
+	inline void setSyntaxName(const QString& n) { mSyntaxName = n; }
 
 	inline bool isDeliminator(const QChar& c) { return mDeliminators.contains(c); }
 
@@ -96,6 +98,7 @@ private:
 	bool link();
 
 	bool mValid;
+	QString mSyntaxName;
 
 	QMap<QString, KeywordList*> mKeywordLists;
 	QMap<QString, QSharedPointer<ContextDef> > mContextMap;

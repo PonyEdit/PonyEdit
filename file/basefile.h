@@ -9,6 +9,8 @@
 #include "location.h"
 
 class Editor;
+class SyntaxHighlighter;
+class SyntaxDefinition;
 
 class BaseFile : public QObject
 {
@@ -50,6 +52,10 @@ public:
 	void ignoreChanges() { mIgnoreChanges++; }
 	void unignoreChanges() { mIgnoreChanges--; if (mIgnoreChanges < 0) mIgnoreChanges = 0; }
 
+	QString getSyntax() const;
+	void setSyntax(const QString& syntaxName);
+	void setSyntax(SyntaxDefinition* syntaxDef);
+
 public slots:
 	void fileOpened(const QByteArray& content);
 	void documentChanged(int position, int removeChars, int added);
@@ -69,6 +75,8 @@ protected:
 	virtual void handleDocumentChange(int position, int removeChars, const QByteArray& insert);
 	virtual void setLastSavedRevision(int lastSavedRevision);
 
+	void autodetectSyntax();
+
 	Location mLocation;
 	QByteArray mContent;
 	QString mError;
@@ -87,6 +95,8 @@ protected:
 	int mLoadingPercent;
 	OpenStatus mOpenStatus;
 	QList<Editor*> mAttachedEditors;
+
+	SyntaxHighlighter* mHighlighter;
 };
 
 #endif // FILE_H

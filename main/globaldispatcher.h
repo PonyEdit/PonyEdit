@@ -26,6 +26,8 @@ public:
 
 	void emitSelectFile(BaseFile* file) { emit selectFile(file); }
 
+	void emitSyntaxChanged(BaseFile* file) { emit syntaxChanged(file); }
+
 signals:
 	void sshServersUpdated();
 
@@ -36,6 +38,7 @@ signals:
 	void locationListFailed(const QString& error, QString locationPath);
 
 	void selectFile(BaseFile* file);
+	void syntaxChanged(BaseFile* file);
 };
 
 extern GlobalDispatcher* gDispatcher;

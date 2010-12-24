@@ -37,6 +37,7 @@ bool SyntaxDefXmlHandler::startElement(const QString &/* namespaceURI */, const 
 					return false;
 				}
 
+				mDefinition->setSyntaxName(Tools::getStringXmlAttribute(atts, "name"));
 				mCurrentBlocks |= Language;
 			}
 			break;

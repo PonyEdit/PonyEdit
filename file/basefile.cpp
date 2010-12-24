@@ -9,6 +9,9 @@
 #include "main/globaldispatcher.h"
 #include "file/openfilemanager.h"
 #include "editor/editor.h"
+#include "syntax/syntaxhighlighter.h"
+#include "syntax/syntaxdefinition.h"
+#include "syntax/syntaxdefmanager.h"
 
 const char* BaseFile::sStatusLabels[] =  { "Closed", "Loading...", "Error while loading", "Ready", "Disconnected", "Reconnecting...", "Lost Synchronization; Repairing", "Syncronization Error", "Closing" };
 
@@ -53,6 +56,7 @@ BaseFile::~BaseFile()
 
 BaseFile::BaseFile(const Location& location = NULL)
 {
+	mHighlighter = NULL;
 	mLoadingPercent = 0;
 	mOpenStatus = BaseFile::Closed;
 	mLocation = location;
@@ -126,6 +130,7 @@ void BaseFile::fileOpened(const QByteArray& content)
 	t.restart();
 
 	ignoreChanges();
+	autodetectSyntax();
 	mDocument->setPlainText(content);
 	unignoreChanges();
 
@@ -202,5 +207,50 @@ void BaseFile::closeCompleted()
 	gOpenFileManager.deregisterFile(this);
 	delete this;
 }
+
+void BaseFile::autodetectSyntax()
+{
+	setSyntax(gSyntaxDefManager.getDefinitionForFile(getLocation().getPath()));
+}
+
+QString BaseFile::getSyntax() const
+{
+	if (!mHighlighter)
+		return QString();
+
+	return mHighlighter->getSyntaxDefinition()->getSyntaxName();
+}
+
+void BaseFile::setSyntax(const QString& syntaxName)
+{
+	setSyntax(gSyntaxDefManager.getDefinitionForSyntax(syntaxName));
+}
+
+void BaseFile::setSyntax(SyntaxDefinition* syntaxDef)
+{
+	ignoreChanges();
+	if (syntaxDef)
+	{
+		if (!mHighlighter)
+			mHighlighter = new SyntaxHighlighter(mDocument, syntaxDef);
+		else
+			mHighlighter->setSyntaxDefinition(syntaxDef);
+	}
+	else if (mHighlighter)
+	{
+		delete mHighlighter;
+		mHighlighter = NULL;
+	}
+	unignoreChanges();
+
+	gDispatcher->emitSyntaxChanged(this);
+}
+
+
+
+
+
+
+
 
 

@@ -39,7 +39,10 @@ public slots:
 	void showStatusMessage(QString message);
 
 	void fileClosed(BaseFile* file);
-	void syntaxSelected();
+	void syntaxMenuOptionClicked();
+
+	void currentEditorChanged();
+	void updateSyntaxSelection();
 
 protected:
 	void closeEvent(QCloseEvent* event);
@@ -54,11 +57,16 @@ private:
 	void createSearchBar();
 	void restoreState();
 
+	Editor* getCurrentEditor();
+
 	FileList* mFileList;
 	QStackedWidget* mEditorStack;
 	QStatusBar* mStatusBar;
 	QLabel* mStatusLine;
 	QList<Editor*> mEditors;
+
+	QMap<QString, QAction*> mSyntaxMenuEntries;
+	QAction* mCurrentSyntaxMenuItem;
 
 	QDockWidget* mSearchBarWrapper;
 	SearchBar* mSearchBar;
