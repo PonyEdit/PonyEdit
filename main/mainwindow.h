@@ -67,6 +67,7 @@ private:
 
 	QMap<QString, QAction*> mSyntaxMenuEntries;
 	QAction* mCurrentSyntaxMenuItem;
+	QMenu* mSyntaxMenu;
 
 	QDockWidget* mSearchBarWrapper;
 	SearchBar* mSearchBar;

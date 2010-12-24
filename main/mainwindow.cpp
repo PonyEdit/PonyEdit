@@ -216,15 +216,20 @@ void MainWindow::createViewMenu()
 	QMenu* viewMenu = new QMenu(tr("&View"), this);
 	menuBar()->addMenu(viewMenu);
 
-	QMenu* syntaxCateogiresMenu = new QMenu(tr("&Syntax"), viewMenu);
-	viewMenu->addMenu(syntaxCateogiresMenu);
+	mSyntaxMenu = new QMenu(tr("&Syntax"), viewMenu);
+	viewMenu->addMenu(mSyntaxMenu);
+	mSyntaxMenu->setEnabled(false);
+
+	QAction* action = mSyntaxMenu->addAction(tr("(No Highlighting)"), this, SLOT(syntaxMenuOptionClicked()));
+	action->setCheckable(true);
+	mSyntaxMenuEntries.insert(QString(), action);
+
 	QStringList categories = gSyntaxDefManager.getDefinitionCategories();
 	categories.sort();
-
 	foreach (const QString& category, categories)
 	{
 		QMenu* syntaxSubMenu = new QMenu(category, viewMenu);
-		syntaxCateogiresMenu->addMenu(syntaxSubMenu);
+		mSyntaxMenu->addMenu(syntaxSubMenu);
 
 		QStringList syntaxes = gSyntaxDefManager.getSyntaxesInCategory(category);
 		syntaxes.sort();
@@ -345,14 +350,14 @@ void MainWindow::updateSyntaxSelection()
 	Editor* editor = getCurrentEditor();
 	if (editor)
 	{
+		mSyntaxMenu->setEnabled(true);
 		BaseFile* file = editor->getFile();
 		QString syntaxName = file->getSyntax();
-		if (!syntaxName.isEmpty())
-		{
-			mCurrentSyntaxMenuItem = mSyntaxMenuEntries.value(syntaxName, NULL);
-			if (mCurrentSyntaxMenuItem != NULL)
-				mCurrentSyntaxMenuItem->setChecked(true);
-		}
+		mCurrentSyntaxMenuItem = mSyntaxMenuEntries.value(syntaxName, NULL);
+		if (mCurrentSyntaxMenuItem != NULL)
+			mCurrentSyntaxMenuItem->setChecked(true);
 	}
+	else
+		mSyntaxMenu->setEnabled(false);
 }
 
