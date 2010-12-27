@@ -370,15 +370,20 @@ int SyntaxRule::match(const QString &string, int position)
 		//	[-][0-9]+.[0-9]#+e[0-9]+
 		const QChar* s = string.constData() + position;
 		int extra = 0;
+		bool seenDecimal = false;
 		if (*s == '-')
 			extra++,s++;
 		if (!s->isNull() && s->isDigit())
 		{
 			match++,s++;
 			while (!s->isNull() && (s->isDigit() || *s == '.' || *s == 'e' || *s == 'E'))
+			{
+				if (*s == '.') seenDecimal = true;
 				match++,s++;
+			}
 			match += extra;
 		}
+		if (!seenDecimal) match = false;
 		break;
 	}
 
