@@ -441,6 +441,20 @@ int SyntaxRule::match(const QString &string, int position)
 		break;
 	}
 
+	//	If this rule matches, check for child matches too
+	if (match && position + match < string.length())
+	{
+		foreach (QSharedPointer<SyntaxRule> rule, mChildRules)
+		{
+			int childMatch = rule->match(string, position + match);
+			if (childMatch > 0)
+			{
+				match += childMatch;
+				break;
+			}
+		}
+	}
+
 	return match;
 }
 
