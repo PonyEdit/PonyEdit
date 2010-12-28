@@ -15,12 +15,15 @@ class FileDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit FileDialog(QWidget *parent = 0);
+	explicit FileDialog(QWidget *parent = 0, bool saveAs = false);
     ~FileDialog();
 
 	void showLocation(const Location& location);
 	QList<Location> getSelectedLocations() const;
+	Location getNewLocation() const;
 
+public slots:
+	void accept();
 private slots:
 	void folderTreeItemExpanded(QTreeWidgetItem* item);
 	void folderChildrenLoaded(const QList<Location>& children, const QString& locationPath);
@@ -48,6 +51,8 @@ private:
 	QMap<QString, QTreeWidgetItem*> mLoadingLocations;
 
 	static Location mLastLocation;
+
+	bool mSaveAs;
 };
 
 #endif // FILEDIALOG_H

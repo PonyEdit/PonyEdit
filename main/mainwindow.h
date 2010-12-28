@@ -8,6 +8,8 @@
 #include <QStatusBar>
 #include <QLabel>
 
+#include "file/location.h"
+
 class Editor;
 class FileList;
 class BaseFile;

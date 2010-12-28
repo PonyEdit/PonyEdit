@@ -3,6 +3,7 @@
 #include <QSpacerItem>
 #include <QTextCursor>
 #include <QDebug>
+
 #include "file/basefile.h"
 #include "syntax/syntaxhighlighter.h"
 #include "syntax/syntaxdefinition.h"

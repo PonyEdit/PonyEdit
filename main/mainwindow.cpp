@@ -109,6 +109,8 @@ void MainWindow::newFile()
 	mEditorStack->setCurrentWidget(newEditor);
 	mEditors.append(newEditor);
 
+	gDispatcher->emitSelectFile(file);
+
 	newEditor->setFocus();
 }
 
@@ -153,11 +155,24 @@ void MainWindow::openFile()
 void MainWindow::saveFile()
 {
 	Editor* current = (Editor*)mEditorStack->currentWidget();
-	if (current) current->save();
+	if (current)
+	{
+		if(current->getFile()->getLocation().getProtocol() == Location::Unsaved)
+			saveFileAs();
+		else
+			current->save();
+	}
 }
 
 void MainWindow::saveFileAs()
 {
+	FileDialog dlg(this, true);
+	if(dlg.exec())
+	{
+		Location loc = dlg.getNewLocation();
+		//loc.getFile()->newFile();
+		saveFile();
+	}
 }
 
 void MainWindow::closeFile()
