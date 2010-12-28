@@ -169,9 +169,27 @@ void MainWindow::saveFileAs()
 	FileDialog dlg(this, true);
 	if(dlg.exec())
 	{
+		Editor* current = (Editor*)mEditorStack->currentWidget();
 		Location loc = dlg.getNewLocation();
-		//loc.getFile()->newFile();
+		BaseFile* file = loc.getFile();
+
+		if(!file->isClosed())
+			file->open();
+
+		Editor* newEditor = new Editor(file);
+		mEditorStack->addWidget(newEditor);
+		mEditorStack->setCurrentWidget(newEditor);
+		mEditors.append(newEditor);
+
+		newEditor->getFile()->fileOpened(current->getFile()->getContent());
+
+		gDispatcher->emitSelectFile(file);
+
+		newEditor->setFocus();
+
 		saveFile();
+
+		current->close();
 	}
 }
 

@@ -335,9 +335,9 @@ void FileDialog::keyPressEvent(QKeyEvent *event)
 	else if ((focusWidget() == ui->fileList || focusWidget() == ui->fileName) && (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return))
 	{
 		QList<Location> selections = getSelectedLocations();
-		if(selections.length() > 1 || (selections.length() > 0 && !selections[0].isDirectory()))
+		if(selections.length() > 1 || (selections.length() > 0 && !selections[0].isDirectory()) || selections.length() == 0 && ui->fileName->text().length() > 0)
 			accept();
-		else
+		else if(selections.length() > 0 && selections[0].isDirectory())
 			showLocation(selections[0]);
 	}
 }
