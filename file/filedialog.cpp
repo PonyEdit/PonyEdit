@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include <QSettings>
+#include <QMessageBox>
 
 #define DATA_ROLE (Qt::UserRole)
 #define EXPANDED_ROLE (Qt::UserRole + 1)
@@ -18,7 +19,7 @@
 
 Location FileDialog::mLastLocation;
 
-FileDialog::FileDialog(QWidget *parent) :
+FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	QDialog(parent),
     ui(new Ui::FileDialog)
 {
@@ -26,9 +27,13 @@ FileDialog::FileDialog(QWidget *parent) :
 
 	mFileListModel = new QStandardItemModel();
 
+	mSaveAs = saveAs;
+
 	ui->fileList->setModel(mFileListModel);
 	ui->fileList->setShowGrid(false);
 	ui->fileList->verticalHeader()->hide();
+	if(mSaveAs)
+		ui->fileList->setSelectionMode(QAbstractItemView::SingleSelection);
 	ui->fileList->setSelectionBehavior(QAbstractItemView::SelectRows);
 	ui->fileList->setWordWrap(false);
 	ui->fileList->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -316,6 +321,9 @@ void FileDialog::directoryTreeSelected()
 
 void FileDialog::keyPressEvent(QKeyEvent *event)
 {
+	if(event->key() == Qt::Key_Escape)
+		reject();
+
 	if (focusWidget() == ui->currentPath && (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return))
 	{
 		if (ui->currentPath->text() != mCurrentLocation.getDisplayPath())
@@ -375,6 +383,34 @@ QList<Location> FileDialog::getSelectedLocations() const
 			selections.append(mFileListModel->itemFromIndex(index)->data(DATA_ROLE).value<Location>());
 
 	return selections;
+}
+
+Location FileDialog::getNewLocation() const
+{
+	QList<Location> selections = getSelectedLocations();
+	if(selections.length() > 0)
+		return selections[0];
+
+	Location newFile(mCurrentLocation.getPath() + "/" + ui->fileName->text());
+
+	return newFile;
+}
+
+void FileDialog::accept()
+{
+	if(mSaveAs && ui->fileList->selectionModel()->selectedIndexes().length() > 0)
+	{
+		QMessageBox msgBox;
+		msgBox.setText(tr("This file already exists."));
+		msgBox.setInformativeText(tr("Are you sure you want to overwrite it?"));
+		msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+		msgBox.setDefaultButton(QMessageBox::Yes);
+
+		if(msgBox.exec() == QMessageBox::No)
+			return;
+	}
+
+	QDialog::accept();
 }
 
 void FileDialog::closing()
