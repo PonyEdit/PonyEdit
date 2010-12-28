@@ -324,6 +324,14 @@ void FileDialog::keyPressEvent(QKeyEvent *event)
 			showLocation(newLocation);
 		}
 	}
+	else if ((focusWidget() == ui->fileList || focusWidget() == ui->fileName) && (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return))
+	{
+		QList<Location> selections = getSelectedLocations();
+		if(selections.length() > 1 || (selections.length() > 0 && !selections[0].isDirectory()))
+			accept();
+		else
+			showLocation(selections[0]);
+	}
 }
 
 void FileDialog::upLevel()
