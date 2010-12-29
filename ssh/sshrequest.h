@@ -175,9 +175,9 @@ private:
 	int mRevision;
 };
 
-////////////////////////
-//  Message 7: close  //
-////////////////////////
+////////////////////////////
+//  Message 7: closeFile  //
+////////////////////////////
 
 class SshRequest_closeFile : public SshRequest
 {
@@ -189,6 +189,25 @@ public:
 
 private:
 	SshFile* mFile;
+};
+
+
+/////////////////////////////
+//  Message 8: createFile  //
+/////////////////////////////
+
+class SshRequest_createFile : public SshRequest
+{
+public:
+	SshRequest_createFile(SshFile* file, const QByteArray& content);
+	virtual void packBody(QByteArray* target);
+
+	virtual void error(const QString& error);
+	virtual void success();
+
+private:
+	SshFile* mFile;
+	QByteArray mContent;
 };
 
 #endif // SSHREQUEST_H

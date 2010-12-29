@@ -13,6 +13,8 @@ SshFile::SshFile(const Location& location) : BaseFile(location)
 	mChangePumpCursor = 0;
 	mChangeBufferSize = 0;
 
+	mCreatingNewFile = false;
+
 	connect(this, SIGNAL(resyncSuccessRethreadSignal(int)), this, SLOT(resyncSuccess(int)), Qt::QueuedConnection);
 }
 
@@ -27,12 +29,10 @@ SshFile::~SshFile()
 	mChangesSinceLastSave.clear();
 }
 
-void SshFile::newFile()
+BaseFile* SshFile::newFile(const QByteArray& content)
 {
-}
+	mCreatingNewFile = true;
 
-void SshFile::open()
-{
 	if (!mHost->ensureConnection())
 		throw(QString("Failed to open file: failed to connect to remote host"));
 	mController = mHost->getController();
@@ -41,6 +41,26 @@ void SshFile::open()
 
 	connect(mHost->getController(), SIGNAL(stateChanged()), this, SLOT(connectionStateChanged()), Qt::QueuedConnection);
 	connectionStateChanged();
+
+	mController->sendRequest(new SshRequest_createFile(this, content));
+
+	return this;
+}
+
+void SshFile::open()
+{
+	if(!mCreatingNewFile)
+	{
+		if (!mHost->ensureConnection())
+			throw(QString("Failed to open file: failed to connect to remote host"));
+		mController = mHost->getController();
+
+		setOpenStatus(BaseFile::Loading);
+
+		connect(mHost->getController(), SIGNAL(stateChanged()), this, SLOT(connectionStateChanged()), Qt::QueuedConnection);
+		connectionStateChanged();
+	}
+
 	mController->sendRequest(new SshRequest_open(this, SshRequest_open::Content));
 }
 
@@ -139,6 +159,9 @@ void SshFile::save()
 {
 	if (!mHost->ensureConnection())
 		throw(QString("Failed to update file: failed to connect to remote host"));
+
+	if(mBufferId < 0)
+		return;
 
 	mHost->getController()->sendRequest(new SshRequest_saveBuffer(mBufferId, this, mRevision, mContent));
 }

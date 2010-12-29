@@ -276,6 +276,16 @@ sub msg_close
 	$buff->close();
 }
 
+#	new
+sub msg_new
+{
+	my( $buff, $params, $result ) = @_;
+
+	open( NEW_FILE, '>' . $params->{'f'} );
+	print NEW_FILE $params->{'c'};
+	close( NEW_FILE );
+}
+
 #
 #	Message Definitions
 #
@@ -289,6 +299,7 @@ our %messageDefs =
 	5 => \&msg_keepalive,
 	6 => \&msg_pushcontent,
 	7 => \&msg_close,
+	8 => \&msg_new,
 );
 
 #

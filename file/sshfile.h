@@ -9,7 +9,7 @@ class SshFile : public BaseFile
 	Q_OBJECT
 
 public:
-	void newFile();
+	BaseFile* newFile(const QByteArray& content);
 	void open();
 	void save();
 	void close();
@@ -42,6 +42,9 @@ protected:
 	QList<Change*> mChangesSinceLastSave;
 	quint64 mChangeBufferSize;
 	int mChangePumpCursor;
+
+private:
+	bool mCreatingNewFile;
 };
 
 #endif // SSHFILE_H

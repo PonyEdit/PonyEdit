@@ -63,6 +63,8 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	restoreState();
 
 	showLocation(mLastLocation);
+
+	ui->fileName->setFocus();
 }
 
 FileDialog::~FileDialog()

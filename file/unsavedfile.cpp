@@ -5,8 +5,9 @@ UnsavedFile::UnsavedFile(const Location& location) :
 {
 }
 
-void UnsavedFile::newFile()
+BaseFile* UnsavedFile::newFile(const QByteArray& /* content */)
 {
+	return this;
 }
 
 void UnsavedFile::open()
@@ -21,5 +22,5 @@ void UnsavedFile::save()
 void UnsavedFile::close()
 {
 	setOpenStatus(Closing);
-	BaseFile::closeCompleted();
+	closeCompleted();
 }

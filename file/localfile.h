@@ -13,7 +13,7 @@ class LocalFile : public BaseFile
 public:
 	LocalFile(const Location& location);
 
-	void newFile();
+	BaseFile* newFile(const QByteArray& content);
 	void open();
 	void save();
 	void close();

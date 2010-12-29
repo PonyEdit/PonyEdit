@@ -34,7 +34,7 @@ public:
 	inline int getLoadingPercent() const { return mLoadingPercent; }
 	inline bool hasUnsavedChanges() const { return mRevision > mLastSavedRevision; }
 
-	virtual void newFile() = 0;
+	virtual BaseFile* newFile(const QByteArray& content) = 0;
 	virtual void open() = 0;
 	virtual void save() = 0;
 	virtual void close() = 0;	// Warning: This call is asynchronous in some kinds of file; eg SshFile.

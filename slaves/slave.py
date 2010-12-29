@@ -166,6 +166,12 @@ def msg_close(buff, params, result):
 	log("Closing buffer.")
 	buff.close()
 
+def msg_new(buff, params, result):
+	name = params['f'];
+	f = open(name, "w");
+	f.write(params['c']);
+	f.close();
+
 #
 #	Message Definitions
 #
@@ -178,7 +184,8 @@ messageDefs = \
 	4: msg_save,
 	5: msg_keepalive,
 	6: msg_pushcontent,
-	7: msg_close
+	7: msg_close,
+	8: msg_new
 }
 
 

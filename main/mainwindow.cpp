@@ -171,7 +171,7 @@ void MainWindow::saveFileAs()
 	{
 		Editor* current = (Editor*)mEditorStack->currentWidget();
 		Location loc = dlg.getNewLocation();
-		BaseFile* file = loc.getFile();
+		BaseFile* file = loc.getFile()->newFile(current->getFile()->getContent());
 
 		if(!file->isClosed())
 			file->open();
@@ -181,15 +181,14 @@ void MainWindow::saveFileAs()
 		mEditorStack->setCurrentWidget(newEditor);
 		mEditors.append(newEditor);
 
-		newEditor->getFile()->fileOpened(current->getFile()->getContent());
-
 		gDispatcher->emitSelectFile(file);
 
 		newEditor->setFocus();
 
 		saveFile();
 
-		current->close();
+		if(current->getFile()->getLocation().getProtocol() == Location::Unsaved)
+			current->close();
 	}
 }
 

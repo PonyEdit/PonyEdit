@@ -396,10 +396,29 @@ void SshRequest_closeFile::success()
 }
 
 
+/////////////////////////////
+//  Message 8: createFile  //
+/////////////////////////////
 
+SshRequest_createFile::SshRequest_createFile(SshFile* file, const QByteArray& content) : SshRequest(8, 0)
+{
+	mFile = file;
+	mContent = content;
+}
 
+void SshRequest_createFile::error(const QString& error)
+{
+	mFile->openError(error);
+}
 
+void SshRequest_createFile::success()
+{
+	mFile->open();
+}
 
-
-
-
+void SshRequest_createFile::packBody(QByteArray* target)
+{
+	const Location& fileLocation = mFile->getLocation();
+	addData(target, 'f', (const char*)fileLocation.getRemotePath().toUtf8());
+	addData(target, 'c', mContent);
+}

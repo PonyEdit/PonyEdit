@@ -9,7 +9,7 @@ class UnsavedFile : public BaseFile
 public:
 	explicit UnsavedFile(const Location& location);
 
-	void newFile();
+	BaseFile* newFile(const QByteArray& content);
 	void open();
 	void save();
 	void close();
