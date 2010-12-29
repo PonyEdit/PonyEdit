@@ -10,8 +10,6 @@
 #include "sitemanager.h"
 #include "main/json.h"
 
-#define SITE_URL "http://localhost/remoted/"
-
 SiteManager::SiteManager()
 {
 	mManager = new QNetworkAccessManager(this);

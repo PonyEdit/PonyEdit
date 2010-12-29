@@ -10,6 +10,7 @@
 #include "main/tools.h"
 #include "main/mainwindow.h"
 #include "website/sitemanager.h"
+#include "website/updatemanager.h"
 #include "syntax/syntaxrule.h"
 #include "main/stringtrie.h"
 
@@ -19,6 +20,8 @@ SiteManager* gSiteManager = NULL;
 int main(int argc, char *argv[])
 {
 	int result = 1;
+
+	UpdateManager* updateManager;
 
 	try
 	{
@@ -48,6 +51,9 @@ int main(int argc, char *argv[])
 		w.show();
 
 		gSiteManager = new SiteManager();
+
+		updateManager = new UpdateManager();
+
 		gSiteManager->checkForUpdates();
 
 		result = a.exec();
@@ -57,6 +63,7 @@ int main(int argc, char *argv[])
 		qDebug() << "FATAL ERROR: " << err;
 	}
 
+	delete updateManager;
 	delete gDispatcher;
 	delete gSiteManager;
 	LocationShared::cleanupIconProvider();

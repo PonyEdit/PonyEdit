@@ -7,6 +7,8 @@
 #ifndef SITEMANAGER_H
 #define SITEMANAGER_H
 
+#define SITE_URL "http://localhost/remoted/"
+
 class SiteManager : public QObject
 {
 	Q_OBJECT
@@ -33,5 +35,7 @@ private:
 	QString mOS;
 
 };
+
+extern SiteManager* gSiteManager;
 
 #endif // SITEMANAGER_H
