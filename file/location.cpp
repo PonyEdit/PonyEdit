@@ -10,9 +10,11 @@
 #include <QObject>
 #include <QDebug>
 #include <QDir>
-
+#include <QSettings>
+#include "main/global.h"
 
 QRegExp gSshServerRegExp("^(?:([^@:]+)@)?([^:]+\\.[^:]+):([^:]+)?");
+QList<Location::Favorite> Location::sFavorites;
 
 
 ///////////////////////////
@@ -378,8 +380,77 @@ bool LocationShared::ensureConnected()
 	return false;
 }
 
+void Location::addToFavorites()
+{
+	if (!isNull())
+	{
+		foreach (Favorite f, sFavorites)
+			if (f.path == getPath())
+				return;
 
+		Favorite f;
+		f.name = getDefaultFavoriteName();
+		f.path = getPath();
+		addSortedFavorite(f);
+		saveFavorites();
+	}
+}
 
+void Location::saveFavorites()
+{
+	QSettings settings;
+
+	int index = 0;
+	settings.beginWriteArray(ntr("favorites"));
+	foreach (Favorite f, sFavorites)
+	{
+		settings.setArrayIndex(index++);
+		settings.setValue(ntr("name"), f.name);
+		settings.setValue(ntr("path"), f.path);
+	}
+	settings.endArray();
+}
+
+void Location::loadFavorites()
+{
+	QSettings settings;
+
+	int count = settings.beginReadArray(ntr("favorites"));
+	for (int i = 0; i < count; i++)
+	{
+		settings.setArrayIndex(i);
+
+		Favorite f;
+		f.name = settings.value(ntr("name")).toString();
+		f.path = settings.value(ntr("path")).toString();
+		addSortedFavorite(f);
+	}
+}
+
+void Location::addSortedFavorite(const Favorite& favorite)
+{
+	int i;
+	for (i = 0; i < sFavorites.length(); i++)
+		if (favorite.name.compare(sFavorites[i].name, Qt::CaseInsensitive) > 0)
+			break;
+	sFavorites.insert(i, favorite);
+}
+
+QString Location::getDefaultFavoriteName()
+{
+	switch (mData->mProtocol)
+	{
+	case Ssh:
+		return QObject::tr("%1 on %2", "eg: ~/ on Server X").arg(getLabel()).arg(mData->mRemoteHost->getName());
+
+	case Unsaved:
+		return QObject::tr("Unsaved");
+
+	case Local:
+	default:
+		return QObject::tr("%1 on local computer").arg(getLabel());
+	}
+}
 
 
 

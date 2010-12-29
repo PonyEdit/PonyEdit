@@ -100,7 +100,8 @@ HEADERS  += \
     syntax/syntaxdefmanager.h \
     file/unsavedfile.h \
     main/stringtrie.h \
-    website/updatemanager.h
+    website/updatemanager.h \
+    main/global.h
 
 OTHER_FILES += \
     slaves/slave.py \

@@ -28,6 +28,7 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	mFileListModel = new QStandardItemModel();
 
 	mSaveAs = saveAs;
+	setWindowTitle(saveAs ? tr("Save As") : tr("Open File"));
 
 	ui->fileList->setModel(mFileListModel);
 	ui->fileList->setShowGrid(false);
@@ -57,6 +58,7 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	connect(gDispatcher, SIGNAL(locationListFailed(QString,QString)), this, SLOT(folderChildrenFailed(QString,QString)), Qt::QueuedConnection);
 	connect(this, SIGNAL(accepted()), this, SLOT(closing()));
 	connect(this, SIGNAL(rejected()), this, SLOT(closing()));
+	connect(ui->addFavoriteButton, SIGNAL(clicked()), this, SLOT(addToFavorites()));
 
 	populateFolderTree();
 
@@ -110,6 +112,16 @@ void FileDialog::populateFolderTree()
 	localComputer->setExpanded(true);
 
 	//
+	//	Favorite Locations; contains a list of bookmarked locations; local or otherwise
+	//
+
+	mFavoriteLocationsBranch = new QTreeWidgetItem(QStringList("Favorite Locations"), 0);
+	mFavoriteLocationsBranch->setIcon(0, QIcon("icons/favorite.png"));
+	ui->directoryTree->addTopLevelItem(mFavoriteLocationsBranch);
+	updateFavorites();
+	mFavoriteLocationsBranch->setExpanded(true);
+
+	//
 	//	Remote Servers; contains a list of pre-configured known servers
 	//
 
@@ -119,22 +131,12 @@ void FileDialog::populateFolderTree()
 	populateRemoteServers();
 	mRemoteServersBranch->setExpanded(true);
 
-	//
-	//	Favorite Locations; contains a list of bookmarked locations; local or otherwise
-	//
-
-	QTreeWidgetItem* favouriteLocations = new QTreeWidgetItem(QStringList("Favorite Locations"), 0);
-	favouriteLocations->setIcon(0, QIcon("icons/favorite.png"));
-	ui->directoryTree->addTopLevelItem(favouriteLocations);
-
 	if (mLastLocation.isNull())
 		mLastLocation = homeLocation;
 }
 
 void FileDialog::populateRemoteServers()
 {
-	//mRemoteServersBranch
-
 	//	Take a quick inventory of the servers in the list now...
 	QMap<SshHost*, bool> currentList;
 	for (int i = 0; i < mRemoteServersBranch->childCount(); i++)
@@ -337,7 +339,7 @@ void FileDialog::keyPressEvent(QKeyEvent *event)
 	else if ((focusWidget() == ui->fileList || focusWidget() == ui->fileName) && (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return))
 	{
 		QList<Location> selections = getSelectedLocations();
-		if(selections.length() > 1 || (selections.length() > 0 && !selections[0].isDirectory()) || selections.length() == 0 && ui->fileName->text().length() > 0)
+		if(selections.length() > 1 || (selections.length() > 0 && !selections[0].isDirectory()) || (selections.length() == 0 && ui->fileName->text().length() > 0))
 			accept();
 		else if(selections.length() > 0 && selections[0].isDirectory())
 			showLocation(selections[0]);
@@ -422,4 +424,47 @@ void FileDialog::closing()
 	settings.setValue("filedialog/geometry", saveGeometry());
 }
 
+void FileDialog::addToFavorites()
+{
+	mCurrentLocation.addToFavorites();
+	updateFavorites();
+}
+
+void FileDialog::updateFavorites()
+{
+	//	take inventory of the favorites in the list now...
+	QMap<QString, bool> currentList;
+	for (int i = 0; i < mFavoriteLocationsBranch->childCount(); i++)
+	{
+		QTreeWidgetItem* child = mFavoriteLocationsBranch->child(i);
+		currentList.insert(child->data(0, DATA_ROLE).toString(), false);
+	}
+
+	//	Go through the list of favorites. Add new entries, mark existing ones as keepers
+	QList<Location::Favorite> favorites = Location::getFavorites();
+	foreach (Location::Favorite f, favorites)
+	{
+		if (currentList.contains(f.path))
+			currentList.insert(f.path, true);
+		else
+		{
+			QTreeWidgetItem* item = new QTreeWidgetItem();
+			item->setText(0, f.name);
+			item->setData(0, DATA_ROLE, QVariant::fromValue<QString>(f.path));
+			mFavoriteLocationsBranch->addChild(item);
+		}
+	}
+
+	//	Remove list entries that don't belong
+	for (int i = 0; i < mFavoriteLocationsBranch->childCount(); i++)
+	{
+		QTreeWidgetItem* child = mFavoriteLocationsBranch->child(i);
+		QString path = child->data(0, DATA_ROLE).toString();
+		if (!currentList.value(path, true))
+		{
+			i--;
+			delete child;
+		}
+	}
+}
 

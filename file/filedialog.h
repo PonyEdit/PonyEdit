@@ -34,6 +34,7 @@ private slots:
 	void populateRemoteServers();
 	void fileListSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 	void closing();
+	void addToFavorites();
 
 private:
 	void keyPressEvent(QKeyEvent *);
@@ -41,12 +42,14 @@ private:
 
 	void populateFolderTree();
 	QTreeWidgetItem* addLocationToTree(QTreeWidgetItem* parent, const Location& location);
+	void updateFavorites();
 
 	Ui::FileDialog *ui;
 	QFileIconProvider mIconProvider;
 	Location mCurrentLocation;
 	QStandardItemModel* mFileListModel;
 	QTreeWidgetItem* mRemoteServersBranch;
+	QTreeWidgetItem* mFavoriteLocationsBranch;
 
 	QMap<QString, QTreeWidgetItem*> mLoadingLocations;
 

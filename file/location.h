@@ -52,6 +52,13 @@ public:
 
 	bool operator==(const Location& other) const;
 
+	struct Favorite { QString path; QString name; };
+	void addToFavorites();
+	QString getDefaultFavoriteName();
+	static void saveFavorites();
+	static void loadFavorites();
+	static inline QList<Favorite>& getFavorites() { return sFavorites; }
+
 private:
 	Location(const Location& parent, const QString& path, Type type, int size, QDateTime lastModified);
 	Location(LocationShared* data);
@@ -63,6 +70,9 @@ private:
 	void fileOpenError(const QString& error);
 
 	LocationShared* mData;
+
+	static void addSortedFavorite(const Favorite& favorite);
+	static QList<Favorite> sFavorites;
 };
 
 class LocationShared
