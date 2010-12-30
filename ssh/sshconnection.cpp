@@ -49,8 +49,6 @@ void SshConnection::connect(const char* host, int port)
 	if (sock < -1)
 		throw(QString("Failed to create a socket!"));
 
-	qDebug() << "x";
-
 	// Disable SIGPIPE on this socket
 #ifndef Q_OS_WIN
 	int set = 1;
@@ -73,8 +71,6 @@ void SshConnection::connect(const char* host, int port)
 	if (mSocket < 0)
 		throw(QString("Failed to connect to host"));
 
-	qDebug() << "y";
-
 	//	Create an SSH2 session
 	mSession = libssh2_session_init();
 	libssh2_session_flag(mSession, LIBSSH2_FLAG_SIGPIPE, 1);
@@ -83,8 +79,6 @@ void SshConnection::connect(const char* host, int port)
 		disconnect();
 		throw(QString("Failed to set up SSH session"));
 	}
-
-	qDebug() << "z";
 
 	//	Fetch the remote host's fingerprint
 	mServerFingerprint = QByteArray(libssh2_hostkey_hash(mSession, LIBSSH2_HOSTKEY_HASH_SHA1), 20);
@@ -132,8 +126,12 @@ SshConnection::AuthMethods SshConnection::getAuthenticationMethods(const char* u
 
 bool SshConnection::authenticatePassword(const char* username, const char* password)
 {
-	if (libssh2_userauth_password(mSession, username, password))
+	int rc = libssh2_userauth_password(mSession, username, password);
+	if (rc == LIBSSH2_ERROR_AUTHENTICATION_FAILED)
 		return false;
+
+	if (rc)
+		throw(QObject::tr("Connection dropped!"));
 
 	createChannel();
 	return true;
