@@ -15,6 +15,8 @@
 #include "file/favoritelocationdialog.h"
 
 QRegExp gSshServerRegExp("^(?:([^@:]+)@)?([^:]+\\.[^:]+):([^:]+)?");
+QRegExp gLocalPathSeparators("/");
+QRegExp gSshPathSeparators("[/:]");
 QList<Location::Favorite> Location::sFavorites;
 
 
@@ -216,17 +218,6 @@ void LocationShared::setPath(const QString &path)
 	while (mPath.endsWith('/') && mPath.length() > 1)
 		mPath.truncate(mPath.length() - 1);
 
-	//	Work out what to label this path...
-	int lastSlashIndex = mPath.lastIndexOf('/');
-	mLabel = mPath.mid(lastSlashIndex + 1);
-	if (mLabel.length() == 0 && mPath.length() > 0)
-		mLabel = "Root (/)";
-	else if(mPath == "New File")
-	{
-		mPath = "";
-		mLabel = QString("New File %1").arg(gOpenFileManager.newFileNumber());
-	}
-
 	//	Work out what kind of path this is. Default if no pattern matches, is local.
 	if (gSshServerRegExp.indexIn(mPath) > -1)
 	{
@@ -240,6 +231,17 @@ void LocationShared::setPath(const QString &path)
 		mProtocol = Location::Unsaved;
 	else
 		mProtocol = Location::Local;
+
+	//	Work out what to label this path...
+	int lastSeparatorIndex = mPath.lastIndexOf(mProtocol == Location::Ssh ? gSshPathSeparators : gLocalPathSeparators);
+	mLabel = mPath.mid(lastSeparatorIndex + 1);
+	if (mLabel.length() == 0 && mPath.length() > 0)
+		mLabel = "Root (/)";
+	else if(mPath == "New File")
+	{
+		mPath = "";
+		mLabel = QString("New File %1").arg(gOpenFileManager.newFileNumber());
+	}
 }
 
 void LocationShared::localLoadSelf()
@@ -447,14 +449,14 @@ QString Location::getDefaultFavoriteName()
 	switch (mData->mProtocol)
 	{
 	case Ssh:
-		return QObject::tr("%1 on %2", "eg: ~/ on Server X").arg(getLabel()).arg(mData->mRemoteHost->getName());
+		return QObject::tr("%1 on %2", "eg: ~/ on Server X").arg(getLabel()).arg(mData->mRemoteHostName);
 
 	case Unsaved:
 		return QObject::tr("Unsaved");
 
 	case Local:
 	default:
-		return QObject::tr("%1 on local computer").arg(getLabel());
+		return QObject::tr("%1 (local)").arg(getLabel());
 	}
 }
 
