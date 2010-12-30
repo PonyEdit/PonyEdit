@@ -37,7 +37,6 @@ private slots:
 	void closing();
 	void addToFavorites();
 	void directoryTreeContextMenu(QPoint point);
-	void deleteFavorite();
 
 private:
 	void keyPressEvent(QKeyEvent *);
@@ -55,7 +54,6 @@ private:
 	QTreeWidgetItem* mFavoriteLocationsBranch;
 
 	QMap<QString, QTreeWidgetItem*> mLoadingLocations;
-	QTreeView* mDirectoryTree;
 
 	static Location mLastLocation;
 

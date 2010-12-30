@@ -404,6 +404,19 @@ void Location::addToFavorites()
 	}
 }
 
+void Location::deleteFavorite(const QString& path)
+{
+	for (int i = 0; i < sFavorites.length(); i++)
+	{
+		if (sFavorites[i].path == path)
+		{
+			sFavorites.removeAt(i);
+			saveFavorites();
+			return;
+		}
+	}
+}
+
 void Location::saveFavorites()
 {
 	QSettings settings;

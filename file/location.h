@@ -55,6 +55,7 @@ public:
 	struct Favorite { QString path; QString name; };
 	void addToFavorites();
 	QString getDefaultFavoriteName();
+	static void deleteFavorite(const QString& path);
 	static void saveFavorites();
 	static void loadFavorites();
 	static inline QList<Favorite>& getFavorites() { return sFavorites; }

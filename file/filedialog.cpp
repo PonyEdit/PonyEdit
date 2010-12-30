@@ -10,7 +10,6 @@
 #include <QSettings>
 #include <QMessageBox>
 #include <QMenu>
-#include <QVBoxLayout>
 
 #define DATA_ROLE (Qt::UserRole)
 #define EXPANDED_ROLE (Qt::UserRole + 1)
@@ -27,11 +26,6 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
     ui(new Ui::FileDialog)
 {
 	ui->setupUi(this);
-
-	/*QVBoxLayout* layout = new QVBoxLayout(this);
-	ui->directoryTreePlaceholder->
-	mDirectoryTree = new QTreeView(this);
-	ui->directoryTreePlaceholder->addChild(mDirectoryTree);*/
 
 	mFileListModel = new QStandardItemModel();
 
@@ -490,23 +484,28 @@ void FileDialog::directoryTreeContextMenu(QPoint point)
 	QTreeWidgetItem* item = ui->directoryTree->itemAt(point);
 	if (!item) return;
 	int nodeType = item->data(0, TYPE_ROLE).toInt();
-	qDebug() << nodeType;
+
+	point = ui->directoryTree->mapToGlobal(point);
+
 	switch (nodeType)
 	{
 		case NODETYPE_FAVORITE:
 		{
+			//	Get the favorite item's path
+			QString path = item->data(0, DATA_ROLE).toString();
+
 			//	Show a context menu appropriate to favorites
 			QMenu* contextMenu = new QMenu(this);
-			contextMenu->addAction(tr("Delete Favorite"), this, SLOT(deleteFavorite()));
-			contextMenu->popup(ui->directoryTree->mapToGlobal(point));
+			QAction* deleteAction = contextMenu->addAction(tr("Delete Favorite"));
+			QAction* selectedAction = contextMenu->exec(point);
+
+			if (selectedAction == deleteAction)
+			{
+				Location::deleteFavorite(path);
+				updateFavorites();
+			}
+
 			break;
 		}
 	}
 }
-
-void FileDialog::deleteFavorite()
-{
-	qDebug() << "Delete favorite!";
-}
-
-
