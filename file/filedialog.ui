@@ -105,7 +105,7 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QTreeWidget" name="directoryTree">
+     <widget class="DirectoryTree" name="directoryTree">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -245,6 +245,13 @@ border: 1px solid grey;
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DirectoryTree</class>
+   <extends>QTreeWidget</extends>
+   <header location="global">file/directorytree.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

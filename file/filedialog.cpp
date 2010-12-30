@@ -9,6 +9,8 @@
 #include <QKeyEvent>
 #include <QSettings>
 #include <QMessageBox>
+#include <QMenu>
+#include <QVBoxLayout>
 
 #define DATA_ROLE (Qt::UserRole)
 #define EXPANDED_ROLE (Qt::UserRole + 1)
@@ -26,6 +28,11 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 {
 	ui->setupUi(this);
 
+	/*QVBoxLayout* layout = new QVBoxLayout(this);
+	ui->directoryTreePlaceholder->
+	mDirectoryTree = new QTreeView(this);
+	ui->directoryTreePlaceholder->addChild(mDirectoryTree);*/
+
 	mFileListModel = new QStandardItemModel();
 
 	mSaveAs = saveAs;
@@ -34,7 +41,7 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	ui->fileList->setModel(mFileListModel);
 	ui->fileList->setShowGrid(false);
 	ui->fileList->verticalHeader()->hide();
-	if(mSaveAs)
+	if (mSaveAs)
 		ui->fileList->setSelectionMode(QAbstractItemView::SingleSelection);
 	ui->fileList->setSelectionBehavior(QAbstractItemView::SelectRows);
 	ui->fileList->setWordWrap(false);
@@ -47,8 +54,11 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	sizes[1] = 300;
 	ui->splitter->setSizes(sizes);
 
+	ui->directoryTree->setContextMenuPolicy(Qt::CustomContextMenu);
+
+	connect(ui->directoryTree, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(directoryTreeContextMenu(QPoint)));
 	connect(ui->directoryTree, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(folderTreeItemExpanded(QTreeWidgetItem*)));
-	connect(ui->directoryTree, SIGNAL(itemSelectionChanged()), this, SLOT(directoryTreeSelected()));
+	connect(ui->directoryTree, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(directoryTreeSelected(QTreeWidgetItem*)));
 	connect(ui->upLevelButton, SIGNAL(clicked()), this, SLOT(upLevel()));
 	connect(ui->fileList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(fileDoubleClicked(QModelIndex)));
 	connect(gDispatcher, SIGNAL(sshServersUpdated()), this, SLOT(populateRemoteServers()), Qt::QueuedConnection);
@@ -308,32 +318,23 @@ void FileDialog::showLocation(const Location& location)
 	mCurrentLocation.asyncGetChildren();
 }
 
-void FileDialog::directoryTreeSelected()
+void FileDialog::directoryTreeSelected(QTreeWidgetItem* item)
 {
-	QList<QTreeWidgetItem*> items = ui->directoryTree->selectedItems();
-	if (items.length() >= 1)
+	int nodeType = item->data(0, TYPE_ROLE).toInt();
+	switch (nodeType)
 	{
-		int nodeType = items[0]->data(0, TYPE_ROLE).toInt();
-		switch (nodeType)
+		case NODETYPE_LOCATION:
 		{
-			case NODETYPE_LOCATION:
-			{
-				Location location = items[0]->data(0, DATA_ROLE).value<Location>();
-				if (!location.isNull())
-					showLocation(location);
-				break;
-			}
-
-			case NODETYPE_FAVORITE:
-			{
-				showLocation(Location(items[0]->data(0, DATA_ROLE).toString()));
-				break;
-			}
+			Location location = item->data(0, DATA_ROLE).value<Location>();
+			if (!location.isNull())
+				showLocation(location);
+			break;
 		}
 
-		if (nodeType == NODETYPE_LOCATION)
+		case NODETYPE_FAVORITE:
 		{
-
+			showLocation(Location(item->data(0, DATA_ROLE).toString()));
+			break;
 		}
 	}
 }
@@ -483,4 +484,29 @@ void FileDialog::updateFavorites()
 		}
 	}
 }
+
+void FileDialog::directoryTreeContextMenu(QPoint point)
+{
+	QTreeWidgetItem* item = ui->directoryTree->itemAt(point);
+	if (!item) return;
+	int nodeType = item->data(0, TYPE_ROLE).toInt();
+	qDebug() << nodeType;
+	switch (nodeType)
+	{
+		case NODETYPE_FAVORITE:
+		{
+			//	Show a context menu appropriate to favorites
+			QMenu* contextMenu = new QMenu(this);
+			contextMenu->addAction(tr("Delete Favorite"), this, SLOT(deleteFavorite()));
+			contextMenu->popup(ui->directoryTree->mapToGlobal(point));
+			break;
+		}
+	}
+}
+
+void FileDialog::deleteFavorite()
+{
+	qDebug() << "Delete favorite!";
+}
+
 

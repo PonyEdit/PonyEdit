@@ -103,7 +103,8 @@ HEADERS  += \
     main/stringtrie.h \
     website/updatemanager.h \
     main/global.h \
-    file/favoritelocationdialog.h
+    file/favoritelocationdialog.h \
+    file/directorytree.h
 
 OTHER_FILES += \
     slaves/slave.py \

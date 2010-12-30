@@ -6,6 +6,7 @@
 #include <QFileIconProvider>
 #include <QStandardItemModel>
 #include <QTreeWidgetItem>
+#include <QMouseEvent>
 
 #include "location.h"
 
@@ -28,13 +29,15 @@ private slots:
 	void folderTreeItemExpanded(QTreeWidgetItem* item);
 	void folderChildrenLoaded(const QList<Location>& children, const QString& locationPath);
 	void folderChildrenFailed(const QString& error, const QString& locationPath);
-	void directoryTreeSelected();
+	void directoryTreeSelected(QTreeWidgetItem*);
 	void upLevel();
 	void fileDoubleClicked(QModelIndex index);
 	void populateRemoteServers();
 	void fileListSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 	void closing();
 	void addToFavorites();
+	void directoryTreeContextMenu(QPoint point);
+	void deleteFavorite();
 
 private:
 	void keyPressEvent(QKeyEvent *);
@@ -52,6 +55,7 @@ private:
 	QTreeWidgetItem* mFavoriteLocationsBranch;
 
 	QMap<QString, QTreeWidgetItem*> mLoadingLocations;
+	QTreeView* mDirectoryTree;
 
 	static Location mLastLocation;
 
