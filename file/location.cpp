@@ -12,6 +12,7 @@
 #include <QDir>
 #include <QSettings>
 #include "main/global.h"
+#include "file/favoritelocationdialog.h"
 
 QRegExp gSshServerRegExp("^(?:([^@:]+)@)?([^:]+\\.[^:]+):([^:]+)?");
 QList<Location::Favorite> Location::sFavorites;
@@ -391,8 +392,13 @@ void Location::addToFavorites()
 		Favorite f;
 		f.name = getDefaultFavoriteName();
 		f.path = getPath();
-		addSortedFavorite(f);
-		saveFavorites();
+
+		FavoriteLocationDialog dialog(NULL, &f);
+		if (dialog.exec() == QDialog::Accepted)
+		{
+			addSortedFavorite(f);
+			saveFavorites();
+		}
 	}
 }
 
