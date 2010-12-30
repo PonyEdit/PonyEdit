@@ -16,6 +16,7 @@
 #define HOST_ROLE (Qt::UserRole + 3)
 
 #define NODETYPE_LOCATION 1
+#define NODETYPE_FAVORITE 2
 
 Location FileDialog::mLastLocation;
 
@@ -313,12 +314,26 @@ void FileDialog::directoryTreeSelected()
 	if (items.length() >= 1)
 	{
 		int nodeType = items[0]->data(0, TYPE_ROLE).toInt();
+		switch (nodeType)
+		{
+			case NODETYPE_LOCATION:
+			{
+				Location location = items[0]->data(0, DATA_ROLE).value<Location>();
+				if (!location.isNull())
+					showLocation(location);
+				break;
+			}
+
+			case NODETYPE_FAVORITE:
+			{
+				showLocation(Location(items[0]->data(0, DATA_ROLE).toString()));
+				break;
+			}
+		}
 
 		if (nodeType == NODETYPE_LOCATION)
 		{
-			Location location = items[0]->data(0, DATA_ROLE).value<Location>();
-			if (!location.isNull())
-				showLocation(location);
+
 		}
 	}
 }
@@ -451,6 +466,7 @@ void FileDialog::updateFavorites()
 			QTreeWidgetItem* item = new QTreeWidgetItem();
 			item->setText(0, f.name);
 			item->setData(0, DATA_ROLE, QVariant::fromValue<QString>(f.path));
+			item->setData(0, TYPE_ROLE, QVariant(NODETYPE_FAVORITE));
 			mFavoriteLocationsBranch->addChild(item);
 		}
 	}

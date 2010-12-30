@@ -449,7 +449,7 @@ QString Location::getDefaultFavoriteName()
 	switch (mData->mProtocol)
 	{
 	case Ssh:
-		return QObject::tr("%1 on %2", "eg: ~/ on Server X").arg(getLabel()).arg(mData->mRemoteHostName);
+		return QObject::tr("%1 on %2", "eg: ~ on Server X").arg(getLabel()).arg(mData->mRemoteHostName);
 
 	case Unsaved:
 		return QObject::tr("Unsaved");

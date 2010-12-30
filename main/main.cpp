@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
 		gDispatcher = new GlobalDispatcher();
 
 		Tools::loadServers();
+		Location::loadFavorites();
 		Tools::initialize();
 
 		QApplication a(argc, argv);
