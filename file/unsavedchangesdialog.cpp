@@ -8,6 +8,7 @@
 #include <QVBoxLayout>
 #include "openfiletreeview.h"
 #include "openfilemanager.h"
+#include "filedialog.h"
 
 UnsavedChangesDialog::UnsavedChangesDialog(const QList<BaseFile*>& files) :
 	QDialog(0)
@@ -52,7 +53,18 @@ void UnsavedChangesDialog::buttonClicked(QAbstractButton* button)
 		//	Save
 		foreach (BaseFile* file, selectedFiles)
 		{
-			file->save();
+			if(file->getLocation().getProtocol() == Location::Unsaved)
+			{
+				FileDialog dlg(this, true);
+				if(dlg.exec())
+				{
+					Location loc = dlg.getNewLocation();
+					loc.getFile()->newFile(file->getContent());
+				}
+			}
+			else
+				file->save();
+
 			file->close();
 		}
 	}
