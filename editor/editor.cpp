@@ -125,7 +125,10 @@ void Editor::fileClosed()
 	delete this;
 }
 
-
+void Editor::setFocus()
+{
+	mEditor->setFocus();
+}
 
 
 

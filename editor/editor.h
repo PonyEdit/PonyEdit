@@ -28,6 +28,7 @@ public slots:
 	void openStatusChanged(int openStatus);
 	void fileOpenProgress(int percent);
 	void find(const QString& text, bool backwards);
+	void setFocus();
 
 private:
 	void showLoading();

@@ -18,6 +18,7 @@ void UpdateManager::updateFound(const QByteArray& /* version */)
 	msgBox.setText(tr("There is an update available."));
 	msgBox.setInformativeText(tr("You can download an updated version from:<br/><a href='%1'>%2</a>").arg(url, url));
 	msgBox.setStandardButtons(QMessageBox::Ok);
+	msgBox.setDefaultButton(QMessageBox::Ok);
 
 	msgBox.exec();
 }

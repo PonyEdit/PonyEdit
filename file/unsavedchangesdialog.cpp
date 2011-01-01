@@ -28,6 +28,7 @@ UnsavedChangesDialog::UnsavedChangesDialog(const QList<BaseFile*>& files) :
 
 	mButtonBox = new QDialogButtonBox(this);
 	mButtonBox->setStandardButtons(QDialogButtonBox::Save | QDialogButtonBox::Discard | QDialogButtonBox::Cancel);
+	mButtonBox->button(QDialogButtonBox::Save)->setDefault(true);
 	layout->addWidget(mButtonBox);
 
 	foreach (BaseFile* file, files)
