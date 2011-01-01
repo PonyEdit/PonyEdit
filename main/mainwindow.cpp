@@ -100,7 +100,7 @@ void MainWindow::createToolbar()
 
 void MainWindow::newFile()
 {
-	QString path = "New File";
+	QString path = "";
 	Location location(path);
 	BaseFile* file = location.getFile();
 

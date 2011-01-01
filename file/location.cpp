@@ -146,7 +146,14 @@ const Location& Location::getDirectory() const
 const Location& Location::getParent() const
 {
 	if (mData->mParent.isNull())
-		mData->mParent = Location(getParentPath());
+	{
+		QString path = getParentPath();
+		// If the path is empty, it's a New File, so just return a copy of this Location
+		if(path.isEmpty())
+			mData->mParent = Location(*this);
+		else
+			mData->mParent = Location(path);
+	}
 
 	return mData->mParent;
 }
@@ -235,13 +242,10 @@ void LocationShared::setPath(const QString &path)
 	//	Work out what to label this path...
 	int lastSeparatorIndex = mPath.lastIndexOf(mProtocol == Location::Ssh ? gSshPathSeparators : gLocalPathSeparators);
 	mLabel = mPath.mid(lastSeparatorIndex + 1);
-	if (mLabel.length() == 0 && mPath.length() > 0)
+	if (mPath == "/")
 		mLabel = "Root (/)";
-	else if(mPath == "New File")
-	{
-		mPath = "";
+	else if(mPath.isEmpty())
 		mLabel = QString("New File %1").arg(gOpenFileManager.newFileNumber());
-	}
 }
 
 void LocationShared::localLoadSelf()
