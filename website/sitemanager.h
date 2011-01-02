@@ -7,7 +7,7 @@
 #ifndef SITEMANAGER_H
 #define SITEMANAGER_H
 
-#define SITE_URL "http://localhost/remoted/"
+#define SITE_URL "http://ponyedit.com/"
 
 class SiteManager : public QObject
 {
