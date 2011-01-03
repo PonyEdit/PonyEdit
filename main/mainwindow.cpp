@@ -48,8 +48,8 @@ MainWindow::MainWindow(QWidget *parent)
 	createToolbar();
 
 	createFileMenu();
+	createEditMenu();
 	createViewMenu();
-	createSearchMenu();
 	createToolsMenu();
 	createHelpMenu();
 
@@ -85,6 +85,7 @@ void MainWindow::createSearchBar()
 	mSearchBarWrapper->setTitleBarWidget(new QWidget(this));
 	connect(mSearchBar, SIGNAL(closeRequested()), mSearchBarWrapper, SLOT(hide()));
 	connect(mSearchBar, SIGNAL(find(QString,bool)), this, SLOT(find(QString,bool)));
+	connect(mSearchBar, SIGNAL(replace(QString,QString,bool)), this, SLOT(replace(QString,QString,bool)));
 	mSearchBarWrapper->setObjectName("Search Bar");
 }
 
@@ -275,11 +276,12 @@ void MainWindow::createViewMenu()
 	}
 }
 
-void MainWindow::createSearchMenu()
+void MainWindow::createEditMenu()
 {
-	QMenu *searchMenu = new QMenu(tr("&Search"), this);
-	menuBar()->addMenu(searchMenu);
-	searchMenu->addAction(tr("&Show Search Bar"), this, SLOT(showSearchBar()), QKeySequence::Find);
+	QMenu *editMenu = new QMenu(tr("&Edit"), this);
+	menuBar()->addMenu(editMenu);
+
+	editMenu->addAction(tr("&Find/Replace"), this, SLOT(showSearchBar()), QKeySequence::Find);
 }
 
 void MainWindow::createToolsMenu()
@@ -318,6 +320,12 @@ void MainWindow::find(const QString& text, bool backwards)
 {
 	Editor* current = (Editor*)mEditorStack->currentWidget();
 	if (current) current->find(text, backwards);
+}
+
+void MainWindow::replace(const QString& findText, const QString& replaceText, bool all)
+{
+	Editor* current = (Editor*)mEditorStack->currentWidget();
+	if (current) current->replace(findText, replaceText, all);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

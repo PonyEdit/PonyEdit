@@ -120,6 +120,39 @@ void Editor::find(const QString& text, bool backwards)
 	mEditor->find(text, (QTextDocument::FindFlags)(backwards ? QTextDocument::FindBackward : 0));
 }
 
+void Editor::replace(const QString &findText, const QString &replaceText, bool all)
+{
+	if(findText.length() <= 0)
+		return;
+
+	if(all)
+	{
+		QString content = mEditor->toPlainText();
+
+		content.replace(findText, replaceText);
+
+		mEditor->setPlainText(content);
+	}
+	else
+	{
+		QTextCursor selection = mEditor->textCursor();
+
+		if(selection.selectionStart() >= selection.selectionEnd())
+			return;
+
+		QString content = mEditor->toPlainText();
+		QString selectedText = content.mid(selection.selectionStart(), selection.selectionEnd() - selection.selectionStart());
+
+		if(selectedText != findText)
+			return;
+
+		content.remove(selection.selectionStart(), selection.selectionEnd() - selection.selectionStart());
+		content.insert(selection.selectionStart(), replaceText);
+
+		mEditor->setPlainText(content);
+	}
+}
+
 void Editor::fileClosed()
 {
 	delete this;

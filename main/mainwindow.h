@@ -33,6 +33,7 @@ public slots:
 	void fileSelected(BaseFile* file);
 	void showSearchBar();
 	void find(const QString& text, bool backwards);
+	void replace(const QString& findText, const QString& replaceText, bool all);
 
 	void options();
 	void about();
@@ -53,7 +54,7 @@ private:
 	void createToolbar();
 	void createFileMenu();
 	void createViewMenu();
-	void createSearchMenu();
+	void createEditMenu();
 	void createToolsMenu();
 	void createHelpMenu();
 	void createSearchBar();

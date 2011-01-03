@@ -18,10 +18,14 @@ public:
 signals:
 	void closeRequested();
 	void find(const QString& text, bool backwards);
+	void replace(const QString& findText, const QString& replaceText, bool all);
 
 private slots:
 	void findNext();
 	void findPrev();
+	void replaceCurrent();
+	void replaceCurrentAndFind();
+	void replaceAll();
 
 protected:
 	void keyPressEvent(QKeyEvent *event);

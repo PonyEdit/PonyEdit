@@ -11,6 +11,9 @@ SearchBar::SearchBar(QWidget *parent) :
 	connect(ui->closeButton, SIGNAL(clicked()), this, SIGNAL(closeRequested()));
 	connect(ui->prevButton, SIGNAL(clicked()), this, SLOT(findPrev()));
 	connect(ui->nextButton, SIGNAL(clicked()), this, SLOT(findNext()));
+	connect(ui->replaceButton, SIGNAL(clicked()), this, SLOT(replaceCurrent()));
+	connect(ui->replaceFindButton, SIGNAL(clicked()), this, SLOT(replaceCurrentAndFind()));
+	connect(ui->replaceAllButton, SIGNAL(clicked()), this, SLOT(replaceAll()));
 }
 
 SearchBar::~SearchBar()
@@ -49,3 +52,18 @@ void SearchBar::findPrev()
 	emit find(ui->find->text(), true);
 }
 
+void SearchBar::replaceCurrent()
+{
+	emit replace(ui->find->text(), ui->replace->text(), false);
+}
+
+void SearchBar::replaceCurrentAndFind()
+{
+	emit replace(ui->find->text(), ui->replace->text(), false);
+	emit find(ui->find->text(), false);
+}
+
+void SearchBar::replaceAll()
+{
+	emit replace(ui->find->text(), ui->replace->text(), true);
+}
