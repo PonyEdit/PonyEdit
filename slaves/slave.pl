@@ -281,9 +281,28 @@ sub msg_new
 {
 	my( $buff, $params, $result ) = @_;
 
-	open( NEW_FILE, '>' . $params->{'f'} );
+	my $opened = open( NEW_FILE, '>' . $params->{'f'} );
+	if( !$opened )
+	{
+		die( "Could not save the file to that location." );
+	}
+
 	print NEW_FILE $params->{'c'};
 	close( NEW_FILE );
+}
+
+#	new directory
+sub msg_new_dir
+{
+	my( $buff, $params, $result ) = @_;
+
+	my $name = $params->{'l'} . '/' . $params->{'n'};
+
+	$created = mkdir( $name );
+	if( !$created )
+	{
+		die( "Could not create directory." );
+	}
 }
 
 #
@@ -300,6 +319,7 @@ our %messageDefs =
 	6 => \&msg_pushcontent,
 	7 => \&msg_close,
 	8 => \&msg_new,
+	9 => \&msg_new_dir
 );
 
 #

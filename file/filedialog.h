@@ -37,6 +37,7 @@ private slots:
 	void closing();
 	void addToFavorites();
 	void directoryTreeContextMenu(QPoint point);
+	void createNewFolder();
 
 private:
 	void keyPressEvent(QKeyEvent *);

@@ -422,3 +422,29 @@ void SshRequest_createFile::packBody(QByteArray* target)
 	addData(target, 'f', (const char*)fileLocation.getRemotePath().toUtf8());
 	addData(target, 'c', mContent);
 }
+
+//////////////////////////////////
+//  Message 9: createDirectory  //
+//////////////////////////////////
+
+SshRequest_createDirectory::SshRequest_createDirectory(const Location& location, QString dirName) : SshRequest(9, 0)
+{
+	mLocation = location;
+	mDirName = dirName;
+}
+
+void SshRequest_createDirectory::error(const QString& error)
+{
+	mLocation.childLoadError(error);
+}
+
+void SshRequest_createDirectory::success()
+{
+	mLocation.asyncGetChildren(true);
+}
+
+void SshRequest_createDirectory::packBody(QByteArray* target)
+{
+	addData(target, 'l', (const char*)mLocation.getRemotePath().toUtf8());
+	addData(target, 'n', (const char*)mDirName.toUtf8());
+}

@@ -168,10 +168,23 @@ def msg_close(buff, params, result):
 
 def msg_new(buff, params, result):
 	name = params['f'];
-	f = open(name, "w");
+
+	try:
+		f = open(name, "w");
+	except:
+		raise Exception("Could not save the file to that location.");
+
 	f.write(params['c']);
 	f.close();
 
+def msg_new_dir(buff, params, result):
+	name = params['l'] + '/' + params['n'];
+
+	try:
+		os.mkdir(name);
+	except OSError, e:
+		log(e.args);
+		raise Exception("Could not create directory.");
 #
 #	Message Definitions
 #
@@ -185,7 +198,8 @@ messageDefs = \
 	5: msg_keepalive,
 	6: msg_pushcontent,
 	7: msg_close,
-	8: msg_new
+	8: msg_new,
+	9: msg_new_dir
 }
 
 

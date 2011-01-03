@@ -210,4 +210,23 @@ private:
 	QByteArray mContent;
 };
 
+
+//////////////////////////////////
+//  Message 9: createDirectory  //
+//////////////////////////////////
+
+class SshRequest_createDirectory : public SshRequest
+{
+public:
+	SshRequest_createDirectory(const Location& location, QString dirName);
+	virtual void packBody(QByteArray* target);
+
+	virtual void error(const QString& error);
+	virtual void success();
+
+private:
+	Location mLocation;
+	QString mDirName;
+};
+
 #endif // SSHREQUEST_H

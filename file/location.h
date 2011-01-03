@@ -15,6 +15,7 @@ class Location
 	friend class LocationShared;
 	friend class SshRequest_ls;
 	friend class SshRequest_open;
+	friend class SshRequest_createDirectory;
 
 public:
 	enum Type { Unknown = 0, File = 1, Directory = 2 };
@@ -48,7 +49,7 @@ public:
 
 	BaseFile* getFile();
 
-	void asyncGetChildren();
+	void asyncGetChildren(bool forceRefresh = false);
 
 	bool operator==(const Location& other) const;
 
@@ -59,6 +60,8 @@ public:
 	static void saveFavorites();
 	static void loadFavorites();
 	static inline QList<Favorite>& getFavorites() { return sFavorites; }
+
+	void createNewDirectory(QString name);
 
 private:
 	Location(const Location& parent, const QString& path, Type type, int size, QDateTime lastModified);

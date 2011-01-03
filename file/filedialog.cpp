@@ -3,6 +3,7 @@
 #include "main/tools.h"
 #include "ssh/sshhost.h"
 #include "main/globaldispatcher.h"
+#include "newfolderdialog.h"
 
 #include <QDir>
 #include <QDebug>
@@ -64,6 +65,7 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	connect(this, SIGNAL(accepted()), this, SLOT(closing()));
 	connect(this, SIGNAL(rejected()), this, SLOT(closing()));
 	connect(ui->addFavoriteButton, SIGNAL(clicked()), this, SLOT(addToFavorites()));
+	connect(ui->newFolderButton, SIGNAL(clicked()), this, SLOT(createNewFolder()));
 
 	populateFolderTree();
 
@@ -507,5 +509,15 @@ void FileDialog::directoryTreeContextMenu(QPoint point)
 
 			break;
 		}
+	}
+}
+
+void FileDialog::createNewFolder()
+{
+	NewFolderDialog dlg;
+	if(dlg.exec())
+	{
+		mCurrentLocation.createNewDirectory(dlg.folderName());
+		showLocation(mCurrentLocation);
 	}
 }

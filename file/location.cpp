@@ -271,6 +271,7 @@ void LocationShared::localLoadListing()
 	}
 
 	mListLoaded = true;
+	mLoading = false;
 	emitListLoadedSignal();
 }
 
@@ -284,9 +285,9 @@ void LocationShared::emitListLoadError(const QString& error)
 	gDispatcher->emitLocationListFailed(error, mPath);
 }
 
-void Location::asyncGetChildren()
+void Location::asyncGetChildren(bool forceRefresh)
 {
-	if (mData->mListLoaded)
+	if (mData->mListLoaded && !forceRefresh)
 		mData->emitListLoadedSignal();
 	else if (!mData->mLoading)
 	{
@@ -348,6 +349,7 @@ void Location::sshChildLoadResponse(const QList<Location>& children)
 {
 	mData->mChildren = children;
 	mData->mListLoaded = true;
+	mData->mLoading = false;
 	mData->emitListLoadedSignal();
 }
 
@@ -477,7 +479,30 @@ QString Location::getDefaultFavoriteName()
 	}
 }
 
+void Location::createNewDirectory(QString name)
+{
+	QDir currentDir;
+	SshRemoteController* controller;
+	Location currentLocDir = this->getDirectory();
+	switch(mData->mProtocol)
+	{
+	case Ssh:
+		controller = mData->mRemoteHost->getController();
+		controller->sendRequest(new SshRequest_createDirectory(Location(*this), name));
+		break;
 
+	case Local:
+		currentDir.setPath(currentLocDir.getPath());
+		currentDir.mkdir(name);
+		break;
+
+	case Unsaved:
+	default:
+		break;
+	}
+
+	currentLocDir.mData->mListLoaded = false;
+}
 
 
 

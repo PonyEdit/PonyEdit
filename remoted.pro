@@ -62,7 +62,8 @@ SOURCES += \
     file/unsavedfile.cpp \
     main/stringtrie.cpp \
     website/updatemanager.cpp \
-    file/favoritelocationdialog.cpp
+    file/favoritelocationdialog.cpp \
+    file/newfolderdialog.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -104,7 +105,8 @@ HEADERS  += \
     website/updatemanager.h \
     main/global.h \
     file/favoritelocationdialog.h \
-    file/directorytree.h
+    file/directorytree.h \
+    file/newfolderdialog.h
 
 OTHER_FILES += \
     slaves/slave.py \
@@ -453,7 +455,8 @@ FORMS += \
     ssh/sshconnectingdialog.ui \
     ssh/serverconfigdlg.ui \
     ssh/passworddialog.ui \
-    file/favoritelocationdialog.ui
+    file/favoritelocationdialog.ui \
+    file/newfolderdialog.ui
 
 RESOURCES += \
 	resources.qrc
