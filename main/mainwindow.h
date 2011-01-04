@@ -32,6 +32,7 @@ public slots:
 	void closeFile();
 	void fileSelected(BaseFile* file);
 	void showSearchBar();
+	void showAdvancedSearch();
 	void find(const QString& text, bool backwards);
 	void replace(const QString& findText, const QString& replaceText, bool all);
 

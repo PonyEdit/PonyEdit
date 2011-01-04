@@ -59,8 +59,8 @@ void SearchBar::replaceCurrent()
 
 void SearchBar::replaceCurrentAndFind()
 {
-	emit replace(ui->find->text(), ui->replace->text(), false);
-	emit find(ui->find->text(), false);
+	replaceCurrent();
+	findNext();
 }
 
 void SearchBar::replaceAll()

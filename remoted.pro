@@ -63,7 +63,8 @@ SOURCES += \
     main/stringtrie.cpp \
     website/updatemanager.cpp \
     file/favoritelocationdialog.cpp \
-    file/newfolderdialog.cpp
+    file/newfolderdialog.cpp \
+    main/advancedsearchdialog.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -106,7 +107,8 @@ HEADERS  += \
     main/global.h \
     file/favoritelocationdialog.h \
     file/directorytree.h \
-    file/newfolderdialog.h
+    file/newfolderdialog.h \
+    main/advancedsearchdialog.h
 
 OTHER_FILES += \
     slaves/slave.py \
@@ -456,7 +458,8 @@ FORMS += \
     ssh/serverconfigdlg.ui \
     ssh/passworddialog.ui \
     file/favoritelocationdialog.ui \
-    file/newfolderdialog.ui
+    file/newfolderdialog.ui \
+    main/advancedsearchdialog.ui
 
 RESOURCES += \
 	resources.qrc

@@ -20,6 +20,7 @@
 #include "options/optionsdialog.h"
 #include "main/globaldispatcher.h"
 #include "main/searchbar.h"
+#include "advancedsearchdialog.h"
 #include "file/unsavedchangesdialog.h"
 #include "file/openfilemanager.h"
 #include "syntax/syntaxdefmanager.h"
@@ -244,6 +245,16 @@ void MainWindow::createFileMenu()
 						QKeySequence::Quit);
 }
 
+void MainWindow::createEditMenu()
+{
+	QMenu *editMenu = new QMenu(tr("&Edit"), this);
+	menuBar()->addMenu(editMenu);
+
+	editMenu->addAction(tr("&Find/Replace"), this, SLOT(showSearchBar()), QKeySequence::Find);
+
+	editMenu->addAction(tr("Advanced F&ind/Replace"), this, SLOT(showAdvancedSearch()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_F));
+}
+
 void MainWindow::createViewMenu()
 {
 	QMenu* viewMenu = new QMenu(tr("&View"), this);
@@ -276,14 +287,6 @@ void MainWindow::createViewMenu()
 	}
 }
 
-void MainWindow::createEditMenu()
-{
-	QMenu *editMenu = new QMenu(tr("&Edit"), this);
-	menuBar()->addMenu(editMenu);
-
-	editMenu->addAction(tr("&Find/Replace"), this, SLOT(showSearchBar()), QKeySequence::Find);
-}
-
 void MainWindow::createToolsMenu()
 {
 	QMenu *toolsMenu = new QMenu(tr("&Tools"), this);
@@ -314,6 +317,12 @@ void MainWindow::showSearchBar()
 {
 	mSearchBarWrapper->show();
 	mSearchBar->takeFocus();
+}
+
+void MainWindow::showAdvancedSearch()
+{
+	AdvancedSearchDialog dlg(this);
+	dlg.exec();
 }
 
 void MainWindow::find(const QString& text, bool backwards)
