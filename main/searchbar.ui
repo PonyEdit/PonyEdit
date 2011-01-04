@@ -25,7 +25,7 @@
   <property name="windowTitle">
    <string>Search</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" rowminimumheight="0,0">
+  <layout class="QGridLayout" name="gridLayout">
    <property name="topMargin">
     <number>10</number>
    </property>
@@ -33,7 +33,7 @@
     <number>0</number>
    </property>
    <property name="horizontalSpacing">
-    <number>-1</number>
+    <number>6</number>
    </property>
    <property name="verticalSpacing">
     <number>0</number>
@@ -48,17 +48,17 @@
    <item row="0" column="1">
     <widget class="QLineEdit" name="find"/>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>Replace :</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="2" column="1">
     <widget class="QLineEdit" name="replace"/>
    </item>
-   <item row="1" column="2">
+   <item row="2" column="2">
     <widget class="QPushButton" name="replaceButton">
      <property name="minimumSize">
       <size>
@@ -71,7 +71,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="5">
+   <item row="2" column="5">
     <widget class="QPushButton" name="replaceFindButton">
      <property name="minimumSize">
       <size>
@@ -84,7 +84,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="6">
+   <item row="2" column="6" colspan="2">
     <widget class="QPushButton" name="replaceAllButton">
      <property name="minimumSize">
       <size>
@@ -141,34 +141,18 @@
      </widget>
     </widget>
    </item>
-   <item row="0" column="6">
-    <widget class="QWidget" name="widget_2" native="true">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>27</height>
-      </size>
+   <item row="0" column="7">
+    <widget class="QToolButton" name="closeButton">
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
      </property>
-     <widget class="QToolButton" name="closeButton">
-      <property name="geometry">
-       <rect>
-        <x>70</x>
-        <y>0</y>
-        <width>26</width>
-        <height>26</height>
-       </rect>
-      </property>
-      <property name="layoutDirection">
-       <enum>Qt::LeftToRight</enum>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="../resources.qrc">
-        <normaloff>:/icons/cross.png</normaloff>:/icons/cross.png</iconset>
-      </property>
-     </widget>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../resources.qrc">
+       <normaloff>:/icons/cross.png</normaloff>:/icons/cross.png</iconset>
+     </property>
     </widget>
    </item>
   </layout>
