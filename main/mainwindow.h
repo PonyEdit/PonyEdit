@@ -33,8 +33,14 @@ public slots:
 	void fileSelected(BaseFile* file);
 	void showSearchBar();
 	void showAdvancedSearch();
+
 	void find(const QString& text, bool backwards);
+	void find(const QString& text, bool backwards, bool caseSensitive, bool useRegexp);
+	void globalFind(const QString& text, const QString& filePattern, bool backwards, bool caseSensitive, bool useRegexp);
+
 	void replace(const QString& findText, const QString& replaceText, bool all);
+	void replace(const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegexp, bool all);
+	void globalReplace(const QString& findText, const QString& replaceText, const QString& filePattern, bool caseSensitive, bool useRegexp, bool all);
 
 	void options();
 	void about();
@@ -60,6 +66,9 @@ private:
 	void createHelpMenu();
 	void createSearchBar();
 	void restoreState();
+
+	int find(Editor* editor, const QString& text, bool backwards, bool caseSensitive, bool useRegexp);
+	int replace(Editor* editor, const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegexp, bool all);
 
 	Editor* getCurrentEditor();
 

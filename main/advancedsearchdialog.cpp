@@ -10,6 +10,8 @@ AdvancedSearchDialog::AdvancedSearchDialog(QWidget *parent) :
 	ui->context->addItem(tr("All Files"));
 	ui->context->addItem(tr("Current File"));
 
+	ui->caseSensitive->setChecked(true);
+
 	ui->filePattern->setText("*");
 
 	connect(ui->nextButton, SIGNAL(clicked()), this, SLOT(findNext()));
@@ -30,7 +32,7 @@ void AdvancedSearchDialog::findNext()
 	if(ui->context->currentIndex() == 0)
 		emit globalFind(ui->find->text(), ui->filePattern->text(), false, ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked());
 	else
-		emit find(ui->find->text(), ui->filePattern->text(), false, ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked());
+		emit find(ui->find->text(), false, ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked());
 }
 
 void AdvancedSearchDialog::findPrevious()
@@ -38,7 +40,7 @@ void AdvancedSearchDialog::findPrevious()
 	if(ui->context->currentIndex() == 0)
 		emit globalFind(ui->find->text(), ui->filePattern->text(), true, ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked());
 	else
-		emit find(ui->find->text(), ui->filePattern->text(), true, ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked());
+		emit find(ui->find->text(), true, ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked());
 
 }
 
@@ -47,7 +49,7 @@ void AdvancedSearchDialog::replaceCurrent()
 	if(ui->context->currentIndex() == 0)
 		emit globalReplace(ui->find->text(), ui->replace->text(), ui->filePattern->text(), ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked(), false);
 	else
-		emit replace(ui->find->text(), ui->replace->text(), ui->filePattern->text(), ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked(), false);
+		emit replace(ui->find->text(), ui->filePattern->text(), ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked(), false);
 }
 
 void AdvancedSearchDialog::replaceCurrentAndFind()
@@ -61,5 +63,5 @@ void AdvancedSearchDialog::replaceAll()
 	if(ui->context->currentIndex() == 0)
 		emit globalReplace(ui->find->text(), ui->replace->text(), ui->filePattern->text(), ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked(), true);
 	else
-		emit replace(ui->find->text(), ui->replace->text(), ui->filePattern->text(), ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked(), true);
+		emit replace(ui->find->text(), ui->filePattern->text(), ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked(), true);
 }

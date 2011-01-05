@@ -9,6 +9,8 @@
 #include "file/location.h"
 #include "file/basefile.h"
 
+#include "main/mainwindow.h"
+
 #include "editor/codeeditor.h"
 
 class Editor : public QStackedWidget
@@ -27,8 +29,8 @@ public:
 public slots:
 	void openStatusChanged(int openStatus);
 	void fileOpenProgress(int percent);
-	void find(const QString& text, bool backwards);
-	void replace(const QString& findText, const QString& replaceText, bool all);
+	int find(const QString& text, bool backwards, bool caseSensitive, bool useRegex);
+	int replace(const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegex, bool all);
 	void setFocus();
 
 private:

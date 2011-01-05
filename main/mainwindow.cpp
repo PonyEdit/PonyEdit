@@ -322,19 +322,135 @@ void MainWindow::showSearchBar()
 void MainWindow::showAdvancedSearch()
 {
 	AdvancedSearchDialog dlg(this);
+
+	connect(&dlg, SIGNAL(find(QString,bool,bool,bool)), this, SLOT(find(QString,bool,bool,bool)));
+	connect(&dlg, SIGNAL(globalFind(QString,QString,bool,bool,bool)), this, SLOT(globalFind(QString,QString,bool,bool,bool)));
+
+	connect(&dlg, SIGNAL(replace(QString,QString,bool,bool,bool)), this, SLOT(replace(QString,QString,bool,bool,bool)));
+	connect(&dlg, SIGNAL(globalReplace(QString,QString,QString,bool,bool,bool)), this, SLOT(globalReplace(QString,QString,QString,bool,bool,bool)));
+
 	dlg.exec();
 }
 
-void MainWindow::find(const QString& text, bool backwards)
+void MainWindow::find(const QString &text, bool backwards)
 {
 	Editor* current = (Editor*)mEditorStack->currentWidget();
-	if (current) current->find(text, backwards);
+	int found;
+	if (current)
+		found = find((Editor*)current, text, backwards, false, false);
 }
 
-void MainWindow::replace(const QString& findText, const QString& replaceText, bool all)
+void MainWindow::find(const QString &text, bool backwards, bool caseSensitive, bool useRegexp)
 {
 	Editor* current = (Editor*)mEditorStack->currentWidget();
-	if (current) current->replace(findText, replaceText, all);
+	int found;
+	if (current)
+		found = find(current, text, backwards, caseSensitive, useRegexp);
+}
+
+void MainWindow::globalFind(const QString &text, const QString &filePattern, bool backwards, bool caseSensitive, bool useRegexp)
+{
+	int found = 0;
+
+	Editor* current;
+	BaseFile* file;
+	Location loc;
+
+#ifdef Q_OS_WIN
+	QRegExp regexp(filePattern, Qt::CaseInsensitive, QRegExp::Wildcard);
+#else
+	QRegExp regexp(filePattern, Qt::CaseInsensitive, QRegExp::WildcardUnix);
+#endif
+
+	for(int ii = mEditorStack->currentIndex(); (backwards)?(ii >= 0):(ii < mEditorStack->count()); (backwards)?(ii--):(ii++))
+	{
+		current = (Editor*)mEditorStack->widget(ii);
+		if(current)
+		{
+			file = current->getFile();
+			loc = file->getLocation();
+
+			if(regexp.exactMatch(loc.getDisplayPath()) || regexp.exactMatch(loc.getLabel()))
+			{
+				gDispatcher->emitSelectFile(file);
+				current->setFocus();
+
+				found += find(current, text, backwards, caseSensitive, useRegexp);
+				if(found)
+					break;
+			}
+		}
+	}
+}
+
+int MainWindow::find(Editor *editor, const QString &text, bool backwards, bool caseSensitive, bool useRegexp)
+{
+	return editor->find(text, backwards, caseSensitive, useRegexp);
+}
+
+void MainWindow::replace(const QString &findText, const QString &replaceText, bool all)
+{
+	Editor* current = (Editor*)mEditorStack->currentWidget();
+	int replaced;
+	if (current)
+		replaced = replace(current, findText, replaceText, false, false, all);
+}
+
+void MainWindow::replace(const QString &findText, const QString &replaceText, bool caseSensitive, bool useRegexp, bool all)
+{
+	Editor* current = (Editor*)mEditorStack->currentWidget();
+	int replaced;
+	if (current)
+		replaced = replace(current, findText, replaceText, caseSensitive, useRegexp, all);
+}
+
+void MainWindow::globalReplace(const QString &findText, const QString &replaceText, const QString &filePattern, bool caseSensitive, bool useRegexp, bool all)
+{
+	int replaced = 0;
+
+	Editor* current;
+	BaseFile* file;
+	Location loc;
+
+#ifdef Q_OS_WIN
+	QRegExp regexp(filePattern, Qt::CaseInsensitive, QRegExp::Wildcard);
+#else
+	QRegExp regexp(filePattern, Qt::CaseInsensitive, QRegExp::WildcardUnix);
+#endif
+
+	int ii;
+	if(all)
+		ii = 0;
+	else
+		ii = mEditorStack->currentIndex();
+
+	for(; ii < mEditorStack->count(); ii++)
+	{
+		current = (Editor*)mEditorStack->widget(ii);
+		if(current)
+		{
+			file = current->getFile();
+			loc = file->getLocation();
+
+			if(regexp.exactMatch(loc.getDisplayPath()) || regexp.exactMatch(loc.getLabel()))
+			{
+				if(!all)
+				{
+					gDispatcher->emitSelectFile(file);
+					current->setFocus();
+				}
+
+				replaced += replace(current, findText, replaceText, caseSensitive, useRegexp, all);
+				if(replaced && !all)
+					break;
+			}
+		}
+	}
+}
+
+int MainWindow::replace(Editor *editor, const QString &findText, const QString &replaceText, bool caseSensitive, bool useRegexp, bool all)
+{
+	return editor->replace(findText, replaceText, caseSensitive, useRegexp, all);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
