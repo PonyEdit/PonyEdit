@@ -31,6 +31,14 @@ public slots:
 	void saveFileAs();
 	void closeFile();
 	void fileSelected(BaseFile* file);
+
+	void undo();
+	void redo();
+	void cut();
+	void copy();
+	void paste();
+	void selectAll();
+
 	void showSearchBar();
 	void showAdvancedSearch();
 

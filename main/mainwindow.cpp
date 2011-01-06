@@ -250,8 +250,22 @@ void MainWindow::createEditMenu()
 	QMenu *editMenu = new QMenu(tr("&Edit"), this);
 	menuBar()->addMenu(editMenu);
 
-	editMenu->addAction(tr("&Find/Replace"), this, SLOT(showSearchBar()), QKeySequence::Find);
+	editMenu->addAction(tr("&Undo"), this, SLOT(undo()), QKeySequence::Undo);
+	editMenu->addAction(tr("&Redo"), this, SLOT(redo()), QKeySequence::Redo);
 
+	editMenu->addSeparator();
+
+	editMenu->addAction(tr("&Cut"), this, SLOT(cut()), QKeySequence::Cut);
+	editMenu->addAction(tr("C&opy"), this, SLOT(copy()), QKeySequence::Copy);
+	editMenu->addAction(tr("&Paste"), this, SLOT(paste()), QKeySequence::Paste);
+
+	editMenu->addSeparator();
+
+	editMenu->addAction(tr("Select &All"), this, SLOT(selectAll()), QKeySequence::SelectAll);
+
+	editMenu->addSeparator();
+
+	editMenu->addAction(tr("&Find/Replace"), this, SLOT(showSearchBar()), QKeySequence::Find);
 	editMenu->addAction(tr("Advanced F&ind/Replace"), this, SLOT(showAdvancedSearch()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_F));
 }
 
@@ -312,6 +326,18 @@ void MainWindow::showStatusMessage(QString message)
 {
 	mStatusLine->setText(message);
 }
+
+void MainWindow::undo(){}
+
+void MainWindow::redo(){}
+
+void MainWindow::cut(){}
+
+void MainWindow::copy(){}
+
+void MainWindow::paste(){}
+
+void MainWindow::selectAll(){}
 
 void MainWindow::showSearchBar()
 {

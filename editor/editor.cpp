@@ -207,7 +207,8 @@ int Editor::replace(const QString &findText, const QString &replaceText, bool ca
 		content.insert(selection.selectionStart(), formattedText);
 	}
 
-	mEditor->setPlainText(content);
+	mEditor->selectAll();
+	mEditor->insertPlainText(content);
 
 	return 1;
 }
