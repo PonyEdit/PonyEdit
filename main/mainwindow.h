@@ -50,6 +50,9 @@ public slots:
 	void replace(const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegexp, bool all);
 	void globalReplace(const QString& findText, const QString& replaceText, const QString& filePattern, bool caseSensitive, bool useRegexp, bool all);
 
+	void previousWindow();
+	void nextWindow();
+
 	void options();
 	void about();
 
@@ -71,6 +74,7 @@ private:
 	void createViewMenu();
 	void createEditMenu();
 	void createToolsMenu();
+	void createWindowMenu();
 	void createHelpMenu();
 	void createSearchBar();
 	void restoreState();

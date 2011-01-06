@@ -52,6 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
 	createEditMenu();
 	createViewMenu();
 	createToolsMenu();
+	createWindowMenu();
 	createHelpMenu();
 
 	connect(gDispatcher, SIGNAL(generalErrorMessage(QString)), this, SLOT(showErrorMessage(QString)), Qt::QueuedConnection);
@@ -217,7 +218,7 @@ void MainWindow::options()
 
 void MainWindow::about()
 {
-	QMessageBox::about(this, tr("About Remoted"),
+	QMessageBox::about(this, tr("About PonyEdit"),
 					 tr("<p>It's awesome.</p><p>The End.</p>"));
 }
 
@@ -306,7 +307,16 @@ void MainWindow::createToolsMenu()
 	QMenu *toolsMenu = new QMenu(tr("&Tools"), this);
 	menuBar()->addMenu(toolsMenu);
 
-	toolsMenu->addAction(tr("&Options..."), this, SLOT(options()));
+	toolsMenu->addAction(tr("&Options..."), this, SLOT(options()), QKeySequence::Preferences);
+}
+
+void MainWindow::createWindowMenu()
+{
+	QMenu *windowMenu = new QMenu(tr("&Window"), this);
+	menuBar()->addMenu(windowMenu);
+
+	windowMenu->addAction(tr("&Previous Window"), this, SLOT(previousWindow()), QKeySequence::PreviousChild);
+	windowMenu->addAction(tr("&Next Window"), this, SLOT(nextWindow()), QKeySequence::NextChild);
 }
 
 void MainWindow::createHelpMenu()
@@ -552,3 +562,28 @@ void MainWindow::updateSyntaxSelection()
 		mSyntaxMenu->setEnabled(false);
 }
 
+void MainWindow::nextWindow()
+{
+	Editor *next;
+
+	if(mEditorStack->currentIndex() + 1 == mEditorStack->count())
+		next = (Editor*)mEditorStack->widget(0);
+	else
+		next = (Editor*)mEditorStack->widget(mEditorStack->currentIndex() + 1);
+
+	gDispatcher->emitSelectFile(next->getFile());
+	next->setFocus();
+}
+
+void MainWindow::previousWindow()
+{
+	Editor *prev;
+
+	if(mEditorStack->currentIndex() == 0)
+		prev = (Editor*)mEditorStack->widget(mEditorStack->count() - 1);
+	else
+		prev = (Editor*)mEditorStack->widget(mEditorStack->currentIndex() - 1);
+
+	gDispatcher->emitSelectFile(prev->getFile());
+	prev->setFocus();
+}
