@@ -1,3 +1,5 @@
+#include <QDebug>
+
 #include "openfilemanager.h"
 #include "unsavedchangesdialog.h"
 #include "basefile.h"
@@ -37,7 +39,7 @@ const QList<BaseFile*> OpenFileManager::getOpenFiles() const
 
 bool OpenFileManager::closeFiles(const QList<BaseFile*>& files, bool /* force */)
 {
-	QList<BaseFile*> unsavedFiles = getUnsavedFiles();
+	QList<BaseFile*> unsavedFiles = getUnsavedFiles(files);
 	if (unsavedFiles.length() > 0)
 	{
 		UnsavedChangesDialog dialog(unsavedFiles);
@@ -60,10 +62,10 @@ bool OpenFileManager::unsavedChanges() const
 	return false;
 }
 
-QList<BaseFile*> OpenFileManager::getUnsavedFiles() const
+QList<BaseFile*> OpenFileManager::getUnsavedFiles(const QList<BaseFile*>& files) const
 {
 	QList<BaseFile*> result;
-	foreach (BaseFile* file, mOpenFiles)
+	foreach (BaseFile* file, files)
 		if (file->hasUnsavedChanges())
 			result.append(file);
 	return result;

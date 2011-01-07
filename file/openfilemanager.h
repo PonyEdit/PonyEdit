@@ -20,7 +20,7 @@ public:
 	const QList<BaseFile*> getOpenFiles() const;         // Returns a list of all the currently opened files
 
 	bool unsavedChanges() const;                         // Returns true if any opened file has unsaved changes
-	QList<BaseFile*> getUnsavedFiles() const;            // Returns a list of files with unsaved changes
+	QList<BaseFile*> getUnsavedFiles(const QList<BaseFile*>& files) const;            // Returns a list of files with unsaved changes
 
 	bool closeFiles(const QList<BaseFile*>& files, bool force = false);   // Closes the list of files. If force unspecified or false, it confirms closure of unsaved files.
 	bool closeAllFiles() { return closeFiles(mOpenFiles); }
