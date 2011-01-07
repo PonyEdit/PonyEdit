@@ -6,6 +6,8 @@ NewFolderDialog::NewFolderDialog(QWidget *parent) :
     ui(new Ui::NewFolderDialog)
 {
     ui->setupUi(this);
+
+	ui->folderName->setFocus();
 }
 
 NewFolderDialog::~NewFolderDialog()
