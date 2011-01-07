@@ -8,6 +8,12 @@ SearchBar::SearchBar(QWidget *parent) :
 {
 	ui->setupUi(this);
 
+#ifdef Q_OS_MAC
+	ui->replaceButton->setMinimumHeight(32);
+	ui->replaceFindButton->setMinimumHeight(32);
+	ui->replaceAllButton->setMinimumHeight(32);
+#endif
+
 	connect(ui->closeButton, SIGNAL(clicked()), this, SIGNAL(closeRequested()));
 	connect(ui->prevButton, SIGNAL(clicked()), this, SLOT(findPrev()));
 	connect(ui->nextButton, SIGNAL(clicked()), this, SLOT(findNext()));
