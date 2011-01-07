@@ -39,6 +39,8 @@ public slots:
 	void paste();
 	void selectAll();
 
+	void showGotoLine();
+
 	void showSearchBar();
 	void showAdvancedSearch();
 

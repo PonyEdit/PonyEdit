@@ -20,6 +20,7 @@
 #include "options/optionsdialog.h"
 #include "main/globaldispatcher.h"
 #include "main/searchbar.h"
+#include "gotolinedialog.h"
 #include "advancedsearchdialog.h"
 #include "file/unsavedchangesdialog.h"
 #include "file/openfilemanager.h"
@@ -267,7 +268,12 @@ void MainWindow::createEditMenu()
 	editMenu->addSeparator();
 
 	editMenu->addAction(tr("&Find/Replace"), this, SLOT(showSearchBar()), QKeySequence::Find);
-	editMenu->addAction(tr("Advanced F&ind/Replace"), this, SLOT(showAdvancedSearch()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_F));
+	editMenu->addAction(tr("Advanced F&ind/Replace..."), this, SLOT(showAdvancedSearch()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_F));
+#ifdef Q_OS_MAC
+	editMenu->addAction(tr("&Go To Line..."), this, SLOT(showGotoLine()), QKeySequence(Qt::CTRL + Qt::Key_L));
+#else
+	editMenu->addAction(tr("&Go To Line..."), this, SLOT(showGotoLine()), QKeySequence(Qt::CTRL + Qt::Key_G));
+#endif
 }
 
 void MainWindow::createViewMenu()
@@ -348,6 +354,17 @@ void MainWindow::copy(){}
 void MainWindow::paste(){}
 
 void MainWindow::selectAll(){}
+
+void MainWindow::showGotoLine()
+{
+	GotoLineDialog dlg(this);
+	if(dlg.exec())
+	{
+		Editor* current = (Editor*)mEditorStack->currentWidget();
+		if(current)
+			current->gotoLine(dlg.lineNumber());
+	}
+}
 
 void MainWindow::showSearchBar()
 {

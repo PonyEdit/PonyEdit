@@ -213,6 +213,16 @@ int Editor::replace(const QString &findText, const QString &replaceText, bool ca
 	return 1;
 }
 
+void Editor::gotoLine(int lineNumber)
+{
+	QTextCursor cursor = mEditor->textCursor();
+
+	cursor.movePosition(QTextCursor::Start);
+	cursor.movePosition(QTextCursor::NextBlock, QTextCursor::MoveAnchor, lineNumber - 1);
+
+	mEditor->setTextCursor(cursor);
+}
+
 void Editor::fileClosed()
 {
 	delete this;

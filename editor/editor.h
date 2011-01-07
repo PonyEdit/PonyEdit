@@ -26,6 +26,8 @@ public:
 	const Location& getLocation() const { return mFile->getLocation(); }
 	void fileClosed();				//	Called when the file this editor is attached to, is closed.
 
+	void gotoLine(int lineNumber);
+
 public slots:
 	void openStatusChanged(int openStatus);
 	void fileOpenProgress(int percent);
