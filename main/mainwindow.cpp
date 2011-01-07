@@ -32,6 +32,8 @@ MainWindow::MainWindow(QWidget *parent)
 	mUnsavedChangesDialog = NULL;
 	mCurrentSyntaxMenuItem = NULL;
 
+	setWindowTitle(tr("PonyEdit"));
+
 	mEditorStack = new QStackedWidget(this);
 	mEditorStack->setMinimumWidth(200);
 	setCentralWidget(mEditorStack);
