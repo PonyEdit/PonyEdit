@@ -104,6 +104,7 @@ LocationShared::LocationShared()
 	mSize = -1;
 	mSelfLoaded = false;
 	mListLoaded = false;
+	mLoading = false;
 	mRemoteHost = NULL;
 }
 
@@ -291,6 +292,7 @@ void Location::asyncGetChildren(bool forceRefresh)
 		mData->emitListLoadedSignal();
 	else if (!mData->mLoading)
 	{
+		mData->mListLoaded = false;
 		mData->mLoading = true;
 		switch (mData->mProtocol)
 		{

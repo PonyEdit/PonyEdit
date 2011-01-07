@@ -414,6 +414,8 @@ void SshRequest_createFile::error(const QString& error)
 void SshRequest_createFile::success()
 {
 	mFile->open();
+	Location dir = mFile->getDirectory();
+	dir.asyncGetChildren(true);
 }
 
 void SshRequest_createFile::packBody(QByteArray* target)
