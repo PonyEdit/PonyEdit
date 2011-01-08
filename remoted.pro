@@ -44,7 +44,6 @@ SOURCES += \
     main/main.cpp \
 	main/json.cpp \
     options/optionsdialog.cpp \
-    ssh/sshconnectingdialog.cpp \
     ssh/sshconnection.cpp \
     ssh/sshhost.cpp \
     ssh/sshremotecontroller.cpp \
@@ -93,7 +92,6 @@ HEADERS  += \
     ssh/sshremotecontroller.h \
     ssh/sshhost.h \
     ssh/sshconnection.h \
-    ssh/sshconnectingdialog.h \
     ssh/serverconfigdlg.h \
     syntax/syntaxrule.h \
     syntax/syntaxhighlighter.h \
@@ -461,7 +459,6 @@ FORMS += \
     file/filedialog.ui \
     main/searchbar.ui \
     options/optionsdialog.ui \
-    ssh/sshconnectingdialog.ui \
     ssh/serverconfigdlg.ui \
     file/favoritelocationdialog.ui \
     file/newfolderdialog.ui \
@@ -472,4 +469,3 @@ FORMS += \
 
 RESOURCES += \
 	resources.qrc
-

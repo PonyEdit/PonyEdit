@@ -3,7 +3,6 @@
 #include "main/tools.h"
 #include <QMessageBox>
 #include "main/globaldispatcher.h"
-#include "ssh/sshconnectingdialog.h"
 #include <QDebug>
 #include "connectionstatuswidget.h"
 #include "main/dialogwrapper.h"
