@@ -15,5 +15,7 @@
         <file>icons/filechanged.png</file>
         <file>icons/disconnected.png</file>
         <file>icons/resync.png</file>
+        <file>icons/question.png</file>
+        <file>icons/warning.png</file>
     </qresource>
 </RCC>

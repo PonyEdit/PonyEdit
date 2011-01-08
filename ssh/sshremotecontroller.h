@@ -2,45 +2,43 @@
 #define SSHREMOTECONTROLLER_H
 
 #include <QString>
-#include <QObject>
 #include <QByteArray>
+#include <QDialogButtonBox>
+
+#include "remoteconnection.h"
 
 class SshControllerThread;
 class SshRequest;
 class SshHost;
+class PasswordInput;
 
 #define	KEEPALIVE_TIMEOUT 60000	/* 60 seconds */
 
-class SshRemoteController : public QObject
+class SshRemoteController : public RemoteConnection
 {
-	Q_OBJECT
-
 public:
-	enum Status { NotConnected, Connecting, WaitingForPassword, Negotiating, UploadingSlave, StartingSlave, PushingBuffers, Connected, Error };
-	static const char* sStatusStrings[];
-
 	enum ScriptType { AutoDetect, Python, Perl, NumScriptTypes };
 	static const char* sScriptTypeLabels[];
 
 	SshRemoteController(SshHost* host);
 	~SshRemoteController();
 
+	QString getName();
+
 	void abortConnection();
 	void sendRequest(SshRequest* request);
 	const QString& getHomeDirectory() const;
 
-	int getLastStatusChange() const;
-	Status getStatus() const;
-	static const char* getStatusString(Status s) { return sStatusStrings[s]; }
-	const QString& getError() const;
+	static void hostkeyWarnDialog(ConnectionStatusWidget* widget, RemoteConnection* connection, QWidget* target);
+	static bool hostkeyWarnCallback(ConnectionStatusWidget* widget, RemoteConnection* connection, QDialogButtonBox::ButtonRole buttonRole);
 
-	void emitStateChanged() { emit stateChanged(); }
-
-signals:
-	void stateChanged();
+	static void passwordInputDialog(ConnectionStatusWidget* widget, RemoteConnection* connection, QWidget* target);
+	static bool passwordInputCallback(ConnectionStatusWidget* widget, RemoteConnection* connection, QDialogButtonBox::ButtonRole buttonRole);
 
 private:
 	SshControllerThread* mThread;
+	PasswordInput* mPasswordInput;
+	bool mNewHostKey;
 };
 
 #endif // SSHREMOTECONTROLLER_H

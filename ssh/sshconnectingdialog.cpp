@@ -3,7 +3,7 @@
 
 #include "sshconnectingdialog.h"
 #include "ui_sshconnectingdialog.h"
-#include "passworddialog.h"
+#include "passwordinput.h"
 #include "sshremotecontroller.h"
 #include "sshhost.h"
 
@@ -37,7 +37,7 @@ void SshConnectingDialog::showEvent(QShowEvent *event)
 
 void SshConnectingDialog::tick()
 {
-	int latestStatus = mController->getLastStatusChange();
+	/*int latestStatus = mController->getLastStatusChange();
 	if (latestStatus > mLastStatusChange)
 	{
 		mLastStatusChange = latestStatus;
@@ -62,13 +62,13 @@ void SshConnectingDialog::tick()
 			ui->buttonBox->button(QDialogButtonBox::Cancel)->setText("OK");
 			mTimer->stop();
 		}
-	}
+	}*/
 }
 
 void SshConnectingDialog::cancel()
 {
 	ui->buttonBox->setEnabled(false);
-	mController->abortConnection();
+//	mController->abortConnection();
 	reject();
 }
 

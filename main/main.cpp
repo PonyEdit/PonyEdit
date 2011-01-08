@@ -25,8 +25,6 @@ int main(int argc, char *argv[])
 
 	try
 	{
-		SshConnection::initializeLib();
-
 #ifndef Q_OS_LINUX
 		QStringList substitutions;
 		substitutions.append("consolas");
@@ -42,6 +40,8 @@ int main(int argc, char *argv[])
 		QCoreApplication::setApplicationName("RemoteEditor");
 		QCoreApplication::setApplicationVersion("0.9-prealpha");
 		gDispatcher = new GlobalDispatcher();
+
+		SshConnection::initializeLib();
 
 		Tools::loadServers();
 		Location::loadFavorites();

@@ -44,7 +44,6 @@ SOURCES += \
     main/main.cpp \
 	main/json.cpp \
     options/optionsdialog.cpp \
-    ssh/passworddialog.cpp \
     ssh/sshconnectingdialog.cpp \
     ssh/sshconnection.cpp \
     ssh/sshhost.cpp \
@@ -65,7 +64,10 @@ SOURCES += \
     file/favoritelocationdialog.cpp \
     file/newfolderdialog.cpp \
     main/advancedsearchdialog.cpp \
-    main/gotolinedialog.cpp
+    main/gotolinedialog.cpp \
+    ssh/remoteconnection.cpp \
+    ssh/connectionstatuswidget.cpp \
+    ssh/passwordinput.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -93,7 +95,6 @@ HEADERS  += \
     ssh/sshconnection.h \
     ssh/sshconnectingdialog.h \
     ssh/serverconfigdlg.h \
-    ssh/passworddialog.h \
     syntax/syntaxrule.h \
     syntax/syntaxhighlighter.h \
     syntax/syntaxdefinition.h \
@@ -110,7 +111,11 @@ HEADERS  += \
     file/directorytree.h \
     file/newfolderdialog.h \
     main/advancedsearchdialog.h \
-    main/gotolinedialog.h
+    main/gotolinedialog.h \
+    ssh/remoteconnection.h \
+    ssh/connectionstatuswidget.h \
+    main/dialogwrapper.h \
+    ssh/passwordinput.h
 
 OTHER_FILES += \
     slaves/slave.py \
@@ -458,11 +463,13 @@ FORMS += \
     options/optionsdialog.ui \
     ssh/sshconnectingdialog.ui \
     ssh/serverconfigdlg.ui \
-    ssh/passworddialog.ui \
     file/favoritelocationdialog.ui \
     file/newfolderdialog.ui \
     main/advancedsearchdialog.ui \
-    main/gotolinedialog.ui
+    main/gotolinedialog.ui \
+    ssh/connectionstatuswidget.ui \
+    ssh/passwordinput.ui
 
 RESOURCES += \
 	resources.qrc
+

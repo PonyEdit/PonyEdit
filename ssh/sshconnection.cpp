@@ -14,6 +14,11 @@
 
 #include <QDebug>
 #include <QTime>
+#include <QSettings>
+#include <QMessageBox>
+#include "main/global.h"
+
+QMap<QString, QByteArray> SshConnection::sKnownHostKeys;
 
 void SshConnection::initializeLib()
 {
@@ -26,6 +31,17 @@ void SshConnection::initializeLib()
 	//	Initialize libssh2
 	if (libssh2_init(0) != 0)
 		throw(QString("Failed to initialize SSH library!"));
+
+	//	Load any saved hostkey pairs
+	QSettings settings;
+	int count = settings.beginReadArray(ntr("hostkeys"));
+	for (int i = 0; i < count; i++)
+	{
+		settings.setArrayIndex(i);
+		QString hostname = settings.value(ntr("hostname")).toString();
+		QByteArray key = settings.value(ntr("hostkey")).toByteArray();
+		sKnownHostKeys.insert(hostname, key);
+	}
 }
 
 SshConnection::SshConnection()
@@ -42,12 +58,12 @@ void SshConnection::connect(const char* host, int port)
 	//	nslookup the hostname
 	struct hostent* server = gethostbyname(host);
 	if (server == NULL)
-		throw(QString("Failed to find host"));
+		throw(QObject::tr("Failed to find host"));
 
 	//	Create a socket & connect
 	int sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock < -1)
-		throw(QString("Failed to create a socket!"));
+		throw(QObject::tr("Failed to create a socket!"));
 
 	// Disable SIGPIPE on this socket
 #ifndef Q_OS_WIN
@@ -69,7 +85,7 @@ void SshConnection::connect(const char* host, int port)
 		tryAddress++;
 	}
 	if (mSocket < 0)
-		throw(QString("Failed to connect to host"));
+		throw(QObject::tr("Failed to connect to host"));
 
 	//	Create an SSH2 session
 	mSession = libssh2_session_init();
@@ -77,7 +93,7 @@ void SshConnection::connect(const char* host, int port)
 	if (libssh2_session_startup(mSession, mSocket))
 	{
 		disconnect();
-		throw(QString("Failed to set up SSH session"));
+		throw(QObject::tr("Failed to set up SSH session"));
 	}
 
 	//	Fetch the remote host's fingerprint
@@ -148,15 +164,15 @@ bool SshConnection::authenticateAgent(const char* username)
 	{
 		//	Initialize SSH agent code
 		agent = libssh2_agent_init(mSession);
-		if (!agent) throw("Failed to call libssh2_agent_init!");
+		if (!agent) throw(QObject::tr("Failed to call libssh2_agent_init!"));
 
 		//	Connect to the SSH agent
 		rc = libssh2_agent_connect(agent);
-		if (rc) throw("Failed to connect to SSH agent!");
+		if (rc) throw(QObject::tr("Failed to connect to SSH agent!"));
 
 		//	Prepare a list of identities managed by the SSH agent
 		rc = libssh2_agent_list_identities(agent);
-		if (rc) throw("Failed to retrieve identities from SSH agent!");
+		if (rc) throw(QObject::tr("Failed to retrieve identities from SSH agent!"));
 
 		while (1)
 		{
@@ -179,7 +195,7 @@ bool SshConnection::authenticateAgent(const char* username)
 			prevIdentity = identity;
 		}
 	}
-	catch (const char* error)
+	catch (const QString& error)
 	{
 		qDebug() << "Failed to authenticate via SSH agent: " << error;
 	}
@@ -350,7 +366,27 @@ QByteArray SshConnection::readFile(const char* filename, ISshConnectionCallback*
 	return fileContent;
 }
 
+void SshConnection::saveFingerprint(const QString &host, const QByteArray &fingerprint)
+{
+	sKnownHostKeys.insert(host, fingerprint);
+	saveKnownHostKeys();
+}
 
+void SshConnection::saveKnownHostKeys()
+{
+	QSettings settings;
+
+	int index = 0;
+	settings.beginWriteArray(ntr("hostkeys"));
+	QStringList keys = sKnownHostKeys.keys();
+	foreach (QString key, keys)
+	{
+		settings.setArrayIndex(index++);
+		settings.setValue(ntr("hostname"), key);
+		settings.setValue(ntr("hostkey"), sKnownHostKeys.value(key));
+	}
+	settings.endArray();
+}
 
 
 

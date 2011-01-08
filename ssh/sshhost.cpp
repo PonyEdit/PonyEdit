@@ -5,6 +5,8 @@
 #include "main/globaldispatcher.h"
 #include "ssh/sshconnectingdialog.h"
 #include <QDebug>
+#include "connectionstatuswidget.h"
+#include "main/dialogwrapper.h"
 
 QList<SshHost*> SshHost::sKnownHosts;
 
@@ -94,12 +96,10 @@ bool SshHost::connect()
 
 	//	Show a connection dialog; it will manage the whole connection process
 	mController = new SshRemoteController(this);
-	SshConnectingDialog dlg(this, mController);
-	if (!dlg.exec())
-	{
-		disconnect();
-		return false;
-	}
+	ConnectionStatusWidget* statusWidget = new ConnectionStatusWidget(mController, true);
+	DialogWrapper<ConnectionStatusWidget> dialogWrapper(statusWidget);
+
+	dialogWrapper.exec();
 
 	return true;
 }

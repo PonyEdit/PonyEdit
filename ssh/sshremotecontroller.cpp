@@ -7,13 +7,15 @@
 #include <QFile>
 #include <QRegExp>
 #include <QTimer>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QIcon>
 #include "ssh/sshhost.h"
 #include "ssh/sshrequest.h"
 #include "ssh/sshconnection.h"
 #include "file/sshfile.h"
-
-const char* SshRemoteController::sStatusStrings[] = { "not connected", "connecting", "password required", "negotiating with remote host", "uploading slave script", "starting slave script", "pushing buffers", "connected", "error" };
-
+#include "connectionstatuswidget.h"
+#include "passwordinput.h"
 
 /////////////////////////////////
 //  SshControllerThread class  //
@@ -28,11 +30,9 @@ public:
 	void connect();
 	void disconnect();
 	void runMainLoop();
-	void setStatus(SshRemoteController::Status status) { mStatus = status; mLastStatusChange++; mController->emitStateChanged(); }
 	void loadScript(SshRemoteController::ScriptType type);
 
-	SshRemoteController::Status mStatus;
-	int mLastStatusChange;
+	void setStatus(RemoteConnection::Status status);
 
 	QString mErrorString;
 
@@ -41,7 +41,6 @@ public:
 	SshConnection* mConnection;
 	QList<SshRequest*> mRequestQueue;
 	QMutex mRequestQueueLock;
-	bool mCloseDown;
 
 	SshRemoteController* mController;
 
@@ -68,19 +67,12 @@ SshRemoteController::SshRemoteController(SshHost* host)
 	//	Fire up a thread to manage this connection
 	mThread = new SshControllerThread(this, host);
 	mThread->start();
+	mPasswordInput = NULL;
 }
 
 SshRemoteController::~SshRemoteController()
 {
-	abortConnection();
 	delete mThread;
-}
-
-void SshRemoteController::abortConnection()
-{
-	mThread->mCloseDown = true;
-	if (!mThread->wait(3000))
-		mThread->terminate();
 }
 
 void SshRemoteController::sendRequest(SshRequest* request)
@@ -90,7 +82,7 @@ void SshRemoteController::sendRequest(SshRequest* request)
 
 	//	Lock the thread before checking if the status is ok; avoids race conditions during disconnects
 	mThread->mRequestQueueLock.lock();
-	connected = (mThread->mStatus == Connected);
+	connected = isConnected();
 	if (connected)
 		mThread->mRequestQueue.append(request);
 	mThread->mRequestQueueLock.unlock();
@@ -108,21 +100,66 @@ const QString& SshRemoteController::getHomeDirectory() const
 	return mThread->mHomeDirectory;
 }
 
-const QString& SshRemoteController::getError() const
+QString SshRemoteController::getName()
 {
-	return mThread->mErrorString;
+	return mThread->mHost->getName();
 }
 
-int SshRemoteController::getLastStatusChange() const
+void SshRemoteController::hostkeyWarnDialog(ConnectionStatusWidget* widget, RemoteConnection* connection, QWidget* target)
 {
-	return mThread->mLastStatusChange;
+	SshRemoteController* controller = static_cast<SshRemoteController*>(connection);
+
+	if (controller->mNewHostKey)
+		widget->setManualStatus(tr("Verify Host Fingerprint"), QPixmap(":/icons/question.png"));
+	else
+		widget->setManualStatus(tr("Host Fingerprint Changed!"), QPixmap(":/icons/warning.png"));
+	widget->addButton(QDialogButtonBox::YesRole, tr("Connect"));
+
+	QVBoxLayout* layout = new QVBoxLayout(target);
+	QString text = controller->mNewHostKey ?
+				tr("There is no fingerprint on file for this host. If this is the first time you are connecting to this server, it is safe "
+				  "to ignore this warning.\n\n Host fingerprints provide extra security by verifying that you are connecting to the server "
+				  "that you think you are. The first time you connect to a new server, there will be no fingerprint on file. You will be "
+				  "warned whenever you connect to a server if the host fingerprint has changed. ")
+				:
+				tr("The fingerprint returned by the host, and the one on file do not match! This may be caused by a breech of security, or "
+				   "by server reconfiguration. Please check with your host administrator before accepting the changed host key!");
+
+	text += "\n\nFingerprint: " + controller->mThread->mConnection->getServerFingerprint().toHex();
+
+	QLabel* question = new QLabel(text, target);
+	question->setWordWrap(true);
+	layout->addWidget(question);
 }
 
-SshRemoteController::Status SshRemoteController::getStatus() const
+bool SshRemoteController::hostkeyWarnCallback(ConnectionStatusWidget* widget, RemoteConnection* connection, QDialogButtonBox::ButtonRole buttonRole)
 {
-	return mThread->mStatus;
+	SshRemoteController* controller = static_cast<SshRemoteController*>(connection);
+	SshConnection::saveFingerprint(controller->mThread->mHost->getHostName(), controller->mThread->mConnection->getServerFingerprint());
+	return true;
 }
 
+void SshRemoteController::passwordInputDialog(ConnectionStatusWidget* widget, RemoteConnection* connection, QWidget* target)
+{
+	SshRemoteController* controller = static_cast<SshRemoteController*>(connection);
+
+	widget->addButton(QDialogButtonBox::YesRole, tr("Connect"));
+	widget->setManualStatus(tr("Please enter your password"), QPixmap(":/icons/question.png"));
+
+	QVBoxLayout* layout = new QVBoxLayout(target);
+	controller->mPasswordInput = new PasswordInput(target);
+	layout->addWidget(controller->mPasswordInput);
+}
+
+bool SshRemoteController::passwordInputCallback(ConnectionStatusWidget* widget, RemoteConnection* connection, QDialogButtonBox::ButtonRole buttonRole)
+{
+	SshRemoteController* controller = static_cast<SshRemoteController*>(connection);
+
+	controller->mThread->mHost->setPassword(controller->mPasswordInput->getEnteredPassword());
+	controller->mThread->mHost->setSavePassword(controller->mPasswordInput->getSavePassword());
+
+	return true;
+}
 
 ///////////////////////////////////////
 //  SshControllerThread definitions  //
@@ -131,16 +168,21 @@ SshRemoteController::Status SshRemoteController::getStatus() const
 SshControllerThread::SshControllerThread(SshRemoteController* controller, SshHost *host)
 {
 	mController = controller;
-	mCloseDown = false;
-	mLastStatusChange = 0;
 	mHost = host;
 	mConnection = NULL;
-	setStatus(SshRemoteController::NotConnected);
+	setStatus(SshRemoteController::Uninitialized);
 }
 
 SshControllerThread::~SshControllerThread()
 {
 	disconnect();
+}
+
+void SshControllerThread::setStatus(RemoteConnection::Status status)
+{
+	mRequestQueueLock.lock();
+	mController->setStatus(status);
+	mRequestQueueLock.unlock();
 }
 
 void SshControllerThread::run()
@@ -177,9 +219,19 @@ void SshControllerThread::connect()
 		//	Establish a raw SSH connection...
 		//
 
-		setStatus(SshRemoteController::Connecting);
+		setStatus(RemoteConnection::Connecting);
 		mConnection->connect(mHost->getHostName().toUtf8(), mHost->getPort());
-		if (mCloseDown) return;
+		if (mController->isDisconnecting()) return;
+
+		//
+		//	Check the server's fingerprint
+		//
+
+		QByteArray fingerprint = mConnection->getServerFingerprint();
+		QByteArray knownFingerprint = mConnection->getExpectedFingerprint(mHost->getHostName());
+		if (knownFingerprint != fingerprint)
+			mController->waitForInput(SshRemoteController::hostkeyWarnDialog, SshRemoteController::hostkeyWarnCallback);
+		if (mController->isDisconnecting()) return;
 
 		//
 		//	Handle authentication
@@ -195,24 +247,16 @@ void SshControllerThread::connect()
 		//	Fall back on password entry
 		while (!authenticated)
 		{
-			QString password = mHost->getPassword();
-			if (password.isEmpty())
-			{
-				setStatus(SshRemoteController::WaitingForPassword);
-				while ((password = mHost->getPassword()).isEmpty())
-				{
-					if (mCloseDown) return;
-					msleep(100);
-				}
-			}
+			if (mHost->getPassword().isEmpty())
+				mController->waitForInput(SshRemoteController::passwordInputDialog, SshRemoteController::passwordInputCallback);
 
-			setStatus(SshRemoteController::Connecting);
-			authenticated = mConnection->authenticatePassword(mHost->getUserName().toUtf8(), password.toUtf8());
+			if (mController->isDisconnecting()) return;
+			authenticated = mConnection->authenticatePassword(mHost->getUserName().toUtf8(), mHost->getPassword().toUtf8());
 
 			if(!authenticated)
-				mHost->setPassword("");
+				mHost->setPassword(QString());
 		}
-		if (mCloseDown) return;
+		if (mController->isDisconnecting()) return;
 
 		//
 		//	Switch to remote home directory...
@@ -220,9 +264,9 @@ void SshControllerThread::connect()
 
 		qDebug() << "Switching to home dir...";
 
-		setStatus(SshRemoteController::Negotiating);
+		setStatus(RemoteConnection::Configuring);
 		mConnection->execute("cd ~\n");
-		if (mCloseDown) return;
+		if (mController->isDisconnecting()) return;
 
 		//
 		//	Check which script to use
@@ -272,11 +316,8 @@ void SshControllerThread::connect()
 			scriptName + " ]; then md5sum ~/.remoted/" + scriptName + "; else echo x; fi\n").toAscii()).toLower();
 		remoteMd5.truncate(32);
 		if (remoteMd5 != sSlaveMd5[scriptType])
-		{
-			setStatus(SshRemoteController::UploadingSlave);
 			mConnection->writeFile((QString(".remoted/") + scriptName).toAscii(), sSlaveScript[scriptType].constData(), sSlaveScript[scriptType].length());
-		}
-		if (mCloseDown) return;
+		if (mController->isDisconnecting()) return;
 
 		//
 		//	Run the remote script...
@@ -284,10 +325,9 @@ void SshControllerThread::connect()
 
 		qDebug() << "Running remote script...";
 
-		setStatus(SshRemoteController::StartingSlave);
 		const char* startCommand = sSlaveStartCommands[scriptType];
 		mConnection->writeData(startCommand, strlen(startCommand));
-		if (mCloseDown) return;
+		if (mController->isDisconnecting()) return;
 
 		//
 		//	The first line returned should be the user's home directory. If not, an error has occurred.
@@ -305,7 +345,7 @@ void SshControllerThread::connect()
 		}
 		else
 			throw(QString("Failed to start slave script!"));
-		if (mCloseDown) return;
+		if (mController->isDisconnecting()) return;
 
 		//
 		//	Connected!!
@@ -318,8 +358,7 @@ void SshControllerThread::connect()
 		delete mConnection;
 		mConnection = NULL;
 
-		mErrorString = QString("Error while ") + SshRemoteController::sStatusStrings[mStatus] + ": " + err;
-		setStatus(SshRemoteController::Error);
+		mController->setErrorStatus(QString("Error while ") + mController->getStatusString() + ": " + err);
 		return;
 	}
 }
@@ -330,13 +369,13 @@ void SshControllerThread::runMainLoop()
 	//	Outer loop: Connects and tries to pump the queue
 	//
 
-	while (!mCloseDown)
+	while (!mController->isDisconnecting())
 	{
 		connect();
-		if (mCloseDown) break;
+		if (mController->isDisconnecting()) break;
 
 		//	Handle connection failure; try again if files are open, fail if not.
-		if (mStatus != SshRemoteController::Connected)
+		if (!mController->isConnected())
 		{
 			qDebug() << "Failed to connect";
 			if (mHost->numOpenFiles() > 0)
@@ -356,7 +395,7 @@ void SshControllerThread::runMainLoop()
 
 		try
 		{
-			while (!mCloseDown)
+			while (!mController->isDisconnecting())
 			{
 				//
 				//	Check the send queue for messages. Drop them in a temp array if they're there
@@ -414,7 +453,7 @@ void SshControllerThread::runMainLoop()
 					lastMessageTime.restart();
 				}
 
-				if (mCloseDown) return;
+				if (mController->isDisconnecting()) return;
 				msleep(10);
 			}
 		}
@@ -453,6 +492,8 @@ void SshControllerThread::disconnect()
 		delete mConnection;
 		mConnection = NULL;
 	}
-	setStatus(SshRemoteController::NotConnected);
+	setStatus(SshRemoteController::Disconnected);
 }
+
+
 

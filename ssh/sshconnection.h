@@ -3,6 +3,7 @@
 
 #include <QByteArray>
 #include <libssh2.h>
+#include <QMap>
 
 #define SSH_BUFFER_SIZE 4096
 #define SSH_PROMPT "%-remoted-%"
@@ -46,9 +47,14 @@ public:
 
 	static void initializeLib();
 
+	inline const QByteArray& getServerFingerprint() { return mServerFingerprint; }
+	inline static QByteArray getExpectedFingerprint(const QString& host) { return sKnownHostKeys.value(host); }
+	static void saveFingerprint(const QString& host, const QByteArray& fingerprint);
+
 private:
 	void createChannel();
 	QString getLastError(int rc);
+	static void saveKnownHostKeys();
 
 	int mSocket;
 	LIBSSH2_SESSION* mSession;
@@ -56,6 +62,8 @@ private:
 	QByteArray mServerFingerprint;
 	char mTmpBuffer[SSH_BUFFER_SIZE];
 	QByteArray mReadBuffer;
+
+	static QMap<QString, QByteArray> sKnownHostKeys;
 };
 
 #endif // SSHCONNECTION_H
