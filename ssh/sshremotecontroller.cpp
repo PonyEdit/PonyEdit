@@ -132,7 +132,7 @@ void SshRemoteController::hostkeyWarnDialog(ConnectionStatusWidget* widget, Remo
 	layout->addWidget(question);
 }
 
-bool SshRemoteController::hostkeyWarnCallback(ConnectionStatusWidget* widget, RemoteConnection* connection, QDialogButtonBox::ButtonRole buttonRole)
+bool SshRemoteController::hostkeyWarnCallback(ConnectionStatusWidget* /* widget */, RemoteConnection* connection, QDialogButtonBox::ButtonRole /* buttonRole */)
 {
 	SshRemoteController* controller = static_cast<SshRemoteController*>(connection);
 	SshConnection::saveFingerprint(controller->mThread->mHost->getHostName(), controller->mThread->mConnection->getServerFingerprint());
@@ -151,7 +151,7 @@ void SshRemoteController::passwordInputDialog(ConnectionStatusWidget* widget, Re
 	layout->addWidget(controller->mPasswordInput);
 }
 
-bool SshRemoteController::passwordInputCallback(ConnectionStatusWidget* widget, RemoteConnection* connection, QDialogButtonBox::ButtonRole buttonRole)
+bool SshRemoteController::passwordInputCallback(ConnectionStatusWidget* /* widget */, RemoteConnection* connection, QDialogButtonBox::ButtonRole /* buttonRole */)
 {
 	SshRemoteController* controller = static_cast<SshRemoteController*>(connection);
 

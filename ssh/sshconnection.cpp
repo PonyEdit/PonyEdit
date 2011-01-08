@@ -178,7 +178,7 @@ bool SshConnection::authenticateAgent(const char* username)
 		{
 			//	Get an identity
 			rc = libssh2_agent_get_identity(agent, &identity, prevIdentity);
-			if (rc) throw(rc == 1 ? "No identities stored in SSH agent accepted!" : "Failed to receive identity from SSH agent!");
+			if (rc) throw(QObject::tr(rc == 1 ? "No identities stored in SSH agent accepted!" : "Failed to receive identity from SSH agent!"));
 
 			//	Try an identity
 			qDebug() << "Trying key: " << identity->comment;
