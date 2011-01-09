@@ -33,8 +33,8 @@
           <string>...</string>
          </property>
          <property name="icon">
-          <iconset>
-           <normaloff>icons/up.png</normaloff>icons/up.png</iconset>
+          <iconset resource="../resources.qrc">
+           <normaloff>:/icons/up.png</normaloff>:/icons/up.png</iconset>
          </property>
         </widget>
        </item>
@@ -44,8 +44,8 @@
           <string>...</string>
          </property>
          <property name="icon">
-          <iconset>
-           <normaloff>icons/newfolder.png</normaloff>icons/newfolder.png</iconset>
+          <iconset resource="../resources.qrc">
+           <normaloff>:/icons/newfolder.png</normaloff>:/icons/newfolder.png</iconset>
          </property>
         </widget>
        </item>
@@ -55,8 +55,8 @@
           <string>...</string>
          </property>
          <property name="icon">
-          <iconset>
-           <normaloff>icons/favorite.png</normaloff>icons/favorite.png</iconset>
+          <iconset resource="../resources.qrc">
+           <normaloff>:/icons/favorite.png</normaloff>:/icons/favorite.png</iconset>
          </property>
         </widget>
        </item>
@@ -252,6 +252,8 @@ border: 1px solid grey;
    <header location="global">file/directorytree.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
