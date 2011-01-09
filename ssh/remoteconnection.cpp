@@ -2,6 +2,7 @@
 
 RemoteConnection::RemoteConnection()
 {
+	mDeliberatelyDisconnecting = false;
 	mStatus = Uninitialized;
 	mInputDialog = NULL;
 }
@@ -88,8 +89,9 @@ void RemoteConnection::waitForInput(DialogFunction dialogFunction, DialogCallbac
 	mDialogCallback = NULL;
 }
 
-void RemoteConnection::disconnect()
+void RemoteConnection::disconnect(bool deliberate)
 {
+	if (deliberate) mDeliberatelyDisconnecting = true;
 	setStatus(Disconnecting);
 }
 

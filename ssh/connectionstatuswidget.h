@@ -26,6 +26,7 @@ private slots:
 
 signals:
 	void signalUpdateLayouts();
+	void completed();
 
 private:
 	void showInput();

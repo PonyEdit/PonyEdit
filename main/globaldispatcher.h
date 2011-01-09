@@ -10,6 +10,7 @@
 //	eg; "SSH hosts list has been updated"
 //
 
+class RemoteConnection;
 class GlobalDispatcher : public QObject
 {
 	Q_OBJECT
@@ -25,8 +26,8 @@ public:
 	void emitLocationListFailed(const QString& error, QString locationPath) { emit locationListFailed(error, locationPath); }
 
 	void emitSelectFile(BaseFile* file) { emit selectFile(file); }
-
 	void emitSyntaxChanged(BaseFile* file) { emit syntaxChanged(file); }
+	void emitConnectionDropped(RemoteConnection* connection) { emit connectionDropped(connection); }
 
 signals:
 	void sshServersUpdated();
@@ -39,6 +40,7 @@ signals:
 
 	void selectFile(BaseFile* file);
 	void syntaxChanged(BaseFile* file);
+	void connectionDropped(RemoteConnection* connection);
 };
 
 extern GlobalDispatcher* gDispatcher;

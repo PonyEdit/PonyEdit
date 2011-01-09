@@ -15,6 +15,7 @@ class FileList;
 class BaseFile;
 class SearchBar;
 class UnsavedChangesDialog;
+class ConnectionStatusPane;
 
 class MainWindow : public QMainWindow
 {
@@ -99,6 +100,8 @@ private:
 	QDockWidget* mSearchBarWrapper;
 	SearchBar* mSearchBar;
 	UnsavedChangesDialog* mUnsavedChangesDialog;
+
+	ConnectionStatusPane* mConnectionStatusPane;
 };
 
 #endif // MAINWINDOW_H

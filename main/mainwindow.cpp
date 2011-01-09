@@ -25,6 +25,7 @@
 #include "file/unsavedchangesdialog.h"
 #include "file/openfilemanager.h"
 #include "syntax/syntaxdefmanager.h"
+#include "ssh/connectionstatuspane.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -43,6 +44,10 @@ MainWindow::MainWindow(QWidget *parent)
 	mFileList->setObjectName("File List");
 
 	createSearchBar();
+
+	mConnectionStatusPane = new ConnectionStatusPane();
+	addDockWidget(Qt::LeftDockWidgetArea, mConnectionStatusPane, Qt::Vertical);
+	mConnectionStatusPane->setObjectName("Dropped Connections");
 
 	mStatusLine = new QLabel();
 	mStatusBar = new QStatusBar();

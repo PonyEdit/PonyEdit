@@ -51,8 +51,9 @@ public:
 	static bool DefaultDialogCallback(ConnectionStatusWidget*, RemoteConnection*, QDialogButtonBox::ButtonRole) { return true; }
 	inline void inputDialogCompleted() { mInputDialogWait.wakeOne(); }
 
-	void disconnect();
+	void disconnect(bool deliberate);
 	bool isDisconnecting();
+	inline bool isDeliberatelyDisconnecting() { return mDeliberatelyDisconnecting; }
 
 	QString getStatusString();
 	QPixmap getStatusIcon();
@@ -67,6 +68,8 @@ private:
 	DialogFunction mInputDialog;
 	DialogCallback mDialogCallback;
 	QWaitCondition mInputDialogWait;
+
+	bool mDeliberatelyDisconnecting;
 };
 
 #endif // REMOTECONNECTION_H

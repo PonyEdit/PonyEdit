@@ -98,9 +98,7 @@ bool SshHost::connect()
 	ConnectionStatusWidget* statusWidget = new ConnectionStatusWidget(mController, true);
 	DialogWrapper<ConnectionStatusWidget> dialogWrapper(statusWidget);
 
-	dialogWrapper.exec();
-
-	return true;
+	return (dialogWrapper.exec() == QDialog::Accepted);
 }
 
 void SshHost::disconnect()

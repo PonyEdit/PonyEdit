@@ -35,7 +35,7 @@ void ConnectionStatusWidget::connectionStatusChanged()
 	RemoteConnection::Status baseStatus = mConnection->getBaseStatus();
 
 	//	Work out if we're through showing this dialog
-	if (baseStatus == (mConnection->isDisconnecting() ? RemoteConnection::Disconnected : RemoteConnection::Connected))
+	if (baseStatus == (mConnection->isDeliberatelyDisconnecting() ? RemoteConnection::Disconnected : RemoteConnection::Connected))
 	{
 		if (mModal)
 		{
@@ -45,6 +45,7 @@ void ConnectionStatusWidget::connectionStatusChanged()
 			else
 				dialogParent->accept();
 		}
+		emit completed();
 		delete this;
 		return;
 	}
@@ -116,7 +117,7 @@ void ConnectionStatusWidget::buttonClicked(QAbstractButton *button)
 	if (role == QDialogButtonBox::RejectRole)
 	{
 		ui->buttonBox->setEnabled(false);
-		mConnection->disconnect();
+		mConnection->disconnect(true);
 		hideInput();
 	}
 	else if (mCurrentInputWidget != NULL && mConnection->inputDialogCallback(this, role))

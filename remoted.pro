@@ -66,7 +66,8 @@ SOURCES += \
     main/gotolinedialog.cpp \
     ssh/remoteconnection.cpp \
     ssh/connectionstatuswidget.cpp \
-    ssh/passwordinput.cpp
+    ssh/passwordinput.cpp \
+    ssh/connectionstatuspane.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -113,7 +114,8 @@ HEADERS  += \
     ssh/remoteconnection.h \
     ssh/connectionstatuswidget.h \
     main/dialogwrapper.h \
-    ssh/passwordinput.h
+    ssh/passwordinput.h \
+    ssh/connectionstatuspane.h
 
 OTHER_FILES += \
     slaves/slave.py \

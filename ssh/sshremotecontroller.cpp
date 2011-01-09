@@ -16,6 +16,7 @@
 #include "file/sshfile.h"
 #include "connectionstatuswidget.h"
 #include "passwordinput.h"
+#include "main/globaldispatcher.h"
 
 /////////////////////////////////
 //  SshControllerThread class  //
@@ -369,7 +370,7 @@ void SshControllerThread::runMainLoop()
 	//	Outer loop: Connects and tries to pump the queue
 	//
 
-	while (!mController->isDisconnecting())
+	while (!mController->isDeliberatelyDisconnecting())
 	{
 		connect();
 		if (mController->isDisconnecting()) break;
@@ -475,12 +476,11 @@ void SshControllerThread::runMainLoop()
 				if (rq != &keepAliveMessage)
 					delete rq;
 			}
-
 			sendingMessages.clear();
-
-			disconnect();	//	This is inside the lock so status is "not connected" by the time the mutex comes undone.
-
 			mRequestQueueLock.unlock();
+
+			disconnect();
+			gDispatcher->emitConnectionDropped(mController);
 		}
 	}
 }
