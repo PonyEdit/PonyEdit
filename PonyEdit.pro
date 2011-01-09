@@ -21,7 +21,12 @@ LIBS	+= -lssh2
 
 QT       += core gui network xml script
 
-TARGET = remoted
+macx {
+	TARGET  = PonyEdit
+}
+!macx {
+	TARGET = ponyedit
+}
 TEMPLATE = app
 
 SOURCES += \

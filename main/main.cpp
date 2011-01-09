@@ -36,8 +36,8 @@ int main(int argc, char *argv[])
 		qRegisterMetaType<Location>("Location");
 		qRegisterMetaType< QList<Location> >("QList<Location>");
 
-		QCoreApplication::setOrganizationName("BananaMonkeyChainsaw");
-		QCoreApplication::setApplicationName("RemoteEditor");
+		QCoreApplication::setOrganizationName("Pentalon");
+		QCoreApplication::setApplicationName("PonyEdit");
 		QCoreApplication::setApplicationVersion("0.9-prealpha");
 		gDispatcher = new GlobalDispatcher();
 

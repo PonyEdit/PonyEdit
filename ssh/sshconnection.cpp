@@ -232,7 +232,7 @@ void SshConnection::createChannel()
 	//libssh2_channel_set_blocking(mChannel, 0);
 
 	//	Shove a message down the line that should change the user's prompt...
-	const char* command = "export PS1=\\%-remoted-\\%\n";
+	const char* command = "export PS1=\\%-ponyedit-\\%\n";
 	libssh2_channel_write(mChannel, command, strlen(command));
 	readToPrompt();
 

@@ -55,7 +55,7 @@ bool SshControllerThread::sSlaveLoaded[SshRemoteController::NumScriptTypes] = { 
 QByteArray SshControllerThread::sSlaveScript[SshRemoteController::NumScriptTypes];
 QByteArray SshControllerThread::sSlaveMd5[SshRemoteController::NumScriptTypes];
 const char* SshControllerThread::sSlaveScriptNames[] = { "", "slave.py", "slave.pl" };
-const char* SshControllerThread::sSlaveStartCommands[] = { "", "python ~/.remoted/slave.py\n", "perl ~/.remoted/slave.pl\n" };
+const char* SshControllerThread::sSlaveStartCommands[] = { "", "python ~/.ponyedit/slave.py\n", "perl ~/.ponyedit/slave.pl\n" };
 const char* SshRemoteController::sScriptTypeLabels[] = { "Auto-detect", "Python", "Perl" };
 
 
@@ -313,11 +313,11 @@ void SshControllerThread::connect()
 		loadScript(scriptType);
 		const char* scriptName = sSlaveScriptNames[scriptType];
 
-		QByteArray remoteMd5 = mConnection->execute((QString("if [ ! -d ~/.remoted ]; then mkdir ~/.remoted; fi; if [ -e ~/.remoted/") +
-			scriptName + " ]; then md5sum ~/.remoted/" + scriptName + "; else echo x; fi\n").toAscii()).toLower();
+		QByteArray remoteMd5 = mConnection->execute((QString("if [ ! -d ~/.ponyedit ]; then mkdir ~/.ponyediy; fi; if [ -e ~/.ponyedit/") +
+			scriptName + " ]; then md5sum ~/.ponyedit/" + scriptName + "; else echo x; fi\n").toAscii()).toLower();
 		remoteMd5.truncate(32);
 		if (remoteMd5 != sSlaveMd5[scriptType])
-			mConnection->writeFile((QString(".remoted/") + scriptName).toAscii(), sSlaveScript[scriptType].constData(), sSlaveScript[scriptType].length());
+			mConnection->writeFile((QString(".ponyedit/") + scriptName).toAscii(), sSlaveScript[scriptType].constData(), sSlaveScript[scriptType].length());
 		if (mController->isDisconnecting()) return;
 
 		//

@@ -6,7 +6,7 @@
 #include <QMap>
 
 #define SSH_BUFFER_SIZE 4096
-#define SSH_PROMPT "%-remoted-%"
+#define SSH_PROMPT "%-ponyedit-%"
 
 class ISshConnectionCallback
 {
