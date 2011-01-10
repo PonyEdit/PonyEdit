@@ -1,24 +1,37 @@
 #include <QMessageBox>
 #include <QDebug>
+#include <QVariantMap>
+#include <QCoreApplication>
 
 #include "sitemanager.h"
 #include "updatemanager.h"
+#include "updatenotificationdialog.h"
 
 UpdateManager::UpdateManager(QObject *parent) :
     QObject(parent)
 {
-	qDebug() << "update manager: " << connect(gSiteManager, SIGNAL(updateAvailable(const QByteArray&)), this, SLOT(updateFound(const QByteArray&)));
+	connect(gSiteManager, SIGNAL(updateAvailable(const QString&, const QVariantMap&)), this, SLOT(updateFound(const QString&, const QVariantMap&)));
 }
 
-void UpdateManager::updateFound(const QByteArray& /* version */)
+void UpdateManager::updateFound(const QString& version, const QVariantMap& changes)
 {
 	QString url = QString("%1downloads/").arg(SITE_URL);
 
-	QMessageBox msgBox;
-	msgBox.setText(tr("There is an update available."));
-	msgBox.setInformativeText(tr("You can download an updated version from:<br/><a href='%1'>%2</a>").arg(url, url));
-	msgBox.setStandardButtons(QMessageBox::Ok);
-	msgBox.setDefaultButton(QMessageBox::Ok);
+	UpdateNotificationDialog dlg;
 
-	msgBox.exec();
+	QVariantMap relevantChanges;
+
+	QMapIterator<QString, QVariant> ii(changes);
+	while(ii.hasNext())
+	{
+		ii.next();
+		if(ii.key() > QCoreApplication::applicationVersion())
+			relevantChanges.insert(ii.key(), ii.value());
+	}
+
+	dlg.setNewVersion(version);
+	dlg.setChanges(relevantChanges);
+	dlg.setDownloadURL(url, url);
+
+	dlg.exec();
 }

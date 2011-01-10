@@ -2,6 +2,7 @@
 #define UPDATEMANAGER_H
 
 #include <QObject>
+#include <QVariantMap>
 
 class UpdateManager : public QObject
 {
@@ -12,7 +13,7 @@ public:
 signals:
 
 public slots:
-	void updateFound(const QByteArray& version);
+	void updateFound(const QString& version, const QVariantMap& changes);
 
 };
 

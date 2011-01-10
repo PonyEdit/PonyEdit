@@ -1,11 +1,12 @@
+#ifndef SITEMANAGER_H
+#define SITEMANAGER_H
+
 #include <QObject>
 #include <QList>
 #include <QString>
 #include <QByteArray>
 #include <QNetworkAccessManager>
-
-#ifndef SITEMANAGER_H
-#define SITEMANAGER_H
+#include <QVariantMap>
 
 #define SITE_URL "http://ponyedit.com/"
 
@@ -25,7 +26,7 @@ public slots:
 	void handleReply(QNetworkReply* reply);
 
 signals:
-	void updateAvailable(const QByteArray& version);
+	void updateAvailable(const QString& version, const QVariantMap& changes);
 	void licenceStatus(bool valid);
 
 private:

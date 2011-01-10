@@ -70,13 +70,15 @@ void SiteManager::handleReply(QNetworkReply *reply)
 		}
 
 		QString version;
+		QVariantMap changes;
 
 		switch(mReplyTypes[index])
 		{
 			case UpdateCheck:
 				version = data[mOS].toString();
+				changes = data["changes"].toMap();
 				if(version > QCoreApplication::applicationVersion())
-					emit updateAvailable(version.toUtf8());
+					emit updateAvailable(version, changes);
 				break;
 
 			case LicenceCheck:

@@ -72,7 +72,8 @@ SOURCES += \
     ssh/remoteconnection.cpp \
     ssh/connectionstatuswidget.cpp \
     ssh/passwordinput.cpp \
-    ssh/connectionstatuspane.cpp
+    ssh/connectionstatuspane.cpp \
+    website/updatenotificationdialog.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -120,7 +121,8 @@ HEADERS  += \
     ssh/connectionstatuswidget.h \
     main/dialogwrapper.h \
     ssh/passwordinput.h \
-    ssh/connectionstatuspane.h
+    ssh/connectionstatuspane.h \
+    website/updatenotificationdialog.h
 
 OTHER_FILES += \
     slaves/slave.py \
@@ -472,7 +474,8 @@ FORMS += \
     main/advancedsearchdialog.ui \
     main/gotolinedialog.ui \
     ssh/connectionstatuswidget.ui \
-    ssh/passwordinput.ui
+    ssh/passwordinput.ui \
+    website/updatenotificationdialog.ui
 
 RESOURCES += \
 	resources.qrc
