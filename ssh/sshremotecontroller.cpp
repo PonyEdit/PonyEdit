@@ -313,7 +313,7 @@ void SshControllerThread::connect()
 		loadScript(scriptType);
 		const char* scriptName = sSlaveScriptNames[scriptType];
 
-		QByteArray remoteMd5 = mConnection->execute((QString("if [ ! -d ~/.ponyedit ]; then mkdir ~/.ponyediy; fi; if [ -e ~/.ponyedit/") +
+		QByteArray remoteMd5 = mConnection->execute((QString("if [ ! -d ~/.ponyedit ]; then mkdir ~/.ponyedit; fi; if [ -e ~/.ponyedit/") +
 			scriptName + " ]; then md5sum ~/.ponyedit/" + scriptName + "; else echo x; fi\n").toAscii()).toLower();
 		remoteMd5.truncate(32);
 		if (remoteMd5 != sSlaveMd5[scriptType])
@@ -335,7 +335,7 @@ void SshControllerThread::connect()
 		//
 
 		mHomeDirectory = mConnection->readLine().trimmed();
-		qDebug() << "Recevied: " << mHomeDirectory;
+		qDebug() << "Received: " << mHomeDirectory;
 
 		if (mHomeDirectory.startsWith("~="))
 		{
