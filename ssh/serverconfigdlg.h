@@ -2,6 +2,7 @@
 #define SERVERCONFIGDLG_H
 
 #include <QDialog>
+#include "serverconfigwidget.h"
 
 namespace Ui { class ServerConfigDlg; }
 
@@ -17,22 +18,10 @@ public:
 
 	void setEditHost(SshHost* host);
 
-	QString getHostName();
-	QString getUserName();
-	QString getPassword();
-
-private slots:
-	void acceptedHandler();
-	void updateName();
-	void browseForKeyFile();
-
 private:
-	QString getAutoName();
-
     Ui::ServerConfigDlg *ui;
-	SshHost* mEditHost;
 
-	QString mLastAutoName;
+	ServerConfigWidget *mConfigWidget;
 };
 
 #endif // SERVERCONFIGDLG_H

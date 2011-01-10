@@ -46,7 +46,7 @@ void SiteManager::checkForUpdates()
 
 void SiteManager::checkLicence()
 {
-	QUrl url(QString(SITE_URL) + "licence/");
+	QUrl url(QString(SITE_URL) + "licence/?v=" + QCoreApplication::applicationVersion() + "&u=testuser&key=5555555");
 	QNetworkReply* reply = mManager->get(QNetworkRequest(url));
 
 	mReplies.append(reply);
