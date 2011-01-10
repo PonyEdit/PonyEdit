@@ -1,5 +1,5 @@
 [Files]
-Source: E:\Projects\RemoteED\remoted-build-desktop\release\remoted.exe; DestDir: {app}; DestName: ponyedit.exe
+Source: E:\Projects\RemoteED\remoted-build-desktop\release\ponyedit.exe; DestDir: {app}
 Source: E:\Projects\RemoteED\trunk\slaves\slave.pl; DestDir: {app}\Slaves
 Source: E:\Projects\RemoteED\trunk\slaves\slave.py; DestDir: {app}\Slaves
 Source: E:\Projects\RemoteED\trunk\syntaxdefs\abap.xml; DestDir: {app}\syntaxdefs
@@ -182,17 +182,31 @@ Source: C:\Qt\2010.05\qt\bin\QtXml4.dll; DestDir: {app}
 Source: C:\Qt\2010.05\qt\bin\libgcc_s_dw2-1.dll; DestDir: {app}
 Source: C:\Qt\2010.05\qt\bin\mingwm10.dll; DestDir: {app}
 [Setup]
-AppCopyright=© 2011 PonyEdit
+AppCopyright=Copyright (c) 2010, 2011 Pentalon
 AppName=PonyEdit
+AppPublisher=Pentalon
+AppPublisherURL=http://ponyedit.com/
 DefaultDirName={pf}\PonyEdit
 OutputDir=E:\Projects\RemoteED\setup
-VersionInfoVersion=
-VersionInfoProductName=PonyEdit
-AppVerName=PonyEdit 0.1-alpha1
+VersionInfoVersion=0.99.1
+AppVersion=1.0-alpha1
 DefaultGroupName=PonyEdit
+OutputBaseFilename=PonyEdit-1.0-alpha1
+UninstallDisplayName=PonyEdit
 [Dirs]
 Name: {app}\Slaves
 Name: {app}\syntaxdefs
+[Tasks]
+Name: startmenu; Description: "Create a &Start Menu icon"
+Name: desktopicon; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"
+Name: desktopicon\common; Description: "For all users"; GroupDescription: "Additional icons:"; Flags: exclusive
+Name: desktopicon\user; Description: "For the current user only"; GroupDescription: "Additional icons:"; Flags: exclusive unchecked
+Name: quicklaunchicon; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; Flags: unchecked
 [Icons]
-Name: {group}\PonyEdit; Filename: {app}\ponyedit.exe; WorkingDir: {app}
-Name: {group}\Uninstall; Filename: {app}\unins000.exe; WorkingDir: {app}
+Name: {group}\PonyEdit; Filename: {app}\ponyedit.exe; WorkingDir: {app}; Comment: "PonyEdit: Enjoy coding again"; Tasks: startmenu
+Name: "{group}\Uninstall PonyEdit"; Filename: {uninstallexe}; Tasks: startmenu
+Name: {commondesktop}\PonyEdit; Filename: {app}\ponyedit.exe; WorkingDir: {app}; Comment: "PonyEdit: Enjoy coding again"; Tasks: desktopicon\common
+Name: {userdesktop}\PonyEdit; Filename: {app}\ponyedit.exe; WorkingDir: {app}; Comment: "PonyEdit: Enjoy coding again"; Tasks: desktopicon\user
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\PonyEdit"; Filename: {app}\ponyedit.exe; WorkingDir: {app}; Comment: "PonyEdit: Enjoy coding again"; Tasks: quicklaunchicon
+[Run]
+Filename: "{app}\ponyedit.exe"; Description: "Launch PonyEdit"; Flags: postinstall nowait skipifsilent 
