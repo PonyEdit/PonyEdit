@@ -4,6 +4,7 @@
 #include "ssh/sshhost.h"
 #include "main/globaldispatcher.h"
 #include "newfolderdialog.h"
+#include "ssh/serverconfigdlg.h"
 
 #include <QDir>
 #include <QDebug>
@@ -19,6 +20,7 @@
 
 #define NODETYPE_LOCATION 1
 #define NODETYPE_FAVORITE 2
+#define NODETYPE_ADD_LOCATION 3
 
 Location FileDialog::mLastLocation;
 
@@ -135,6 +137,16 @@ void FileDialog::populateFolderTree()
 	mRemoteServersBranch = new QTreeWidgetItem(QStringList("Remote Servers"), 0);
 	mRemoteServersBranch->setIcon(0, mIconProvider.icon(QFileIconProvider::Network));
 	ui->directoryTree->addTopLevelItem(mRemoteServersBranch);
+
+	QTreeWidgetItem* item = new QTreeWidgetItem();
+	item->setText(0, tr("Add Server..."));
+	item->setIcon(0, QIcon(":/icons/newserver.png"));
+	item->setData(0, DATA_ROLE, QVariant(1));
+	item->setData(0, EXPANDED_ROLE, QVariant(1));
+	item->setData(0, TYPE_ROLE, QVariant(NODETYPE_ADD_LOCATION));
+	item->setData(0, HOST_ROLE, QVariant(1));
+	mRemoteServersBranch->addChild(item);
+
 	populateRemoteServers();
 	mRemoteServersBranch->setExpanded(true);
 
@@ -173,7 +185,7 @@ void FileDialog::populateRemoteServers()
 	}
 
 	//	Remove the list entries that have not been marked as "ok to keep"
-	for (int i = 0; i < mRemoteServersBranch->childCount(); i++)
+	for (int i = 1; i < mRemoteServersBranch->childCount(); i++)
 	{
 		QTreeWidgetItem* child = mRemoteServersBranch->child(i);
 		SshHost* host = (SshHost*)child->data(0, HOST_ROLE).value<void*>();
@@ -330,6 +342,12 @@ void FileDialog::directoryTreeSelected(QTreeWidgetItem* item)
 		case NODETYPE_FAVORITE:
 		{
 			showLocation(Location(item->data(0, DATA_ROLE).toString()));
+			break;
+		}
+
+		case NODETYPE_ADD_LOCATION:
+		{
+			SshHost::getHost("", "", true);
 			break;
 		}
 	}

@@ -19,11 +19,18 @@ public:
 
 	void setEditHost(SshHost* host);
 
+	void setFocus();
+
 	QString getHostName();
 	QString getUserName();
 	QString getPassword();
 
+signals:
+	void rejected();
+	void accepted();
+
 private slots:
+	void keyPressEvent(QKeyEvent *event);
 	void acceptedHandler();
 	void updateName();
 	void browseForKeyFile();
@@ -32,7 +39,7 @@ private:
 	QString getAutoName();
 
 	Ui::ServerConfigWidget *ui;
-	SshHost* mEditHost;
+	SshHost *mEditHost;
 
 	QString mLastAutoName;
 };

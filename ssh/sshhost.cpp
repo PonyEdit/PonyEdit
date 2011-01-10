@@ -9,7 +9,7 @@
 
 QList<SshHost*> SshHost::sKnownHosts;
 
-SshHost* SshHost::getHost(const QString& hostName, const QString& userName)
+SshHost* SshHost::getHost(const QString& hostName, const QString& userName, bool save)
 {
 	SshHost* host = NULL;
 	bool createdHost = false;
@@ -28,7 +28,7 @@ SshHost* SshHost::getHost(const QString& hostName, const QString& userName)
 	{
 		//	No known hosts found. Try to create a new one
 		createdHost = true;
-		host = createHost(hostName, userName);
+		host = createHost(hostName, userName, save);
 		if (!host)
 			return NULL;
 	}
@@ -43,9 +43,12 @@ SshHost* SshHost::getHost(const QString& hostName, const QString& userName)
 	return host;
 }
 
-SshHost* SshHost::createHost(const QString& hostName, const QString& userName)
+SshHost* SshHost::createHost(const QString& hostName, const QString& userName, bool save)
 {
 	SshHost* newHost = new SshHost(hostName, userName);
+
+	if(save)
+		newHost->setSave(true);
 
 	ServerConfigDlg serverConfigDlg;
 	serverConfigDlg.setEditHost(newHost);

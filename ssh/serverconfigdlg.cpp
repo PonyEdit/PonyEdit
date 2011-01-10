@@ -11,21 +11,23 @@ ServerConfigDlg::ServerConfigDlg(QWidget *parent) :
 {
     ui->setupUi(this);
 
-	mConfigWidget = new ServerConfigWidget();
+	mConfigWidget = new ServerConfigWidget;
 
 	QGridLayout *layout = new QGridLayout;
 	layout->setContentsMargins(0, 0, 0, 0);
 	layout->addWidget(mConfigWidget);
 
 	ui->configContainer->setLayout(layout);
-	ui->configContainer->setFocusProxy(mConfigWidget);
 
 	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
+	connect(mConfigWidget, SIGNAL(accepted()), this, SLOT(accept()));
+	connect(mConfigWidget, SIGNAL(rejected()), this, SLOT(reject()));
+
 	connect(this, SIGNAL(accepted()), mConfigWidget, SLOT(acceptedHandler()));
 
-	ui->configContainer->setFocus();
+	mConfigWidget->setFocus();
 }
 
 ServerConfigDlg::~ServerConfigDlg()

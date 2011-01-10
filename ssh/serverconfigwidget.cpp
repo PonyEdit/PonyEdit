@@ -3,6 +3,7 @@
 #include "main/tools.h"
 #include "ssh/sshhost.h"
 #include <QFileDialog>
+#include <QKeyEvent>
 
 ServerConfigWidget::ServerConfigWidget(QWidget *parent) :
 	QWidget(parent),
@@ -20,13 +21,19 @@ ServerConfigWidget::ServerConfigWidget(QWidget *parent) :
 
 	for (int i = 0; i < SshRemoteController::NumScriptTypes; i++)
 		ui->scriptType->addItem(SshRemoteController::sScriptTypeLabels[i], QVariant::fromValue<int>(i));
-
-	ui->password->setFocus();
 }
 
 ServerConfigWidget::~ServerConfigWidget()
 {
 	delete ui;
+}
+
+void ServerConfigWidget::setFocus()
+{
+	if(ui->hostName->text().isNull())
+		ui->hostName->setFocus();
+	else
+		ui->password->setFocus();
 }
 
 QString ServerConfigWidget::getHostName()
@@ -80,6 +87,7 @@ void ServerConfigWidget::acceptedHandler()
 	mEditHost->setSavePassword(ui->savePassword->checkState() == Qt::Checked);
 	mEditHost->setScriptType((SshRemoteController::ScriptType)ui->scriptType->itemData(ui->scriptType->currentIndex()).value<int>());
 	mEditHost->setKeyFile(ui->keyFile->text());
+
 }
 
 QString ServerConfigWidget::getAutoName()
@@ -113,3 +121,11 @@ void ServerConfigWidget::browseForKeyFile()
 	}
 }
 
+void ServerConfigWidget::keyPressEvent(QKeyEvent *event)
+{
+	if (event->key() == Qt::Key_Escape)
+		emit rejected();
+
+	if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)
+		emit accepted();
+}
