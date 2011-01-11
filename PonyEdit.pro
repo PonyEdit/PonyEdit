@@ -129,8 +129,7 @@ HEADERS  += \
     options/sshserveroptionswidget.h
 
 OTHER_FILES += \
-    slaves/slave.py \
-    slaves/slave.pl \
+	slave/slave.pl \
     syntaxdefs/perl.xml \
     syntax/test.pl \
     syntaxdefs/zonnon.xml \
@@ -466,8 +465,7 @@ OTHER_FILES += \
     syntaxdefs/ada.xml \
     syntaxdefs/actionscript.xml \
     syntaxdefs/abc.xml \
-    syntaxdefs/abap.xml \
-    slave/slave.pl
+	syntaxdefs/abap.xml
 
 FORMS += \
     file/filedialog.ui \
