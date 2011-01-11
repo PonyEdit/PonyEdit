@@ -193,6 +193,7 @@ AppVersion=1.0-alpha1
 DefaultGroupName=PonyEdit
 OutputBaseFilename=PonyEdit-1.0-alpha1
 UninstallDisplayName=PonyEdit
+LicenseFile=E:\Projects\RemoteED\trunk\licence.rtf
 [Dirs]
 Name: {app}\Slaves
 Name: {app}\syntaxdefs
