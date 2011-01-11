@@ -1,25 +1,21 @@
 #include <QDialogButtonBox>
 #include <QAbstractButton>
 #include <QStringList>
-#include <QUrl>
 #include <QList>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkRequest>
-#include <QtNetwork/QNetworkReply>
 
+#include "ssh/serverconfigwidget.h"
+#include "sshserveroptionswidget.h"
 
 #include "optionsdialog.h"
 #include "ui_optionsdialog.h"
 
-const char* OptionsDialog::sOptionsStrings[] = { "Editor" };
+const char* OptionsDialog::sOptionsStrings[] = { "Editor", "SSH Servers" };
 
 OptionsDialog::OptionsDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::OptionsDialog)
 {
     ui->setupUi(this);
-
-	mNetworkManager = new QNetworkAccessManager(this);
 
 	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
@@ -31,6 +27,8 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
 	{
 		ui->optionList->addItem(sOptionsStrings[ii]);
 	}
+
+	addSshServers();
 
 	ui->optionList->setCurrentRow(0);
 	updateSelectedOption(0);
@@ -55,4 +53,10 @@ void OptionsDialog::buttonClicked(QAbstractButton *button)
 
 void OptionsDialog::saveOptions()
 {
+}
+
+void OptionsDialog::addSshServers()
+{
+	SshServerOptionsWidget *widget = new SshServerOptionsWidget(this);
+	ui->stackedWidget->insertWidget(1, widget);
 }

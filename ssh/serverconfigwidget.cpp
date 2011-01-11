@@ -73,6 +73,11 @@ void ServerConfigWidget::setEditHost(SshHost* host)
 	updateName();
 }
 
+SshHost* ServerConfigWidget::getEditHost()
+{
+	return mEditHost;
+}
+
 void ServerConfigWidget::acceptedHandler()
 {
 	updateName();
@@ -105,7 +110,11 @@ void ServerConfigWidget::updateName()
 	{
 		mLastAutoName = getAutoName();
 		ui->serverName->setText(mLastAutoName);
+
+		emit nameUpdated(mLastAutoName);
 	}
+	else
+		emit nameUpdated(currentName);
 }
 
 void ServerConfigWidget::browseForKeyFile()

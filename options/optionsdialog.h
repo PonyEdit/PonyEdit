@@ -4,9 +4,6 @@
 #include <QDialog>
 #include <QAbstractButton>
 #include <QList>
-#include <QUrl>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkReply>
 
 namespace Ui {
     class OptionsDialog;
@@ -17,10 +14,8 @@ class OptionsDialog : public QDialog
     Q_OBJECT
 
 public:
-	enum Options { Editor, NumOptions };
+	enum Options { Editor, SshServers, NumOptions };
 	static const char* sOptionsStrings[];
-
-	QNetworkAccessManager *mNetworkManager;
 
 	explicit OptionsDialog(QWidget *parent = 0);
     ~OptionsDialog();
@@ -32,6 +27,8 @@ private slots:
 
 private:
     Ui::OptionsDialog *ui;
+
+	void addSshServers();
 };
 
 #endif // OPTIONSDIALOG_H

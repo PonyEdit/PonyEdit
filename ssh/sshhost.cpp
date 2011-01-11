@@ -43,6 +43,21 @@ SshHost* SshHost::getHost(const QString& hostName, const QString& userName, bool
 	return host;
 }
 
+SshHost* SshHost::getBlankHost(bool save)
+{
+	SshHost* host = new SshHost("", "");
+	if(!host)
+		return NULL;
+
+	host->setSave(save);
+
+	sKnownHosts.append(host);
+
+	gDispatcher->emitSshServersUpdated();
+
+	return host;
+}
+
 SshHost* SshHost::createHost(const QString& hostName, const QString& userName, bool save)
 {
 	SshHost* newHost = new SshHost(hostName, userName);
@@ -85,6 +100,7 @@ SshHost::SshHost(const QString& hostName, const QString& userName)
 SshHost::~SshHost()
 {
 	disconnect();
+	sKnownHosts.removeAll(this);
 }
 
 bool SshHost::isConnected() const

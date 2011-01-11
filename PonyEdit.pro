@@ -74,7 +74,8 @@ SOURCES += \
     ssh/passwordinput.cpp \
     ssh/connectionstatuspane.cpp \
     website/updatenotificationdialog.cpp \
-    ssh/serverconfigwidget.cpp
+    ssh/serverconfigwidget.cpp \
+    options/sshserveroptionswidget.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -124,7 +125,8 @@ HEADERS  += \
     ssh/passwordinput.h \
     ssh/connectionstatuspane.h \
     website/updatenotificationdialog.h \
-    ssh/serverconfigwidget.h
+    ssh/serverconfigwidget.h \
+    options/sshserveroptionswidget.h
 
 OTHER_FILES += \
     slaves/slave.py \
@@ -478,7 +480,8 @@ FORMS += \
     ssh/connectionstatuswidget.ui \
     ssh/passwordinput.ui \
     website/updatenotificationdialog.ui \
-    ssh/serverconfigwidget.ui
+    ssh/serverconfigwidget.ui \
+    options/sshserveroptionswidget.ui
 
 RESOURCES += \
 	resources.qrc

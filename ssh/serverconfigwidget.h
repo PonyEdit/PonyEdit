@@ -18,6 +18,7 @@ public:
     ~ServerConfigWidget();
 
 	void setEditHost(SshHost* host);
+	SshHost* getEditHost();
 
 	void setFocus();
 
@@ -28,6 +29,7 @@ public:
 signals:
 	void rejected();
 	void accepted();
+	void nameUpdated(const QString& oldName);
 
 private slots:
 	void keyPressEvent(QKeyEvent *event);
