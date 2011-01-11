@@ -33,7 +33,7 @@ public:
 	AuthMethods getAuthenticationMethods(const char* username);
 	bool authenticatePassword(const char* username, const char* password);
 	bool authenticateAgent(const char* username);
-	void startRemoteSlave(const char* filename);
+	void startRemoteSlave();
 
 	void writeFile(const char* remoteFilename, const char* data, int length);
 	QByteArray readFile(const char* filename, ISshConnectionCallback* callback);

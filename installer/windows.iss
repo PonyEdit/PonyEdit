@@ -1,7 +1,6 @@
 [Files]
 Source: E:\Projects\RemoteED\remoted-build-desktop\release\ponyedit.exe; DestDir: {app}
 Source: E:\Projects\RemoteED\trunk\slaves\slave.pl; DestDir: {app}\Slaves
-Source: E:\Projects\RemoteED\trunk\slaves\slave.py; DestDir: {app}\Slaves
 Source: E:\Projects\RemoteED\trunk\syntaxdefs\abap.xml; DestDir: {app}\syntaxdefs
 Source: E:\Projects\RemoteED\trunk\syntaxdefs\abc.xml; DestDir: {app}\syntaxdefs
 Source: E:\Projects\RemoteED\trunk\syntaxdefs\actionscript.xml; DestDir: {app}\syntaxdefs

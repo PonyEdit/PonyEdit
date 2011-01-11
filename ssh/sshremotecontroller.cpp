@@ -31,7 +31,7 @@ public:
 	void connect();
 	void disconnect();
 	void runMainLoop();
-	void loadScript(SshRemoteController::ScriptType type);
+	void loadScript();
 
 	void setStatus(RemoteConnection::Status status);
 
@@ -45,18 +45,17 @@ public:
 
 	SshRemoteController* mController;
 
-	static bool sSlaveLoaded[SshRemoteController::NumScriptTypes];
-	static QByteArray sSlaveScript[SshRemoteController::NumScriptTypes];
-	static QByteArray sSlaveMd5[SshRemoteController::NumScriptTypes];
-	static const char* sSlaveScriptNames[];
-	static const char* sSlaveStartCommands[];
+	static bool sSlaveLoaded;
+	static QByteArray sSlaveScript;
+	static QByteArray sSlaveMd5;
+	static const char* sSlaveScriptName;
+	static const char* sSlaveStartCommand;
 };
-bool SshControllerThread::sSlaveLoaded[SshRemoteController::NumScriptTypes] = { false };
-QByteArray SshControllerThread::sSlaveScript[SshRemoteController::NumScriptTypes];
-QByteArray SshControllerThread::sSlaveMd5[SshRemoteController::NumScriptTypes];
-const char* SshControllerThread::sSlaveScriptNames[] = { "", "slave.py", "slave.pl" };
-const char* SshControllerThread::sSlaveStartCommands[] = { "", "python ~/.ponyedit/slave.py\n", "perl ~/.ponyedit/slave.pl\n" };
-const char* SshRemoteController::sScriptTypeLabels[] = { "Auto-detect", "Python", "Perl" };
+bool SshControllerThread::sSlaveLoaded = false;
+QByteArray SshControllerThread::sSlaveScript;
+QByteArray SshControllerThread::sSlaveMd5;
+const char* SshControllerThread::sSlaveScriptName = "slave.pl";
+const char* SshControllerThread::sSlaveStartCommand = "perl ~/.ponyedit/slave.pl\n";
 
 
 //////////////////////////////////////
@@ -192,22 +191,19 @@ void SshControllerThread::run()
 	disconnect();
 }
 
-void SshControllerThread::loadScript(SshRemoteController::ScriptType type)
+void SshControllerThread::loadScript()
 {
-	if (type == SshRemoteController::AutoDetect || type >= SshRemoteController::NumScriptTypes)
-		throw(QString("Invalid slave script type!"));
-
-	if (!sSlaveLoaded[type])
+	if (!sSlaveLoaded)
 	{
-		QFile f(QString("slaves/") + sSlaveScriptNames[type]);
+		QFile f(QString("slave/") + sSlaveScriptName);
 		f.open(QFile::ReadOnly);
-		sSlaveScript[type] = f.readAll();
+		sSlaveScript = f.readAll();
 
 		QCryptographicHash hash(QCryptographicHash::Md5);
-		hash.addData(sSlaveScript[type]);
-		sSlaveMd5[type] = hash.result().toHex().toLower();
+		hash.addData(sSlaveScript);
+		sSlaveMd5 = hash.result().toHex().toLower();
 
-		sSlaveLoaded[type] = true;
+		sSlaveLoaded = true;
 	}
 }
 
@@ -270,54 +266,36 @@ void SshControllerThread::connect()
 		if (mController->isDisconnecting()) return;
 
 		//
-		//	Check which script to use
+		//	Check that Perl is installed and a recent version
 		//
 
-		SshRemoteController::ScriptType scriptType = mHost->getScriptType();
-		if (scriptType == SshRemoteController::AutoDetect)
+		bool validPerl = false;
+		QByteArray perlVersion = mConnection->execute("perl -v\n");
+		if(perlVersion.length() > 0)
 		{
-			QByteArray pythonVersion = mConnection->execute("python -V\n");
-			if(pythonVersion.length() > 0)
+			QRegExp perlVersionRx("This is perl, v(\\w+)");
+			if(perlVersionRx.indexIn(perlVersion) > -1)
 			{
-				QRegExp pythonVersionRx("^\\d+\\.\\d+");
-
-				pythonVersion.replace("Python ", "");
-
-				if(pythonVersionRx.indexIn(pythonVersion) > -1 && pythonVersion >= "2.4")
-					scriptType = SshRemoteController::Python;
+				QString perlVersionNumber = perlVersionRx.cap(1);
+				if(perlVersionNumber >= "5.6")
+					validPerl = true;
 			}
-
-			if (scriptType == SshRemoteController::AutoDetect)
-			{
-				QByteArray perlVersion = mConnection->execute("perl -v\n");
-				if(perlVersion.length() > 0)
-				{
-					QRegExp perlVersionRx("This is perl, v(\\w+)");
-					if(perlVersionRx.indexIn(perlVersion) > -1)
-					{
-						QString perlVersionNumber = perlVersionRx.cap(1);
-						if(perlVersionNumber >= "5.6")
-							scriptType = SshRemoteController::Perl;
-					}
-				}
-			}
-
-			if (scriptType == SshRemoteController::AutoDetect)
-				throw(QString("No usable version of Python or Perl found!"));
 		}
+
+		if(!validPerl)
+			throw(tr("No usable version of Perl found!"));
 
 		//
 		//	Make sure the remote slave script is present, and the md5 hashes match. If not, upload again.
 		//
 
-		loadScript(scriptType);
-		const char* scriptName = sSlaveScriptNames[scriptType];
+		loadScript();
 
 		QByteArray remoteMd5 = mConnection->execute((QString("if [ ! -d ~/.ponyedit ]; then mkdir ~/.ponyedit; fi; if [ -e ~/.ponyedit/") +
-			scriptName + " ]; then md5sum ~/.ponyedit/" + scriptName + "; else echo x; fi\n").toAscii()).toLower();
+			sSlaveScriptName + " ]; then md5sum ~/.ponyedit/" + sSlaveScriptName + "; else echo x; fi\n").toAscii()).toLower();
 		remoteMd5.truncate(32);
-		if (remoteMd5 != sSlaveMd5[scriptType])
-			mConnection->writeFile((QString(".ponyedit/") + scriptName).toAscii(), sSlaveScript[scriptType].constData(), sSlaveScript[scriptType].length());
+		if (remoteMd5 != sSlaveMd5)
+			mConnection->writeFile((QString(".ponyedit/") + sSlaveScriptName).toAscii(), sSlaveScript.constData(), sSlaveScript.length());
 		if (mController->isDisconnecting()) return;
 
 		//
@@ -326,8 +304,7 @@ void SshControllerThread::connect()
 
 		qDebug() << "Running remote script...";
 
-		const char* startCommand = sSlaveStartCommands[scriptType];
-		mConnection->writeData(startCommand, strlen(startCommand));
+		mConnection->writeData(sSlaveStartCommand, strlen(sSlaveStartCommand));
 		if (mController->isDisconnecting()) return;
 
 		//

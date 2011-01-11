@@ -17,9 +17,6 @@ class PasswordInput;
 class SshRemoteController : public RemoteConnection
 {
 public:
-	enum ScriptType { AutoDetect, Python, Perl, NumScriptTypes };
-	static const char* sScriptTypeLabels[];
-
 	SshRemoteController(SshHost* host);
 	~SshRemoteController();
 

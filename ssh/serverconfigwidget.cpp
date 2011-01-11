@@ -18,9 +18,6 @@ ServerConfigWidget::ServerConfigWidget(QWidget *parent) :
 	connect(ui->hostName, SIGNAL(textEdited(QString)), this, SLOT(updateName()));
 	connect(ui->userName, SIGNAL(textEdited(QString)), this, SLOT(updateName()));
 	connect(ui->keyFileBrowse, SIGNAL(clicked()), this, SLOT(browseForKeyFile()));
-
-	for (int i = 0; i < SshRemoteController::NumScriptTypes; i++)
-		ui->scriptType->addItem(SshRemoteController::sScriptTypeLabels[i], QVariant::fromValue<int>(i));
 }
 
 ServerConfigWidget::~ServerConfigWidget()
@@ -64,11 +61,6 @@ void ServerConfigWidget::setEditHost(SshHost* host)
 	ui->defaultDirectory->setText(host->getDefaultDirectory());
 	ui->keyFile->setText(host->getKeyFile());
 
-	int scriptIndex = ui->scriptType->findData(QVariant::fromValue<int>((int)host->getScriptType()));
-	if(scriptIndex < 0)
-		scriptIndex = 0;
-	ui->scriptType->setCurrentIndex(scriptIndex);
-
 	mLastAutoName = getAutoName();
 	updateName();
 }
@@ -90,7 +82,6 @@ void ServerConfigWidget::acceptedHandler()
 	mEditHost->setName(ui->serverName->text());
 	mEditHost->setDefaultDirectory(ui->defaultDirectory->text());
 	mEditHost->setSavePassword(ui->savePassword->checkState() == Qt::Checked);
-	mEditHost->setScriptType((SshRemoteController::ScriptType)ui->scriptType->itemData(ui->scriptType->currentIndex()).value<int>());
 	mEditHost->setKeyFile(ui->keyFile->text());
 
 }
