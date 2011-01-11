@@ -63,7 +63,7 @@ bool SyntaxDefinition::link()
 				QSharedPointer<ContextDef> sourceContext;
 				if (source.startsWith("##"))
 				{
-					SyntaxDefinition* includedDefinition = gSyntaxDefManager.getDefinitionForSyntax(source.mid(2));
+					SyntaxDefinition* includedDefinition = gSyntaxDefManager->getDefinitionForSyntax(source.mid(2));
 					if (includedDefinition)
 						sourceContext = includedDefinition->getDefaultContext();
 				}
@@ -101,7 +101,7 @@ bool SyntaxDefinition::linkContext(const QString& context, ContextLink* link)
 	{
 		if (context.startsWith("##"))
 		{
-			SyntaxDefinition* includedDefinition = gSyntaxDefManager.getDefinitionForSyntax(context.mid(2));
+			SyntaxDefinition* includedDefinition = gSyntaxDefManager->getDefinitionForSyntax(context.mid(2));
 			if (includedDefinition)
 				link->contextDef = includedDefinition->getDefaultContext();
 			else

@@ -309,14 +309,14 @@ void MainWindow::createViewMenu()
 	action->setCheckable(true);
 	mSyntaxMenuEntries.insert(QString(), action);
 
-	QStringList categories = gSyntaxDefManager.getDefinitionCategories();
+	QStringList categories = gSyntaxDefManager->getDefinitionCategories();
 	categories.sort();
 	foreach (const QString& category, categories)
 	{
 		QMenu* syntaxSubMenu = new QMenu(category, viewMenu);
 		mSyntaxMenu->addMenu(syntaxSubMenu);
 
-		QStringList syntaxes = gSyntaxDefManager.getSyntaxesInCategory(category);
+		QStringList syntaxes = gSyntaxDefManager->getSyntaxesInCategory(category);
 		syntaxes.sort();
 		foreach (const QString& syntax, syntaxes)
 		{

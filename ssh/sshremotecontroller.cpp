@@ -10,6 +10,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QIcon>
+#include <QCoreApplication>
 #include "ssh/sshhost.h"
 #include "ssh/sshrequest.h"
 #include "ssh/sshconnection.h"
@@ -195,7 +196,11 @@ void SshControllerThread::loadScript()
 {
 	if (!sSlaveLoaded)
 	{
+#ifdef Q_OS_MAC
+		QFile f(QCoreApplication::applicationDirPath() + QString("/../Resources/slave/") + sSlaveScriptName);
+#else
 		QFile f(QString("slave/") + sSlaveScriptName);
+#endif
 		f.open(QFile::ReadOnly);
 		sSlaveScript = f.readAll();
 

@@ -29,6 +29,13 @@ macx {
 }
 TEMPLATE = app
 
+macx {
+	data.files = syntaxdefs slave
+	data.path = Contents/Resources
+
+	QMAKE_BUNDLE_DATA += data
+}
+
 SOURCES += \
     editor/linenumberwidget.cpp \
     editor/editor.cpp \

@@ -9,3 +9,13 @@ To create a new build:
 - In the [Setup] section, check that OutputDir, VersionInfoVersion, AppVersion and OutputBaseFilename are correct.
 - Click the Compile button.
 - Click the Run button to test the installer.
+
+
+MAC OS X
+--------
+
+The Windows installer requires the `macdeployqt` tool, which should be included in the Qt SDK.
+
+To create a new build, run the following command:
+
+shell> macdeployqt PonyEdit.app -dmg

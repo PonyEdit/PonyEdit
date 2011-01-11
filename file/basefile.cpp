@@ -210,7 +210,7 @@ void BaseFile::closeCompleted()
 
 void BaseFile::autodetectSyntax()
 {
-	setSyntax(gSyntaxDefManager.getDefinitionForFile(getLocation().getPath()));
+	setSyntax(gSyntaxDefManager->getDefinitionForFile(getLocation().getPath()));
 }
 
 QString BaseFile::getSyntax() const
@@ -223,7 +223,7 @@ QString BaseFile::getSyntax() const
 
 void BaseFile::setSyntax(const QString& syntaxName)
 {
-	setSyntax(gSyntaxDefManager.getDefinitionForSyntax(syntaxName));
+	setSyntax(gSyntaxDefManager->getDefinitionForSyntax(syntaxName));
 }
 
 void BaseFile::setSyntax(SyntaxDefinition* syntaxDef)

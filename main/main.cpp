@@ -12,10 +12,12 @@
 #include "website/sitemanager.h"
 #include "website/updatemanager.h"
 #include "syntax/syntaxrule.h"
+#include "syntax/syntaxdefmanager.h"
 #include "main/stringtrie.h"
 
 GlobalDispatcher* gDispatcher = NULL;
 SiteManager* gSiteManager = NULL;
+SyntaxDefManager* gSyntaxDefManager = NULL;
 
 int main(int argc, char *argv[])
 {
@@ -48,6 +50,9 @@ int main(int argc, char *argv[])
 		Tools::initialize();
 
 		QApplication a(argc, argv);
+
+		gSyntaxDefManager = new SyntaxDefManager();
+
 		MainWindow w;
 		w.show();
 

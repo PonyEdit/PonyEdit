@@ -3,8 +3,6 @@
 #include "main/tools.h"
 #include <QDir>
 
-SyntaxDefManager gSyntaxDefManager;
-
 void SyntaxDefManager::Record::pack(const QXmlAttributes& atts)
 {
 	syntaxName = Tools::getStringXmlAttribute(atts, "name");
@@ -55,7 +53,11 @@ SyntaxDefManager::~SyntaxDefManager()
 
 void SyntaxDefManager::updateIndex()
 {
+#ifdef Q_OS_MAC
+	QDir defDir(QCoreApplication::applicationDirPath() + "/../Resources/syntaxdefs/");
+#else
 	QDir defDir("syntaxdefs/");
+#endif
 	QFileInfoList fileInfos = defDir.entryInfoList();
 	foreach (QFileInfo info, fileInfos)
 		indexFile(info);

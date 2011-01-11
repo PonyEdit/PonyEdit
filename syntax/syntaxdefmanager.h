@@ -56,6 +56,6 @@ private:
 	QMap<QString, SyntaxDefinition*> mOpenDefinitionsByName;
 };
 
-extern SyntaxDefManager gSyntaxDefManager;
+extern SyntaxDefManager* gSyntaxDefManager;
 
 #endif // SYNTAXDEFMANAGER_H
