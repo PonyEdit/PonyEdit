@@ -466,7 +466,8 @@ OTHER_FILES += \
     syntaxdefs/ada.xml \
     syntaxdefs/actionscript.xml \
     syntaxdefs/abc.xml \
-    syntaxdefs/abap.xml
+    syntaxdefs/abap.xml \
+    slave/slave.pl
 
 FORMS += \
     file/filedialog.ui \

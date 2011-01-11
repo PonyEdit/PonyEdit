@@ -298,7 +298,7 @@ sub msg_new_dir
 
 	my $name = $params->{'l'} . '/' . $params->{'n'};
 
-	$created = mkdir( $name );
+	my $created = mkdir( $name );
 	if( !$created )
 	{
 		die( "Could not create directory." );

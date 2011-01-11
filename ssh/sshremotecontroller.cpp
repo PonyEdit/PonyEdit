@@ -273,11 +273,12 @@ void SshControllerThread::connect()
 		QByteArray perlVersion = mConnection->execute("perl -v\n");
 		if(perlVersion.length() > 0)
 		{
-			QRegExp perlVersionRx("This is perl, v(\\w+)");
+			QRegExp perlVersionRx("This is perl, v(\\d+)\\.(\\d+)");
 			if(perlVersionRx.indexIn(perlVersion) > -1)
 			{
-				QString perlVersionNumber = perlVersionRx.cap(1);
-				if(perlVersionNumber >= "5.6")
+				QString perlMajorVersionNumber = perlVersionRx.cap(1);
+				QString perlMinorVersionNumber = perlVersionRx.cap(2);
+				if(perlMajorVersionNumber.toInt() >= 5 && perlMinorVersionNumber.toInt() > 6)
 					validPerl = true;
 			}
 		}
