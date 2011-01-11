@@ -20,6 +20,7 @@
 #include "options/optionsdialog.h"
 #include "main/globaldispatcher.h"
 #include "main/searchbar.h"
+#include "tools.h"
 #include "gotolinedialog.h"
 #include "advancedsearchdialog.h"
 #include "file/unsavedchangesdialog.h"
@@ -69,6 +70,9 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(&gOpenFileManager, SIGNAL(fileClosed(BaseFile*)), this, SLOT(fileClosed(BaseFile*)), Qt::DirectConnection);
 	connect(mEditorStack, SIGNAL(currentChanged(int)), this, SLOT(currentEditorChanged()));
 	connect(gDispatcher, SIGNAL(syntaxChanged(BaseFile*)), this, SLOT(updateSyntaxSelection()));
+
+	mRecentFiles = Tools::loadRecentFiles();
+	updateRecentFilesMenu();
 
 	restoreState();
 }
@@ -143,23 +147,35 @@ void MainWindow::openFile()
 				return;
 		}
 		foreach (Location location, locations)
-		{
-			if (!location.isDirectory())
-			{
-				BaseFile* file = location.getFile();
-				if (file->isClosed())
-					file->open();
+			openSingleFile(&location);
+	}
+}
 
-				Editor* newEditor = new Editor(file);
-				mEditorStack->addWidget(newEditor);
-				mEditorStack->setCurrentWidget(newEditor);
-				mEditors.append(newEditor);
+void MainWindow::openSingleFile(Location *loc)
+{
+	if(!loc)
+	{
+		QAction* action = static_cast<QAction*>(sender());
+		if(action)
+			loc = mRecentFiles[action->data().toInt()];
+	}
 
-				gDispatcher->emitSelectFile(file);
+	if (loc && !loc->isDirectory())
+	{
+		BaseFile* file = loc->getFile();
+		if (file->isClosed())
+			file->open();
 
-				newEditor->setFocus();
-			}
-		}
+		Editor* newEditor = new Editor(file);
+		mEditorStack->addWidget(newEditor);
+		mEditorStack->setCurrentWidget(newEditor);
+		mEditors.append(newEditor);
+
+		gDispatcher->emitSelectFile(file);
+
+		newEditor->setFocus();
+
+		addRecentFile(loc);
 	}
 }
 
@@ -182,19 +198,9 @@ void MainWindow::saveFileAs()
 	{
 		Editor* current = (Editor*)mEditorStack->currentWidget();
 		Location loc = dlg.getNewLocation();
-		BaseFile* file = loc.getFile()->newFile(current->getFile()->getContent());
+		loc.getFile()->newFile(current->getFile()->getContent());
 
-		if(!file->isClosed())
-			file->open();
-
-		Editor* newEditor = new Editor(file);
-		mEditorStack->addWidget(newEditor);
-		mEditorStack->setCurrentWidget(newEditor);
-		mEditors.append(newEditor);
-
-		gDispatcher->emitSelectFile(file);
-
-		newEditor->setFocus();
+		openSingleFile(&loc);
 
 		saveFile();
 
@@ -235,17 +241,24 @@ void MainWindow::createFileMenu()
 	QMenu *fileMenu = new QMenu(tr("&File"), this);
 	menuBar()->addMenu(fileMenu);
 
-	fileMenu->addAction(tr("&New"), this, SLOT(newFile()),
+	fileMenu->addAction(tr("&New File"), this, SLOT(newFile()),
 						QKeySequence::New);
 
 	fileMenu->addAction(tr("&Open..."), this, SLOT(openFile()),
 						QKeySequence::Open);
+
+	mRecentFilesMenu = new QMenu(tr("&Recent Files"), fileMenu);
+	fileMenu->addMenu(mRecentFilesMenu);
+
+	fileMenu->addSeparator();
 
 	fileMenu->addAction(tr("&Save"), this, SLOT(saveFile()),
 						QKeySequence::Save);
 
 	fileMenu->addAction(tr("Save &As..."), this, SLOT(saveFileAs()),
 						QKeySequence::SaveAs);
+
+	fileMenu->addSeparator();
 
 	fileMenu->addAction(tr("&Close File"), this, SLOT(closeFile()),
 						QKeySequence::Close);
@@ -610,4 +623,38 @@ void MainWindow::previousWindow()
 
 	gDispatcher->emitSelectFile(prev->getFile());
 	prev->setFocus();
+}
+
+void MainWindow::updateRecentFilesMenu()
+{
+	mRecentFilesMenu->clear();
+
+	for(int ii = 0; ii < mRecentFiles.length(); ii++)
+	{
+		QAction* action = mRecentFilesMenu->addAction(mRecentFiles[ii]->getDisplayPath(), this, SLOT(openSingleFile()));
+		action->setData(ii);
+	}
+}
+
+void MainWindow::addRecentFile(Location *loc)
+{
+	Location* newLoc = new Location(*loc);
+
+	for(int ii = 0; ii < mRecentFiles.length(); ii++)
+	{
+		if(newLoc->getDisplayPath() == mRecentFiles[ii]->getDisplayPath())
+		{
+			mRecentFiles.removeAt(ii);
+			ii--;
+		}
+	}
+	mRecentFiles.push_front(newLoc);
+
+	// Only keep the 10 most recent files
+	for(int ii = 9; ii < mRecentFiles.length(); ii++)
+		mRecentFiles.removeAt(ii);
+
+	updateRecentFilesMenu();
+
+	Tools::saveRecentFiles(mRecentFiles);
 }

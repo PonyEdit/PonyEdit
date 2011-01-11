@@ -28,6 +28,7 @@ public:
 public slots:
 	void newFile();
 	void openFile();
+	void openSingleFile(Location* loc = NULL);
 	void saveFile();
 	void saveFileAs();
 	void closeFile();
@@ -82,6 +83,9 @@ private:
 	void createSearchBar();
 	void restoreState();
 
+	void updateRecentFilesMenu();
+	void addRecentFile(Location* loc);
+
 	int find(Editor* editor, const QString& text, bool backwards, bool caseSensitive, bool useRegexp);
 	int replace(Editor* editor, const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegexp, bool all);
 
@@ -92,6 +96,9 @@ private:
 	QStatusBar* mStatusBar;
 	QLabel* mStatusLine;
 	QList<Editor*> mEditors;
+
+	QList<Location*> mRecentFiles;
+	QMenu* mRecentFilesMenu;
 
 	QMap<QString, QAction*> mSyntaxMenuEntries;
 	QAction* mCurrentSyntaxMenuItem;

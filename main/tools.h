@@ -6,6 +6,8 @@
 #include <QtXml>
 #include <QMap>
 
+#include "file/location.h"
+
 class QThread;
 
 class Tools
@@ -15,6 +17,9 @@ public:
 	static void saveServers();
 	static void loadServers();
 	static bool isMainThread();
+
+	static QList<Location*> loadRecentFiles();
+	static void saveRecentFiles(QList<Location*> recentFiles);
 
 	static void initialize();
 

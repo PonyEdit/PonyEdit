@@ -75,6 +75,38 @@ void Tools::loadServers()
 	}
 }
 
+QList<Location*> Tools::loadRecentFiles()
+{
+	QSettings settings;
+
+	QList<Location*> recentFiles;
+
+	int count = settings.beginReadArray("recentFiles");
+	for (int i = 0; i < count; i++)
+	{
+		settings.setArrayIndex(i);
+		Location *loc = new Location(settings.value("path").toString());
+
+		recentFiles.append(loc);
+	}
+
+	return recentFiles;
+}
+
+void Tools::saveRecentFiles(QList<Location*> recentFiles)
+{
+	QSettings settings;
+
+	int index = 0;
+	settings.beginWriteArray("recentFiles");
+	foreach (Location* loc, recentFiles)
+	{
+		settings.setArrayIndex(index++);
+		settings.setValue("path", loc->getDisplayPath());
+	}
+	settings.endArray();
+}
+
 bool Tools::isMainThread()
 {
 	return (QThread::currentThread() == sMainThread);
