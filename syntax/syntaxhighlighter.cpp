@@ -41,6 +41,8 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 	const SyntaxDefinition::ContextLink* lineEndOverrideContextLink = NULL;
 	while (position < text.length())
 	{
+		QString tmp = text.mid(position);
+
 		//	If there is no current context, create a default one
 		if (contextStack.isEmpty())
 			contextStack.push(mSyntaxDefinition->getDefaultContext());
@@ -61,6 +63,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 		SyntaxDefinition::ItemData* attributeLink = NULL;
 		const SyntaxDefinition::ContextLink* contextLink = NULL;
 		bool isLookAhead = false;
+		bool forceFallthrough = false;
 		QStringList dynamicCaptures;
 		foreach (QSharedPointer<SyntaxRule> rule, context->rules)
 		{
@@ -79,16 +82,20 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 					lineEndOverrideContextLink = contextLink;
 					contextLink = NULL;
 				}
+
+				//	Special case: If this rule is detectSpaces, we're going to pop after this match
+				if (rule->getType() == SyntaxRule::DetectSpaces)
+					forceFallthrough = true;
 				break;
 			}
 		}
 
 		//	If no match was found, check for any fallthrough rules. Force a match length of at least 1 at this point.
-		if (matchLength == 0)
+		if (matchLength == 0 || forceFallthrough)
 		{
 			if (context->fallthrough)
 				contextLink = &context->fallthroughContextLink;
-			else
+			else if (matchLength == 0)
 				matchLength = 1;
 		}
 
