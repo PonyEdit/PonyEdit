@@ -45,9 +45,12 @@ public:
         virtual void doManualWork(SshConnection* /*connection*/) {}
 
 protected:
-	inline void addData(QByteArray* target, unsigned char field, qint16 d) { append(target, field, dtInt16, (const char*)&d, sizeof(d)); }
+
+	//	UNSUPPORTED: Signed 16 and 32-bit numbers. Perl <5.10 can't read 'em without some manual work.
+	//inline void addData(QByteArray* target, unsigned char field, qint16 d) { append(target, field, dtInt16, (const char*)&d, sizeof(d)); }
+	//inline void addData(QByteArray* target, unsigned char field, qint32 d) { append(target, field, dtInt32, (const char*)&d, sizeof(d)); }
+
 	inline void addData(QByteArray* target, unsigned char field, quint16 d) { append(target, field, dtUnsigned | dtInt16, (const char*)&d, sizeof(d)); }
-	inline void addData(QByteArray* target, unsigned char field, qint32 d) { append(target, field, dtInt32, (const char*)&d, sizeof(d)); }
 	inline void addData(QByteArray* target, unsigned char field, quint32 d) { append(target, field, dtUnsigned | dtInt32, (const char*)&d, sizeof(d)); }
 	void addData(QByteArray* target, unsigned char field, const QByteArray& d);
 	void addData(QByteArray* target, unsigned char field, const char* d);

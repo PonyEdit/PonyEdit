@@ -336,7 +336,7 @@ void SshRequest_resyncFile::packBody(QByteArray* target)
 
 	addData(target, 'd', mContent);
 	addData(target, 'c', md5checksum);
-	addData(target, 's', 0);
+	addData(target, 's', quint32(0));
 }
 
 void SshRequest_resyncFile::handleResponse(const QByteArray& response)
