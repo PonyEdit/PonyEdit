@@ -237,7 +237,7 @@ sub msg_save
 	my( $buff, $params, $result ) = @_;
 
 	my $s = $buff->checksum();
-	if( $params->{'c'} != $s )
+	if( $params->{'c'} ne $s )
 	{
 		die( "Checksums do not match: $s vs " . $params->{'c'} );
 	}
