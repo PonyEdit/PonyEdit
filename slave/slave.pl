@@ -1,3 +1,4 @@
+# (C) 2010-2011 Mark George & Gary Pendergast. PonyEdit slave script.
 use strict;
 use warnings;
 
