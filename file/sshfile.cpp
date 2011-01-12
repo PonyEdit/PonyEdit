@@ -57,7 +57,7 @@ void SshFile::open()
 
 		setOpenStatus(BaseFile::Loading);
 
-		connect(mHost->getController(), SIGNAL(stateChanged()), this, SLOT(connectionStateChanged()), Qt::QueuedConnection);
+		connect(mHost->getController(), SIGNAL(statusChanged()), this, SLOT(connectionStateChanged()), Qt::QueuedConnection);
 		connectionStateChanged();
 	}
 
