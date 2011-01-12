@@ -25,10 +25,10 @@ sub errlog
 
 our %dataTypes =
 (
-	1 => 's',
-	129 => 'S',
-	2 => 'l',
-	130 => 'L'
+	#1 => 's',
+	#2 => 'l',
+	129 => 'v',
+	130 => 'V',
 );
 
 #
@@ -116,7 +116,6 @@ our %dataTypes =
 	sub read
 	{
 		my ($self, $fmt) = @_;
-		$fmt = "($fmt)<";
 		my @v = unpack( $fmt, substr( $self->{DATA}, $self->{CURSOR} ) );
 		$self->{CURSOR} += length( pack( $fmt, @v ) );
 		return @v;
@@ -125,7 +124,7 @@ our %dataTypes =
 	sub readString
 	{
 		my $self = shift;
-		my ($length) = $self->read( 'L' );
+		my ($length) = $self->read( 'V' );
 		my $v = substr( $self->{DATA}, $self->{CURSOR}, $length );
 		$self->{CURSOR} += $length;
 		return $v;
@@ -134,13 +133,13 @@ our %dataTypes =
 	sub write
 	{
 		my ($self, $fmt, @args) = @_;
-		$self->{DATA} .= pack( "($fmt)<", @args );
+		$self->{DATA} .= pack( "$fmt", @args );
 	}
 
 	sub writeString
 	{
 		my ($self, $s) = @_;
-		$self->{DATA} .= pack( 'L<', length( $s ) ) . $s;
+		$self->{DATA} .= pack( 'V', length( $s ) ) . $s;
 	}
 
 	sub getData
@@ -158,7 +157,7 @@ our %dataTypes =
 	sub readMessage
 	{
 		my $self = shift;
-		my ($messageId, $bufferId, $length) = $self->read( 'SLL' );
+		my ($messageId, $bufferId, $length) = $self->read( 'vVV' );
 		if( $length > length( $self->{DATA} ) - $self->{CURSOR} )
 		{
 			die( 'Faulty Message Header!' );
@@ -220,7 +219,7 @@ sub msg_open
 	$nextBufferId += 1;
 	$buffers{$bufferId} = $buff;
 
-	$result->write( 'L', $bufferId );
+	$result->write( 'V', $bufferId );
 	$result->writeString( $buff->checksum() );
 }
 
