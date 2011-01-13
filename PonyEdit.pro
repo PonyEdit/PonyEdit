@@ -4,9 +4,10 @@
 #
 #-------------------------------------------------
 
+INCLUDEPATH += $$PWD/deps/libssh2/include/
+
 win32 {
-	INCLUDEPATH += $$PWD/../libssh2-1.2.7/include/
-	LIBS     += -L$$PWD/../libssh2-1.2.7/lib/ -llibgpg-error -lwsock32
+	LIBS     += -L$$PWD/deps/lib-win32/ -llibgpg-error -lwsock32
 }
 
 !win32 {
