@@ -241,3 +241,11 @@ int _libssh2_cipher_crypt(_libssh2_cipher_ctx * ctx,
 const EVP_CIPHER *_libssh2_EVP_aes_128_ctr(void);
 const EVP_CIPHER *_libssh2_EVP_aes_192_ctr(void);
 const EVP_CIPHER *_libssh2_EVP_aes_256_ctr(void);
+
+int gen_publickey_from_private_keyfile(LIBSSH2_SESSION *session,
+                                       unsigned char **method,
+                                       unsigned long *method_len,
+                                       unsigned char **pubkeydata,
+                                       unsigned long *pubkeydata_len,
+                                       const char *privatekey,
+                                       const char *passphrase);
