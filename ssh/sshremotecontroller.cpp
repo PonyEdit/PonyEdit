@@ -242,9 +242,16 @@ void SshControllerThread::connect()
 		SshConnection::AuthMethods authMethods = mConnection->getAuthenticationMethods(mHost->getUserName().toUtf8());
 		bool authenticated = false;
 
-		//	Always try ssh-agent/putty first if key auth is available
+		//	If key authentication is available
 		if (authMethods & SshConnection::PublicKey)
-			authenticated = mConnection->authenticateAgent(mHost->getUserName().toUtf8());
+		{
+			//	Try with an agent first
+			//authenticated = mConnection->authenticateAgent(mHost->getUserName().toUtf8());
+
+			//	If no agent available, try with a straight-up key
+			if (!authenticated && !mHost->getKeyFile().isEmpty())
+				authenticated = mConnection->authenticateKeyFile(mHost->getKeyFile().toUtf8(), "brains!!");
+		}
 
 		//	Fall back on password entry
 		while (!authenticated)

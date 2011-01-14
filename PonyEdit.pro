@@ -7,7 +7,7 @@
 INCLUDEPATH += $$PWD/deps/libssh2/include/
 
 win32 {
-	LIBS     += -L$$PWD/deps/lib-win32/ -llibgpg-error -lwsock32
+	LIBS     += -L$$PWD/deps/lib-win32/ -lwsock32 -lcrypto -lssl
 }
 
 !win32 {

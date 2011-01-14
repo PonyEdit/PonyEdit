@@ -54,6 +54,7 @@ libssh2_knownhost_readfile
 libssh2_knownhost_readline
 libssh2_knownhost_writefile
 libssh2_knownhost_writeline
+libssh2_md5
 libssh2_poll
 libssh2_poll_channel_read
 libssh2_publickey_add_ex
@@ -102,6 +103,7 @@ libssh2_sftp_tell
 libssh2_sftp_tell64
 libssh2_sftp_unlink_ex
 libssh2_sftp_write
+libssh2_sha1
 libssh2_trace
 libssh2_trace_sethandler
 libssh2_userauth_authenticated
