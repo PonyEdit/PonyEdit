@@ -32,7 +32,7 @@ public:
 	void disconnect();
 	AuthMethods getAuthenticationMethods(const char* username);
 	bool authenticatePassword(const char* username, const char* password);
-	bool authenticateKeyFile(const char* filename, const char* password);
+	bool authenticateKeyFile(const char* filename, const char* username, const char* password, bool* keyRejected);
 	bool authenticateAgent(const char* username);
 	void startRemoteSlave();
 

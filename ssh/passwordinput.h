@@ -17,6 +17,7 @@ public:
 
 	QString getEnteredPassword();
 	bool getSavePassword();
+	void setSavePassword(bool save);
 
 private:
     Ui::PasswordInput *ui;

@@ -42,8 +42,9 @@ void Tools::saveServers()
 			settings.setValue("hostname", host->getHostName());
 			settings.setValue("port", host->getPort());
 			settings.setValue("username", host->getUserName());
-			settings.setValue("password", host->getSavePassword() ? host->getPassword() : "");
+			settings.setValue("password", host->getSavePassword() ? host->getPassword().toUtf8().toBase64() : "");
 			settings.setValue("keyFile", host->getKeyFile());
+			settings.setValue("keyPassphrase", host->getSaveKeyPassphrase() ? host->getKeyPassphrase().toUtf8().toBase64() : "");
 			settings.setValue("name", host->getName());
 			settings.setValue("defaultDirectory", host->getDefaultDirectory());
 		}
@@ -65,11 +66,15 @@ void Tools::loadServers()
 		host->setPort(settings.value("port", 22).toInt());
 		host->setUserName(settings.value("username").toString());
 		host->setKeyFile(settings.value("keyFile").toString());
+
+		QByteArray password = QByteArray::fromBase64(settings.value("password").toByteArray());
+		if (password.length()) host->setPassword(password);
+
+		QByteArray keyPassphrase = QByteArray::fromBase64(settings.value("keyPassphrase").toByteArray());
+		if (keyPassphrase.length()) host->setKeyPassphrase(keyPassphrase);
+
 		host->setName(settings.value("name").toString());
 		host->setDefaultDirectory(settings.value("defaultDirectory", QVariant("~")).toString());
-
-		QString password = settings.value("password").toString();
-		host->setPassword(password);
 
 		SshHost::recordKnownHost(host);
 	}

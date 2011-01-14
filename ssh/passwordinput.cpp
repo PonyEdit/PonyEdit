@@ -23,3 +23,8 @@ bool PasswordInput::getSavePassword()
 {
 	return ui->savePassword->isChecked();
 }
+
+void PasswordInput::setSavePassword(bool save)
+{
+	ui->savePassword->setChecked(save);
+}

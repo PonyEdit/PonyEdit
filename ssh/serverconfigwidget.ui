@@ -72,7 +72,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="0" column="2">
        <widget class="QLineEdit" name="userName"/>
       </item>
       <item row="1" column="0">
@@ -82,14 +82,14 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="1" column="2">
        <widget class="QLineEdit" name="password">
         <property name="echoMode">
          <enum>QLineEdit::Password</enum>
         </property>
        </widget>
       </item>
-      <item row="1" column="2" colspan="2">
+      <item row="1" column="3" colspan="2">
        <widget class="QCheckBox" name="savePassword">
         <property name="text">
          <string>Remember Password (insecure)</string>
@@ -99,19 +99,36 @@
       <item row="2" column="0">
        <widget class="QLabel" name="label_8">
         <property name="text">
-         <string>Key File :</string>
+         <string>Private Key File : </string>
         </property>
        </widget>
       </item>
-      <item row="2" column="2">
+      <item row="2" column="3">
        <widget class="QPushButton" name="keyFileBrowse">
         <property name="text">
          <string>Browse ...</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="2" column="2">
        <widget class="QLineEdit" name="keyFile"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Key Passphrase : </string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QLineEdit" name="keyPassphrase"/>
+      </item>
+      <item row="3" column="3" colspan="2">
+       <widget class="QCheckBox" name="saveKeyPassphrase">
+        <property name="text">
+         <string>Remember Passphrase (insecure)</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

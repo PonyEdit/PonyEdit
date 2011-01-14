@@ -60,6 +60,7 @@ void ServerConfigWidget::setEditHost(SshHost* host)
 	ui->serverName->setText(host->getName());
 	ui->defaultDirectory->setText(host->getDefaultDirectory());
 	ui->keyFile->setText(host->getKeyFile());
+	ui->keyPassphrase->setText(host->getKeyPassphrase());
 
 	mLastAutoName = getAutoName();
 	updateName();
@@ -83,7 +84,8 @@ void ServerConfigWidget::acceptedHandler()
 	mEditHost->setDefaultDirectory(ui->defaultDirectory->text());
 	mEditHost->setSavePassword(ui->savePassword->checkState() == Qt::Checked);
 	mEditHost->setKeyFile(ui->keyFile->text());
-
+	mEditHost->setKeyPassphrase(ui->keyPassphrase->text());
+	mEditHost->setSaveKeyPassphrase(ui->saveKeyPassphrase->isChecked());
 }
 
 QString ServerConfigWidget::getAutoName()

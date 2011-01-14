@@ -69,6 +69,7 @@ SshRemoteController::SshRemoteController(SshHost* host)
 	mThread = new SshControllerThread(this, host);
 	mThread->start();
 	mPasswordInput = NULL;
+	mKeyPassphraseInput = false;
 }
 
 SshRemoteController::~SshRemoteController()
@@ -145,19 +146,32 @@ void SshRemoteController::passwordInputDialog(ConnectionStatusWidget* widget, Re
 	SshRemoteController* controller = static_cast<SshRemoteController*>(connection);
 
 	widget->addButton(QDialogButtonBox::YesRole, tr("Connect"));
-	widget->setManualStatus(tr("Please enter your password"), QPixmap(":/icons/question.png"));
+	widget->setManualStatus(controller->mKeyPassphraseInput ? tr("Please enter your key passphrase") : tr("Please enter your password"), QPixmap(":/icons/question.png"));
 
 	QVBoxLayout* layout = new QVBoxLayout(target);
 	controller->mPasswordInput = new PasswordInput(target);
 	layout->addWidget(controller->mPasswordInput);
+
+	controller->mPasswordInput->setSavePassword(controller->mKeyPassphraseInput ?
+		controller->mThread->mHost->getSaveKeyPassphrase() :
+		controller->mThread->mHost->getSavePassword());
 }
 
 bool SshRemoteController::passwordInputCallback(ConnectionStatusWidget* /* widget */, RemoteConnection* connection, QDialogButtonBox::ButtonRole /* buttonRole */)
 {
 	SshRemoteController* controller = static_cast<SshRemoteController*>(connection);
 
-	controller->mThread->mHost->setPassword(controller->mPasswordInput->getEnteredPassword());
-	controller->mThread->mHost->setSavePassword(controller->mPasswordInput->getSavePassword());
+	SshHost* host = controller->mThread->mHost;
+	if (controller->mKeyPassphraseInput)
+	{
+		host->setKeyPassphrase(controller->mPasswordInput->getEnteredPassword());
+		host->setSaveKeyPassphrase(controller->mPasswordInput->getSavePassword());
+	}
+	else
+	{
+		host->setPassword(controller->mPasswordInput->getEnteredPassword());
+		host->setSavePassword(controller->mPasswordInput->getSavePassword());
+	}
 
 	return true;
 }
@@ -242,22 +256,37 @@ void SshControllerThread::connect()
 		SshConnection::AuthMethods authMethods = mConnection->getAuthenticationMethods(mHost->getUserName().toUtf8());
 		bool authenticated = false;
 
-		//	If key authentication is available
+		//	Try key authentication first if available
 		if (authMethods & SshConnection::PublicKey)
 		{
-			//	Try with an agent first
-			//authenticated = mConnection->authenticateAgent(mHost->getUserName().toUtf8());
+			//	Try to see if there is an agent available first...
+			authenticated = mConnection->authenticateAgent(mHost->getUserName().toUtf8());
 
-			//	If no agent available, try with a straight-up key
-			if (!authenticated && !mHost->getKeyFile().isEmpty())
-				authenticated = mConnection->authenticateKeyFile(mHost->getKeyFile().toUtf8(), "brains!!");
+			//	If no agent is available, but a keyfile was specified, try that...
+			if (!authenticated)
+			{
+				bool passkeyRejected = true;
+				while (passkeyRejected)
+				{
+					authenticated = mConnection->authenticateKeyFile(mHost->getKeyFile().toUtf8(), mHost->getUserName().toUtf8(), mHost->getKeyPassphrase().toUtf8(), &passkeyRejected);
+
+					if (passkeyRejected)
+					{
+						mController->mKeyPassphraseInput = true;
+						mController->waitForInput(SshRemoteController::passwordInputDialog, SshRemoteController::passwordInputCallback);
+					}
+				}
+			}
 		}
 
 		//	Fall back on password entry
 		while (!authenticated)
 		{
 			if (mHost->getPassword().isEmpty())
+			{
+				mController->mKeyPassphraseInput = false;
 				mController->waitForInput(SshRemoteController::passwordInputDialog, SshRemoteController::passwordInputCallback);
+			}
 
 			if (mController->isDisconnecting()) return;
 			authenticated = mConnection->authenticatePassword(mHost->getUserName().toUtf8(), mHost->getPassword().toUtf8());

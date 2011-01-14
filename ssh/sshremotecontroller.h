@@ -32,6 +32,7 @@ public:
 	static void passwordInputDialog(ConnectionStatusWidget* widget, RemoteConnection* connection, QWidget* target);
 	static bool passwordInputCallback(ConnectionStatusWidget* widget, RemoteConnection* connection, QDialogButtonBox::ButtonRole buttonRole);
 
+	bool mKeyPassphraseInput;
 private:
 	SshControllerThread* mThread;
 	PasswordInput* mPasswordInput;

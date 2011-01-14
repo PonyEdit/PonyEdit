@@ -22,22 +22,26 @@ public:
 	inline const QString& getHostName() const { return mHostName; }
 	inline const QString& getUserName() const { return mUserName; }
 	inline const QString& getPassword() const { return mPassword; }
+	inline const QString& getKeyPassphrase() const { return mKeyPassphrase; }
 	inline const QString& getKeyFile() const { return mKeyFile; }
 	inline const QString& getDefaultDirectory() const { return mDefaultDirectory; }
 	inline int getPort() const { return mPort; }
 	inline bool getSave() const { return mSave; }
 	inline const QString& getName() const { return mName; }
 	inline bool getSavePassword() const { return mSavePassword; }
+	inline bool getSaveKeyPassphrase() const { return mSaveKeyPassphrase; }
 
 	inline void setHostName(const QString& hostName) { mHostName = hostName; }
 	inline void setUserName(const QString& userName) { mUserName = userName; }
 	inline void setPassword(const QString& password) { mPassword = password; }
+	inline void setKeyPassphrase(const QString& keyPassphrase) { mKeyPassphrase = keyPassphrase; }
 	inline void setKeyFile(const QString& keyFile) { mKeyFile = keyFile; }
 	inline void setDefaultDirectory(const QString& defaultDirectory) { mDefaultDirectory = defaultDirectory; }
 	inline void setPort(int port) { mPort = port; }
 	inline void setSave(bool save) { mSave = save; }
 	inline void setName(const QString& name) { mName = name; }
 	inline void setSavePassword(bool savePassword) { mSavePassword = savePassword; }
+	inline void setSaveKeyPassphrase(bool saveKeyPassphrase) { mSaveKeyPassphrase = saveKeyPassphrase; }
 
 	bool isConnected() const;
 	bool ensureConnection();
@@ -67,7 +71,9 @@ private:
 	QString mUserName;
 	QString mPassword;
 	QString mKeyFile;
+	QString mKeyPassphrase;
 	bool mSavePassword;
+	bool mSaveKeyPassphrase;
 
 	QString mDefaultDirectory;
 

@@ -153,20 +153,21 @@ bool SshConnection::authenticatePassword(const char* username, const char* passw
 	return true;
 }
 
-bool SshConnection::authenticateKeyFile(const char* filename, const char* password)
+bool SshConnection::authenticateKeyFile(const char* filename, const char* username, const char* password, bool* keyRejected)
 {
 	qDebug() << filename;
-	int rc = libssh2_userauth_publickey_fromfile_ex(mSession, "markg", strlen("markg"),
-												 NULL, filename, "*****");
+	int rc = libssh2_userauth_publickey_fromfile_ex(mSession, username, strlen(username),
+												 NULL, filename, password);
 
-	char* message;
-	int msgLen;
-	libssh2_session_last_error(mSession, &message, &msgLen, 0);
-	qDebug() << message;
+	if (rc == 0)
+	{
+		createChannel();
+		*keyRejected = false;
+		return true;
+	}
 
-	qDebug() << "Attempt to authenticate keyfile: " << rc;
-	createChannel();
-	return (rc == 0);
+	*keyRejected = (rc == LIBSSH2_ERROR_PUBLICKEY_UNVERIFIED || rc == LIBSSH2_ERROR_FILE);
+	return false;
 }
 
 bool SshConnection::authenticateAgent(const char* username)
