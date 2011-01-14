@@ -263,7 +263,7 @@ void SshControllerThread::connect()
 			authenticated = mConnection->authenticateAgent(mHost->getUserName().toUtf8());
 
 			//	If no agent is available, but a keyfile was specified, try that...
-			if (!authenticated)
+			if (!authenticated && !mHost->getKeyFile().isEmpty())
 			{
 				bool passkeyRejected = true;
 				while (passkeyRejected)
