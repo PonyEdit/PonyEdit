@@ -72,7 +72,7 @@ use constant FILE_CANWRITE => 4;
 	sub save
 	{
 		my $self = shift;
-		open( BUFFER_FILE, '>' . $self->{NAME} );
+		open( BUFFER_FILE, '>' . $self->{NAME} ) or die "Failed to open $self->{NAME} for writing!\n";
 		print BUFFER_FILE $self->{DATA};
 		close( BUFFER_FILE );
 	}
@@ -217,6 +217,7 @@ sub msg_ls
 		$result->write( 'CL', $flags, $size );
 		$hits++;
 	}
+	close(DIR);
 
 	die("Permission denied!\n") if ($hits == 0 && !(-r $d));
 }
@@ -255,7 +256,7 @@ sub msg_save
 	my $s = $buff->checksum();
 	if( $params->{'c'} ne $s )
 	{
-		die( "Checksums do not match: $s vs " . $params->{'c'} );
+		die( "Checksums do not match: $s vs " . $params->{'c'} . "\n" );
 	}
 	$buff->save();
 }
@@ -273,7 +274,7 @@ sub msg_pushcontent
 	my $s = $buff->checksum();
 	if ($params->{'c'} != $s)
 	{
-		die( "Checksums do not match: $s vs " . $params->{'c'} );
+		die( "Checksums do not match: $s vs " . $params->{'c'} . "\n" );
 	}
 
 	if ($params->{'s'})
@@ -299,7 +300,7 @@ sub msg_new
 	my $opened = open( NEW_FILE, '>' . $params->{'f'} );
 	if( !$opened )
 	{
-		die( "Could not save the file to that location." );
+		die( "Could not save the file to that location.\n" );
 	}
 
 	print NEW_FILE $params->{'c'};
@@ -316,7 +317,7 @@ sub msg_new_dir
 	my $created = mkdir( $name );
 	if( !$created )
 	{
-		die( "Could not create directory." );
+		die( "Could not create directory.\n" );
 	}
 }
 
