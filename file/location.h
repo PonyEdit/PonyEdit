@@ -46,6 +46,8 @@ public:
 	bool isNull() const;
 	bool isHidden() const;
 	bool isDirectory() const;
+	bool canRead() const;
+	bool canWrite() const;
 
 	BaseFile* getFile();
 
@@ -64,7 +66,7 @@ public:
 	void createNewDirectory(QString name);
 
 private:
-	Location(const Location& parent, const QString& path, Type type, int size, QDateTime lastModified);
+	Location(const Location& parent, const QString& path, Type type, int size, QDateTime lastModified, bool canRead, bool canWrite);
 	Location(LocationShared* data);
 
 	void sshChildLoadResponse(const QList<Location>& children);
@@ -112,6 +114,8 @@ private:
 	bool mListLoaded;
 	bool mLoading;
 	int mSize;
+	bool mCanRead;
+	bool mCanWrite;
 
 	QString mRemoteHostName;
 	QString mRemoteUserName;

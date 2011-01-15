@@ -84,7 +84,7 @@ Location::Location(const QString& path)
 	mData->setPath(path);
 }
 
-Location::Location(const Location& parent, const QString& path, Type type, int size, QDateTime lastModified)
+Location::Location(const Location& parent, const QString& path, Type type, int size, QDateTime lastModified, bool canRead, bool canWrite)
 {
 	mData = new LocationShared();
 	mData->setPath(path);
@@ -93,6 +93,8 @@ Location::Location(const Location& parent, const QString& path, Type type, int s
 	mData->mLastModified = lastModified;
 	mData->mSelfLoaded = true;
 	mData->mParent = parent;
+	mData->mCanRead = canRead;
+	mData->mCanWrite = canWrite;
 }
 
 LocationShared::LocationShared()
@@ -130,6 +132,8 @@ bool Location::isHidden() const { return (mData->mLabel.startsWith('.')); }
 int Location::getSize() const { return mData->mSize; }
 const QDateTime& Location::getLastModified() const { return mData->mLastModified; }
 bool Location::isDirectory() const { return mData->mType == Directory; }
+bool Location::canRead() const { return mData->mCanRead; }
+bool Location::canWrite() const { return mData->mCanWrite; }
 
 bool Location::operator==(const Location& other) const
 {
@@ -268,7 +272,9 @@ void LocationShared::localLoadListing()
 	foreach (QString entry, entries)
 	{
 		QFileInfo fileInfo(mPath + "/" + entry);
-		mChildren.append(Location(Location(this), fileInfo.absoluteFilePath(), fileInfo.isDir() ? Location::Directory : Location::File, fileInfo.size(), fileInfo.lastModified()));
+		mChildren.append(Location(Location(this), fileInfo.absoluteFilePath(),
+			fileInfo.isDir() ? Location::Directory : Location::File, fileInfo.size(),
+			fileInfo.lastModified(), fileInfo.isReadable(), fileInfo.isWritable()));
 	}
 
 	mListLoaded = true;

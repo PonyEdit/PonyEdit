@@ -32,6 +32,10 @@ our %dataTypes =
 	130 => 'V',
 );
 
+use constant FILE_ISDIR =>    1;
+use constant FILE_CANREAD =>  2;
+use constant FILE_CANWRITE => 4;
+
 #
 #	Buffer class
 #
@@ -202,8 +206,14 @@ sub msg_ls
 	{
 		my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,
 		$atime,$mtime,$ctime,$blksize,$blocks) = stat( "$d/$filename" );
+
+		my $flags =
+			(S_ISDIR($mode) ? FILE_ISDIR : 0) +
+			(-r "$d/$filename" ? FILE_CANREAD : 0) +
+			(-w "$d/$filename" ? FILE_CANWRITE : 0);
+
 		$result->writeString( $filename );
-		$result->write( 'CL', S_ISDIR( $mode ), $size );
+		$result->write( 'CL', $flags, $size );
 	}
 }
 

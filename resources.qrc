@@ -18,5 +18,6 @@
         <file>icons/question.png</file>
         <file>icons/warning.png</file>
         <file>icons/newserver.png</file>
+        <file>icons/unreadable.png</file>
     </qresource>
 </RCC>

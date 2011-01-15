@@ -5,6 +5,7 @@
 #include "main/globaldispatcher.h"
 #include "newfolderdialog.h"
 #include "ssh/serverconfigdlg.h"
+#include "file/filelistdelegate.h"
 
 #include <QDir>
 #include <QDebug>
@@ -31,6 +32,7 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	ui->setupUi(this);
 
 	mFileListModel = new QStandardItemModel();
+	ui->fileList->setItemDelegate(new FileListDelegate(this));
 
 	mSaveAs = saveAs;
 	setWindowTitle(saveAs ? tr("Save As") : tr("Open File"));

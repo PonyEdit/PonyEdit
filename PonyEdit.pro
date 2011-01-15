@@ -86,7 +86,8 @@ SOURCES += \
     options/sshserveroptionswidget.cpp \
     options/fontoptionswidget.cpp \
     options/options.cpp \
-    options/optionsdialogpage.cpp
+    options/optionsdialogpage.cpp \
+    file/filelistdelegate.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -140,7 +141,8 @@ HEADERS  += \
     options/sshserveroptionswidget.h \
     options/fontoptionswidget.h \
     options/options.h \
-    options/optionsdialogpage.h
+    options/optionsdialogpage.h \
+    file/filelistdelegate.h
 
 OTHER_FILES += \
 	slave/slave.pl \

@@ -15,6 +15,13 @@ enum DataType
 	dtUnsigned = 0x80
 };
 
+enum FileFlags
+{
+	fileIsDir =    0x01,
+	fileCanRead =  0x02,
+	fileCanWrite = 0x04
+};
+
 class SshFile;
 class SshConnection;
 class SshRemoteController;

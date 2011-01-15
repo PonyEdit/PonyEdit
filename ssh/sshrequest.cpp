@@ -105,8 +105,7 @@ void SshRequest_ls::handleResponse(const QByteArray& response)
 		quint32 filenameLength;
 		QString filename;
 		quint64 size;
-		//quint64 lastModified;
-		quint8 isDir;
+		quint8 flags;
 
 		filenameLength = *(quint32*)cursor;
 		cursor += 4;
@@ -114,8 +113,12 @@ void SshRequest_ls::handleResponse(const QByteArray& response)
 		filename = QByteArray(cursor, filenameLength);
 		cursor += filenameLength;
 
-		isDir = *(quint8*)cursor;
+		flags = *(quint8*)cursor;
 		cursor += 1;
+
+		bool isDir = (flags & fileIsDir)!=0;
+		bool canRead = (flags & fileCanRead)!=0;
+		bool canWrite = (flags & fileCanWrite)!=0;
 
 		size = *(quint32*)cursor;
 		cursor += 4;
@@ -123,7 +126,8 @@ void SshRequest_ls::handleResponse(const QByteArray& response)
 		/*lastModified = *(quint32*)cursor;
 		cursor += 4;*/
 
-		mDirList.append(Location(mLocation, mLocation.getPath() + "/" + filename, isDir?Location::Directory:Location::File, size, QDateTime()));
+		mDirList.append(Location(mLocation, mLocation.getPath() + "/" + filename,
+			isDir?Location::Directory:Location::File, size, QDateTime(), canRead, canWrite));
 	}
 }
 
