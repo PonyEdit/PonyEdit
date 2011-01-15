@@ -13,7 +13,7 @@ public:
 	void open();
 	void save();
 	void close();
-	void fileOpened(int bufferId, const QByteArray& content, const QString& checksum);
+	void fileOpened(int bufferId, const QByteArray& content, const QString& checksum, bool readOnly);
 
 	SshFile(const Location& location);	//	Do not call; use File::getFile instead.
 	void reconnect();

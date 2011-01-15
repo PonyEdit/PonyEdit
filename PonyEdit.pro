@@ -87,7 +87,8 @@ SOURCES += \
     options/fontoptionswidget.cpp \
     options/options.cpp \
     options/optionsdialogpage.cpp \
-    file/filelistdelegate.cpp
+    file/filelistdelegate.cpp \
+    editor/editorwarningbar.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -142,7 +143,8 @@ HEADERS  += \
     options/fontoptionswidget.h \
     options/options.h \
     options/optionsdialogpage.h \
-    file/filelistdelegate.h
+    file/filelistdelegate.h \
+    editor/editorwarningbar.h
 
 OTHER_FILES += \
 	slave/slave.pl \

@@ -10,12 +10,20 @@
 #include "syntax/syntaxdefmanager.h"
 #include "options/options.h"
 #include "main/globaldispatcher.h"
+#include "editorwarningbar.h"
 
 Editor::Editor(BaseFile* file) : QStackedWidget()
 {
-	mEditor = new CodeEditor();
+	mReadOnlyWarning = NULL;
 	mFirstOpen = true;
-	addWidget(mEditor);
+
+	mEditorPane = new QWidget(this);
+	mEditorPaneLayout = new QVBoxLayout(mEditorPane);
+	mEditorPaneLayout->setSpacing(0);
+	mEditorPaneLayout->setMargin(0);
+	mEditor = new CodeEditor(this);
+	mEditorPaneLayout->addWidget(mEditor);
+	addWidget(mEditorPane);
 
 	mWorkingPane = new QWidget();
 	QGridLayout* layout = new QGridLayout(mWorkingPane);
@@ -78,12 +86,18 @@ void Editor::openStatusChanged(int openStatus)
 			{
 				mFirstOpen = false;
 				mEditor->moveCursor(QTextCursor::Start, QTextCursor::MoveAnchor);
+
+				if (mFile->isReadOnly())
+				{
+					setReadOnly(true);
+					showReadOnlyWarning();
+				}
 			}
 
 		case BaseFile::Disconnected:
 		case BaseFile::Reconnecting:
 		case BaseFile::Repairing:
-			setCurrentWidget(mEditor);
+			setCurrentWidget(mEditorPane);
 			if (hasFocus()) mEditor->setFocus();
 			break;
 
@@ -241,3 +255,26 @@ void Editor::applyOptions()
 {
 	mEditor->setFont(Options::getEditorFont());
 }
+
+void Editor::setReadOnly(bool readOnly)
+{
+	mEditor->setReadOnly(readOnly);
+
+	if (!readOnly && mReadOnlyWarning)
+	{
+		delete mReadOnlyWarning;
+		mReadOnlyWarning = NULL;
+	}
+}
+
+void Editor::showReadOnlyWarning()
+{
+	if (mReadOnlyWarning) delete mReadOnlyWarning;
+
+	mReadOnlyWarning = new EditorWarningBar(this, QPixmap(":/icons/warning.png"), tr("You do not have access to write to this file. It has been opened in read-only mode."));
+	mReadOnlyWarning->addButton(tr("Enable Editing"), this, SLOT(enableEditing()));
+	mEditorPaneLayout->insertWidget(0, mReadOnlyWarning);
+}
+
+
+

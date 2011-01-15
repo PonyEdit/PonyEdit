@@ -64,14 +64,14 @@ void SshFile::open()
 	mController->sendRequest(new SshRequest_open(this, SshRequest_open::Content));
 }
 
-void SshFile::fileOpened(int bufferId, const QByteArray& content, const QString& checksum)
+void SshFile::fileOpened(int bufferId, const QByteArray& content, const QString& checksum, bool readOnly)
 {
 	mBufferId = bufferId;
 
 	//	If this is from a plain "open" request, content will not be null.
 	if (!content.isNull())
 	{
-		BaseFile::fileOpened(content);
+		BaseFile::fileOpened(content, readOnly);
 		mChangePumpCursor = 0;
 	}
 	else

@@ -33,6 +33,7 @@ public:
 	inline OpenStatus getOpenStatus() const { return mOpenStatus; }
 	inline int getLoadingPercent() const { return mLoadingPercent; }
 	inline bool hasUnsavedChanges() const { return mRevision > mLastSavedRevision; }
+	inline bool isReadOnly() const { return mReadOnly; }
 
 	virtual BaseFile* newFile(const QByteArray& content) = 0;
 	virtual void open() = 0;
@@ -57,12 +58,12 @@ public:
 	void setSyntax(SyntaxDefinition* syntaxDef);
 
 public slots:
-	void fileOpened(const QByteArray& content);
+	void fileOpened(const QByteArray& content, bool readOnly);
 	void documentChanged(int position, int removeChars, int added);
 	void closeCompleted();
 
 signals:
-	void fileOpenedRethreadSignal(const QByteArray& content);
+	void fileOpenedRethreadSignal(const QByteArray& content, bool readOnly);
 	void closeCompletedRethreadSignal();
 	void fileOpenProgress(int percent);
 	void openStatusChanged(int newStatus);
@@ -86,6 +87,7 @@ protected:
 
 	bool mChanged;
 	bool mDosLineEndings;
+	bool mReadOnly;
 	int mRevision;
 	int mIgnoreChanges;	//	To disregard change signals while changing content of QTextDocument programmatically.
 

@@ -5,14 +5,14 @@
 #include <QTextEdit>
 #include <QStackedWidget>
 #include <QProgressBar>
+#include <QVBoxLayout>
 
 #include "file/location.h"
 #include "file/basefile.h"
-
 #include "main/mainwindow.h"
-
 #include "editor/codeeditor.h"
 
+class EditorWarningBar;
 class Editor : public QStackedWidget
 {
     Q_OBJECT
@@ -28,6 +28,9 @@ public:
 
 	void gotoLine(int lineNumber);
 
+	void setReadOnly(bool readOnly);
+	void showReadOnlyWarning();
+
 public slots:
 	void openStatusChanged(int openStatus);
 	void fileOpenProgress(int percent);
@@ -35,6 +38,7 @@ public slots:
 	int replace(const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegex, bool all);
 	void setFocus();
 	void applyOptions();
+	void enableEditing() { setReadOnly(false); }
 
 private:
 	void showLoading();
@@ -42,6 +46,8 @@ private:
 
 	bool mFirstOpen;
 
+	QWidget* mEditorPane;
+	QVBoxLayout* mEditorPaneLayout;
 	BaseFile* mFile;
 	CodeEditor* mEditor;
 	QTextDocument* mDocument;
@@ -50,6 +56,8 @@ private:
 	QLabel* mWorkingIcon;
 	QLabel* mWorkingText;
 	QProgressBar* mProgressBar;
+
+	EditorWarningBar* mReadOnlyWarning;
 };
 
 #endif // EDITOR_H

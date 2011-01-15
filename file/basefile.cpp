@@ -56,6 +56,7 @@ BaseFile::~BaseFile()
 
 BaseFile::BaseFile(const Location& location = NULL)
 {
+	mReadOnly = false;
 	mHighlighter = NULL;
 	mLoadingPercent = 0;
 	mOpenStatus = BaseFile::Closed;
@@ -72,7 +73,7 @@ BaseFile::BaseFile(const Location& location = NULL)
 	mDocument->setDocumentLayout(mDocumentLayout);
 
 	connect(mDocument, SIGNAL(contentsChange(int,int,int)), this, SLOT(documentChanged(int,int,int)));
-	connect(this, SIGNAL(fileOpenedRethreadSignal(QByteArray)), this, SLOT(fileOpened(QByteArray)), Qt::QueuedConnection);
+	connect(this, SIGNAL(fileOpenedRethreadSignal(QByteArray,bool)), this, SLOT(fileOpened(QByteArray,bool)), Qt::QueuedConnection);
 	connect(this, SIGNAL(closeCompletedRethreadSignal()), this, SLOT(closeCompleted()), Qt::QueuedConnection);
 }
 
@@ -107,16 +108,17 @@ void BaseFile::handleDocumentChange(int position, int removeChars, const QByteAr
 	emit unsavedStatusChanged();
 }
 
-void BaseFile::fileOpened(const QByteArray& content)
+void BaseFile::fileOpened(const QByteArray& content, bool readOnly)
 {
 	//	If this is not the main thread, move to the main thread.
 	if (!Tools::isMainThread())
 	{
-		emit fileOpenedRethreadSignal(content);
+		emit fileOpenedRethreadSignal(content, readOnly);
 		return;
 	}
 
 	mContent = content;
+	mReadOnly = readOnly;
 
 	QTime t;
 	t.start();

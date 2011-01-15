@@ -181,6 +181,10 @@ void SshRequest_open::handleResponse(const QByteArray& response)
 	//	Take note of the bufferId & checksum
 	//
 
+	quint8 flags = *(quint8*)cursor;
+	cursor++;
+	mReadOnly = !(flags & fileCanWrite);
+
 	mBufferId = *(quint32*)cursor;
 	cursor += 4;
 
@@ -208,7 +212,7 @@ void SshRequest_open::error(const QString& error)
 
 void SshRequest_open::success()
 {
-	mFile->fileOpened(mBufferId, mData, mChecksum);
+	mFile->fileOpened(mBufferId, mData, mChecksum, mReadOnly);
 }
 
 void SshRequest_open::fileOpenProgress(int percent)

@@ -113,6 +113,7 @@ private:
 	QByteArray mData;
 	QString mChecksum;
 	Fetch mFetch;
+	bool mReadOnly;
 };
 
 ////////////////////////////////

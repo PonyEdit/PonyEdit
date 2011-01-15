@@ -234,6 +234,7 @@ sub msg_open
 	$nextBufferId += 1;
 	$buffers{$bufferId} = $buff;
 
+	$result->write( 'C', (-w $name ? FILE_CANWRITE : 0) );
 	$result->write( 'V', $bufferId );
 	$result->writeString( $buff->checksum() );
 }
