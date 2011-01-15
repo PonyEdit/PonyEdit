@@ -271,7 +271,8 @@ void Editor::showReadOnlyWarning()
 {
 	if (mReadOnlyWarning) delete mReadOnlyWarning;
 
-	mReadOnlyWarning = new EditorWarningBar(this, QPixmap(":/icons/warning.png"), tr("You do not have access to write to this file. It has been opened in read-only mode."));
+	mReadOnlyWarning = new EditorWarningBar(this, QPixmap(":/icons/warning.png"),
+		tr("You do not have write access to this file. It has been opened in read-only mode."));
 	mReadOnlyWarning->addButton(tr("Enable Editing"), this, SLOT(enableEditing()));
 	mEditorPaneLayout->insertWidget(0, mReadOnlyWarning);
 }

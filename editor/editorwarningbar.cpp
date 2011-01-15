@@ -23,21 +23,24 @@ EditorWarningBar::EditorWarningBar(QWidget* parent, const QPixmap& icon, const Q
 	mLayout->setMargin(3);
 
 	mLayout->addSpacerItem(new QSpacerItem(1, 1, QSizePolicy::Expanding));
-
-	QToolButton* closeButton = new QToolButton(this);
-	closeButton->setIcon(QIcon(":/icons/cross.png"));
-	mLayout->addWidget(closeButton);
-
-	connect(closeButton, SIGNAL(clicked()), this, SLOT(closeAndDestroy()));
 }
 
 void EditorWarningBar::addButton(const QString &label, QObject *callbackTarget, const char *callbackMethod)
 {
 	QPushButton* button = new QPushButton(this);
 	button->setText(label);
-	mLayout->insertWidget(mLayout->count() - 1, button);
+	mLayout->addWidget(button);
 
 	connect(button, SIGNAL(clicked()), callbackTarget, callbackMethod);
+}
+
+void EditorWarningBar::addCloseButton()
+{
+	QToolButton* closeButton = new QToolButton(this);
+	closeButton->setIcon(QIcon(":/icons/cross.png"));
+	mLayout->addWidget(closeButton);
+
+	connect(closeButton, SIGNAL(clicked()), this, SLOT(closeAndDestroy()));
 }
 
 void EditorWarningBar::closeAndDestroy()
