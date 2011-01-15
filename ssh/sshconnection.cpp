@@ -288,7 +288,7 @@ QByteArray SshConnection::readUntil(const char* marker)
 		if (rc > 0)
 		{
 			totalReceived += rc;
-			// qDebug() << QByteArray(mTmpBuffer, rc);
+			qDebug() << QByteArray(mTmpBuffer, rc);
 			mReadBuffer.append(mTmpBuffer, rc);
 		}
 		else if (rc < 0)

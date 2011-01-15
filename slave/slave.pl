@@ -1,6 +1,5 @@
 # (C) 2010-2011 Mark George & Gary Pendergast. PonyEdit slave script.
 use strict;
-use warnings;
 
 use Cwd;
 use Fcntl ':mode';
@@ -202,6 +201,8 @@ sub msg_ls
 	my( $buff, $params, $result ) = @_;
 	my $d = $params->{'d'};
 	opendir( DIR, $d );
+
+	my $hits = 0;
 	while( my $filename = readdir( DIR ) )
 	{
 		my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,
@@ -214,7 +215,10 @@ sub msg_ls
 
 		$result->writeString( $filename );
 		$result->write( 'CL', $flags, $size );
+		$hits++;
 	}
+
+	die("Permission denied!\n") if ($hits == 0 && !(-r $d));
 }
 
 #	open
@@ -408,10 +412,12 @@ sub handleMessage
 	}
 	or do
 	{
-		errlog( "Error occurred: $@" );
+		my $e = $@;
+		$e =~ s/\s+$//;
+		errlog( "Error occurred: $e" );
 		my $err = DataBlock->new();
 		$err->write( 'C', 0 );
-		$err->writeString( $@ );
+		$err->writeString( $e );
 		return $err;
 	};
 	return $result;
