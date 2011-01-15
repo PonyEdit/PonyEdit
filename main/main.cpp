@@ -14,6 +14,7 @@
 #include "syntax/syntaxrule.h"
 #include "syntax/syntaxdefmanager.h"
 #include "main/stringtrie.h"
+#include "options/options.h"
 
 GlobalDispatcher* gDispatcher = NULL;
 SiteManager* gSiteManager = NULL;
@@ -45,6 +46,7 @@ int main(int argc, char *argv[])
 
 		SshConnection::initializeLib();
 
+		Options::load();
 		Tools::loadServers();
 		Location::loadFavorites();
 		Tools::initialize();
@@ -72,6 +74,7 @@ int main(int argc, char *argv[])
 	delete updateManager;
 	delete gDispatcher;
 	delete gSiteManager;
+	Options::save();
 	LocationShared::cleanupIconProvider();
 	StringTrie::cleanup();
 	SyntaxRule::cleanup();

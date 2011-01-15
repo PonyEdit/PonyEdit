@@ -8,7 +8,7 @@
 #include "ui_sshserveroptionswidget.h"
 
 SshServerOptionsWidget::SshServerOptionsWidget(QWidget *parent) :
-    QWidget(parent),
+	OptionsDialogPage(parent),
     ui(new Ui::SshServerOptionsWidget)
 {
     ui->setupUi(this);

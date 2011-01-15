@@ -83,7 +83,10 @@ SOURCES += \
     ssh/connectionstatuspane.cpp \
     website/updatenotificationdialog.cpp \
     ssh/serverconfigwidget.cpp \
-    options/sshserveroptionswidget.cpp
+    options/sshserveroptionswidget.cpp \
+    options/fontoptionswidget.cpp \
+    options/options.cpp \
+    options/optionsdialogpage.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -134,7 +137,10 @@ HEADERS  += \
     ssh/connectionstatuspane.h \
     website/updatenotificationdialog.h \
     ssh/serverconfigwidget.h \
-    options/sshserveroptionswidget.h
+    options/sshserveroptionswidget.h \
+    options/fontoptionswidget.h \
+    options/options.h \
+    options/optionsdialogpage.h
 
 OTHER_FILES += \
 	slave/slave.pl \
@@ -488,7 +494,8 @@ FORMS += \
     ssh/passwordinput.ui \
     website/updatenotificationdialog.ui \
     ssh/serverconfigwidget.ui \
-    options/sshserveroptionswidget.ui
+    options/sshserveroptionswidget.ui \
+    options/fontoptionswidget.ui
 
 RESOURCES += \
 	resources.qrc

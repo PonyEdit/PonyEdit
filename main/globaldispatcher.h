@@ -28,6 +28,7 @@ public:
 	void emitSelectFile(BaseFile* file) { emit selectFile(file); }
 	void emitSyntaxChanged(BaseFile* file) { emit syntaxChanged(file); }
 	void emitConnectionDropped(RemoteConnection* connection) { emit connectionDropped(connection); }
+	void emitOptionsChanged() { emit optionsChanged(); }
 
 signals:
 	void sshServersUpdated();
@@ -41,6 +42,7 @@ signals:
 	void selectFile(BaseFile* file);
 	void syntaxChanged(BaseFile* file);
 	void connectionDropped(RemoteConnection* connection);
+	void optionsChanged();
 };
 
 extern GlobalDispatcher* gDispatcher;

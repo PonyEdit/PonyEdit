@@ -34,6 +34,7 @@ public slots:
 	int find(const QString& text, bool backwards, bool caseSensitive, bool useRegex);
 	int replace(const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegex, bool all);
 	void setFocus();
+	void applyOptions();
 
 private:
 	void showLoading();

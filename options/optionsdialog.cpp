@@ -5,11 +5,14 @@
 
 #include "ssh/serverconfigwidget.h"
 #include "sshserveroptionswidget.h"
+#include "main/globaldispatcher.h"
 
 #include "optionsdialog.h"
 #include "ui_optionsdialog.h"
+#include "options.h"
+#include "fontoptionswidget.h"
 
-const char* OptionsDialog::sOptionsStrings[] = { "Editor", "SSH Servers" };
+QString OptionsDialog::sOptionsStrings[] = { tr("Editor"), tr("SSH Servers"), tr("Fonts & Colors") };
 
 OptionsDialog::OptionsDialog(QWidget *parent) :
     QDialog(parent),
@@ -28,7 +31,8 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
 		ui->optionList->addItem(sOptionsStrings[ii]);
 	}
 
-	addSshServers();
+	addPage(new SshServerOptionsWidget(this));
+	addPage(new FontOptionsWidget(this));
 
 	ui->optionList->setCurrentRow(0);
 	updateSelectedOption(0);
@@ -53,10 +57,16 @@ void OptionsDialog::buttonClicked(QAbstractButton *button)
 
 void OptionsDialog::saveOptions()
 {
+	foreach (OptionsDialogPage* page, mPages)
+		page->apply();
+
+	::Options::save();
+
+	gDispatcher->emitOptionsChanged();
 }
 
-void OptionsDialog::addSshServers()
+void OptionsDialog::addPage(OptionsDialogPage *page)
 {
-	SshServerOptionsWidget *widget = new SshServerOptionsWidget(this);
-	ui->stackedWidget->insertWidget(1, widget);
+	mPages.append(page);
+	ui->stackedWidget->addWidget(page);
 }

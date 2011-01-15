@@ -6,12 +6,13 @@
 
 #include "ssh/serverconfigwidget.h"
 #include "options/optionsdialog.h"
+#include "options/optionsdialogpage.h"
 
 namespace Ui {
     class SshServerOptionsWidget;
 }
 
-class SshServerOptionsWidget : public QWidget
+class SshServerOptionsWidget : public OptionsDialogPage
 {
     Q_OBJECT
 

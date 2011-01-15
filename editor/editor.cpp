@@ -8,6 +8,8 @@
 #include "syntax/syntaxhighlighter.h"
 #include "syntax/syntaxdefinition.h"
 #include "syntax/syntaxdefmanager.h"
+#include "options/options.h"
+#include "main/globaldispatcher.h"
 
 Editor::Editor(BaseFile* file) : QStackedWidget()
 {
@@ -41,7 +43,9 @@ Editor::Editor(BaseFile* file) : QStackedWidget()
 	openStatusChanged(mFile->getOpenStatus());
 
 	mEditor->setDocument(mFile->getTextDocument());
-	mEditor->setFont(QFont("inconsolata", 11));
+
+	connect(gDispatcher, SIGNAL(optionsChanged()), this, SLOT(applyOptions()));
+	applyOptions();
 }
 
 Editor::~Editor()
@@ -231,4 +235,9 @@ void Editor::fileClosed()
 void Editor::setFocus()
 {
 	mEditor->setFocus();
+}
+
+void Editor::applyOptions()
+{
+	mEditor->setFont(Options::getEditorFont());
 }
