@@ -1,6 +1,6 @@
 [Files]
 Source: E:\Projects\RemoteED\remoted-build-desktop\release\ponyedit.exe; DestDir: {app}
-Source: E:\Projects\RemoteED\trunk\slaves\slave.pl; DestDir: {app}\Slaves
+Source: E:\Projects\RemoteED\trunk\slave\slave.pl; DestDir: {app}\slave
 Source: E:\Projects\RemoteED\trunk\syntaxdefs\abap.xml; DestDir: {app}\syntaxdefs
 Source: E:\Projects\RemoteED\trunk\syntaxdefs\abc.xml; DestDir: {app}\syntaxdefs
 Source: E:\Projects\RemoteED\trunk\syntaxdefs\actionscript.xml; DestDir: {app}\syntaxdefs
@@ -170,9 +170,10 @@ Source: E:\Projects\RemoteED\trunk\syntaxdefs\yacas.xml; DestDir: {app}\syntaxde
 Source: E:\Projects\RemoteED\trunk\syntaxdefs\yacc.xml; DestDir: {app}\syntaxdefs
 Source: E:\Projects\RemoteED\trunk\syntaxdefs\yaml.xml; DestDir: {app}\syntaxdefs
 Source: E:\Projects\RemoteED\trunk\syntaxdefs\zonnon.xml; DestDir: {app}\syntaxdefs
-Source: E:\Projects\RemoteED\trunk\libgcrypt-11.dll; DestDir: {app}
-Source: E:\Projects\RemoteED\trunk\libgpg-error-0.dll; DestDir: {app}
-Source: E:\Projects\RemoteED\trunk\libssh2-1.dll; DestDir: {app}
+Source: E:\Projects\RemoteED\trunk\deps\lib-win32\libeay32.dll; DestDir: {app}
+Source: E:\Projects\RemoteED\trunk\deps\lib-win32\libssh2-1.dll; DestDir: {app}
+Source: E:\Projects\RemoteED\trunk\deps\lib-win32\ssleay32.dll; DestDir: {app}
+Source: E:\Projects\RemoteED\trunk\deps\lib-win32\libz-1.dll; DestDir: {app}
 Source: C:\Qt\2010.05\qt\bin\QtCore4.dll; DestDir: {app}
 Source: C:\Qt\2010.05\qt\bin\QtGui4.dll; DestDir: {app}
 Source: C:\Qt\2010.05\qt\bin\QtNetwork4.dll; DestDir: {app}
@@ -188,13 +189,13 @@ AppPublisherURL=http://ponyedit.com/
 DefaultDirName={pf}\PonyEdit
 OutputDir=E:\Projects\RemoteED\setup
 VersionInfoVersion=0.99.1
-AppVersion=1.0-alpha1
+AppVersion=0.9-prealpha
 DefaultGroupName=PonyEdit
-OutputBaseFilename=PonyEdit-1.0-alpha1
+OutputBaseFilename=PonyEdit-0.9-prealpha
 UninstallDisplayName=PonyEdit
 LicenseFile=E:\Projects\RemoteED\trunk\licence.rtf
 [Dirs]
-Name: {app}\Slaves
+Name: {app}\slave
 Name: {app}\syntaxdefs
 [Tasks]
 Name: startmenu; Description: "Create a &Start Menu icon"
