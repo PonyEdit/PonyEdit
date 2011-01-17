@@ -188,10 +188,10 @@ AppPublisher=Pentalon
 AppPublisherURL=http://ponyedit.com/
 DefaultDirName={pf}\PonyEdit
 OutputDir=E:\Projects\RemoteED\setup
-VersionInfoVersion=0.99.1
-AppVersion=0.9-prealpha
+VersionInfoVersion=0.99.0.1
+AppVersion=0.9-prealpha1
 DefaultGroupName=PonyEdit
-OutputBaseFilename=PonyEdit-0.9-prealpha
+OutputBaseFilename=PonyEdit-0.9-prealpha1
 UninstallDisplayName=PonyEdit
 LicenseFile=E:\Projects\RemoteED\trunk\licence.rtf
 [Dirs]
