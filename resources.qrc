@@ -17,7 +17,7 @@
         <file>icons/resync.png</file>
         <file>icons/question.png</file>
         <file>icons/warning.png</file>
-        <file>icons/newserver.png</file>
         <file>icons/unreadable.png</file>
+        <file>icons/add.png</file>
     </qresource>
 </RCC>

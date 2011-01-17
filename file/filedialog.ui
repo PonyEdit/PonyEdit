@@ -49,17 +49,6 @@
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QToolButton" name="addFavoriteButton">
-         <property name="text">
-          <string>...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../resources.qrc">
-           <normaloff>:/icons/favorite.png</normaloff>:/icons/favorite.png</iconset>
-         </property>
-        </widget>
-       </item>
       </layout>
      </item>
     </layout>

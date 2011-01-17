@@ -22,6 +22,7 @@
 #define NODETYPE_LOCATION 1
 #define NODETYPE_FAVORITE 2
 #define NODETYPE_ADD_LOCATION 3
+#define NODETYPE_ADD_FAVORITE 4
 
 Location FileDialog::mLastLocation;
 
@@ -68,7 +69,6 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	connect(gDispatcher, SIGNAL(locationListFailed(QString,QString)), this, SLOT(folderChildrenFailed(QString,QString)), Qt::QueuedConnection);
 	connect(this, SIGNAL(accepted()), this, SLOT(closing()));
 	connect(this, SIGNAL(rejected()), this, SLOT(closing()));
-	connect(ui->addFavoriteButton, SIGNAL(clicked()), this, SLOT(addToFavorites()));
 	connect(ui->newFolderButton, SIGNAL(clicked()), this, SLOT(createNewFolder()));
 
 	populateFolderTree();
@@ -129,6 +129,14 @@ void FileDialog::populateFolderTree()
 	mFavoriteLocationsBranch = new QTreeWidgetItem(QStringList("Favorite Locations"), 0);
 	mFavoriteLocationsBranch->setIcon(0, QIcon("icons/favorite.png"));
 	ui->directoryTree->addTopLevelItem(mFavoriteLocationsBranch);
+
+	QTreeWidgetItem* addFavorite = new QTreeWidgetItem();
+	addFavorite->setText(0, tr("Add Favorite..."));
+	addFavorite->setIcon(0, QIcon(":/icons/add.png"));
+	addFavorite->setData(0, DATA_ROLE, QVariant(1));
+	addFavorite->setData(0, TYPE_ROLE, QVariant(NODETYPE_ADD_FAVORITE));
+	mFavoriteLocationsBranch->addChild(addFavorite);
+
 	updateFavorites();
 	mFavoriteLocationsBranch->setExpanded(true);
 
@@ -140,14 +148,14 @@ void FileDialog::populateFolderTree()
 	mRemoteServersBranch->setIcon(0, mIconProvider.icon(QFileIconProvider::Network));
 	ui->directoryTree->addTopLevelItem(mRemoteServersBranch);
 
-	QTreeWidgetItem* item = new QTreeWidgetItem();
-	item->setText(0, tr("Add Server..."));
-	item->setIcon(0, QIcon(":/icons/newserver.png"));
-	item->setData(0, DATA_ROLE, QVariant(1));
-	item->setData(0, EXPANDED_ROLE, QVariant(1));
-	item->setData(0, TYPE_ROLE, QVariant(NODETYPE_ADD_LOCATION));
-	item->setData(0, HOST_ROLE, QVariant(1));
-	mRemoteServersBranch->addChild(item);
+	QTreeWidgetItem* addServer = new QTreeWidgetItem();
+	addServer->setText(0, tr("Add Server..."));
+	addServer->setIcon(0, QIcon(":/icons/add.png"));
+	addServer->setData(0, DATA_ROLE, QVariant(1));
+	addServer->setData(0, EXPANDED_ROLE, QVariant(1));
+	addServer->setData(0, TYPE_ROLE, QVariant(NODETYPE_ADD_LOCATION));
+	addServer->setData(0, HOST_ROLE, QVariant(1));
+	mRemoteServersBranch->addChild(addServer);
 
 	populateRemoteServers();
 	mRemoteServersBranch->setExpanded(true);
@@ -352,6 +360,12 @@ void FileDialog::directoryTreeSelected(QTreeWidgetItem* item)
 			SshHost::getHost("", "", true);
 			break;
 		}
+
+		case NODETYPE_ADD_FAVORITE:
+		{
+			addToFavorites();
+			break;
+		}
 	}
 }
 
@@ -489,7 +503,7 @@ void FileDialog::updateFavorites()
 	}
 
 	//	Remove list entries that don't belong
-	for (int i = 0; i < mFavoriteLocationsBranch->childCount(); i++)
+	for (int i = 1; i < mFavoriteLocationsBranch->childCount(); i++)
 	{
 		QTreeWidgetItem* child = mFavoriteLocationsBranch->child(i);
 		QString path = child->data(0, DATA_ROLE).toString();
