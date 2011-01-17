@@ -234,7 +234,10 @@ void BaseFile::setSyntax(SyntaxDefinition* syntaxDef)
 	if (syntaxDef)
 	{
 		if (!mHighlighter)
+		{
 			mHighlighter = new SyntaxHighlighter(mDocument, syntaxDef);
+			mHighlighter->rehighlight();
+		}
 		else
 			mHighlighter->setSyntaxDefinition(syntaxDef);
 	}
