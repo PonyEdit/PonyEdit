@@ -352,7 +352,12 @@ void MainWindow::createHelpMenu()
 	 menuBar()->addMenu(helpMenu);
 
 	 helpMenu->addAction(tr("&About"), this, SLOT(about()));
-	 helpMenu->addAction(tr("&Check for updates..."), this, SLOT(checkForUpdates()));
+
+	 QAction *updates = new QAction(tr("&Check for updates..."), this);
+	 updates->setMenuRole(QAction::ApplicationSpecificRole);
+	 connect(updates, SIGNAL(triggered()), this, SLOT(checkForUpdates()));
+
+	 helpMenu->addAction(updates);
 }
 
 void MainWindow::showErrorMessage(QString error)
