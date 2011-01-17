@@ -4,7 +4,7 @@
 
 LocalFile::LocalFile(const Location& location) : BaseFile(location)
 {
-	connect(this, SIGNAL(localFileOpened(QByteArray)), this, SLOT(fileOpened(QByteArray)), Qt::QueuedConnection);
+	connect(this, SIGNAL(localFileOpened(QByteArray,bool)), this, SLOT(fileOpened(QByteArray,bool)), Qt::QueuedConnection);
 }
 
 BaseFile* LocalFile::newFile(const QByteArray& content)
@@ -25,7 +25,7 @@ void LocalFile::open()
 
 	fileHandle.close();
 
-	emit localFileOpened(content.toUtf8());
+	emit localFileOpened(content.toUtf8(), false);
 }
 
 void LocalFile::save()

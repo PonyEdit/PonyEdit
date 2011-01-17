@@ -19,7 +19,7 @@ public:
 	void close();
 
 signals:
-	void localFileOpened(const QByteArray& content);
+	void localFileOpened(const QByteArray& content, bool readOnly);
 };
 
 #endif // LOCALFILE_H
