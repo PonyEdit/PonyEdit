@@ -55,7 +55,7 @@ SOURCES += \
     main/searchbar.cpp \
     main/mainwindow.cpp \
     main/main.cpp \
-	main/json.cpp \
+    main/json.cpp \
     options/optionsdialog.cpp \
     ssh/sshconnection.cpp \
     ssh/sshhost.cpp \
@@ -110,7 +110,7 @@ HEADERS  += \
     main/searchbar.h \
     main/mainwindow.h \
     main/globaldispatcher.h \
-	main/json.h \
+    main/json.h \
     options/optionsdialog.h \
     ssh/sshrequest.h \
     ssh/sshremotecontroller.h \
@@ -151,7 +151,7 @@ HEADERS  += \
     options/editoroptionswidget.h
 
 OTHER_FILES += \
-	slave/slave.pl \
+    slave/slave.pl \
     syntaxdefs/perl.xml \
     syntax/test.pl \
     syntaxdefs/zonnon.xml \
@@ -487,7 +487,7 @@ OTHER_FILES += \
     syntaxdefs/ada.xml \
     syntaxdefs/actionscript.xml \
     syntaxdefs/abc.xml \
-	syntaxdefs/abap.xml
+    syntaxdefs/abap.xml
 
 FORMS += \
     file/filedialog.ui \
