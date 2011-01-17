@@ -253,7 +253,9 @@ void Editor::setFocus()
 
 void Editor::applyOptions()
 {
-	mEditor->setFont(Options::getEditorFont());
+	QFont font = Options::getEditorFont();
+	font.setWeight(QFont::Normal);
+	mEditor->setFont(font);
 }
 
 void Editor::setReadOnly(bool readOnly)
