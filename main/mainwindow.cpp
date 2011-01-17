@@ -28,6 +28,7 @@
 #include "syntax/syntaxdefmanager.h"
 #include "ssh/connectionstatuspane.h"
 #include "website/sitemanager.h"
+#include "aboutdialog.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -233,8 +234,8 @@ void MainWindow::options()
 
 void MainWindow::about()
 {
-	QMessageBox::about(this, tr("About PonyEdit"),
-					 tr("<p>It's awesome.</p><p>The End.</p>"));
+	AboutDialog dlg(this);
+	dlg.exec();
 }
 
 void MainWindow::createFileMenu()

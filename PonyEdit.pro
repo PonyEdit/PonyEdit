@@ -88,7 +88,8 @@ SOURCES += \
     options/options.cpp \
     options/optionsdialogpage.cpp \
     file/filelistdelegate.cpp \
-    editor/editorwarningbar.cpp
+    editor/editorwarningbar.cpp \
+    main/aboutdialog.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -144,7 +145,8 @@ HEADERS  += \
     options/options.h \
     options/optionsdialogpage.h \
     file/filelistdelegate.h \
-    editor/editorwarningbar.h
+    editor/editorwarningbar.h \
+    main/aboutdialog.h
 
 OTHER_FILES += \
 	slave/slave.pl \
@@ -499,7 +501,8 @@ FORMS += \
     website/updatenotificationdialog.ui \
     ssh/serverconfigwidget.ui \
     options/sshserveroptionswidget.ui \
-    options/fontoptionswidget.ui
+    options/fontoptionswidget.ui \
+    main/aboutdialog.ui
 
 RESOURCES += \
 	resources.qrc
