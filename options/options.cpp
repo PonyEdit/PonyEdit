@@ -2,13 +2,17 @@
 #include <QSettings>
 #include "main/global.h"
 
-QFont Options::mEditorFont;
+QFont Options::EditorFont;
+int Options::TabStopWidth;
+bool Options::WordWrap;
 
 void Options::save()
 {
 	QSettings settings;
 
-	settings.setValue(ntr("editorFont"), QVariant(mEditorFont.toString()));
+	settings.setValue(ntr("editorFont"), QVariant(EditorFont.toString()));
+	settings.setValue(ntr("wordWrap"), QVariant(WordWrap));
+	settings.setValue(ntr("tabStopWidth"), QVariant(TabStopWidth));
 }
 
 void Options::load()
@@ -16,7 +20,10 @@ void Options::load()
 	QSettings settings;
 
 	QString fontString = settings.value(ntr("editorFont")).toString();
-	mEditorFont.fromString(fontString);
-	if (mEditorFont.family().isEmpty())
-		mEditorFont.setFamily(ntr("inconsolata"));
+	EditorFont.fromString(fontString);
+	if (EditorFont.family().isEmpty())
+		EditorFont.setFamily(ntr("inconsolata"));
+
+	WordWrap = settings.value(ntr("wordWrap"), QVariant(false)).toBool();
+	TabStopWidth = settings.value(ntr("TabStopWidth"), QVariant(8)).toInt();
 }

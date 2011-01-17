@@ -18,8 +18,8 @@ FontOptionsWidget::FontOptionsWidget(QWidget *parent) :
 	foreach (QString family, families)
 		ui->fontCombo->addItem(family);
 
-	QStringList fontFamilies = QFont::substitutes(Options::getEditorFont().family());
-	fontFamilies.push_front(Options::getEditorFont().family());
+	QStringList fontFamilies = QFont::substitutes(Options::EditorFont.family());
+	fontFamilies.push_front(Options::EditorFont.family());
 	foreach (QString family, fontFamilies)
 	{
 		int index = ui->fontCombo->findText(family, Qt::MatchFixedString);
@@ -39,7 +39,7 @@ FontOptionsWidget::FontOptionsWidget(QWidget *parent) :
 	foreach (int size, sizes)
 		ui->sizeCombo->addItem(QString::number(size));
 
-	int index = ui->sizeCombo->findText(QString::number(Options::getEditorFont().pointSize()));
+	int index = ui->sizeCombo->findText(QString::number(Options::EditorFont.pointSize()));
 	ui->sizeCombo->setCurrentIndex(index);
 }
 
@@ -55,6 +55,6 @@ void FontOptionsWidget::apply()
 	if (!ok)
 		size = 12;
 
-	Options::setEditorFont(mFontDatabase.font(ui->fontCombo->currentText(), "", size));
+	Options::EditorFont = mFontDatabase.font(ui->fontCombo->currentText(), "", size);
 }
 

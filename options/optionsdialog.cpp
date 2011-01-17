@@ -11,6 +11,7 @@
 #include "ui_optionsdialog.h"
 #include "options.h"
 #include "fontoptionswidget.h"
+#include "editoroptionswidget.h"
 
 QString OptionsDialog::sOptionsStrings[] = { tr("Editor"), tr("SSH Servers"), tr("Fonts & Colors") };
 
@@ -31,6 +32,7 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
 		ui->optionList->addItem(sOptionsStrings[ii]);
 	}
 
+	addPage(new EditorOptionsWidget(this));
 	addPage(new SshServerOptionsWidget(this));
 	addPage(new FontOptionsWidget(this));
 

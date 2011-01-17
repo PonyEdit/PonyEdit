@@ -253,9 +253,15 @@ void Editor::setFocus()
 
 void Editor::applyOptions()
 {
-	QFont font = Options::getEditorFont();
+	QFont font = Options::EditorFont;
 	font.setWeight(QFont::Normal);
 	mEditor->setFont(font);
+
+	QFontMetrics fontMetrics(font);
+	int characterWidth = fontMetrics.width('X');
+
+	mEditor->setTabStopWidth(Options::TabStopWidth * characterWidth);
+	mEditor->setLineWrapMode(Options::WordWrap ? QPlainTextEdit::WidgetWidth : QPlainTextEdit::NoWrap);
 }
 
 void Editor::setReadOnly(bool readOnly)
