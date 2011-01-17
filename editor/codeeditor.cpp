@@ -4,6 +4,7 @@
 #include "editor/codeeditor.h"
 #include "editor/linenumberwidget.h"
 #include "syntax/syntaxhighlighter.h"
+#include "options/options.h"
 
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 {
@@ -100,3 +101,28 @@ void CodeEditor::highlightCurrentLine()
 
 	setExtraSelections(extraSelections);
 }
+
+void CodeEditor::keyPressEvent(QKeyEvent* event)
+{
+	QPlainTextEdit::keyPressEvent(event);
+
+	//	Keep indent on next line, if options say to
+	if (Options::IndentMode == Options::KeepIndentOnNextLine)
+	{
+		if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter)
+		{
+			const QTextBlock& currentBlock = textCursor().block();
+			const QTextBlock& previousBlock = currentBlock.previous();
+
+			if (previousBlock.isValid())
+			{
+				QString previousLine = previousBlock.text();
+				QString whitespace;
+				for (int i = 0; i < previousLine.length() && previousLine.at(i).isSpace(); i++)
+					whitespace += previousLine.at(i);
+				textCursor().insertText(whitespace);
+			}
+		}
+	}
+}
+

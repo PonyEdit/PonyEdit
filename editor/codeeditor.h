@@ -2,6 +2,7 @@
 #define CODEEDITOR_H
 
 #include <QPlainTextEdit>
+#include <QTextBlock>
 
 class LineNumberWidget;
 class SyntaxHighlighter;
@@ -17,6 +18,7 @@ public:
 
 protected:
 	void resizeEvent(QResizeEvent *event);
+	void keyPressEvent(QKeyEvent* event);
 
 private slots:
 	void updateLineNumberAreaWidth(int newBlockCount);

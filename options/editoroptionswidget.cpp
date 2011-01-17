@@ -8,8 +8,9 @@ EditorOptionsWidget::EditorOptionsWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-	ui->tabStopWidth->setText(QString::number(Options::TabStopWidth));
+	ui->tabStopWidth->setValue(Options::TabStopWidth);
 	ui->wordWrap->setChecked(Options::WordWrap);
+	ui->keepIndent->setChecked(Options::IndentMode == Options::KeepIndentOnNextLine);
 }
 
 EditorOptionsWidget::~EditorOptionsWidget()
@@ -19,11 +20,7 @@ EditorOptionsWidget::~EditorOptionsWidget()
 
 void EditorOptionsWidget::apply()
 {
-	bool ok;
-	int tabStopWidth = ui->tabStopWidth->text().toInt(&ok);
-	if (!ok)
-		tabStopWidth = 80;
-
-	Options::TabStopWidth = tabStopWidth;
+	Options::TabStopWidth = ui->tabStopWidth->value();
 	Options::WordWrap = ui->wordWrap->isChecked();
+	Options::IndentMode = ui->keepIndent->isChecked() ? Options::KeepIndentOnNextLine : Options::NoAutoIndent;
 }

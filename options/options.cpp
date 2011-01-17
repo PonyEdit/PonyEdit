@@ -5,6 +5,7 @@
 QFont Options::EditorFont;
 int Options::TabStopWidth;
 bool Options::WordWrap;
+Options::IndentModes Options::IndentMode;
 
 void Options::save()
 {
@@ -13,6 +14,7 @@ void Options::save()
 	settings.setValue(ntr("editorFont"), QVariant(EditorFont.toString()));
 	settings.setValue(ntr("wordWrap"), QVariant(WordWrap));
 	settings.setValue(ntr("tabStopWidth"), QVariant(TabStopWidth));
+	settings.setValue(ntr("indentMode"), QVariant(static_cast<int>(IndentMode)));
 }
 
 void Options::load()
@@ -26,4 +28,5 @@ void Options::load()
 
 	WordWrap = settings.value(ntr("wordWrap"), QVariant(false)).toBool();
 	TabStopWidth = settings.value(ntr("TabStopWidth"), QVariant(8)).toInt();
+	IndentMode = static_cast<IndentModes>(settings.value(ntr("indentMode"), QVariant(static_cast<int>(KeepIndentOnNextLine))).toInt());
 }
