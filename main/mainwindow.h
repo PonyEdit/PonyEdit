@@ -59,6 +59,7 @@ public slots:
 
 	void options();
 	void about();
+	void checkForUpdates();
 
 	void showErrorMessage(QString error);
 	void showStatusMessage(QString message);

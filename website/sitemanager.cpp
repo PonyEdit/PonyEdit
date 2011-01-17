@@ -35,13 +35,16 @@ SiteManager::~SiteManager()
 	mManager = NULL;
 }
 
-void SiteManager::checkForUpdates()
+void SiteManager::checkForUpdates(bool forceNotification)
 {
 	QUrl url(QString(SITE_URL) + "version/");
 	QNetworkReply* reply = mManager->get(QNetworkRequest(url));
 
 	mReplies.append(reply);
-	mReplyTypes.append(UpdateCheck);
+	if(forceNotification)
+		mReplyTypes.append(UpdateCheckForcedNotification);
+	else
+		mReplyTypes.append(UpdateCheck);
 }
 
 void SiteManager::checkLicence()
@@ -75,10 +78,13 @@ void SiteManager::handleReply(QNetworkReply *reply)
 		switch(mReplyTypes[index])
 		{
 			case UpdateCheck:
+			case UpdateCheckForcedNotification:
 				version = data[mOS].toString();
 				changes = data["changes"].toMap();
 				if(version > QCoreApplication::applicationVersion())
 					emit updateAvailable(version, changes);
+				else if(mReplyTypes[index] == UpdateCheckForcedNotification)
+					emit noUpdateAvailable();
 				break;
 
 			case LicenceCheck:

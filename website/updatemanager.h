@@ -14,6 +14,7 @@ signals:
 
 public slots:
 	void updateFound(const QString& version, const QVariantMap& changes);
+	void noUpdateFound();
 
 };
 

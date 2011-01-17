@@ -15,11 +15,11 @@ class SiteManager : public QObject
 	Q_OBJECT
 
 public:
-	enum Messages {UpdateCheck, LicenceCheck};
+	enum Messages {UpdateCheck, UpdateCheckForcedNotification, LicenceCheck};
     SiteManager();
 	~SiteManager();
 
-	void checkForUpdates();
+	void checkForUpdates(bool forceNotification = false);
 	void checkLicence();
 
 public slots:
@@ -27,6 +27,7 @@ public slots:
 
 signals:
 	void updateAvailable(const QString& version, const QVariantMap& changes);
+	void noUpdateAvailable();
 	void licenceStatus(bool valid);
 
 private:

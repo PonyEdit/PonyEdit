@@ -27,6 +27,7 @@
 #include "file/openfilemanager.h"
 #include "syntax/syntaxdefmanager.h"
 #include "ssh/connectionstatuspane.h"
+#include "website/sitemanager.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -351,6 +352,7 @@ void MainWindow::createHelpMenu()
 	 menuBar()->addMenu(helpMenu);
 
 	 helpMenu->addAction(tr("&About"), this, SLOT(about()));
+	 helpMenu->addAction(tr("&Check for updates..."), this, SLOT(checkForUpdates()));
 }
 
 void MainWindow::showErrorMessage(QString error)
@@ -657,4 +659,9 @@ void MainWindow::addRecentFile(Location *loc)
 	updateRecentFilesMenu();
 
 	Tools::saveRecentFiles(mRecentFiles);
+}
+
+void MainWindow::checkForUpdates()
+{
+	gSiteManager->checkForUpdates(true);
 }

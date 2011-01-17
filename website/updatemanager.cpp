@@ -11,6 +11,7 @@ UpdateManager::UpdateManager(QObject *parent) :
     QObject(parent)
 {
 	connect(gSiteManager, SIGNAL(updateAvailable(const QString&, const QVariantMap&)), this, SLOT(updateFound(const QString&, const QVariantMap&)));
+	connect(gSiteManager, SIGNAL(noUpdateAvailable()), this, SLOT(noUpdateFound()));
 }
 
 void UpdateManager::updateFound(const QString& version, const QVariantMap& changes)
@@ -34,4 +35,15 @@ void UpdateManager::updateFound(const QString& version, const QVariantMap& chang
 	dlg.setDownloadURL(url, url);
 
 	dlg.exec();
+}
+
+void UpdateManager::noUpdateFound()
+{
+	QMessageBox msg;
+	msg.setWindowTitle(tr("No updates available."));
+	msg.setText(tr("No updates available."));
+	msg.setInformativeText(tr("Your installation of PonyEdit is up to date."));
+	msg.setStandardButtons(QMessageBox::Ok);
+
+	msg.exec();
 }
