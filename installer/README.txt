@@ -16,6 +16,9 @@ MAC OS X
 
 The Windows installer requires the `macdeployqt` tool, which should be included in the Qt SDK.
 
-To create a new build, run the following command:
+To create a new distributable dmg file, build the Release version of PonyEdit, then run the following commands in the build directory:
 
-shell> macdeployqt PonyEdit.app -dmg
+shell> macdeployqt PonyEdit.app
+shell> mkdir PonyEdit
+shell> ditto --rsrc --arch i386 PonyEdit.app PonyEdit/PonyEdit.app
+shell> hdiutil create PonyEdit.dmg -srcfolder ./PonyEdit/ -ov -format UDBZ
