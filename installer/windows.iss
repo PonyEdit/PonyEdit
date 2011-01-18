@@ -180,6 +180,7 @@ Source: C:\Qt\2010.05\qt\bin\QtNetwork4.dll; DestDir: {app}
 Source: C:\Qt\2010.05\qt\bin\QtScript4.dll; DestDir: {app}
 Source: C:\Qt\2010.05\qt\bin\QtXml4.dll; DestDir: {app}
 Source: C:\Qt\2010.05\qt\bin\QtWebKit4.dll; DestDir: {app}
+Source: C:\Qt\2010.05\qt\bin\phonon4.dll; DestDir: {app}
 Source: C:\Qt\2010.05\qt\bin\libgcc_s_dw2-1.dll; DestDir: {app}
 Source: C:\Qt\2010.05\qt\bin\mingwm10.dll; DestDir: {app}
 [Setup]
@@ -189,10 +190,10 @@ AppPublisher=Pentalon
 AppPublisherURL=http://ponyedit.com/
 DefaultDirName={pf}\PonyEdit
 OutputDir=C:\Users\Thingalon\Documents\Projects\remoted\setup
-VersionInfoVersion=0.99.0.2
-AppVersion=0.9-prealpha2
+VersionInfoVersion=0.99.0.3
+AppVersion=0.9-prealpha3
 DefaultGroupName=PonyEdit
-OutputBaseFilename=PonyEdit-0.9-prealpha2
+OutputBaseFilename=PonyEdit-0.9-prealpha3
 UninstallDisplayName=PonyEdit
 LicenseFile=C:\Users\Thingalon\Documents\Projects\remoted\remoted\licence.rtf
 [Dirs]
