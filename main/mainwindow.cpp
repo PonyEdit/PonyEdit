@@ -13,6 +13,7 @@
 #include <QMenuBar>
 #include <QCoreApplication>
 #include <QSettings>
+#include <QErrorMessage>
 
 #include "file/filedialog.h"
 #include "file/filelist.h"
@@ -142,6 +143,7 @@ void MainWindow::openFile()
 		if(locations.length() > 20)
 		{
 			QMessageBox msgBox;
+			msgBox.setWindowTitle(tr("Opening Many Files"));
 			msgBox.setText(tr("You have selected %1 files to open.").arg(locations.length()));
 			msgBox.setInformativeText(tr("This may take some time to complete. Are you sure you want to do this?"));
 			msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
@@ -183,6 +185,7 @@ void MainWindow::openSingleFile(Location *loc)
 
 		connect(file, SIGNAL(openStatusChanged(int)), this, SLOT(updateTitle()));
 		connect(file, SIGNAL(unsavedStatusChanged()), this, SLOT(updateTitle()));
+		connect(file, SIGNAL(saveFailed(QString)), this, SLOT(saveFailed(QString)));
 	}
 }
 
@@ -262,7 +265,6 @@ void MainWindow::updateTitle()
 
 void MainWindow::updateTitle(BaseFile* file)
 {
-	qDebug() << "Unsaved: " << file->hasUnsavedChanges();
 	QString title = "PonyEdit - ";
 	title += file->getLocation().getLabel();
 	if(file->hasUnsavedChanges())
@@ -735,4 +737,17 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 	Location loc(fileName);
 	openSingleFile(&loc);
+}
+
+void MainWindow::saveFailed(const QString &error)
+{
+	QMessageBox dlg(this);
+
+	dlg.setWindowTitle(tr("Unable to Save"));
+	dlg.setText(tr("Unable to save this file."));
+	dlg.setInformativeText(error);
+	dlg.setIcon(QMessageBox::Critical);
+	dlg.setStandardButtons(QMessageBox::Ok);
+
+	dlg.exec();
 }

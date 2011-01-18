@@ -73,6 +73,8 @@ public slots:
 	void currentEditorChanged();
 	void updateSyntaxSelection();
 
+	void saveFailed(const QString& error);
+
 protected:
 	void closeEvent(QCloseEvent* event);
 	void dragEnterEvent(QDragEnterEvent *);
