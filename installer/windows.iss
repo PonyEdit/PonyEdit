@@ -179,6 +179,7 @@ Source: C:\Qt\2010.05\qt\bin\QtGui4.dll; DestDir: {app}
 Source: C:\Qt\2010.05\qt\bin\QtNetwork4.dll; DestDir: {app}
 Source: C:\Qt\2010.05\qt\bin\QtScript4.dll; DestDir: {app}
 Source: C:\Qt\2010.05\qt\bin\QtXml4.dll; DestDir: {app}
+Source: C:\Qt\2010.05\qt\bin\QtWebKit4.dll; DestDir: {app}
 Source: C:\Qt\2010.05\qt\bin\libgcc_s_dw2-1.dll; DestDir: {app}
 Source: C:\Qt\2010.05\qt\bin\mingwm10.dll; DestDir: {app}
 [Setup]
