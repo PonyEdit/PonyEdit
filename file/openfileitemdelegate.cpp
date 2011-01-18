@@ -10,7 +10,7 @@
 #include <QIcon>
 #include <QStyle>
 
-OpenFileItemDelegate::OpenFileItemDelegate(QTreeView *parent) : QStyledItemDelegate(parent)
+OpenFileItemDelegate::OpenFileItemDelegate(OpenFileTreeView *parent) : QStyledItemDelegate(parent)
 {
 	mParent = parent;
 }
@@ -86,6 +86,12 @@ void OpenFileItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 				//	Draw the icon
 				location.getIcon().paint(&sp, labelRect.left(), labelRect.top(), 16, 16);
 				labelRect.adjust(16, 0, 0, 0);
+			}
+
+			if(mParent->getSelectedFile() == file)
+			{
+				// This item is currently selected
+				sp.drawPixmap(labelRect.left() - 32, labelRect.top(), 16, 16, QPixmap(":/icons/arrow-right-double.png"));
 			}
 
 			//	Add some padding around the text...
