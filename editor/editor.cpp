@@ -133,7 +133,7 @@ void Editor::close()
 	mFile->close();
 }
 
-int Editor::find(const QString& text, bool backwards, bool caseSensitive, bool useRegexp)
+int Editor::find(const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop)
 {
 	int foundCount = 0, lastPos = 0, found = 0, length = 0;
 
@@ -148,6 +148,9 @@ int Editor::find(const QString& text, bool backwards, bool caseSensitive, bool u
 	{
 		QRegExp regexp(text, (Qt::CaseSensitivity)(caseSensitive)?(Qt::CaseSensitive):(Qt::CaseInsensitive));
 
+		if(!content.contains(regexp))
+			return 0;
+
 		if(backwards)
 			found = regexp.lastIndexIn(content, lastPos);
 		else
@@ -158,6 +161,9 @@ int Editor::find(const QString& text, bool backwards, bool caseSensitive, bool u
 	}
 	else
 	{
+		if(!content.contains(text, (Qt::CaseSensitivity)(caseSensitive)?(Qt::CaseSensitive):(Qt::CaseInsensitive)))
+			return 0;
+
 		if(backwards)
 			found = content.lastIndexOf(text, lastPos, (Qt::CaseSensitivity)(caseSensitive)?(Qt::CaseSensitive):(Qt::CaseInsensitive));
 		else
@@ -167,13 +173,20 @@ int Editor::find(const QString& text, bool backwards, bool caseSensitive, bool u
 		foundCount = content.count(text, (Qt::CaseSensitivity)(caseSensitive)?(Qt::CaseSensitive):(Qt::CaseInsensitive));
 	}
 
+	QTextCursor newSelection = mEditor->textCursor();
+
 	if(found >= 0)
 	{
-		QTextCursor newSelection = mEditor->textCursor();
 		newSelection.setPosition(found);
 		newSelection.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, length);
 
 		mEditor->setTextCursor(newSelection);
+	}
+	else if(loop)
+	{
+		newSelection.setPosition(0);
+		mEditor->setTextCursor(newSelection);
+		found = find(text, backwards, caseSensitive, useRegexp);
 	}
 
 	return (found >= 0)?(foundCount):(0);

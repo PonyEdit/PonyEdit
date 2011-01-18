@@ -94,7 +94,7 @@ private:
 	void updateRecentFilesMenu();
 	void addRecentFile(Location* loc);
 
-	int find(Editor* editor, const QString& text, bool backwards, bool caseSensitive, bool useRegexp);
+	int find(Editor* editor, const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true);
 	int replace(Editor* editor, const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegexp, bool all);
 
 	Editor* getCurrentEditor();

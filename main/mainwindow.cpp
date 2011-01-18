@@ -490,7 +490,8 @@ void MainWindow::globalFind(const QString &text, const QString &filePattern, boo
 	QRegExp regexp(filePattern, Qt::CaseInsensitive, QRegExp::WildcardUnix);
 #endif
 
-	for(int ii = mEditorStack->currentIndex(); (backwards)?(ii >= 0):(ii < mEditorStack->count()); (backwards)?(ii--):(ii++))
+	int filesSearched = 0;
+	for(int ii = mEditorStack->currentIndex(); filesSearched < mEditorStack->count(); (backwards)?(ii--):(ii++))
 	{
 		current = (Editor*)mEditorStack->widget(ii);
 		if(current)
@@ -502,18 +503,26 @@ void MainWindow::globalFind(const QString &text, const QString &filePattern, boo
 			{
 				gDispatcher->emitSelectFile(file);
 				current->setFocus();
+				if(filesSearched > 0)
+					current->gotoLine(1);
 
-				found += find(current, text, backwards, caseSensitive, useRegexp);
+				found += find(current, text, backwards, caseSensitive, useRegexp, false);
 				if(found)
 					break;
 			}
 		}
+		filesSearched++;
+
+		if(ii == 0 && backwards)
+			ii = mEditorStack->count();
+		else if(ii == mEditorStack->count() - 1 && !backwards)
+			ii = -1;
 	}
 }
 
-int MainWindow::find(Editor *editor, const QString &text, bool backwards, bool caseSensitive, bool useRegexp)
+int MainWindow::find(Editor *editor, const QString &text, bool backwards, bool caseSensitive, bool useRegexp, bool loop)
 {
-	return editor->find(text, backwards, caseSensitive, useRegexp);
+	return editor->find(text, backwards, caseSensitive, useRegexp, loop);
 }
 
 void MainWindow::replace(const QString &findText, const QString &replaceText, bool all)
