@@ -180,6 +180,9 @@ void MainWindow::openSingleFile(Location *loc)
 		newEditor->setFocus();
 
 		addRecentFile(loc);
+
+		connect(file, SIGNAL(openStatusChanged(int)), this, SLOT(updateTitle()));
+		connect(file, SIGNAL(unsavedStatusChanged()), this, SLOT(updateTitle()));
 	}
 }
 
@@ -216,16 +219,56 @@ void MainWindow::saveFileAs()
 void MainWindow::closeFile()
 {
 	Editor* current = (Editor*)mEditorStack->currentWidget();
-	if (current) current->close();
+	if (current)
+	{
+		QList<BaseFile *> files;
+		files.append(current->getFile());
+
+		gOpenFileManager.closeFiles(files);
+	}
 }
 
 void MainWindow::fileSelected(BaseFile* file)
 {
 	if (!file) return;
 
+	updateTitle(file);
+
 	const QList<Editor*>& editors = file->getAttachedEditors();
 	if (editors.length() > 0)
 		mEditorStack->setCurrentWidget(editors[0]);
+}
+
+void MainWindow::updateTitle()
+{
+	BaseFile* file = static_cast<BaseFile*>(sender());
+	if(file->isClosed())
+	{
+		setWindowTitle("PonyEdit");
+		return;
+	}
+	QList<Editor*> editors = file->getAttachedEditors();
+
+	bool current = false;
+	foreach(Editor* editor, editors)
+	{
+		if(editor == (Editor*)mEditorStack->currentWidget())
+			current = true;
+	}
+
+	if(current)
+		updateTitle(file);
+}
+
+void MainWindow::updateTitle(BaseFile* file)
+{
+	qDebug() << "Unsaved: " << file->hasUnsavedChanges();
+	QString title = "PonyEdit - ";
+	title += file->getLocation().getLabel();
+	if(file->hasUnsavedChanges())
+		title += '*';
+
+	setWindowTitle(title);
 }
 
 void MainWindow::options()
