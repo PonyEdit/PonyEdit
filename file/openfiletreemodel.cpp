@@ -166,7 +166,7 @@ QVariant OpenFileTreeModel::data(const QModelIndex &index, int role) const
 Qt::ItemFlags OpenFileTreeModel::flags(const QModelIndex &index) const
 {
 	Entry* entry = static_cast<Entry*>(index.internalPointer());
-	return (entry->file ? Qt::ItemIsSelectable : Qt::NoItemFlags) | Qt::ItemIsEnabled;
+	return (entry->file ? Qt::ItemIsSelectable | Qt::ItemIsEnabled : Qt::NoItemFlags) ;
 }
 
 QModelIndex OpenFileTreeModel::findFile(BaseFile* file) const

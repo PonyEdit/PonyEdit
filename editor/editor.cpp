@@ -271,7 +271,7 @@ void Editor::applyOptions()
 	mEditor->setFont(font);
 
 	QFontMetrics fontMetrics(font);
-	int characterWidth = fontMetrics.width('X');
+	int characterWidth = fontMetrics.width('M');
 
 	mEditor->setTabStopWidth(Options::TabStopWidth * characterWidth);
 	mEditor->setLineWrapMode(Options::WordWrap ? QPlainTextEdit::WidgetWidth : QPlainTextEdit::NoWrap);
