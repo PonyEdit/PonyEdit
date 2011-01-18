@@ -487,7 +487,8 @@ OTHER_FILES += \
     syntaxdefs/ada.xml \
     syntaxdefs/actionscript.xml \
     syntaxdefs/abc.xml \
-    syntaxdefs/abap.xml
+    syntaxdefs/abap.xml \
+    syntaxdefs/markdown.xml
 
 FORMS += \
     file/filedialog.ui \
