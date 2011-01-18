@@ -10,10 +10,6 @@ win32 {
 	LIBS     += -L$$PWD/deps/lib-win32/ -lwsock32 -lcrypto -lssl
 }
 
-!win32 {
-	LIBS	+= -lgpg-error
-}
-
 macx {
 	DEFINES += __DARWIN_64_BIT_INO_T
 }
@@ -35,6 +31,8 @@ macx {
 	data.path = Contents/Resources
 
 	QMAKE_BUNDLE_DATA += data
+
+	CONFIG += x86
 }
 
 SOURCES += \
