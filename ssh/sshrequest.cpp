@@ -316,7 +316,7 @@ void SshRequest_saveBuffer::handleResponse(const QByteArray& response)
 
 void SshRequest_saveBuffer::error(const QString& error)
 {
-	gDispatcher->emitGeneralErrorMessage(QString("Failed to save ") + mFile->getLocation().getLabel() + ": " + error);
+	mFile->saveFailed();
 }
 
 void SshRequest_saveBuffer::success()

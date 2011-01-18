@@ -157,12 +157,6 @@ void SshFile::pumpChangeQueue()
 
 void SshFile::save()
 {
-	if(mReadOnly)
-	{
-		emit saveFailed(tr("Cannot save file: open in read-only mode"));
-		return;
-	}
-
 	if (!mHost->ensureConnection())
 		throw(QString("Failed to update file: failed to connect to remote host"));
 

@@ -251,11 +251,7 @@ void BaseFile::setSyntax(SyntaxDefinition* syntaxDef)
 	gDispatcher->emitSyntaxChanged(this);
 }
 
-
-
-
-
-
-
-
-
+void BaseFile::saveFailed()
+{
+	emit saveFailed(tr("Cannot save file: do not have write permissions"));
+}

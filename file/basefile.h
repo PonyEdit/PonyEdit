@@ -43,6 +43,8 @@ public:
 	void savedRevision(int revision, const QByteArray& checksum);
 	void fileOpenProgressed(int percent);
 
+	void saveFailed();
+
 	inline const QList<Editor*>& getAttachedEditors() { return mAttachedEditors; }
 	void editorAttached(Editor* editor);	//	Call only from Editor constructor.
 	void editorDetached(Editor* editor);	//	Call only from Editor destructor.

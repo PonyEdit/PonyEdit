@@ -34,14 +34,14 @@ void LocalFile::open()
 
 void LocalFile::save()
 {
-	if(mReadOnly)
-	{
-		emit saveFailed(tr("Cannot save file: open in read-only mode"));
-		return;
-	}
-
 	QFile fileHandle(mLocation.getPath());
 	fileHandle.open(QIODevice::WriteOnly);
+
+	if(!(fileHandle.permissions() & QFile::WriteUser))
+	{
+		saveFailed();
+		return;
+	}
 
 	QTextStream stream(&fileHandle);
 
