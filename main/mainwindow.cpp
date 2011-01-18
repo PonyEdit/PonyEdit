@@ -38,6 +38,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 	setWindowTitle(tr("PonyEdit"));
 
+	setAcceptDrops(true);
+
 	mEditorStack = new QStackedWidget(this);
 	mEditorStack->setMinimumWidth(200);
 	setCentralWidget(mEditorStack);
@@ -670,4 +672,24 @@ void MainWindow::addRecentFile(Location *loc)
 void MainWindow::checkForUpdates()
 {
 	gSiteManager->checkForUpdates(true);
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+	if (event->mimeData()->hasFormat("text/uri-list"))
+		event->acceptProposedAction();
+}
+
+void MainWindow::dropEvent(QDropEvent *event)
+{
+	QList<QUrl> urls = event->mimeData()->urls();
+	if (urls.isEmpty())
+		return;
+
+	QString fileName = urls.first().toLocalFile();
+	if (fileName.isEmpty())
+		return;
+
+	Location loc(fileName);
+	openSingleFile(&loc);
 }

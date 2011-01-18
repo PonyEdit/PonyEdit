@@ -72,6 +72,8 @@ public slots:
 
 protected:
 	void closeEvent(QCloseEvent* event);
+	void dragEnterEvent(QDragEnterEvent *);
+	void dropEvent(QDropEvent *);
 
 private:
 	void createToolbar();
