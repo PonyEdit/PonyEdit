@@ -314,7 +314,7 @@ void SshRequest_saveBuffer::handleResponse(const QByteArray& response)
 	}
 }
 
-void SshRequest_saveBuffer::error(const QString& error)
+void SshRequest_saveBuffer::error(const QString& /* error */)
 {
 	mFile->saveFailed();
 }
