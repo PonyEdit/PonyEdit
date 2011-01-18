@@ -60,7 +60,9 @@ public slots:
 	void previousWindow();
 	void nextWindow();
 
+	void showHTMLPreview();
 	void options();
+
 	void about();
 	void checkForUpdates();
 
@@ -74,6 +76,8 @@ public slots:
 	void updateSyntaxSelection();
 
 	void saveFailed(const QString& error);
+
+	Editor* getCurrentEditor();
 
 protected:
 	void closeEvent(QCloseEvent* event);
@@ -96,8 +100,6 @@ private:
 
 	int find(Editor* editor, const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true);
 	int replace(Editor* editor, const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegexp, bool all);
-
-	Editor* getCurrentEditor();
 
 	FileList* mFileList;
 	QStackedWidget* mEditorStack;

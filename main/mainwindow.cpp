@@ -30,6 +30,7 @@
 #include "ssh/connectionstatuspane.h"
 #include "website/sitemanager.h"
 #include "aboutdialog.h"
+#include "tools/htmlpreview.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -381,6 +382,8 @@ void MainWindow::createToolsMenu()
 {
 	QMenu *toolsMenu = new QMenu(tr("&Tools"), this);
 	menuBar()->addMenu(toolsMenu);
+
+	toolsMenu->addAction(tr("&HTML Preview..."), this, SLOT(showHTMLPreview()));
 
 	toolsMenu->addAction(tr("&Options..."), this, SLOT(options()), QKeySequence::Preferences);
 }
@@ -759,4 +762,18 @@ void MainWindow::saveFailed(const QString &error)
 	dlg.setStandardButtons(QMessageBox::Ok);
 
 	dlg.exec();
+}
+
+void MainWindow::showHTMLPreview()
+{
+	HTMLPreview *htmlPreview = new HTMLPreview(this);
+	QDockWidget *htmlWrapper = new QDockWidget("HTML Preview", 0);
+
+	htmlWrapper->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetFloatable);
+	htmlWrapper->setWidget(htmlPreview);
+	addDockWidget(Qt::BottomDockWidgetArea, htmlWrapper, Qt::Horizontal);
+
+	htmlWrapper->show();
+
+	htmlWrapper->setObjectName(tr("HTML Preview"));
 }

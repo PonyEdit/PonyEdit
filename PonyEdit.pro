@@ -20,7 +20,7 @@ macx {
 
 LIBS	+= -lssh2
 
-QT       += core gui network xml script
+QT       += core gui network xml script webkit
 
 macx {
 	TARGET  = PonyEdit
@@ -90,7 +90,8 @@ SOURCES += \
     file/filelistdelegate.cpp \
     editor/editorwarningbar.cpp \
     main/aboutdialog.cpp \
-    options/editoroptionswidget.cpp
+    options/editoroptionswidget.cpp \
+    tools/htmlpreview.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -148,7 +149,8 @@ HEADERS  += \
     file/filelistdelegate.h \
     editor/editorwarningbar.h \
     main/aboutdialog.h \
-    options/editoroptionswidget.h
+    options/editoroptionswidget.h \
+    tools/htmlpreview.h
 
 OTHER_FILES += \
     slave/slave.pl \
@@ -506,7 +508,8 @@ FORMS += \
     options/sshserveroptionswidget.ui \
     options/fontoptionswidget.ui \
     main/aboutdialog.ui \
-    options/editoroptionswidget.ui
+    options/editoroptionswidget.ui \
+    tools/htmlpreview.ui
 
 RESOURCES += \
 	resources.qrc
