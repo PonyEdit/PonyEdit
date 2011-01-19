@@ -22,6 +22,7 @@ void Options::load()
 	QSettings settings;
 
 	QString fontString = settings.value(ntr("editorFont")).toString();
+	EditorFont = QFont();
 	EditorFont.fromString(fontString);
 	if (EditorFont.family().isEmpty())
 		EditorFont.setFamily(ntr("inconsolata"));

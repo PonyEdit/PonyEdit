@@ -5,6 +5,7 @@
 #include "editor/linenumberwidget.h"
 #include "syntax/syntaxhighlighter.h"
 #include "options/options.h"
+#include <QChar>
 
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 {
@@ -62,7 +63,6 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 	QPainter painter(mLineNumberWidget);
 	painter.fillRect(event->rect(), Qt::lightGray);
 
-
 	QTextBlock block = firstVisibleBlock();
 	int blockNumber = block.blockNumber();
 	int top = (int) blockBoundingGeometry(block).translated(contentOffset()).top();
@@ -102,8 +102,113 @@ void CodeEditor::highlightCurrentLine()
 	setExtraSelections(extraSelections);
 }
 
+void CodeEditor::applyIndent(QTextCursor& cursor, bool outdent)
+{
+	QTextDocument* doc = document();
+	int position = cursor.position();
+	int column = 0;
+	int lastTabPosition = 0;
+
+	for (int i = cursor.block().position(); i < position; i++)
+	{
+		if (column % Options::TabStopWidth == 0)
+			lastTabPosition = i;
+
+		if (doc->characterAt(i) == '\t')
+		{
+			column -= (column % Options::TabStopWidth);
+			column += Options::TabStopWidth;
+		}
+		else
+			column++;
+	}
+
+	if (outdent)
+	{
+		if (column == 0) return;
+		int removeSpaces = position - lastTabPosition;
+
+		while (removeSpaces)
+		{
+			QChar nextChar = doc->characterAt(position - 1);
+			if (!nextChar.isSpace())
+				break;
+			else
+			{
+				cursor.deletePreviousChar();
+				//if (nextChar == '\t')
+					//break;
+				removeSpaces--;
+				position--;
+			}
+		}
+	}
+	else
+	{
+		cursor.insertText("\t");
+	}
+}
+
+int CodeEditor::firstNonWhiteSpace(const QTextBlock& block)
+{
+	QTextDocument* doc = document();
+	int scan = block.position();
+	int length = block.length();
+	int end = scan + length;
+
+	while (scan < end && doc->characterAt(scan).isSpace())
+		scan++;
+
+	if (scan == end)
+		scan--;
+
+	return scan;
+}
+
 void CodeEditor::keyPressEvent(QKeyEvent* event)
 {
+	//	Deal with TABs; special case for indenting stuff.
+	if (event->key() == Qt::Key_Tab || event->key() == Qt::Key_Backtab)
+	{
+		bool outdent = event->modifiers() & Qt::ShiftModifier;
+		textCursor().beginEditBlock();
+
+		//	If stuff is selected, indent each line
+		if (textCursor().hasSelection())
+		{
+			QTextBlock block = document()->findBlock(textCursor().selectionStart());
+			QTextCursor tmpCursor = QTextCursor(document());
+			tmpCursor.setPosition(firstNonWhiteSpace(block));
+
+			int selectionEnd = textCursor().selectionEnd();
+			QTextBlock lastBlock = document()->findBlock(selectionEnd);
+			int lastLine = lastBlock.blockNumber();
+			if (selectionEnd > lastBlock.position())
+				lastLine++;
+
+			while (!tmpCursor.atEnd() && tmpCursor.blockNumber() < lastLine)
+			{
+				applyIndent(tmpCursor, outdent);
+
+				tmpCursor.movePosition(QTextCursor::StartOfLine);
+				tmpCursor.movePosition(QTextCursor::NextBlock);
+				tmpCursor.setPosition(firstNonWhiteSpace(tmpCursor.block()));
+			}
+		}
+		//	Else indent at the current spot
+		else
+		{
+			QTextCursor tc = textCursor();
+			applyIndent(tc, outdent);
+			setTextCursor(tc);
+		}
+
+		textCursor().endEditBlock();
+		event->accept();
+		return;
+	}
+
+	//	Handle normal keypress
 	QPlainTextEdit::keyPressEvent(event);
 
 	//	Keep indent on next line, if options say to

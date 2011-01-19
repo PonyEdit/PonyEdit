@@ -2,6 +2,7 @@
 #define CODEEDITOR_H
 
 #include <QPlainTextEdit>
+#include <QTextCursor>
 #include <QTextBlock>
 
 class LineNumberWidget;
@@ -16,9 +17,12 @@ public:
 	void lineNumberAreaPaintEvent(QPaintEvent *event);
 	int lineNumberAreaWidth();
 
+	int firstNonWhiteSpace(const QTextBlock& block);
+
 protected:
 	void resizeEvent(QResizeEvent *event);
 	void keyPressEvent(QKeyEvent* event);
+	void applyIndent(QTextCursor& cursor, bool outdent);
 
 private slots:
 	void updateLineNumberAreaWidth(int newBlockCount);

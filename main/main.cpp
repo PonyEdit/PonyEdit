@@ -46,12 +46,12 @@ int main(int argc, char *argv[])
 
 		SshConnection::initializeLib();
 
-		Options::load();
 		Tools::loadServers();
 		Location::loadFavorites();
 		Tools::initialize();
 
 		QApplication a(argc, argv);
+		Options::load();
 
 		gSyntaxDefManager = new SyntaxDefManager();
 
@@ -59,7 +59,6 @@ int main(int argc, char *argv[])
 		w.show();
 
 		gSiteManager = new SiteManager();
-
 		updateManager = new UpdateManager();
 
 		gSiteManager->checkForUpdates();

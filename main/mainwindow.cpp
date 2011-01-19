@@ -509,10 +509,12 @@ void MainWindow::globalFind(const QString &text, const QString &filePattern, boo
 				gDispatcher->emitSelectFile(file);
 				current->setFocus();
 				if(filesSearched > 0)
+				{
 					if(!backwards)
 						current->gotoLine(1);
 					else
 						current->gotoEnd();
+				}
 
 				found += find(current, text, backwards, caseSensitive, useRegexp, false);
 				if(found)
