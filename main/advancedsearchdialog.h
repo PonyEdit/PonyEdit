@@ -15,6 +15,9 @@ public:
     explicit AdvancedSearchDialog(QWidget *parent = 0);
     ~AdvancedSearchDialog();
 
+public slots:
+	void keyPressEvent(QKeyEvent *);
+
 signals:
 	void find(const QString& text, bool backwards, bool caseSensitive, bool useRegexp);
 	void globalFind(const QString& text, const QString& filePattern, bool backwards, bool caseSensitive, bool useRegexp);

@@ -137,6 +137,9 @@ int Editor::find(const QString& text, bool backwards, bool caseSensitive, bool u
 {
 	int foundCount = 0, lastPos = 0, found = 0, length = 0;
 
+	if(backwards && mEditor->textCursor().selectionStart() == 0 && !loop)
+		return 0;
+
 	QString content = mEditor->toPlainText();
 
 	if(backwards)
@@ -250,6 +253,15 @@ void Editor::gotoLine(int lineNumber)
 
 	cursor.movePosition(QTextCursor::Start);
 	cursor.movePosition(QTextCursor::NextBlock, QTextCursor::MoveAnchor, lineNumber - 1);
+
+	mEditor->setTextCursor(cursor);
+}
+
+void Editor::gotoEnd()
+{
+	QTextCursor cursor = mEditor->textCursor();
+
+	cursor.movePosition(QTextCursor::End);
 
 	mEditor->setTextCursor(cursor);
 }

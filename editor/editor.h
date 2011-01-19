@@ -27,6 +27,7 @@ public:
 	void fileClosed();				//	Called when the file this editor is attached to, is closed.
 
 	void gotoLine(int lineNumber);
+	void gotoEnd();
 
 	void setReadOnly(bool readOnly);
 	void showReadOnlyWarning();

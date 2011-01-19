@@ -338,6 +338,8 @@ void MainWindow::createEditMenu()
 	editMenu->addSeparator();
 
 	editMenu->addAction(tr("&Find/Replace"), this, SLOT(showSearchBar()), QKeySequence::Find);
+	editMenu->addAction("Find &Next", mSearchBar, SLOT(findNext()), QKeySequence::FindNext);
+	editMenu->addAction("Find P&revious", mSearchBar, SLOT(findPrev()), QKeySequence::FindPrevious);
 	editMenu->addAction(tr("Advanced F&ind/Replace..."), this, SLOT(showAdvancedSearch()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_F));
 #ifdef Q_OS_MAC
 	editMenu->addAction(tr("&Go To Line..."), this, SLOT(showGotoLine()), QKeySequence(Qt::CTRL + Qt::Key_L));
@@ -507,7 +509,10 @@ void MainWindow::globalFind(const QString &text, const QString &filePattern, boo
 				gDispatcher->emitSelectFile(file);
 				current->setFocus();
 				if(filesSearched > 0)
-					current->gotoLine(1);
+					if(!backwards)
+						current->gotoLine(1);
+					else
+						current->gotoEnd();
 
 				found += find(current, text, backwards, caseSensitive, useRegexp, false);
 				if(found)

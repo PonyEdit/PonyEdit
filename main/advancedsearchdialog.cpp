@@ -1,3 +1,5 @@
+#include <QKeyEvent>
+
 #include "advancedsearchdialog.h"
 #include "ui_advancedsearchdialog.h"
 
@@ -13,6 +15,8 @@ AdvancedSearchDialog::AdvancedSearchDialog(QWidget *parent) :
 	ui->caseSensitive->setChecked(true);
 
 	ui->filePattern->setText("*");
+
+	ui->find->setFocus();
 
 	connect(ui->nextButton, SIGNAL(clicked()), this, SLOT(findNext()));
 	connect(ui->previousButton, SIGNAL(clicked()), this, SLOT(findPrevious()));
@@ -64,4 +68,14 @@ void AdvancedSearchDialog::replaceAll()
 		emit globalReplace(ui->find->text(), ui->replace->text(), ui->filePattern->text(), ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked(), true);
 	else
 		emit replace(ui->find->text(), ui->filePattern->text(), ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked(), true);
+}
+
+void AdvancedSearchDialog::keyPressEvent(QKeyEvent *event)
+{
+	if(event->matches(QKeySequence::FindNext))
+		findNext();
+	else if(event->matches(QKeySequence::FindPrevious))
+		findPrevious();
+	else if(event->key() == Qt::Key_Escape)
+		close();
 }
