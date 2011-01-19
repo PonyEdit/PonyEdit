@@ -296,27 +296,29 @@ int SyntaxRule::match(const QString &string, int position)
 		break;
 
 	case Keyword:
-	{
-		const QChar* s = string.constData() + position;
-		const StringTrie::Node* scan = mKeywordLink->items.startScan();
-		int length = 0;
-
-		while (!s->isNull() && !mDefinition->isDeliminator(*s))
+		if (position == 0 || mDefinition->isDeliminator(string.at(position - 1)))
 		{
-			if (mKeywordLink->items.continueScan(&scan, static_cast<unsigned char>(s->toLatin1())))
-				length++;
-			else
-			{
-				length = 0;
-				break;
-			}
+			const QChar* s = string.constData() + position;
+			const StringTrie::Node* scan = mKeywordLink->items.startScan();
+			int length = 0;
 
-			s++;
+
+			while (!s->isNull() && !mDefinition->isDeliminator(*s))
+			{
+				if (mKeywordLink->items.continueScan(&scan, static_cast<unsigned char>(s->toLatin1())))
+					length++;
+				else
+				{
+					length = 0;
+					break;
+				}
+
+				s++;
+			}
+			if (length && mKeywordLink->items.endScan(scan))
+				match = length;
 		}
-		if (length && mKeywordLink->items.endScan(scan))
-			match = length;
 		break;
-	}
 
 	case DetectSpaces:
 		while (position + match < string.length() && string.at(position + match).isSpace())
