@@ -21,4 +21,8 @@ To create a new distributable dmg file, build the Release version of PonyEdit, t
 shell> macdeployqt PonyEdit.app
 shell> mkdir PonyEdit
 shell> ditto --rsrc --arch i386 PonyEdit.app PonyEdit/PonyEdit.app
-shell> hdiutil create PonyEdit.dmg -srcfolder ./PonyEdit/ -ov -format UDBZ
+
+Make sure all PonyEdit dmg files are unmounted before running this command:
+
+shell> ../trunk/installer/osx/create-dmg --volname PonyEdit --background ../trunk/installer/osx/background.png --window-size 400 300 --icon "Applications" 300 200 --icon "PonyEdit" 50 200 --icon-size 64 PonyEdit.dmg PonyEdit
+
