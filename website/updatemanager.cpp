@@ -16,7 +16,7 @@ UpdateManager::UpdateManager(QObject *parent) :
 
 void UpdateManager::updateFound(const QString& version, const QVariantMap& changes)
 {
-	QString url = QString("%1downloads/").arg(SITE_URL);
+	QString url = QString("%1download/").arg(SITE_URL);
 
 	UpdateNotificationDialog dlg;
 

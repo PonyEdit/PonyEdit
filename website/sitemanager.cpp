@@ -37,7 +37,7 @@ SiteManager::~SiteManager()
 
 void SiteManager::checkForUpdates(bool forceNotification)
 {
-	QUrl url(QString(SITE_URL) + "version/");
+	QUrl url(QString(SITE_URL) + "version/?v=" + QCoreApplication::applicationVersion() + "&u=testuser&key=5555555");
 	QNetworkReply* reply = mManager->get(QNetworkRequest(url));
 
 	mReplies.append(reply);
