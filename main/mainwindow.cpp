@@ -31,6 +31,63 @@
 #include "website/sitemanager.h"
 #include "aboutdialog.h"
 #include "tools/htmlpreview.h"
+#include "openssl/rsa.h"
+#include "openssl/sha.h"
+#include "openssl/bio.h"
+#include "openssl/x509.h"
+#include "openssl/evp.h"
+#include "openssl/err.h"
+#include "openssl/pem.h"
+
+
+char* publicKey =	"-----BEGIN PUBLIC KEY-----\n"
+					"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7AuOwBjtW4J8xrt+PGKv\n"
+					"bOkxDDxk/smi6W2S4g8WIMSNq5GvX4Cg5TgRzzspgkKipZimuF9iQvNEUempmAQy\n"
+					"deXARby8PnVtF35mhZomt7X48v57Wgha2nFLpz5/7jabguKyc0n7ox1lRdTfxLWO\n"
+					"lzBf4FLRLyDNCXPqCQCmFSV35NPEavVHvdjtX/eTnRF6b2yEdSWT3LEmtMnMuHJT\n"
+					"wD5Y1B/UwEv4q3IPO6p4Ebe6VuvwsRuBq9AHS5Jqzi3y7DJwVurrfMx/1eVynSUu\n"
+					"VEDHcKkDBhjFK7ciz3Rq0iBHStolrSrwqQT2slb5caxg572HrfBd7A9CBF7j7MKt\n"
+					"UwIDAQAB\n"
+					"-----END PUBLIC KEY-----\n";
+
+bool verifyLicenseKey(const char* licenseKey)
+{
+	QByteArray decoded = QByteArray::fromBase64(licenseKey);
+	int firstDivider = decoded.indexOf(':');
+	int secondDivider = decoded.indexOf(':', firstDivider + 1);
+	if (firstDivider < 0 || secondDivider < 0)
+		return false;
+
+	QString login = decoded.mid(0, firstDivider);
+	QString expiry = decoded.mid(firstDivider + 1, secondDivider - firstDivider - 1);
+
+	QByteArray signedData = decoded.mid(0, secondDivider);
+	QByteArray signature = decoded.mid(secondDivider + 1);
+
+	//	SHA1-hash the signed data for verification
+	SHA_CTX sha_ctx = { 0 };
+	unsigned char digest[SHA_DIGEST_LENGTH];
+	if (SHA1_Init(&sha_ctx) != 1) { qDebug() << "Failed to init SHA1 libs"; return false; }
+	if (SHA1_Update(&sha_ctx, signedData.constData(), signedData.length()) != 1) { qDebug() << "Failed to add data to SHA1 hash"; return false; }
+	if (SHA1_Final(digest, &sha_ctx) != 1) { qDebug() << "Failed to finalize SHA1 hash"; return false; }
+
+	BIO* b = BIO_new_mem_buf(publicKey, strlen(publicKey));
+	EVP_PKEY* k = PEM_read_bio_PUBKEY(b, NULL, NULL, NULL);
+
+	bool result = RSA_verify(NID_sha1, digest, sizeof(digest), (const unsigned char*)signature.constData(), signature.length(), EVP_PKEY_get1_RSA(k));
+
+	if (result)
+		qDebug() << "License for " << login << " verified. Expires " << expiry;
+	else
+		qDebug() << "License rejected :(";
+
+	EVP_PKEY_free(k);
+	BIO_free(b);
+
+	return result;
+}
+
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -79,6 +136,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 	mRecentFiles = Tools::loadRecentFiles();
 	updateRecentFilesMenu();
+
+	verifyLicenseKey("dGhpbmdhbG9uOjIwMTEtMDYtMTI6h8jRlxHjYu1kfSJI1clyPozKGOhMW4MpBLJMBztnp7JO0oGnX437wI1rACRziiL4css2o95FRriyGwlZQZlts1SS7q+1qsOa9oGblD9lT0dAk/Dz5A5HIhd530qSjCt1cZMTcoD01xNuBYYVWvZny8NYDWG7A/OjRGQb3Bt6N1QtKrW9vPe6GA9AEj3ZJZXEX4BOa0LOXcNFmGOhNdn7U8lmxjNFiaPT+4LcPsB1iEH/uamuhs/QlrQwFg2jOh1SFBUwkvjMgEcvKvN4WjsI+j6GlxdAgtGu/2UiW3dcyFEIaDRV9iW0SyvkKvKfLWfGFaFWFecgD1pYAKn7hiJdNQ==");
 
 	restoreState();
 }
