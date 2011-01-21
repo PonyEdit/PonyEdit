@@ -90,7 +90,8 @@ SOURCES += \
     editor/editorwarningbar.cpp \
     main/aboutdialog.cpp \
     options/editoroptionswidget.cpp \
-    tools/htmlpreview.cpp
+    tools/htmlpreview.cpp \
+    licence/licence.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -149,7 +150,8 @@ HEADERS  += \
     editor/editorwarningbar.h \
     main/aboutdialog.h \
     options/editoroptionswidget.h \
-    tools/htmlpreview.h
+    tools/htmlpreview.h \
+    licence/licence.h
 
 OTHER_FILES += \
     slave/slave.pl \
