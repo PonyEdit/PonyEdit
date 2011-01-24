@@ -35,6 +35,8 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	mFileListModel = new QStandardItemModel();
 	ui->fileList->setItemDelegate(new FileListDelegate(this));
 
+	setAcceptDrops(true);
+
 	mSaveAs = saveAs;
 	setWindowTitle(saveAs ? tr("Save As") : tr("Open File"));
 
@@ -307,6 +309,19 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 		ui->fileList->setColumnHidden(3, true);
 		mFileListModel->sort(0, (Qt::SortOrder)(Qt::AscendingOrder | Qt::CaseInsensitive));
 		mFileListModel->sort(3, (Qt::SortOrder)(Qt::AscendingOrder | Qt::CaseInsensitive));
+
+		if(!mSelectFile.isNull())
+		{
+			QList<QStandardItem *> items = mFileListModel->findItems(mSelectFile);
+
+			QItemSelectionModel *mdl = ui->fileList->selectionModel();
+			mdl->clearSelection();
+
+			foreach(QStandardItem *item, items)
+				mdl->select(item->index(), QItemSelectionModel::Select);
+
+			mSelectFile = "";
+		}
 	}
 }
 
@@ -553,5 +568,32 @@ void FileDialog::createNewFolder()
 	{
 		mCurrentLocation.createNewDirectory(dlg.folderName());
 		showLocation(mCurrentLocation);
+	}
+}
+
+void FileDialog::dragEnterEvent(QDragEnterEvent *event)
+{
+	if (event->mimeData()->hasFormat("text/uri-list"))
+		event->acceptProposedAction();
+}
+
+void FileDialog::dropEvent(QDropEvent *event)
+{
+	QList<QUrl> urls = event->mimeData()->urls();
+	if (urls.isEmpty())
+		return;
+
+	QString fileName = urls.first().toLocalFile();
+	if (fileName.isEmpty())
+		return;
+
+	Location loc(fileName);
+
+	if(loc.isDirectory())
+		showLocation(loc);
+	else
+	{
+		showLocation(loc.getDirectory());
+		mSelectFile = loc.getLabel();
 	}
 }

@@ -25,6 +25,11 @@ public:
 
 public slots:
 	void accept();
+
+protected:
+	void dragEnterEvent(QDragEnterEvent *);
+	void dropEvent(QDropEvent *);
+
 private slots:
 	void folderTreeItemExpanded(QTreeWidgetItem* item);
 	void folderChildrenLoaded(const QList<Location>& children, const QString& locationPath);
@@ -59,6 +64,8 @@ private:
 	static Location mLastLocation;
 
 	bool mSaveAs;
+
+	QString mSelectFile;
 };
 
 #endif // FILEDIALOG_H

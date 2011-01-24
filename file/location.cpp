@@ -131,7 +131,6 @@ bool Location::isNull() const { return (mData == NULL || getPath() == ""); }
 bool Location::isHidden() const { return (mData->mLabel.startsWith('.')); }
 int Location::getSize() const { return mData->mSize; }
 const QDateTime& Location::getLastModified() const { return mData->mLastModified; }
-bool Location::isDirectory() const { return mData->mType == Directory; }
 bool Location::canRead() const { return mData->mCanRead; }
 bool Location::canWrite() const { return mData->mCanWrite; }
 
@@ -219,6 +218,14 @@ Location::Type Location::getType() const
 		mData->localLoadSelf();
 
 	return mData->mType;
+}
+
+bool Location::isDirectory() const
+{
+	if (!mData->mSelfLoaded && mData->mProtocol == Local)
+		mData->localLoadSelf();
+
+	return mData->mType == Directory;
 }
 
 void LocationShared::setPath(const QString &path)
