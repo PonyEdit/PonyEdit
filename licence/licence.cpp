@@ -63,7 +63,7 @@ Licence::Licence(const QByteArray& key)
 bool Licence::verifySignature(const QByteArray& data, const QByteArray& signature)
 {
 	//	Calculate the SHA1 hash of data
-	SHA_CTX sha_ctx = { 0 };
+	SHA_CTX sha_ctx = { 0, 0, 0, 0, 0, 0, 0, { 0 }, 0 };
 	unsigned char digest[SHA_DIGEST_LENGTH];
 	if (SHA1_Init(&sha_ctx) != 1) { qDebug() << "Failed to init SHA1 libs"; return false; }
 	if (SHA1_Update(&sha_ctx, data.constData(), data.length()) != 1) { qDebug() << "Failed to add data to SHA1 hash"; return false; }
@@ -74,7 +74,7 @@ bool Licence::verifySignature(const QByteArray& data, const QByteArray& signatur
 	EVP_PKEY* k = PEM_read_bio_PUBKEY(b, NULL, NULL, NULL);
 
 	//	Verify the signature
-	bool result = RSA_verify(NID_sha1, digest, sizeof(digest), (const unsigned char*)signature.constData(), signature.length(), EVP_PKEY_get1_RSA(k));
+	bool result = RSA_verify(NID_sha1, digest, sizeof(digest), (unsigned char*)signature.constData(), signature.length(), EVP_PKEY_get1_RSA(k));
 
 	//	Clean up
 	EVP_PKEY_free(k);
@@ -82,7 +82,3 @@ bool Licence::verifySignature(const QByteArray& data, const QByteArray& signatur
 
 	return result;
 }
-
-
-
-

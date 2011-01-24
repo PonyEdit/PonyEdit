@@ -12,6 +12,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QCoreApplication>
+#include <QApplication>
 #include <QSettings>
 #include <QErrorMessage>
 
@@ -277,12 +278,23 @@ void MainWindow::updateTitle()
 
 void MainWindow::updateTitle(BaseFile* file)
 {
+	bool modified = false;
 	QString title = "PonyEdit - ";
 	title += file->getLocation().getLabel();
 	if(file->hasUnsavedChanges())
-		title += '*';
+		modified = true;
+
+	if(file->getLocation().getProtocol() == Location::Local)
+		setWindowFilePath(file->getLocation().getPath());
+	else
+	{
+		setWindowFilePath("");
+		QIcon icon = file->getLocation().getIcon();
+		setWindowIcon(icon);
+	}
 
 	setWindowTitle(title);
+	setWindowModified(modified);
 }
 
 void MainWindow::options()

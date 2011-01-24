@@ -7,7 +7,7 @@
 INCLUDEPATH += $$PWD/deps/libssh2/include/
 
 win32 {
-	LIBS        += -L$$PWD/deps/lib-win32/ -lwsock32 -lcrypto -lssl
+	LIBS        += -L$$PWD/deps/lib-win32/ -lwsock32
 	INCLUDEPATH += $$PWD/deps/include-win32/
 }
 
@@ -15,7 +15,7 @@ macx {
 	DEFINES += __DARWIN_64_BIT_INO_T
 }
 
-LIBS	+= -lssh2
+LIBS	+= -lssh2 -lcrypto -lssl
 
 QT       += core gui network xml script webkit
 
