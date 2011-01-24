@@ -223,9 +223,9 @@ void MainWindow::saveFileAs()
 		Location loc = dlg.getNewLocation();
 		loc.getFile()->newFile(current->getFile()->getContent());
 
-		openSingleFile(&loc);
+		loc.getFile()->open();
 
-		saveFile();
+		openSingleFile(&loc);
 
 		if(current->getFile()->getLocation().getProtocol() == Location::Unsaved)
 			current->close();
