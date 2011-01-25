@@ -446,17 +446,47 @@ void MainWindow::showStatusMessage(QString message)
 	mStatusLine->setText(message);
 }
 
-void MainWindow::undo(){}
+void MainWindow::undo()
+{
+	Editor* current = (Editor*)mEditorStack->currentWidget();
+	if(current)
+		current->undo();
+}
 
-void MainWindow::redo(){}
+void MainWindow::redo()
+{
+	Editor* current = (Editor*)mEditorStack->currentWidget();
+	if(current)
+		current->redo();
+}
 
-void MainWindow::cut(){}
+void MainWindow::cut()
+{
+	Editor* current = (Editor*)mEditorStack->currentWidget();
+	if(current)
+		current->cut();
+}
 
-void MainWindow::copy(){}
+void MainWindow::copy()
+{
+	Editor* current = (Editor*)mEditorStack->currentWidget();
+	if(current)
+		current->copy();
+}
 
-void MainWindow::paste(){}
+void MainWindow::paste()
+{
+	Editor* current = (Editor*)mEditorStack->currentWidget();
+	if(current)
+		current->paste();
+}
 
-void MainWindow::selectAll(){}
+void MainWindow::selectAll()
+{
+	Editor* current = (Editor*)mEditorStack->currentWidget();
+	if(current)
+		current->selectAll();
+}
 
 void MainWindow::showGotoLine()
 {

@@ -40,6 +40,12 @@ public slots:
 	void setFocus();
 	void applyOptions();
 	void enableEditing() { setReadOnly(false); }
+	void undo() { mEditor->undo(); }
+	void redo() { mEditor->redo(); }
+	void copy() { mEditor->copy(); }
+	void cut() { mEditor->cut(); }
+	void paste() { mEditor->paste(); }
+	void selectAll() { mEditor->selectAll(); }
 
 private:
 	void showLoading();
