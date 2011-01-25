@@ -133,66 +133,70 @@ void Editor::close()
 	mFile->close();
 }
 
-int Editor::find(const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop)
+int Editor::find(const QString &text, bool backwards, bool caseSensitive, bool useRegexp, bool loop)
 {
-	int foundCount = 0, lastPos = 0, found = 0, length = 0;
+	QTextCursor found = internalFind(text, backwards, caseSensitive, useRegexp, loop);
 
-	if(backwards && mEditor->textCursor().selectionStart() == 0 && !loop)
+	if(found.isNull())
 		return 0;
+	else
+		return 1;
+}
+
+QTextCursor Editor::internalFind(const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop)
+{
+	if(backwards && mEditor->textCursor().selectionStart() == 0 && !loop)
+		return QTextCursor();
+
+	QTextDocument *doc = mEditor->document();
 
 	QString content = mEditor->toPlainText();
 
+	QTextCursor currentCursor = mEditor->textCursor();
+
+	QTextDocument::FindFlags flags = 0;
+	if(caseSensitive)
+		flags |= QTextDocument::FindCaseSensitively;
 	if(backwards)
-		lastPos = mEditor->textCursor().selectionStart() - 1;
-	else
-		lastPos = mEditor->textCursor().selectionEnd();
+		flags |= QTextDocument::FindBackward;
+
+	QTextCursor newSelection;
 
 	if(useRegexp)
 	{
 		QRegExp regexp(text, (Qt::CaseSensitivity)(caseSensitive)?(Qt::CaseSensitive):(Qt::CaseInsensitive));
 
 		if(!content.contains(regexp))
-			return 0;
+			return QTextCursor();
 
-		if(backwards)
-			found = regexp.lastIndexIn(content, lastPos);
-		else
-			found = regexp.indexIn(content, lastPos);
-
-		length = regexp.matchedLength();
-		foundCount = content.count(regexp);
+		newSelection = doc->find(regexp, currentCursor, flags);
 	}
 	else
 	{
 		if(!content.contains(text, (Qt::CaseSensitivity)(caseSensitive)?(Qt::CaseSensitive):(Qt::CaseInsensitive)))
-			return 0;
+			return QTextCursor();
 
-		if(backwards)
-			found = content.lastIndexOf(text, lastPos, (Qt::CaseSensitivity)(caseSensitive)?(Qt::CaseSensitive):(Qt::CaseInsensitive));
-		else
-			found = content.indexOf(text, lastPos, (Qt::CaseSensitivity)(caseSensitive)?(Qt::CaseSensitive):(Qt::CaseInsensitive));
-
-		length = text.length();
-		foundCount = content.count(text, (Qt::CaseSensitivity)(caseSensitive)?(Qt::CaseSensitive):(Qt::CaseInsensitive));
+		newSelection = doc->find(text, currentCursor, flags);
 	}
 
-	QTextCursor newSelection = mEditor->textCursor();
-
-	if(found >= 0)
+	if(!newSelection.isNull())
 	{
-		newSelection.setPosition(found);
-		newSelection.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, length);
-
 		mEditor->setTextCursor(newSelection);
 	}
 	else if(loop)
 	{
-		newSelection.setPosition(0);
-		mEditor->setTextCursor(newSelection);
-		found = find(text, backwards, caseSensitive, useRegexp);
+		if(backwards)
+		{
+			currentCursor.movePosition(QTextCursor::End);
+			mEditor->setTextCursor(currentCursor);
+		}
+		else
+			gotoLine(1);
+
+		newSelection = internalFind(text, backwards, caseSensitive, useRegexp, false);
 	}
 
-	return (found >= 0)?(foundCount):(0);
+	return newSelection;
 }
 
 int Editor::replace(const QString &findText, const QString &replaceText, bool caseSensitive, bool useRegex, bool all)
@@ -215,51 +219,31 @@ int Editor::replace(const QString &findText, const QString &replaceText, bool ca
 			return 0;
 	}
 
+	QTextCursor found = internalFind(findText, false, caseSensitive, useRegex);
+
 	if(all)
 	{
-		if(useRegex)
-			content.replace(regexp, replaceText);
-		else
-			content.replace(findText, replaceText);
+		while(!found.isNull())
+		{
+			found.insertText(replaceText);
+			mEditor->setTextCursor(found);
+			found = internalFind(findText, false, caseSensitive, useRegex);
+		}
 	}
 	else
 	{
-		QTextCursor selection = mEditor->textCursor();
-
-		if(selection.selectionStart() >= selection.selectionEnd())
-			return 0;
-
-		QString selectedText = content.mid(selection.selectionStart(), selection.selectionEnd() - selection.selectionStart());
-		QString formattedText = replaceText;
-
-		if(useRegex)
-		{
-			if(!regexp.exactMatch(selectedText))
-				return 0;
-
-			QStringList caps = regexp.capturedTexts();
-
-			for(int ii = 1; ii < caps.size(); ii++)
-				formattedText.replace(QString("\\%1").arg(ii), caps[ii]);
-		}
-		else
-		{
-			if(selectedText != findText)
-				return 0;
-		}
-
-		content.remove(selection.selectionStart(), selection.selectionEnd() - selection.selectionStart());
-		content.insert(selection.selectionStart(), formattedText);
+		found.insertText(replaceText);
+		mEditor->setTextCursor(found);
 	}
-
-	mEditor->selectAll();
-	mEditor->insertPlainText(content);
 
 	return 1;
 }
 
 void Editor::gotoLine(int lineNumber)
 {
+	if(lineNumber < 1)
+		lineNumber = 1;
+
 	QTextCursor cursor = mEditor->textCursor();
 
 	cursor.movePosition(QTextCursor::Start);

@@ -35,7 +35,7 @@ public:
 public slots:
 	void openStatusChanged(int openStatus);
 	void fileOpenProgress(int percent);
-	int find(const QString& text, bool backwards, bool caseSensitive, bool useRegex, bool loop = true);
+	int find(const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true);
 	int replace(const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegex, bool all);
 	void setFocus();
 	void applyOptions();
@@ -50,6 +50,7 @@ public slots:
 private:
 	void showLoading();
 	void showError(const QString& error);
+	QTextCursor internalFind(const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true);
 
 	bool mFirstOpen;
 
