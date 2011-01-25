@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QByteArray>
+#include <QString>
 #include <QTextDocument>
 #include <QPlainTextDocumentLayout>
 
@@ -17,7 +18,7 @@ class BaseFile : public QObject
 	Q_OBJECT
 
 public:
-	struct Change { int revision; int position; int remove; QByteArray insert; };
+	struct Change { int revision; int position; int remove; QString insert; };
 	enum OpenStatus { Closed, Loading, LoadError, Ready, Disconnected, Reconnecting, Repairing, SyncError, Closing };
 	static const char* sStatusLabels[];
 
@@ -25,7 +26,7 @@ public:
 	static const QList<BaseFile*>& getActiveFiles();
 	virtual ~BaseFile();
 
-	inline const QByteArray& getContent() const { return mContent; }
+	inline const QString& getContent() const { return mContent; }
 	inline const Location& getLocation() const { return mLocation; }
 	inline QTextDocument* getTextDocument() { return mDocument; }
 	inline const QString& getError() const { return mError; }
@@ -35,7 +36,7 @@ public:
 	inline bool hasUnsavedChanges() const { return mRevision > mLastSavedRevision; }
 	inline bool isReadOnly() const { return mReadOnly; }
 
-	virtual BaseFile* newFile(const QByteArray& content) = 0;
+	virtual BaseFile* newFile(const QString& content) = 0;
 	virtual void open() = 0;
 	virtual void save() = 0;
 	virtual void close() = 0;	// Warning: This call is asynchronous in some kinds of file; eg SshFile.
@@ -60,12 +61,12 @@ public:
 	void setSyntax(SyntaxDefinition* syntaxDef);
 
 public slots:
-	void fileOpened(const QByteArray& content, bool readOnly);
+	void fileOpened(const QString& content, bool readOnly);
 	void documentChanged(int position, int removeChars, int added);
 	void closeCompleted();
 
 signals:
-	void fileOpenedRethreadSignal(const QByteArray& content, bool readOnly);
+	void fileOpenedRethreadSignal(const QString& content, bool readOnly);
 	void closeCompletedRethreadSignal();
 	void fileOpenProgress(int percent);
 	void openStatusChanged(int newStatus);
@@ -76,13 +77,13 @@ protected:
 	BaseFile(const Location& location);
 	void setOpenStatus(OpenStatus newStatus);
 
-	virtual void handleDocumentChange(int position, int removeChars, const QByteArray& insert);
+	virtual void handleDocumentChange(int position, int removeChars, const QString& insert);
 	virtual void setLastSavedRevision(int lastSavedRevision);
 
 	void autodetectSyntax();
 
 	Location mLocation;
-	QByteArray mContent;
+	QString mContent;
 	QString mError;
 
 	QTextDocument* mDocument;

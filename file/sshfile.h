@@ -9,11 +9,11 @@ class SshFile : public BaseFile
 	Q_OBJECT
 
 public:
-	BaseFile* newFile(const QByteArray& content);
+	BaseFile* newFile(const QString& content);
 	void open();
 	void save();
 	void close();
-	void fileOpened(int bufferId, const QByteArray& content, const QString& checksum, bool readOnly);
+	void fileOpened(int bufferId, const QString& content, const QString& checksum, bool readOnly);
 
 	SshFile(const Location& location);	//	Do not call; use File::getFile instead.
 	void reconnect();
@@ -29,7 +29,7 @@ signals:
 
 protected:
 	virtual ~SshFile();
-	virtual void handleDocumentChange(int position, int removeChars, const QByteArray& insert);
+	virtual void handleDocumentChange(int position, int removeChars, const QString& insert);
 	virtual void setLastSavedRevision(int lastSavedRevision);
 	void pumpChangeQueue();
 	void resync();

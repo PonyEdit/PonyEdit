@@ -29,7 +29,7 @@ SshFile::~SshFile()
 	mChangesSinceLastSave.clear();
 }
 
-BaseFile* SshFile::newFile(const QByteArray& content)
+BaseFile* SshFile::newFile(const QString& content)
 {
 	mCreatingNewFile = true;
 
@@ -64,7 +64,7 @@ void SshFile::open()
 	mController->sendRequest(new SshRequest_open(this, SshRequest_open::Content));
 }
 
-void SshFile::fileOpened(int bufferId, const QByteArray& content, const QString& checksum, bool readOnly)
+void SshFile::fileOpened(int bufferId, const QString& content, const QString& checksum, bool readOnly)
 {
 	mBufferId = bufferId;
 
@@ -126,7 +126,7 @@ void SshFile::movePumpCursor(int revision)
 		mChangePumpCursor++;
 }
 
-void SshFile::handleDocumentChange(int position, int removeChars, const QByteArray& insert)
+void SshFile::handleDocumentChange(int position, int removeChars, const QString& insert)
 {
 	if (mIgnoreChanges)
 		return;

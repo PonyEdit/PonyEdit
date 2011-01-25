@@ -73,13 +73,13 @@ BaseFile::BaseFile(const Location& location = NULL)
 	mDocument->setDocumentLayout(mDocumentLayout);
 
 	connect(mDocument, SIGNAL(contentsChange(int,int,int)), this, SLOT(documentChanged(int,int,int)));
-	connect(this, SIGNAL(fileOpenedRethreadSignal(QByteArray,bool)), this, SLOT(fileOpened(QByteArray,bool)), Qt::QueuedConnection);
+	connect(this, SIGNAL(fileOpenedRethreadSignal(QString,bool)), this, SLOT(fileOpened(QString,bool)), Qt::QueuedConnection);
 	connect(this, SIGNAL(closeCompletedRethreadSignal()), this, SLOT(closeCompleted()), Qt::QueuedConnection);
 }
 
 void BaseFile::documentChanged(int position, int removeChars, int charsAdded)
 {
-	QByteArray added = "";
+	QString added = "";
 	for (int i = 0; i < charsAdded; i++)
 	{
 		QChar c = mDocument->characterAt(i + position);
@@ -94,7 +94,7 @@ void BaseFile::documentChanged(int position, int removeChars, int charsAdded)
 	this->handleDocumentChange(position, removeChars, added);
 }
 
-void BaseFile::handleDocumentChange(int position, int removeChars, const QByteArray &insert)
+void BaseFile::handleDocumentChange(int position, int removeChars, const QString &insert)
 {
 	qDebug() << "handleDocumentChange " << mIgnoreChanges;
 	if (mIgnoreChanges)
@@ -108,7 +108,7 @@ void BaseFile::handleDocumentChange(int position, int removeChars, const QByteAr
 	emit unsavedStatusChanged();
 }
 
-void BaseFile::fileOpened(const QByteArray& content, bool readOnly)
+void BaseFile::fileOpened(const QString& content, bool readOnly)
 {
 	//	If this is not the main thread, move to the main thread.
 	if (!Tools::isMainThread())
@@ -167,7 +167,7 @@ void BaseFile::editorDetached(Editor* editor)	//	Call only from Editor destructo
 QString BaseFile::getChecksum() const
 {
 	QCryptographicHash hash(QCryptographicHash::Md5);
-	hash.addData(mContent);
+	hash.addData(mContent.toUtf8());
 	return QString(hash.result().toHex().toLower());
 }
 

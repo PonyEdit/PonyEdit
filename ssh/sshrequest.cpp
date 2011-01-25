@@ -212,7 +212,7 @@ void SshRequest_open::error(const QString& error)
 
 void SshRequest_open::success()
 {
-	mFile->fileOpened(mBufferId, mData, mChecksum, mReadOnly);
+	mFile->fileOpened(mBufferId, QString::fromUtf8(mData), mChecksum, mReadOnly);
 }
 
 void SshRequest_open::fileOpenProgress(int percent)
@@ -224,7 +224,7 @@ void SshRequest_open::fileOpenProgress(int percent)
 //  Message 3: change buffer  //
 ////////////////////////////////
 
-SshRequest_changeBuffer::SshRequest_changeBuffer(quint32 bufferId, quint32 position, quint32 removeCount, const QByteArray& add)
+SshRequest_changeBuffer::SshRequest_changeBuffer(quint32 bufferId, quint32 position, quint32 removeCount, const QString& add)
 	: SshRequest(3, bufferId)
 {
 	mPosition = position;
@@ -236,7 +236,7 @@ void SshRequest_changeBuffer::packBody(QByteArray* target)
 {
 	addData(target, 'p', mPosition);
 	addData(target, 'r', mRemoveCount);
-	addData(target, 'a', mAdd);
+	addData(target, 'a', mAdd.toUtf8());
 }
 
 void SshRequest_changeBuffer::handleResponse(const QByteArray& response)
@@ -273,7 +273,7 @@ void SshRequest_changeBuffer::error(const QString& error)
 //  Message 4: save buffer  //
 //////////////////////////////
 
-SshRequest_saveBuffer::SshRequest_saveBuffer(quint32 bufferId, SshFile* file, int revision, const QByteArray& fileContent)
+SshRequest_saveBuffer::SshRequest_saveBuffer(quint32 bufferId, SshFile* file, int revision, const QString& fileContent)
 	: SshRequest(4, bufferId)
 {
 	mFile = file;
@@ -284,7 +284,7 @@ SshRequest_saveBuffer::SshRequest_saveBuffer(quint32 bufferId, SshFile* file, in
 void SshRequest_saveBuffer::packBody(QByteArray* target)
 {
 	QCryptographicHash hash(QCryptographicHash::Md5);
-	hash.addData(mFileContent);
+	hash.addData(mFileContent.toUtf8());
 	mChecksum = hash.result().toHex().toLower();
 
 	addData(target, 'c', mChecksum);
@@ -328,7 +328,7 @@ void SshRequest_saveBuffer::success()
 //  Message 6: resyncFile  //
 /////////////////////////////
 
-SshRequest_resyncFile::SshRequest_resyncFile(quint32 bufferId, SshFile* file, const QByteArray& content, int revision)
+SshRequest_resyncFile::SshRequest_resyncFile(quint32 bufferId, SshFile* file, const QString& content, int revision)
 	: SshRequest(6, bufferId)
 {
 	mRevision = revision;
@@ -339,10 +339,10 @@ SshRequest_resyncFile::SshRequest_resyncFile(quint32 bufferId, SshFile* file, co
 void SshRequest_resyncFile::packBody(QByteArray* target)
 {
 	QCryptographicHash hash(QCryptographicHash::Md5);
-	hash.addData(mContent);
+	hash.addData(mContent.toUtf8());
 	QByteArray md5checksum = hash.result().toHex().toLower();
 
-	addData(target, 'd', mContent);
+	addData(target, 'd', mContent.toUtf8());
 	addData(target, 'c', md5checksum);
 	addData(target, 's', quint32(0));
 }
@@ -408,7 +408,7 @@ void SshRequest_closeFile::success()
 //  Message 8: createFile  //
 /////////////////////////////
 
-SshRequest_createFile::SshRequest_createFile(SshFile* file, const QByteArray& content) : SshRequest(8, 0)
+SshRequest_createFile::SshRequest_createFile(SshFile* file, const QString& content) : SshRequest(8, 0)
 {
 	mFile = file;
 	mContent = content;
@@ -430,7 +430,7 @@ void SshRequest_createFile::packBody(QByteArray* target)
 {
 	const Location& fileLocation = mFile->getLocation();
 	addData(target, 'f', (const char*)fileLocation.getRemotePath().toUtf8());
-	addData(target, 'c', mContent);
+	addData(target, 'c', mContent.toUtf8());
 }
 
 //////////////////////////////////

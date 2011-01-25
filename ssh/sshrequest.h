@@ -49,7 +49,7 @@ public:
 
 	//	Manual work; if this ssh request does stuff like scp data down, this is where to do it.
 	virtual bool hasManualComponent() { return false; }
-        virtual void doManualWork(SshConnection* /*connection*/) {}
+	virtual void doManualWork(SshConnection* /*connection*/) {}
 
 protected:
 
@@ -123,7 +123,7 @@ private:
 class SshRequest_changeBuffer : public SshRequest
 {
 public:
-	SshRequest_changeBuffer(quint32 bufferId, quint32 position, quint32 removeCount, const QByteArray& add);
+	SshRequest_changeBuffer(quint32 bufferId, quint32 position, quint32 removeCount, const QString& add);
 	virtual void packBody(QByteArray* target);
 	virtual void handleResponse(const QByteArray& response);
 
@@ -132,7 +132,7 @@ public:
 private:
 	quint32 mPosition;
 	quint32 mRemoveCount;
-	QByteArray mAdd;
+	QString mAdd;
 };
 
 //////////////////////////////
@@ -142,7 +142,7 @@ private:
 class SshRequest_saveBuffer : public SshRequest
 {
 public:
-	SshRequest_saveBuffer(quint32 bufferId, SshFile* file, int revision, const QByteArray& fileContent);
+	SshRequest_saveBuffer(quint32 bufferId, SshFile* file, int revision, const QString& fileContent);
 	virtual void packBody(QByteArray* target);
 	virtual void handleResponse(const QByteArray& response);
 
@@ -150,7 +150,7 @@ public:
 	virtual void success();
 
 private:
-	QByteArray mFileContent;
+	QString mFileContent;
 	QByteArray mChecksum;
 	SshFile* mFile;
 	int mRevision;
@@ -173,7 +173,7 @@ public:
 class SshRequest_resyncFile : public SshRequest
 {
 public:
-	SshRequest_resyncFile(quint32 bufferId, SshFile* file, const QByteArray& content, int revision);
+	SshRequest_resyncFile(quint32 bufferId, SshFile* file, const QString& content, int revision);
 	virtual void packBody(QByteArray* target);
 	virtual void handleResponse(const QByteArray& response);
 
@@ -181,7 +181,7 @@ public:
 	virtual void success();
 
 private:
-	QByteArray mContent;
+	QString mContent;
 	SshFile* mFile;
 	int mRevision;
 };
@@ -210,7 +210,7 @@ private:
 class SshRequest_createFile : public SshRequest
 {
 public:
-	SshRequest_createFile(SshFile* file, const QByteArray& content);
+	SshRequest_createFile(SshFile* file, const QString& content);
 	virtual void packBody(QByteArray* target);
 
 	virtual void error(const QString& error);
@@ -218,7 +218,7 @@ public:
 
 private:
 	SshFile* mFile;
-	QByteArray mContent;
+	QString mContent;
 };
 
 

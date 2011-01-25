@@ -5,7 +5,7 @@ UnsavedFile::UnsavedFile(const Location& location) :
 {
 }
 
-BaseFile* UnsavedFile::newFile(const QByteArray& /* content */)
+BaseFile* UnsavedFile::newFile(const QString& /* content */)
 {
 	return this;
 }

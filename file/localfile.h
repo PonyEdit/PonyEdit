@@ -13,13 +13,13 @@ class LocalFile : public BaseFile
 public:
 	LocalFile(const Location& location);
 
-	BaseFile* newFile(const QByteArray& content);
+	BaseFile* newFile(const QString& content);
 	void open();
 	void save();
 	void close();
 
 signals:
-	void localFileOpened(const QByteArray& content, bool readOnly);
+	void localFileOpened(const QString& content, bool readOnly);
 };
 
 #endif // LOCALFILE_H
