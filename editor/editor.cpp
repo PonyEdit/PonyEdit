@@ -204,6 +204,17 @@ int Editor::replace(const QString &findText, const QString &replaceText, bool ca
 
 	QRegExp regexp(findText, (Qt::CaseSensitivity)(caseSensitive)?(Qt::CaseSensitive):(Qt::CaseInsensitive));
 
+	if(useRegex)
+	{
+		if(!content.contains(regexp))
+			return 0;
+	}
+	else
+	{
+		if(!content.contains(findText, (Qt::CaseSensitivity)(caseSensitive)?(Qt::CaseSensitive):(Qt::CaseInsensitive)))
+			return 0;
+	}
+
 	if(all)
 	{
 		if(useRegex)
