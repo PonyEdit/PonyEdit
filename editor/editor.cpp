@@ -223,12 +223,19 @@ int Editor::replace(const QString &findText, const QString &replaceText, bool ca
 
 	if(all)
 	{
+		QTextCursor editBlock = found;
+		editBlock.beginEditBlock();
+		mEditor->setTextCursor(editBlock);
+
 		while(!found.isNull())
 		{
 			found.insertText(replaceText);
 			mEditor->setTextCursor(found);
 			found = internalFind(findText, false, caseSensitive, useRegex);
 		}
+
+		editBlock.endEditBlock();
+		mEditor->setTextCursor(editBlock);
 	}
 	else
 	{
