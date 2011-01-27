@@ -8,6 +8,9 @@ UpdateNotificationDialog::UpdateNotificationDialog(QWidget *parent) :
     ui(new Ui::UpdateNotificationDialog)
 {
     ui->setupUi(this);
+
+	ui->changesBrowser->setOpenExternalLinks(true);
+	ui->urlLabel->setOpenExternalLinks(true);
 }
 
 UpdateNotificationDialog::~UpdateNotificationDialog()
