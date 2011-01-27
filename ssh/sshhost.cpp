@@ -80,7 +80,7 @@ SshHost* SshHost::createHost(const QString& hostName, const QString& userName, b
 
 SshHost::SshHost()
 {
-	mController = NULL;
+	mConnection = NULL;
 	mSave = true;
 	mSavePassword = false;
 	mPort = 22;
@@ -88,7 +88,7 @@ SshHost::SshHost()
 
 SshHost::SshHost(const QString& hostName, const QString& userName)
 {
-	mController = NULL;
+	mConnection = NULL;
 	mHostName = hostName;
 	mUserName = userName;
 	mPort = 22;
@@ -99,13 +99,64 @@ SshHost::SshHost(const QString& hostName, const QString& userName)
 
 SshHost::~SshHost()
 {
-	disconnect();
+	//	TODO: Disconnect before deletion
 	sKnownHosts.removeAll(this);
 }
 
+void SshHost::recordKnownHost(SshHost* host)
+{
+	sKnownHosts.append(host);
+}
+
+QString SshHost::getDefaultPath()
+{
+	return (mUserName.isEmpty() ? "" : mUserName + "@") + mHostName + ":" + mDefaultDirectory;
+}
+
+Location SshHost::getDefaultLocation()
+{
+	return Location(getDefaultPath());
+}
+
+void SshHost::registerOpenFile(SlaveFile* file)
+{
+	mOpenFiles.append(file);
+}
+
+void SshHost::unregisterOpenFile(SlaveFile* file)
+{
+	mOpenFiles.removeOne(file);
+}
+
+int SshHost::numOpenFiles() const
+{
+	return mOpenFiles.count();
+}
+
+const QList<SlaveFile*> SshHost::getOpenFiles() const
+{
+	return mOpenFiles;
+}
+
+SshConnection* SshHost::getConnection()
+{
+	if (mConnection)
+		return mConnection;
+
+	mConnection = new SshConnection(this);
+	DialogWrapper<ConnectionStatusWidget> dialogWrapper(new ConnectionStatusWidget(mConnection, true));
+
+	if (dialogWrapper.exec() == QDialog::Accepted)
+		return mConnection;
+
+	delete mConnection;
+	return NULL;
+}
+
+/*
 bool SshHost::isConnected() const
 {
-	return (mController != NULL && mController->getStatus() == SshRemoteController::Connected);
+	return (mController != NULL && mController->getStatus() == SshConnection::Connected);
 }
 
 bool SshHost::connect()
@@ -113,9 +164,9 @@ bool SshHost::connect()
 	disconnect();
 
 	//	Show a connection dialog; it will manage the whole connection process
-	mController = new SshRemoteController(this);
+	mController = new SshConnection(this);
 	ConnectionStatusWidget* statusWidget = new ConnectionStatusWidget(mController, true);
-	DialogWrapper<ConnectionStatusWidget> dialogWrapper(statusWidget);
+	statusWidget);
 
 	return (dialogWrapper.exec() == QDialog::Accepted);
 }
@@ -134,40 +185,23 @@ bool SshHost::ensureConnection()
 	return isConnected() || connect();
 }
 
-void SshHost::recordKnownHost(SshHost* host)
-{
-	sKnownHosts.append(host);
-}
 
-QString SshHost::getDefaultPath()
-{
-	return (mUserName.isEmpty() ? "" : mUserName + "@") + mHostName + ":" + mDefaultDirectory;
-}
+*/
 
-Location SshHost::getDefaultLocation()
-{
-	return Location(getDefaultPath());
-}
 
-void SshHost::registerOpenFile(SshFile* file)
-{
-	mOpenFiles.append(file);
-}
 
-void SshHost::unregisterOpenFile(SshFile* file)
-{
-	mOpenFiles.removeOne(file);
-}
 
-int SshHost::numOpenFiles() const
-{
-	return mOpenFiles.count();
-}
 
-const QList<SshFile*> SshHost::getOpenFiles() const
-{
-	return mOpenFiles;
-}
+
+
+
+
+
+
+
+
+
+
 
 
 

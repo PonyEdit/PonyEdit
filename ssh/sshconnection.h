@@ -1,70 +1,56 @@
-#ifndef SSHCONNECTION_H
-#define SSHCONNECTION_H
+#ifndef SSHREMOTECONTROLLER_H
+#define SSHREMOTECONTROLLER_H
 
+#include <QString>
 #include <QByteArray>
-#include <libssh2.h>
-#include <QMap>
+#include <QDialogButtonBox>
+#include <QMutex>
 
-#define SSH_BUFFER_SIZE 4096
-#define SSH_PROMPT "%-ponyedit-%"
+#include "remoteconnection.h"
+#include "rawsshconnection.h"
 
-class ISshConnectionCallback
+class SlaveRequest;
+class SshHost;
+class PasswordInput;
+class RawSshChannelHandle;
+
+class SshConnection : public RemoteConnection
 {
 public:
-        virtual void fileOpenProgress(int /*percent*/) {}
-};
-
-class SshConnection
-{
-public:
-	enum AuthMethods
-	{
-		Password = 0x01,
-		KeyboardInteractive = 0x02,
-		PublicKey = 0x03
-	};
-
-public:
-	SshConnection();
+	SshConnection(SshHost* host);
 	~SshConnection();
 
-	void connect(const char* host, int port);
-	void disconnect();
-	AuthMethods getAuthenticationMethods(const char* username);
-	bool authenticatePassword(const char* username, const char* password);
-	bool authenticateKeyFile(const char* filename, const char* username, const char* password, bool* keyRejected);
-	bool authenticateAgent(const char* username);
-	void startRemoteSlave();
+	inline RawSshConnection* getRawConnection() const { return mRawConnection; }
 
-	void writeFile(const char* remoteFilename, const char* data, int length);
-	QByteArray readFile(const char* filename, ISshConnectionCallback* callback);
+	virtual QString getName();
+	virtual RawChannelHandle* createRawSlaveChannel();
 
-	QByteArray execute(const char* command);
-	QByteArray readToPrompt();
-	QByteArray readLine();
-	QByteArray readUntil(const char* marker);
-	void writeData(const char* data, int length);
-	void sendEof();
+	virtual void sendLine(RawChannelHandle* handle, const QByteArray& data);
+	virtual QByteArray readLine(RawChannelHandle* handle);
 
-	static void initializeLib();
+protected:
+	virtual bool threadConnect();
+	virtual RemoteChannel* threadOpenPrimaryChannel();
 
-	inline const QByteArray& getServerFingerprint() { return mServerFingerprint; }
-	inline static QByteArray getExpectedFingerprint(const QString& host) { return sKnownHostKeys.value(host); }
-	static void saveFingerprint(const QString& host, const QByteArray& fingerprint);
+	static void hostkeyWarnDialog(ConnectionStatusWidget* widget, RemoteConnection* connection, QWidget* target, QVariant param);
+	static bool hostkeyWarnCallback(ConnectionStatusWidget* widget, RemoteConnection* connection, QDialogButtonBox::ButtonRole buttonRole, QVariant param);
+
+	static void passwordInputDialog(ConnectionStatusWidget* widget, RemoteConnection* connection, QWidget* target, QVariant param);
+	static bool passwordInputCallback(ConnectionStatusWidget* widget, RemoteConnection* connection, QDialogButtonBox::ButtonRole buttonRole, QVariant param);
 
 private:
-	void createChannel();
-	QString getLastError(int rc);
-	static void saveKnownHostKeys();
+	void loadSlaveScript();
 
-	int mSocket;
-	LIBSSH2_SESSION* mSession;
-	LIBSSH2_CHANNEL* mChannel;
-	QByteArray mServerFingerprint;
-	char mTmpBuffer[SSH_BUFFER_SIZE];
-	QByteArray mReadBuffer;
+private:
+	SshHost* mHost;
+	RawSshConnection* mRawConnection;
 
-	static QMap<QString, QByteArray> sKnownHostKeys;
+	static QMutex sSlaveScriptMutex;	//	Mutex used to ensure two slave threads don't try to init the slaveScript simultaneously
+	static bool sSlaveLoaded;
+	static QByteArray sSlaveScript;
+	static QByteArray sSlaveMd5;
+
+	PasswordInput* mPasswordInput;
 };
 
-#endif // SSHCONNECTION_H
+#endif // SSHREMOTECONTROLLER_H

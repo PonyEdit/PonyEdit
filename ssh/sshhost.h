@@ -4,9 +4,9 @@
 #include <QString>
 
 #include "file/location.h"
-#include "ssh/sshremotecontroller.h"
+#include "ssh/sshconnection.h"
 
-class SshFile;
+class SlaveFile;
 class SshHost
 {
 public:
@@ -43,27 +43,22 @@ public:
 	inline void setSavePassword(bool savePassword) { mSavePassword = savePassword; }
 	inline void setSaveKeyPassphrase(bool saveKeyPassphrase) { mSaveKeyPassphrase = saveKeyPassphrase; }
 
-	bool isConnected() const;
-	bool ensureConnection();
-	bool connect();
-	void disconnect();
-
 	QString getDefaultPath();
 	Location getDefaultLocation();
 
-	void registerOpenFile(SshFile* file);
-	void unregisterOpenFile(SshFile* file);
+	void registerOpenFile(SlaveFile* file);
+	void unregisterOpenFile(SlaveFile* file);
 	int numOpenFiles() const;
-	const QList<SshFile*> getOpenFiles() const;
+	const QList<SlaveFile*> getOpenFiles() const;
 
-	//	Only usable when connected:
-	inline SshRemoteController* getController() { return mController; }
-	inline const QString& getHomeDirectory() { return mController->getHomeDirectory(); }
+	//	Connection stuff
+	SshConnection* getConnection();		//	*NOT RE-ENTRANT* If already connected, this returns the connection. Otherwise, this connects!!
 
 private:
 	SshHost(const QString& hostName, const QString& userName);
 
-	SshRemoteController* mController;
+	SshConnection* mConnection;
+	QList<SlaveFile*> mOpenFiles;
 
 	QString mHostName;
 	int mPort;
@@ -76,8 +71,6 @@ private:
 	bool mSaveKeyPassphrase;
 
 	QString mDefaultDirectory;
-
-	QList<SshFile*> mOpenFiles;
 
 	QString mName;
 	bool mSave;

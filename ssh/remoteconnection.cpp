@@ -1,10 +1,24 @@
 #include "remoteconnection.h"
+#include "remoteconnectionthread.h"
+#include "slavechannel.h"
+#include <QDebug>
 
 RemoteConnection::RemoteConnection()
 {
-	mDeliberatelyDisconnecting = false;
 	mStatus = Uninitialized;
-	mInputDialog = NULL;
+	mDeliberatelyDisconnecting = false;
+	mConnectionId = 0;
+}
+
+void RemoteConnection::startConnectionThread()
+{
+	mThread = new RemoteConnectionThread(this);
+	mThread->start();
+}
+
+void RemoteConnection::registerNewChannel(RemoteChannel* channel)
+{
+	mOpenChannels.append(channel);
 }
 
 QString RemoteConnection::getStatusString()
@@ -20,11 +34,11 @@ QString RemoteConnection::getStatusString()
 	case Authenticating:
 		return tr("Authenticating ...");
 
-	case Configuring:
-		return tr("Configuring ...");
-
 	case Connected:
 		return tr("Connected");
+
+	case OpeningChannels:
+		return tr("Configuring ...");
 
 	case Disconnecting:
 		return tr("Disconnecting ...");
@@ -50,8 +64,8 @@ QPixmap RemoteConnection::getStatusIcon()
 
 	case Connecting:
 	case Authenticating:
-	case Configuring:
 	case Disconnecting:
+	case OpeningChannels:
 		return QPixmap(":/icons/loading.png");
 
 	case Connected:
@@ -67,6 +81,8 @@ void RemoteConnection::setStatus(Status newStatus)
 {
 	mStatus = newStatus;
 	emit statusChanged();
+	mThread->wake();
+	mStatusWaiter.wakeAll();
 }
 
 void RemoteConnection::setErrorStatus(const QString &errorMessage)
@@ -75,10 +91,11 @@ void RemoteConnection::setErrorStatus(const QString &errorMessage)
 	setStatus(Error);
 }
 
-void RemoteConnection::waitForInput(DialogFunction dialogFunction, DialogCallback callbackFunction)
+void RemoteConnection::waitForInput(DialogFunction dialogFunction, DialogCallback callbackFunction, QVariant param)
 {
 	mInputDialog = dialogFunction;
 	mDialogCallback = callbackFunction;
+	mDialogParameter = param;
 
 	QMutex mutex;
 	mutex.lock();
@@ -87,6 +104,11 @@ void RemoteConnection::waitForInput(DialogFunction dialogFunction, DialogCallbac
 
 	mInputDialog = NULL;
 	mDialogCallback = NULL;
+}
+
+SlaveChannel* RemoteConnection::threadOpenSlaveChannel()
+{
+	return new SlaveChannel(this);
 }
 
 void RemoteConnection::disconnect(bool deliberate)
@@ -99,6 +121,43 @@ bool RemoteConnection::isDisconnecting()
 {
 	Status baseStatus = getBaseStatus();
 	return (baseStatus == Disconnecting || baseStatus == Disconnected);
+}
+
+SlaveChannel* RemoteConnection::getSlaveChannel()
+{
+	return static_cast<SlaveChannel*>(getChannel(RemoteChannel::Slave));
+}
+
+RemoteChannel* RemoteConnection::getChannel(RemoteChannel::Type type)
+{
+	foreach (RemoteChannel* channel, mOpenChannels)
+	{
+		if (channel->getType() == type)
+			return channel;
+	}
+
+	return NULL;
+}
+
+bool RemoteConnection::waitUntilOpen()
+{
+	qDebug() << "Entering RemoteConnection::waitUntilOpen";
+
+	QMutex mutex;
+	mutex.lock();
+
+	while (1)
+	{
+		Status baseStatus = getBaseStatus();
+		if (baseStatus == OpeningChannels || baseStatus == Connected || baseStatus == Error)
+			break;
+
+		mStatusWaiter.wait(&mutex, 1000);
+	}
+
+	qDebug() << "Exiting RemoteConnection::waitUntilOpen";
+
+	return (getBaseStatus() != Error);
 }
 
 

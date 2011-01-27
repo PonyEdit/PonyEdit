@@ -1,9 +1,8 @@
 #include "file/location.h"
 #include "file/openfilemanager.h"
-#include "ssh/sshremotecontroller.h"
-#include "ssh/sshrequest.h"
+#include "ssh/slaverequest.h"
 #include "ssh/sshhost.h"
-#include "file/sshfile.h"
+#include "file/slavefile.h"
 #include "main/globaldispatcher.h"
 #include <QFileIconProvider>
 #include <QMetaMethod>
@@ -13,6 +12,7 @@
 #include <QSettings>
 #include "main/global.h"
 #include "file/favoritelocationdialog.h"
+#include "ssh/slavechannel.h"
 
 QRegExp gSshServerRegExp("^(?:([^@:]+)@)?([^:]+\\.[^:]+):([^:]+)?");
 QRegExp gLocalPathSeparators("/");
@@ -101,6 +101,7 @@ LocationShared::LocationShared()
 {
 	initIconProvider();
 
+	mSlaveChannel = NULL;
 	mReferences = 1;
 	mType = Location::Unknown;
 	mSize = -1;
@@ -354,10 +355,7 @@ void LocationShared::sshLoadListing()
 	if (!ensureConnected())
 		emitListLoadError("Failed to connect to remote host!");
 	else
-	{
-		SshRemoteController* controller = mRemoteHost->getController();
-		controller->sendRequest(new SshRequest_ls(Location(this)));
-	}
+		mSlaveChannel->sendRequest(new SlaveRequest_ls(Location(this)));
 }
 
 void Location::sshChildLoadResponse(const QList<Location>& children)
@@ -386,17 +384,26 @@ bool LocationShared::ensureConnected()
 		if (mRemoteHost == NULL)
 			mRemoteHost = SshHost::getHost(mRemoteHostName, mRemoteUserName);
 
-		if (mRemoteHost && (mRemoteHost->isConnected() || mRemoteHost->connect()))
+		if (mRemoteHost)
 		{
-			mPath.replace("~", mRemoteHost->getHomeDirectory());
-			mRemotePath.replace("~", mRemoteHost->getHomeDirectory());
-			mPath = mPath.trimmed();
-			mRemotePath = mRemotePath.trimmed();
+			RemoteConnection* connection = mRemoteHost->getConnection();
+			if (connection)
+			{
+				mSlaveChannel = connection->getSlaveChannel();
 
-			if (mRemotePath.length() == 0)
-				mRemotePath = "/";
+				if (mSlaveChannel)
+				{
+					mPath.replace("~", connection->getHomeDirectory());
+					mRemotePath.replace("~", connection->getHomeDirectory());
+					mPath = mPath.trimmed();
+					mRemotePath = mRemotePath.trimmed();
 
-			return true;
+					if (mRemotePath.length() == 0)
+						mRemotePath = "/";
+
+					return true;
+				}
+			}
 		}
 	}
 
@@ -497,13 +504,11 @@ QString Location::getDefaultFavoriteName()
 void Location::createNewDirectory(QString name)
 {
 	QDir currentDir;
-	SshRemoteController* controller;
 	Location currentLocDir = this->getDirectory();
 	switch(mData->mProtocol)
 	{
 	case Ssh:
-		controller = mData->mRemoteHost->getController();
-		controller->sendRequest(new SshRequest_createDirectory(Location(*this), name));
+		mData->mSlaveChannel->sendRequest(new SlaveRequest_createDirectory(Location(*this), name));
 		break;
 
 	case Local:

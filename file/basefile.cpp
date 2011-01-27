@@ -1,7 +1,7 @@
 #include <QDebug>
 #include <QCryptographicHash>
 
-#include "sshfile.h"
+#include "slavefile.h"
 #include "localfile.h"
 #include "unsavedfile.h"
 #include "basefile.h"
@@ -28,7 +28,7 @@ BaseFile* BaseFile::getFile(const Location& location)
 	switch (protocol)
 	{
 	case Location::Ssh:
-		newFile = new SshFile(location);
+		newFile = new SlaveFile(location);
 		break;
 
 	case Location::Local:

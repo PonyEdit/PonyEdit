@@ -41,7 +41,6 @@ SOURCES += \
     editor/editor.cpp \
     editor/codeeditor.cpp \
     file/unsavedchangesdialog.cpp \
-    file/sshfile.cpp \
     file/openfiletreeview.cpp \
     file/openfiletreemodel.cpp \
     file/openfilemanager.cpp \
@@ -58,8 +57,6 @@ SOURCES += \
     options/optionsdialog.cpp \
     ssh/sshconnection.cpp \
     ssh/sshhost.cpp \
-    ssh/sshremotecontroller.cpp \
-    ssh/sshrequest.cpp \
     ssh/serverconfigdlg.cpp \
     syntax/syntaxdefinition.cpp \
     syntax/syntaxrule.cpp \
@@ -91,14 +88,20 @@ SOURCES += \
     main/aboutdialog.cpp \
     options/editoroptionswidget.cpp \
     tools/htmlpreview.cpp \
-    licence/licence.cpp
+    licence/licence.cpp \
+    ssh/remotechannel.cpp \
+    ssh/slavechannel.cpp \
+    ssh/remoteconnectionthread.cpp \
+    file/slavefile.cpp \
+    ssh/slaverequest.cpp \
+    ssh/remoterequest.cpp \
+    ssh/rawsshconnection.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
     editor/editor.h \
     editor/codeeditor.h \
     file/unsavedchangesdialog.h \
-    file/sshfile.h \
     file/openfiletreeview.h \
     file/openfiletreemodel.h \
     file/openfilemanager.h \
@@ -113,10 +116,7 @@ HEADERS  += \
     main/globaldispatcher.h \
     main/json.h \
     options/optionsdialog.h \
-    ssh/sshrequest.h \
-    ssh/sshremotecontroller.h \
     ssh/sshhost.h \
-    ssh/sshconnection.h \
     ssh/serverconfigdlg.h \
     syntax/syntaxrule.h \
     syntax/syntaxhighlighter.h \
@@ -151,7 +151,15 @@ HEADERS  += \
     main/aboutdialog.h \
     options/editoroptionswidget.h \
     tools/htmlpreview.h \
-    licence/licence.h
+    licence/licence.h \
+    ssh/remotechannel.h \
+    ssh/slavechannel.h \
+    ssh/remoteconnectionthread.h \
+    ssh/rawsshconnection.h \
+    ssh/sshconnection.h \
+    file/slavefile.h \
+    ssh/slaverequest.h \
+    ssh/remoterequest.h
 
 OTHER_FILES += \
     slave/slave.pl \

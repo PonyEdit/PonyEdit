@@ -8,14 +8,15 @@
 class SshHost;
 class BaseFile;
 class LocationShared;
-class SshRemoteController;
+class SshConnection;
+class SlaveChannel;
 
 class Location
 {
 	friend class LocationShared;
-	friend class SshRequest_ls;
-	friend class SshRequest_open;
-	friend class SshRequest_createDirectory;
+	friend class SlaveRequest_ls;
+	friend class SlaveRequest_open;
+	friend class SlaveRequest_createDirectory;
 
 public:
 	enum Type { Unknown = 0, File = 1, Directory = 2 };
@@ -72,7 +73,7 @@ private:
 	void sshChildLoadResponse(const QList<Location>& children);
 	void childLoadError(const QString& error);
 
-	void sshFileOpenResponse(SshRemoteController* controller, quint32 bufferId, const QByteArray& data);
+	void sshFileOpenResponse(SshConnection* controller, quint32 bufferId, const QByteArray& data);
 	void fileOpenError(const QString& error);
 
 	LocationShared* mData;
@@ -121,6 +122,7 @@ private:
 	QString mRemoteUserName;
 	QString mRemotePath;
 	SshHost* mRemoteHost;
+	SlaveChannel* mSlaveChannel;
 };
 
 Q_DECLARE_METATYPE (Location);

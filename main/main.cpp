@@ -5,7 +5,7 @@
 #include <QFont>
 
 #include "main/globaldispatcher.h"
-#include "ssh/sshconnection.h"
+#include "ssh/rawsshconnection.h"
 #include "file/location.h"
 #include "main/tools.h"
 #include "main/mainwindow.h"
@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 		QCoreApplication::setApplicationVersion("0.9-prealpha4");
 		gDispatcher = new GlobalDispatcher();
 
-		SshConnection::initializeLib();
+		RawSshConnection::initializeLib();
 
 		Tools::loadServers();
 		Location::loadFavorites();
