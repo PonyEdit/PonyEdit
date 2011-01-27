@@ -41,6 +41,7 @@ use constant FILE_CANWRITE => 4;
 
 { package Buffer;
   use Digest::MD5 qw(md5_hex);
+  use Encode qw(encode decode);
 	sub new
 	{
 		my $self = {};
@@ -60,6 +61,7 @@ use constant FILE_CANWRITE => 4;
 
 		$self->{DATA} = join( '', @data );
 		$self->{DATA} =~ s/\r\n/\n/g;
+		$self->{DATA} = decode( 'UTF-8', $self->{DATA} );
 	}
 
 	sub change
@@ -73,14 +75,14 @@ use constant FILE_CANWRITE => 4;
 	{
 		my $self = shift;
 		open( BUFFER_FILE, '>' . $self->{NAME} ) or die "Failed to open $self->{NAME} for writing!\n";
-		print BUFFER_FILE $self->{DATA};
+		print BUFFER_FILE encode( 'UTF-8', $self->{DATA} );
 		close( BUFFER_FILE );
 	}
 
 	sub checksum
 	{
 		my $self = shift;
-		return md5_hex( $self->{DATA} );
+		return md5_hex( encode( 'UTF-8', $self->{DATA} ) );
 	}
 
 	sub setData
