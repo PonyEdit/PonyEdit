@@ -25,6 +25,9 @@ public:
 public slots:
 	void handleReply(QNetworkReply* reply);
 
+	void feedbackHappy();
+	void feedbackSad();
+
 signals:
 	void updateAvailable(const QString& version, const QVariantMap& changes);
 	void noUpdateAvailable();

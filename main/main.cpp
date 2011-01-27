@@ -54,12 +54,12 @@ int main(int argc, char *argv[])
 		Options::load();
 
 		gSyntaxDefManager = new SyntaxDefManager();
+		gSiteManager = new SiteManager();
+		updateManager = new UpdateManager();
+
 
 		MainWindow w;
 		w.show();
-
-		gSiteManager = new SiteManager();
-		updateManager = new UpdateManager();
 
 		gSiteManager->checkForUpdates();
 

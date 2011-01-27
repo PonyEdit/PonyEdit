@@ -8,6 +8,7 @@
 #include <QCryptographicHash>
 #include <QPushButton>
 #include <QToolBar>
+#include <QToolButton>
 #include <QMessageBox>
 #include <QMenu>
 #include <QMenuBar>
@@ -127,6 +128,20 @@ void MainWindow::createToolbar()
 	toolbar->addAction(QIcon(":/icons/new.png"), "New", this, SLOT(newFile()));
 	toolbar->addAction(QIcon(":/icons/open.png"), "Open", this, SLOT(openFile()));
 	toolbar->addAction(QIcon(":/icons/save.png"), "Save", this, SLOT(saveFile()));
+
+	QToolButton *feedbackButton = new QToolButton(toolbar);
+	feedbackButton->setText(tr("Feedback"));
+
+	QMenu *feedbackMenu = new QMenu(toolbar);
+
+	feedbackMenu->addAction(tr("PonyEdit Made Me Happy Because..."), gSiteManager, SLOT(feedbackHappy()));
+	feedbackMenu->addAction(tr("PonyEdit Made Me Sad Because..."), gSiteManager, SLOT(feedbackSad()));
+
+	feedbackButton->setMenu(feedbackMenu);
+	feedbackButton->setPopupMode(QToolButton::InstantPopup);
+
+	toolbar->addWidget(feedbackButton);
+
 	this->addToolBar(toolbar);
 	toolbar->setObjectName("File Toolbar");
 }

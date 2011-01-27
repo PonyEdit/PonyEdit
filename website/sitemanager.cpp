@@ -6,6 +6,7 @@
 #include <QDate>
 #include <QtScript/QScriptEngine>
 #include <QtScript/QScriptValue>
+#include <QDesktopServices>
 
 #include "sitemanager.h"
 #include "main/json.h"
@@ -97,4 +98,18 @@ void SiteManager::handleReply(QNetworkReply *reply)
 	}
 
 	reply->deleteLater();
+}
+
+void SiteManager::feedbackHappy()
+{
+	QUrl url(QString(SITE_URL) + "feedback/?feedback=happy&version=" + QCoreApplication::applicationVersion());
+
+	QDesktopServices::openUrl(url);
+}
+
+void SiteManager::feedbackSad()
+{
+	QUrl url(QString(SITE_URL) + "feedback/?feedback=sad&version=" + QCoreApplication::applicationVersion());
+
+	QDesktopServices::openUrl(url);
 }
