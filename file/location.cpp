@@ -302,6 +302,8 @@ void LocationShared::emitListLoadError(const QString& error)
 
 void Location::asyncGetChildren(bool forceRefresh)
 {
+	mData->mListLoaded = false;
+
 	if (mData->mListLoaded && !forceRefresh)
 		mData->emitListLoadedSignal();
 	else if (!mData->mLoading)
