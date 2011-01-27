@@ -242,7 +242,7 @@ void SshConnection::hostkeyWarnDialog(ConnectionStatusWidget* widget, RemoteConn
 	layout->addWidget(question);
 }
 
-bool SshConnection::hostkeyWarnCallback(ConnectionStatusWidget*, RemoteConnection* connection, QDialogButtonBox::ButtonRole, QVariant param)
+bool SshConnection::hostkeyWarnCallback(ConnectionStatusWidget*, RemoteConnection* connection, QDialogButtonBox::ButtonRole, QVariant /* param */)
 {
 	SshConnection* sshConnection = static_cast<SshConnection*>(connection);
 	RawSshConnection::saveFingerprint(sshConnection->mHost->getHostName(), sshConnection->mRawConnection->getServerFingerprint());
