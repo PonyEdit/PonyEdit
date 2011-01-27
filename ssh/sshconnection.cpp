@@ -190,7 +190,7 @@ RawChannelHandle* SshConnection::createRawSlaveChannel()
 	QByteArray remoteMd5 = mRawConnection->execute(rawChannel, REMOTE_GETSLAVEMD5).toLower();
 	remoteMd5.truncate(32);
 	if (remoteMd5 != sSlaveMd5)
-		mRawConnection->writeFile("~/.ponyedit/slave.pl", sSlaveScript.constData(), sSlaveScript.length());
+		mRawConnection->writeFile(".ponyedit/slave.pl", sSlaveScript.constData(), sSlaveScript.length());
 
 	//	Run the remote slave script
 	const char* slaveStarter = "perl .ponyedit/slave.pl\n";
