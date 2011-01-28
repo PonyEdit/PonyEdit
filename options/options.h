@@ -17,6 +17,7 @@ public:
 	static void load();
 
 	static QFont EditorFont;
+	static int EditorFontZoom;
 	static bool WordWrap;
 	static int TabStopWidth;
 	static IndentModes IndentMode;

@@ -19,9 +19,15 @@ public:
 
 	int firstNonWhiteSpace(const QTextBlock& block);
 
+	void updateFont();
+
+	void zoomOut();
+	void zoomIn();
+
 protected:
 	void resizeEvent(QResizeEvent *event);
 	void keyPressEvent(QKeyEvent* event);
+	void wheelEvent(QWheelEvent *e);
 	void applyIndent(QTextCursor& cursor, bool outdent);
 
 private slots:

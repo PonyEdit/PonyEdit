@@ -20,6 +20,7 @@
 #include "file/filedialog.h"
 #include "file/filelist.h"
 #include "editor/editor.h"
+#include "options/options.h"
 #include "options/optionsdialog.h"
 #include "main/globaldispatcher.h"
 #include "main/searchbar.h"
@@ -390,6 +391,12 @@ void MainWindow::createViewMenu()
 {
 	QMenu* viewMenu = new QMenu(tr("&View"), this);
 	menuBar()->addMenu(viewMenu);
+
+	viewMenu->addAction(tr("&Actual Size"), this, SLOT(resetZoom()), QKeySequence(Qt::CTRL + Qt::Key_0));
+	viewMenu->addAction(tr("Zoom &In"), this, SLOT(zoomIn()), QKeySequence::ZoomIn);
+	viewMenu->addAction(tr("Zoom &Out"), this, SLOT(zoomOut()), QKeySequence::ZoomOut);
+
+	viewMenu->addSeparator();
 
 	mSyntaxMenu = new QMenu(tr("&Syntax"), viewMenu);
 	viewMenu->addMenu(mSyntaxMenu);
@@ -851,4 +858,27 @@ void MainWindow::showHTMLPreview()
 	htmlWrapper->show();
 
 	htmlWrapper->setObjectName(tr("HTML Preview"));
+}
+
+void MainWindow::resetZoom()
+{
+	Options::EditorFontZoom = 100;
+
+	gDispatcher->emitOptionsChanged();
+}
+
+void MainWindow::zoomIn()
+{
+	Options::EditorFontZoom += 10;
+
+	gDispatcher->emitOptionsChanged();
+}
+
+void MainWindow::zoomOut()
+{
+	Options::EditorFontZoom -= 10;
+	if(Options::EditorFontZoom < 10)
+		Options::EditorFontZoom = 10;
+
+	gDispatcher->emitOptionsChanged();
 }

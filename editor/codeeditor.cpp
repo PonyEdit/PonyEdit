@@ -5,6 +5,7 @@
 #include "editor/linenumberwidget.h"
 #include "syntax/syntaxhighlighter.h"
 #include "options/options.h"
+#include "main/globaldispatcher.h"
 #include <QChar>
 
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
@@ -231,3 +232,44 @@ void CodeEditor::keyPressEvent(QKeyEvent* event)
 	}
 }
 
+void CodeEditor::wheelEvent(QWheelEvent *e)
+{
+	if(e->modifiers() == Qt::ControlModifier)
+	{
+		e->accept();
+		if(e->delta() > 0)
+			zoomIn();
+		else
+			zoomOut();
+	}
+	else
+		QPlainTextEdit::wheelEvent(e);
+}
+
+void CodeEditor::updateFont()
+{
+	QFont font = Options::EditorFont;
+	font.setWeight(QFont::Normal);
+
+	int pointSize = font.pointSize();
+	pointSize = (pointSize * Options::EditorFontZoom) / 100;
+	font.setPointSize(pointSize);
+
+	setFont(font);
+}
+
+void CodeEditor::zoomIn()
+{
+	Options::EditorFontZoom += 10;
+
+	gDispatcher->emitOptionsChanged();
+}
+
+void CodeEditor::zoomOut()
+{
+	Options::EditorFontZoom -= 10;
+	if(Options::EditorFontZoom < 10)
+		Options::EditorFontZoom = 10;
+
+	gDispatcher->emitOptionsChanged();
+}
