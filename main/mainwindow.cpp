@@ -16,6 +16,8 @@
 #include <QApplication>
 #include <QSettings>
 #include <QErrorMessage>
+#include <QPrintDialog>
+#include <QPrinter>
 
 #include "file/filedialog.h"
 #include "file/filelist.h"
@@ -348,6 +350,12 @@ void MainWindow::createFileMenu()
 						QKeySequence::SaveAs);
 
 	fileMenu->addSeparator();
+
+	fileMenu->addAction(tr("&Print..."), this, SLOT(print()),
+						QKeySequence::Print);
+
+	fileMenu->addSeparator();
+
 
 	fileMenu->addAction(tr("&Close File"), this, SLOT(closeFile()),
 						QKeySequence::Close);
@@ -881,4 +889,21 @@ void MainWindow::zoomOut()
 		Options::EditorFontZoom = 10;
 
 	gDispatcher->emitOptionsChanged();
+}
+
+void MainWindow::print()
+{
+	Editor* current = getCurrentEditor();
+	if(!current)
+		return;
+
+	QPrinter printer;
+
+	QPrintDialog *dialog = new QPrintDialog(&printer, this);
+	dialog->setWindowTitle(tr("Print Document"));
+
+	if (dialog->exec() != QDialog::Accepted)
+		return;
+
+	current->print(&printer);
 }

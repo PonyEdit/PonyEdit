@@ -34,6 +34,8 @@ public slots:
 	void closeFile();
 	void fileSelected(BaseFile* file);
 
+	void print();
+
 	void updateTitle();
 	void updateTitle(BaseFile* file);
 

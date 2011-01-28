@@ -6,6 +6,7 @@
 #include <QStackedWidget>
 #include <QProgressBar>
 #include <QVBoxLayout>
+#include <QPrinter>
 
 #include "file/location.h"
 #include "file/basefile.h"
@@ -31,6 +32,8 @@ public:
 
 	void setReadOnly(bool readOnly);
 	void showReadOnlyWarning();
+
+	inline void print(QPrinter *printer) { mEditor->print(printer); }
 
 public slots:
 	void openStatusChanged(int openStatus);
