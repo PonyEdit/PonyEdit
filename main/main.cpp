@@ -15,10 +15,12 @@
 #include "syntax/syntaxdefmanager.h"
 #include "main/stringtrie.h"
 #include "options/options.h"
+#include "ponyedit.h"
 
 GlobalDispatcher* gDispatcher = NULL;
 SiteManager* gSiteManager = NULL;
 SyntaxDefManager* gSyntaxDefManager = NULL;
+MainWindow* gMainWindow = NULL;
 
 int main(int argc, char *argv[])
 {
@@ -50,7 +52,7 @@ int main(int argc, char *argv[])
 		Location::loadFavorites();
 		Tools::initialize();
 
-		QApplication a(argc, argv);
+		PonyEdit a(argc, argv);
 		Options::load();
 
 		gSyntaxDefManager = new SyntaxDefManager();
@@ -58,16 +60,20 @@ int main(int argc, char *argv[])
 		updateManager = new UpdateManager();
 
 
-		MainWindow w;
-		w.show();
+		gMainWindow = new MainWindow();
+		gMainWindow->show();
 
 		if(argc > 1)
 		{
 			Location *loc;
 			for(int ii = 1; ii < argc; ii++)
 			{
-				loc = new Location(QString(argv[ii]));
-				w.openSingleFile(loc);
+				QString name(argv[ii]);
+				if(name.trimmed().isNull())
+					continue;
+
+				loc = new Location(name);
+				gMainWindow->openSingleFile(loc);
 				delete loc;
 			}
 		}
@@ -84,9 +90,12 @@ int main(int argc, char *argv[])
 	delete updateManager;
 	delete gDispatcher;
 	delete gSiteManager;
+	delete gMainWindow;
+
 	Options::save();
 	LocationShared::cleanupIconProvider();
 	StringTrie::cleanup();
 	SyntaxRule::cleanup();
+
 	return result;
 }

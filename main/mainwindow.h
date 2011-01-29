@@ -131,4 +131,6 @@ private:
 	bool mWasMaximized;
 };
 
+extern MainWindow* gMainWindow;
+
 #endif // MAINWINDOW_H

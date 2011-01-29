@@ -95,7 +95,8 @@ SOURCES += \
     file/slavefile.cpp \
     ssh/slaverequest.cpp \
     ssh/remoterequest.cpp \
-    ssh/rawsshconnection.cpp
+    ssh/rawsshconnection.cpp \
+    main/ponyedit.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -159,7 +160,8 @@ HEADERS  += \
     ssh/sshconnection.h \
     file/slavefile.h \
     ssh/slaverequest.h \
-    ssh/remoterequest.h
+    ssh/remoterequest.h \
+    main/ponyedit.h
 
 OTHER_FILES += \
     slave/slave.pl \

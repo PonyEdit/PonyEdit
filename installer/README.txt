@@ -21,6 +21,8 @@ To create a new distributable dmg file, build the Release version of PonyEdit, t
 shell> macdeployqt PonyEdit.app
 shell> mkdir PonyEdit
 shell> ditto --rsrc --arch i386 PonyEdit.app PonyEdit/PonyEdit.app
+shell> cp ../trunk/installer/OSX/Applications PonyEdit
+shell> cp ../trunk/installer/OSX/Info.plist PonyEdit/PonyEdit.app/Contents
 
 Make sure all PonyEdit dmg files are unmounted before running this command:
 
