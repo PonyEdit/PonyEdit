@@ -61,6 +61,17 @@ int main(int argc, char *argv[])
 		MainWindow w;
 		w.show();
 
+		if(argc > 1)
+		{
+			Location *loc;
+			for(int ii = 1; ii < argc; ii++)
+			{
+				loc = new Location(QString(argv[ii]));
+				w.openSingleFile(loc);
+				delete loc;
+			}
+		}
+
 		gSiteManager->checkForUpdates();
 
 		result = a.exec();

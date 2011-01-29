@@ -196,6 +196,12 @@ DefaultGroupName=PonyEdit
 OutputBaseFilename=PonyEdit-0.9-prealpha4
 UninstallDisplayName=PonyEdit
 LicenseFile=C:\Users\Thingalon\Documents\Projects\remoted\remoted\licence.rtf
+[Registry]
+Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\ponyedit.exe"; ValueName: ""; ValueType: string; ValueData: "{app}\ponyedit.exe"; Flags: uninsdeletekey
+Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\ponyedit.exe"; ValueName: "Path"; ValueType: string; ValueData: "{app}"
+Root: HKCR; Subkey: "*\shell\Edit with PonyEdit"; Flags: uninsdeletekey; Tasks: contextoption
+Root: HKCR; Subkey: "*\shell\Edit with PonyEdit"; ValueName: "icon"; ValueType: string; ValueData: "ponyedit.exe,1"; Tasks: contextoption
+Root: HKCR; Subkey: "*\shell\Edit with PonyEdit\command"; ValueName: ""; ValueType: string; ValueData: "ponyedit.exe %1"; Tasks: contextoption
 [Dirs]
 Name: {app}\slave
 Name: {app}\syntaxdefs
@@ -205,6 +211,7 @@ Name: desktopicon; Description: "Create a &desktop icon"; GroupDescription: "Add
 Name: desktopicon\common; Description: "For all users"; GroupDescription: "Additional icons:"; Flags: exclusive
 Name: desktopicon\user; Description: "For the current user only"; GroupDescription: "Additional icons:"; Flags: exclusive unchecked
 Name: quicklaunchicon; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; Flags: unchecked
+Name: contextoption; Description: "Create a &context menu shortcut"; GroupDescription: "Other Options:"
 [Icons]
 Name: {group}\PonyEdit; Filename: {app}\ponyedit.exe; WorkingDir: {app}; Comment: "PonyEdit: Enjoy coding again"; Tasks: startmenu
 Name: "{group}\Uninstall PonyEdit"; Filename: {uninstallexe}; Tasks: startmenu
