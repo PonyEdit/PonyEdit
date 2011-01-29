@@ -17,6 +17,10 @@ class SearchBar;
 class UnsavedChangesDialog;
 class ConnectionStatusPane;
 
+#ifdef Q_OS_MAC
+extern void qt_mac_set_dock_menu(QMenu *menu);
+#endif
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -100,6 +104,9 @@ private:
 	void createToolsMenu();
 	void createWindowMenu();
 	void createHelpMenu();
+
+	void createMacDockMenu();
+
 	void createSearchBar();
 	void restoreState();
 

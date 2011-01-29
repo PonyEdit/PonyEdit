@@ -76,6 +76,7 @@ MainWindow::MainWindow(QWidget *parent)
 	createToolsMenu();
 	createWindowMenu();
 	createHelpMenu();
+	createMacDockMenu();
 
 	connect(gDispatcher, SIGNAL(generalErrorMessage(QString)), this, SLOT(showErrorMessage(QString)), Qt::QueuedConnection);
 	connect(gDispatcher, SIGNAL(generalStatusMessage(QString)), this, SLOT(showStatusMessage(QString)), Qt::QueuedConnection);
@@ -471,6 +472,19 @@ void MainWindow::createHelpMenu()
 	 connect(updates, SIGNAL(triggered()), this, SLOT(checkForUpdates()));
 
 	 helpMenu->addAction(updates);
+}
+
+void MainWindow::createMacDockMenu()
+{
+#ifndef Q_OS_MAC
+	return;
+#else
+	QMenu *dockMenu = new QMenu(this);
+
+	dockMenu->addAction(tr("New File"), this, SLOT(newFile()));
+
+	qt_mac_set_dock_menu(dockMenu);
+#endif
 }
 
 void MainWindow::showErrorMessage(QString error)

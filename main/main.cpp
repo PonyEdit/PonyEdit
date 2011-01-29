@@ -65,14 +65,13 @@ int main(int argc, char *argv[])
 
 		if(argc > 1)
 		{
-			Location *loc;
 			for(int ii = 1; ii < argc; ii++)
 			{
 				QString name(argv[ii]);
 				if(name.trimmed().isNull())
 					continue;
 
-				loc = new Location(name);
+				Location *loc = new Location(name);
 				gMainWindow->openSingleFile(loc);
 				delete loc;
 			}

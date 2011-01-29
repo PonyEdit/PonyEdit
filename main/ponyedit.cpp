@@ -16,11 +16,15 @@ bool PonyEdit::event(QEvent *e)
 		if(!gMainWindow)
 			return false;
 
-		e->accept();
-
 		QFileOpenEvent *event = static_cast<QFileOpenEvent*>(e);
 
-		Location *loc = new Location(event->file());
+		QString name = event->file();
+		if(name.trimmed().isNull())
+			return false;
+
+		e->accept();
+
+		Location *loc = new Location(name);
 
 		gMainWindow->openSingleFile(loc);
 
