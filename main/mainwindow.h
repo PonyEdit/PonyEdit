@@ -63,6 +63,8 @@ public slots:
 	void zoomIn();
 	void zoomOut();
 
+	void toggleFullScreen();
+
 	void previousWindow();
 	void nextWindow();
 
@@ -125,6 +127,8 @@ private:
 	UnsavedChangesDialog* mUnsavedChangesDialog;
 
 	ConnectionStatusPane* mConnectionStatusPane;
+
+	bool mWasMaximized;
 };
 
 #endif // MAINWINDOW_H

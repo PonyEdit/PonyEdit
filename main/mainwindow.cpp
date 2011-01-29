@@ -431,6 +431,13 @@ void MainWindow::createViewMenu()
 			mSyntaxMenuEntries.insert(syntax, action);
 		}
 	}
+
+	viewMenu->addSeparator();
+#ifdef Q_OS_MAC
+	viewMenu->addAction(tr("&Full Screen"), this, SLOT(toggleFullScreen()), QKeySequence(Qt::ALT + Qt::CTRL + Qt::Key_F));
+#else
+	viewMenu->addAction(tr("&Full Screen"), this, SLOT(toggleFullScreen()), QKeySequence(Qt::Key_F11));
+#endif
 }
 
 void MainWindow::createToolsMenu()
@@ -906,4 +913,23 @@ void MainWindow::print()
 		return;
 
 	current->print(&printer);
+}
+
+void MainWindow::toggleFullScreen()
+{
+	if(isFullScreen())
+	{
+		if(mWasMaximized)
+			showMaximized();
+		else
+			showNormal();
+	}
+	else
+	{
+		if(isMaximized())
+			mWasMaximized = true;
+		else
+			mWasMaximized = false;
+		showFullScreen();
+	}
 }
