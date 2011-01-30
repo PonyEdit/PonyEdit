@@ -53,25 +53,13 @@ public slots:
 
 	void showGotoLine();
 
-	void showSearchBar();
 	void showAdvancedSearch();
-
-	void find(const QString& text, bool backwards);
-	void find(const QString& text, bool backwards, bool caseSensitive, bool useRegexp);
-	void globalFind(const QString& text, const QString& filePattern, bool backwards, bool caseSensitive, bool useRegexp);
-
-	void replace(const QString& findText, const QString& replaceText, bool all);
-	void replace(const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegexp, bool all);
-	void globalReplace(const QString& findText, const QString& replaceText, const QString& filePattern, bool caseSensitive, bool useRegexp, bool all);
 
 	void resetZoom();
 	void zoomIn();
 	void zoomOut();
 
 	void toggleFullScreen();
-
-	void previousWindow();
-	void nextWindow();
 
 	void showHTMLPreview();
 	void options();
@@ -107,14 +95,10 @@ private:
 
 	void createMacDockMenu();
 
-	void createSearchBar();
 	void restoreState();
 
 	void updateRecentFilesMenu();
 	void addRecentFile(Location* loc);
-
-	int find(Editor* editor, const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true);
-	int replace(Editor* editor, const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegexp, bool all);
 
 	FileList* mFileList;
 	WindowManager* mWindowManager;
@@ -128,8 +112,6 @@ private:
 	QAction* mCurrentSyntaxMenuItem;
 	QMenu* mSyntaxMenu;
 
-	QDockWidget* mSearchBarWrapper;
-	SearchBar* mSearchBar;
 	UnsavedChangesDialog* mUnsavedChangesDialog;
 
 	ConnectionStatusPane* mConnectionStatusPane;

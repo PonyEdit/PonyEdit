@@ -25,7 +25,6 @@
 #include "options/options.h"
 #include "options/optionsdialog.h"
 #include "main/globaldispatcher.h"
-#include "main/searchbar.h"
 #include "tools.h"
 #include "gotolinedialog.h"
 #include "advancedsearchdialog.h"
@@ -56,8 +55,6 @@ MainWindow::MainWindow(QWidget *parent)
 	mFileList = new FileList();
 	addDockWidget(Qt::LeftDockWidgetArea, mFileList, Qt::Vertical);
 	mFileList->setObjectName("File List");
-
-	createSearchBar();
 
 	mConnectionStatusPane = new ConnectionStatusPane();
 	addDockWidget(Qt::LeftDockWidgetArea, mConnectionStatusPane, Qt::Vertical);
@@ -109,21 +106,6 @@ void MainWindow::restoreState()
 	QSettings settings;
 	restoreGeometry(settings.value("mainwindow/geometry").toByteArray());
 	QMainWindow::restoreState(settings.value("mainwindow/state").toByteArray());
-}
-
-void MainWindow::createSearchBar()
-{
-	mSearchBar = new SearchBar();
-	mSearchBarWrapper = new QDockWidget("Search", 0, Qt::FramelessWindowHint);
-	mSearchBarWrapper->setFeatures(QDockWidget::DockWidgetClosable);
-	mSearchBarWrapper->setWidget(mSearchBar);
-	addDockWidget(Qt::BottomDockWidgetArea, mSearchBarWrapper, Qt::Horizontal);
-	mSearchBarWrapper->hide();
-	mSearchBarWrapper->setTitleBarWidget(new QWidget(this));
-	connect(mSearchBar, SIGNAL(closeRequested()), mSearchBarWrapper, SLOT(hide()));
-	connect(mSearchBar, SIGNAL(find(QString,bool)), this, SLOT(find(QString,bool)));
-	connect(mSearchBar, SIGNAL(replace(QString,QString,bool)), this, SLOT(replace(QString,QString,bool)));
-	mSearchBarWrapper->setObjectName("Search Bar");
 }
 
 void MainWindow::createToolbar()
@@ -373,9 +355,9 @@ void MainWindow::createEditMenu()
 
 	editMenu->addSeparator();
 
-	editMenu->addAction(tr("&Find/Replace"), this, SLOT(showSearchBar()), QKeySequence::Find);
-	editMenu->addAction("Find &Next", mSearchBar, SLOT(findNext()), QKeySequence::FindNext);
-	editMenu->addAction("Find P&revious", mSearchBar, SLOT(findPrev()), QKeySequence::FindPrevious);
+	editMenu->addAction(tr("&Find/Replace"), mWindowManager, SLOT(showSearchBar()), QKeySequence::Find);
+	editMenu->addAction("Find &Next", mWindowManager, SLOT(findNext()), QKeySequence::FindNext);
+	editMenu->addAction("Find P&revious", mWindowManager, SLOT(findPrevious()), QKeySequence::FindPrevious);
 	editMenu->addAction(tr("Advanced F&ind/Replace..."), this, SLOT(showAdvancedSearch()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_F));
 #ifdef Q_OS_MAC
 	editMenu->addAction(tr("&Go To Line..."), this, SLOT(showGotoLine()), QKeySequence(Qt::CTRL + Qt::Key_L));
@@ -444,8 +426,8 @@ void MainWindow::createWindowMenu()
 	QMenu *windowMenu = new QMenu(tr("&Window"), this);
 	menuBar()->addMenu(windowMenu);
 
-	windowMenu->addAction(tr("&Previous Window"), this, SLOT(previousWindow()), QKeySequence::PreviousChild);
-	windowMenu->addAction(tr("&Next Window"), this, SLOT(nextWindow()), QKeySequence::NextChild);
+	windowMenu->addAction(tr("&Previous Window"), mWindowManager, SLOT(previousWindow()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Tab));
+	windowMenu->addAction(tr("&Next Window"), mWindowManager, SLOT(nextWindow()), QKeySequence::NextChild);
 }
 
 void MainWindow::createHelpMenu()
@@ -538,164 +520,19 @@ void MainWindow::showGotoLine()
 	}
 }
 
-void MainWindow::showSearchBar()
-{
-	mSearchBarWrapper->show();
-	mSearchBar->takeFocus();
-}
-
 void MainWindow::showAdvancedSearch()
 {
 	AdvancedSearchDialog dlg(this);
 
-	connect(&dlg, SIGNAL(find(QString,bool,bool,bool)), this, SLOT(find(QString,bool,bool,bool)));
-	connect(&dlg, SIGNAL(globalFind(QString,QString,bool,bool,bool)), this, SLOT(globalFind(QString,QString,bool,bool,bool)));
+	connect(&dlg, SIGNAL(find(QString,bool,bool,bool)), mWindowManager, SLOT(find(QString,bool,bool,bool)));
+	connect(&dlg, SIGNAL(globalFind(QString,QString,bool,bool,bool)), mWindowManager, SLOT(globalFind(QString,QString,bool,bool,bool)));
 
-	connect(&dlg, SIGNAL(replace(QString,QString,bool,bool,bool)), this, SLOT(replace(QString,QString,bool,bool,bool)));
-	connect(&dlg, SIGNAL(globalReplace(QString,QString,QString,bool,bool,bool)), this, SLOT(globalReplace(QString,QString,QString,bool,bool,bool)));
+	connect(&dlg, SIGNAL(replace(QString,QString,bool,bool,bool)), mWindowManager, SLOT(replace(QString,QString,bool,bool,bool)));
+	connect(&dlg, SIGNAL(globalReplace(QString,QString,QString,bool,bool,bool)), mWindowManager, SLOT(globalReplace(QString,QString,QString,bool,bool,bool)));
 
 	dlg.exec();
 }
 
-void MainWindow::find(const QString &text, bool backwards)
-{
-	Editor* current = mWindowManager->currentEditor();
-	int found;
-	if (current)
-		found = find((Editor*)current, text, backwards, false, false);
-}
-
-void MainWindow::find(const QString &text, bool backwards, bool caseSensitive, bool useRegexp)
-{
-	Editor* current = mWindowManager->currentEditor();
-	int found;
-	if (current)
-		found = find(current, text, backwards, caseSensitive, useRegexp);
-}
-
-void MainWindow::globalFind(const QString &text, const QString &filePattern, bool backwards, bool caseSensitive, bool useRegexp)
-{
-	int found = 0;
-
-	Editor* current;
-	BaseFile* file;
-	Location loc;
-
-#ifdef Q_OS_WIN
-	QRegExp regexp(filePattern, Qt::CaseInsensitive, QRegExp::Wildcard);
-#else
-	QRegExp regexp(filePattern, Qt::CaseInsensitive, QRegExp::WildcardUnix);
-#endif
-
-	int filesSearched = 0;
-	QList<Editor*>* editorList = mWindowManager->getEditors();
-	Editor* currentEditor = mWindowManager->currentEditor();
-
-	for(int ii = editorList->indexOf(currentEditor); filesSearched < editorList->length(); (backwards)?(ii--):(ii++))
-	{
-		current = editorList->at(ii);
-		if(current)
-		{
-			file = current->getFile();
-			loc = file->getLocation();
-
-			if(regexp.exactMatch(loc.getDisplayPath()) || regexp.exactMatch(loc.getLabel()))
-			{
-				gDispatcher->emitSelectFile(file);
-				current->setFocus();
-				if(filesSearched > 0)
-				{
-					if(!backwards)
-						current->gotoLine(1);
-					else
-						current->gotoEnd();
-				}
-
-				found += find(current, text, backwards, caseSensitive, useRegexp, false);
-				if(found)
-					break;
-			}
-		}
-		filesSearched++;
-
-		if(ii == 0 && backwards)
-			ii = editorList->length();
-		else if(ii == editorList->length() - 1 && !backwards)
-			ii = -1;
-	}
-}
-
-int MainWindow::find(Editor *editor, const QString &text, bool backwards, bool caseSensitive, bool useRegexp, bool loop)
-{
-	return editor->find(text, backwards, caseSensitive, useRegexp, loop);
-}
-
-void MainWindow::replace(const QString &findText, const QString &replaceText, bool all)
-{
-	Editor* current = mWindowManager->currentEditor();
-	int replaced;
-	if (current)
-		replaced = replace(current, findText, replaceText, false, false, all);
-}
-
-void MainWindow::replace(const QString &findText, const QString &replaceText, bool caseSensitive, bool useRegexp, bool all)
-{
-	Editor* current = mWindowManager->currentEditor();
-	int replaced;
-	if (current)
-		replaced = replace(current, findText, replaceText, caseSensitive, useRegexp, all);
-}
-
-void MainWindow::globalReplace(const QString &findText, const QString &replaceText, const QString &filePattern, bool caseSensitive, bool useRegexp, bool all)
-{
-	int replaced = 0;
-
-	Editor* current;
-	BaseFile* file;
-	Location loc;
-	QList<Editor*>* editorList = mWindowManager->getEditors();
-	Editor* currentEditor = mWindowManager->currentEditor();
-
-#ifdef Q_OS_WIN
-	QRegExp regexp(filePattern, Qt::CaseInsensitive, QRegExp::Wildcard);
-#else
-	QRegExp regexp(filePattern, Qt::CaseInsensitive, QRegExp::WildcardUnix);
-#endif
-
-	int ii;
-	if(all)
-		ii = 0;
-	else
-		ii = editorList->indexOf(currentEditor);
-
-	for(; ii < editorList->length(); ii++)
-	{
-		current = editorList->at(ii);
-		if(current)
-		{
-			file = current->getFile();
-			loc = file->getLocation();
-
-			if(regexp.exactMatch(loc.getDisplayPath()) || regexp.exactMatch(loc.getLabel()))
-			{
-				if(!all)
-				{
-					gDispatcher->emitSelectFile(file);
-					current->setFocus();
-				}
-
-				replaced += replace(current, findText, replaceText, caseSensitive, useRegexp, all);
-				if(replaced && !all)
-					break;
-			}
-		}
-	}
-}
-
-int MainWindow::replace(Editor *editor, const QString &findText, const QString &replaceText, bool caseSensitive, bool useRegexp, bool all)
-{
-	return editor->replace(findText, replaceText, caseSensitive, useRegexp, all);
-}
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
@@ -753,43 +590,6 @@ void MainWindow::updateSyntaxSelection()
 	}
 	else
 		mSyntaxMenu->setEnabled(false);
-}
-
-void MainWindow::nextWindow()
-{
-	Editor* next;
-	Editor* current = mWindowManager->currentEditor();
-	QList<Editor*>* editorList = mWindowManager->getEditors();
-
-	int currIdx = editorList->indexOf(current);
-
-	if(currIdx + 1 == editorList->length())
-		next = editorList->at(0);
-	else
-		next = editorList->at(currIdx + 1);
-
-
-	gDispatcher->emitSelectFile(next->getFile());
-	mWindowManager->displayFile(next->getFile());
-}
-
-void MainWindow::previousWindow()
-{
-	Editor *prev;
-
-	Editor* current = mWindowManager->currentEditor();
-	QList<Editor*>* editorList = mWindowManager->getEditors();
-
-	int currIdx = editorList->indexOf(current);
-
-
-	if(currIdx == 0)
-		prev = editorList->at(editorList->length() - 1);
-	else
-		prev = editorList->at(currIdx - 1);
-
-	gDispatcher->emitSelectFile(prev->getFile());
-	mWindowManager->displayFile(prev->getFile());
 }
 
 void MainWindow::updateRecentFilesMenu()

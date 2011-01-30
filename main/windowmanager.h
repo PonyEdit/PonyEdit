@@ -9,6 +9,10 @@
 
 #include "editor/editor.h"
 #include "file/basefile.h"
+#include "searchbar.h"
+#include "mainwindow.h"
+
+class MainWindow;
 
 class WindowManager : public QWidget
 {
@@ -21,8 +25,7 @@ public:
 	void unsplitAll();
 
 	QList<Editor*> currentEditors();
-	QList<Editor*> currentSplitEditors();
-	Editor* currentEditor();*/
+	QList<Editor*> currentSplitEditors();*/
 
 	void displayFile(BaseFile *file);
 
@@ -35,10 +38,36 @@ signals:
 public slots:
 	void fileClosed(BaseFile* file);
 
+	void findNext();
+	void findPrevious();
+
+	void find(const QString& text, bool backwards);
+	void find(const QString& text, bool backwards, bool caseSensitive, bool useRegexp);
+	void globalFind(const QString& text, const QString& filePattern, bool backwards, bool caseSensitive, bool useRegexp);
+
+	void replace(const QString& findText, const QString& replaceText, bool all);
+	void replace(const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegexp, bool all);
+	void globalReplace(const QString& findText, const QString& replaceText, const QString& filePattern, bool caseSensitive, bool useRegexp, bool all);
+
+	void showSearchBar();
+
+	void previousWindow();
+	void nextWindow();
+
 private:
+	int find(Editor* editor, const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true);
+	int replace(Editor* editor, const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegexp, bool all);
+
+	void createSearchBar();
+
+	MainWindow *mParent;
+
 	QList<Editor*> mEditors;
 	Editor *mCurrentEditor;
 	QVBoxLayout *mLayout;
+
+	QDockWidget* mSearchBarWrapper;
+	SearchBar* mSearchBar;
 
 	/*QMap< QSplitter*, QList<Editor*> > mLeftEditors;
 	QMap< QSplitter*, QList<Editor*> > mRightEditors;

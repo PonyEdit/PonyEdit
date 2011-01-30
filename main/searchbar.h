@@ -20,9 +20,11 @@ signals:
 	void find(const QString& text, bool backwards);
 	void replace(const QString& findText, const QString& replaceText, bool all);
 
-private slots:
+public slots:
 	void findNext();
 	void findPrev();
+
+private slots:
 	void replaceCurrent();
 	void replaceCurrentAndFind();
 	void replaceAll();
