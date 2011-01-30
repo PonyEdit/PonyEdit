@@ -33,7 +33,7 @@ public:
 	inline bool isClosed() const { return mOpenStatus == Closed; }
 	inline OpenStatus getOpenStatus() const { return mOpenStatus; }
 	inline int getLoadingPercent() const { return mLoadingPercent; }
-	inline bool hasUnsavedChanges() const { return mRevision > mLastSavedRevision; }
+	inline bool hasUnsavedChanges() const { return mChanged; }
 	inline bool isReadOnly() const { return mReadOnly; }
 
 	virtual BaseFile* newFile(const QString& content) = 0;
@@ -41,7 +41,7 @@ public:
 	virtual void save() = 0;
 	virtual void close() = 0;	// Warning: This call is asynchronous in some kinds of file; eg SshFile.
 	void openError(const QString& error);
-	void savedRevision(int revision, const QByteArray& checksum);
+	void savedRevision(int revision, int undoLength, const QByteArray& checksum);
 	void fileOpenProgressed(int percent);
 
 	void saveFailed();
@@ -97,12 +97,14 @@ protected:
 	bool mChanged;
 	bool mDosLineEndings;
 	bool mReadOnly;
-	int mRevision;
 	int mIgnoreChanges;	//	To disregard change signals while changing content of QTextDocument programmatically.
 	int mInUndoBlock;
 	int mInRedoBlock;
 
+
+	int mRevision;	//	Revision number is pure changes for pumping change queues; undos increase revision number!!
 	int mLastSavedRevision;
+	int mLastSavedUndoLength;	//	Undo length is used only for detecting unsaved changes; it helps work out if the user has undone all unsaved changes
 	QByteArray mLastSaveChecksum;
 
 	int mLoadingPercent;

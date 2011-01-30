@@ -69,6 +69,7 @@ BaseFile::BaseFile(const Location& location = NULL)
 	mChanged = false;
 	mRevision = 0;
 	mLastSavedRevision = 0;
+	mLastSavedUndoLength = 0;
 
 	mDocument = new QTextDocument(this);
 	mDocumentLayout = new QPlainTextDocumentLayout(mDocument);
@@ -101,14 +102,20 @@ void BaseFile::handleDocumentChange(int position, int removeChars, const QString
 	if (mIgnoreChanges)
 		return;
 
-	qDebug() << "Handling doc change. Undo: " << mInUndoBlock << " Redo: " << mInRedoBlock;
-
+	mContent.replace(position, removeChars, insert);
 	mRevision++;
 
-	mContent.replace(position, removeChars, insert);
-	mChanged = true;
+	int undoLength = mDocument->availableUndoSteps();
+	if (undoLength <= mLastSavedUndoLength && !mInRedoBlock && !mInUndoBlock)
+		mLastSavedUndoLength = -1;	//	If making changes when undo'd past last save, you can never reach "no unsaved chnages" w/o saving.
 
-	emit unsavedStatusChanged();
+	//	Make doc as unchanged if undone to last save, otherwise mark as changed.
+	bool newChangedState = (undoLength != mLastSavedUndoLength);
+	if (newChangedState != mChanged)
+	{
+		mChanged = newChangedState;
+		emit unsavedStatusChanged();
+	}
 }
 
 void BaseFile::fileOpened(const QString& content, bool readOnly)
@@ -142,6 +149,8 @@ void BaseFile::fileOpened(const QString& content, bool readOnly)
 	qDebug() << "Time taken calling setPlainText: " << t.elapsed();
 	t.restart();
 
+	mLastSavedUndoLength = mDocument->availableUndoSteps();
+
 	setOpenStatus(Ready);
 }
 
@@ -174,10 +183,12 @@ QString BaseFile::getChecksum() const
 	return QString(hash.result().toHex().toLower());
 }
 
-void BaseFile::savedRevision(int revision, const QByteArray& checksum)
+void BaseFile::savedRevision(int revision, int undoLength, const QByteArray& checksum)
 {
 	mLastSaveChecksum = checksum;
 	setLastSavedRevision(revision);
+	mLastSavedUndoLength = undoLength;
+	mChanged = (undoLength == mDocument->availableUndoSteps());
 	gDispatcher->emitGeneralStatusMessage(QString("Finished saving ") + mLocation.getLabel() + " at revision " + QString::number(revision));
 	qDebug() << "Saved revision " << revision;
 	emit unsavedStatusChanged();
@@ -185,7 +196,7 @@ void BaseFile::savedRevision(int revision, const QByteArray& checksum)
 
 void BaseFile::setLastSavedRevision(int lastSavedRevision)
 {
-	this->mLastSavedRevision = lastSavedRevision;
+	mLastSavedRevision = lastSavedRevision;
 }
 
 void BaseFile::fileOpenProgressed(int percent)

@@ -51,6 +51,8 @@ void LocalFile::save()
 	fileHandle.close();
 
 	mLastSavedRevision = mRevision;
+	mLastSavedUndoLength = mDocument->availableUndoSteps();
+	mChanged = false;
 
 	setOpenStatus(Ready);
 }

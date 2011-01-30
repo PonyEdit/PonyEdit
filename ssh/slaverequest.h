@@ -141,7 +141,7 @@ private:
 class SlaveRequest_saveBuffer : public SlaveRequest
 {
 public:
-	SlaveRequest_saveBuffer(quint32 bufferId, SlaveFile* file, int revision, const QString& fileContent);
+	SlaveRequest_saveBuffer(quint32 bufferId, SlaveFile* file, int revision, int undoLength, const QString& fileContent);
 	virtual void packBody(QByteArray* target);
 	virtual void handleResponse(const QByteArray& response);
 
@@ -153,6 +153,7 @@ private:
 	QByteArray mChecksum;
 	SlaveFile* mFile;
 	int mRevision;
+	int mUndoLength;
 };
 
 ////////////////////////////

@@ -163,7 +163,7 @@ void SlaveFile::save()
 	if(mBufferId < 0)
 		return;
 
-	mChannel->sendRequest(new SlaveRequest_saveBuffer(mBufferId, this, mRevision, mContent));
+	mChannel->sendRequest(new SlaveRequest_saveBuffer(mBufferId, this, mRevision, mDocument->availableUndoSteps(), mContent));
 }
 
 void SlaveFile::connectionStateChanged()

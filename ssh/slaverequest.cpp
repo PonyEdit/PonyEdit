@@ -272,9 +272,10 @@ void SlaveRequest_changeBuffer::error(const QString& error)
 //  Message 4: save buffer  //
 //////////////////////////////
 
-SlaveRequest_saveBuffer::SlaveRequest_saveBuffer(quint32 bufferId, SlaveFile* file, int revision, const QString& fileContent)
+SlaveRequest_saveBuffer::SlaveRequest_saveBuffer(quint32 bufferId, SlaveFile* file, int revision, int undoLength, const QString& fileContent)
 	: SlaveRequest(4, bufferId)
 {
+	mUndoLength = undoLength;
 	mFile = file;
 	mRevision = revision;
 	mFileContent = fileContent;
@@ -320,7 +321,7 @@ void SlaveRequest_saveBuffer::error(const QString& /* error */)
 
 void SlaveRequest_saveBuffer::success()
 {
-	mFile->savedRevision(mRevision, mChecksum);
+	mFile->savedRevision(mRevision, mUndoLength, mChecksum);
 }
 
 /////////////////////////////
