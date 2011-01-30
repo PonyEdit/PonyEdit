@@ -60,6 +60,11 @@ public:
 	void setSyntax(const QString& syntaxName);
 	void setSyntax(SyntaxDefinition* syntaxDef);
 
+	void beginRedoBlock();	// Note the start & end of undo/redo actions for revision tracking
+	void beginUndoBlock();
+	void endUndoBlock();
+	void endRedoBlock();
+
 public slots:
 	void fileOpened(const QString& content, bool readOnly);
 	void documentChanged(int position, int removeChars, int added);
@@ -94,6 +99,8 @@ protected:
 	bool mReadOnly;
 	int mRevision;
 	int mIgnoreChanges;	//	To disregard change signals while changing content of QTextDocument programmatically.
+	int mInUndoBlock;
+	int mInRedoBlock;
 
 	int mLastSavedRevision;
 	QByteArray mLastSaveChecksum;

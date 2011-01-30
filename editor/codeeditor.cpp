@@ -6,10 +6,12 @@
 #include "syntax/syntaxhighlighter.h"
 #include "options/options.h"
 #include "main/globaldispatcher.h"
+#include "file/basefile.h"
 #include <QChar>
 
-CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
+CodeEditor::CodeEditor(BaseFile* file, QWidget *parent) : QPlainTextEdit(parent)
 {
+	mFile = file;
 	mLineNumberWidget = new LineNumberWidget(this);
 
 	connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
@@ -168,6 +170,14 @@ int CodeEditor::firstNonWhiteSpace(const QTextBlock& block)
 
 void CodeEditor::keyPressEvent(QKeyEvent* event)
 {
+	//	Take special note of undo/redo key chords, for version tracking
+	bool isUndo = event->matches(QKeySequence::Undo);
+	bool isRedo = event->matches(QKeySequence::Redo);
+	if (isUndo)
+		mFile->beginUndoBlock();
+	else if (isRedo)
+		mFile->beginRedoBlock();
+
 	//	Deal with TABs; special case for indenting stuff.
 	if (event->key() == Qt::Key_Tab || event->key() == Qt::Key_Backtab)
 	{
@@ -211,6 +221,11 @@ void CodeEditor::keyPressEvent(QKeyEvent* event)
 
 	//	Handle normal keypress
 	QPlainTextEdit::keyPressEvent(event);
+
+	if (isUndo)
+		mFile->endUndoBlock();
+	else if (isRedo)
+		mFile->endRedoBlock();
 
 	//	Keep indent on next line, if options say to
 	if (Options::IndentMode == Options::KeepIndentOnNextLine)

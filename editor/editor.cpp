@@ -21,7 +21,7 @@ Editor::Editor(BaseFile* file) : QStackedWidget()
 	mEditorPaneLayout = new QVBoxLayout(mEditorPane);
 	mEditorPaneLayout->setSpacing(0);
 	mEditorPaneLayout->setMargin(0);
-	mEditor = new CodeEditor(this);
+	mEditor = new CodeEditor(file, this);
 	mEditorPaneLayout->addWidget(mEditor);
 	addWidget(mEditorPane);
 

@@ -7,12 +7,13 @@
 
 class LineNumberWidget;
 class SyntaxHighlighter;
+class BaseFile;
 
 class CodeEditor : public QPlainTextEdit
 {
     Q_OBJECT
 public:
-	CodeEditor(QWidget *parent = 0);
+	CodeEditor(BaseFile* file, QWidget *parent = 0);
 
 	void lineNumberAreaPaintEvent(QPaintEvent *event);
 	int lineNumberAreaWidth();
@@ -38,10 +39,7 @@ private slots:
 private:
 	LineNumberWidget *mLineNumberWidget;
 	SyntaxHighlighter* mSyntaxHighlighter;
-
-signals:
-public slots:
-
+	BaseFile* mFile;
 };
 
 #endif // CODEEDITOR_H

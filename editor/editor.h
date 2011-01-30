@@ -44,8 +44,8 @@ public slots:
 	bool hasFocus();
 	void applyOptions();
 	void enableEditing() { setReadOnly(false); }
-	void undo() { mEditor->undo(); }
-	void redo() { mEditor->redo(); }
+	void undo() { mFile->beginUndoBlock(); mEditor->undo(); mFile->endUndoBlock(); }
+	void redo() { mFile->beginRedoBlock(); mEditor->redo(); mFile->endRedoBlock(); }
 	void copy() { mEditor->copy(); }
 	void cut() { mEditor->cut(); }
 	void paste() { mEditor->paste(); }

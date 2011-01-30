@@ -56,6 +56,8 @@ BaseFile::~BaseFile()
 
 BaseFile::BaseFile(const Location& location = NULL)
 {
+	mInRedoBlock = 0;
+	mInUndoBlock = 0;
 	mReadOnly = false;
 	mHighlighter = NULL;
 	mLoadingPercent = 0;
@@ -96,9 +98,10 @@ void BaseFile::documentChanged(int position, int removeChars, int charsAdded)
 
 void BaseFile::handleDocumentChange(int position, int removeChars, const QString &insert)
 {
-	qDebug() << "handleDocumentChange " << mIgnoreChanges;
 	if (mIgnoreChanges)
 		return;
+
+	qDebug() << "Handling doc change. Undo: " << mInUndoBlock << " Redo: " << mInRedoBlock;
 
 	mRevision++;
 
@@ -255,3 +258,40 @@ void BaseFile::saveFailed()
 {
 	emit saveFailed(tr("Cannot save file: do not have write permissions"));
 }
+
+void BaseFile::beginRedoBlock()
+{
+	mInRedoBlock++;
+}
+
+void BaseFile::beginUndoBlock()
+{
+	mInUndoBlock++;
+}
+
+void BaseFile::endUndoBlock()
+{
+	mInUndoBlock--;
+	if (mInUndoBlock < 0)
+		mInUndoBlock = 0;
+}
+
+void BaseFile::endRedoBlock()
+{
+	mInRedoBlock--;
+	if (mInRedoBlock < 0)
+		mInRedoBlock = 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
