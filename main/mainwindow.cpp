@@ -816,6 +816,9 @@ void MainWindow::updateRecentFilesMenu()
 
 void MainWindow::addRecentFile(Location *loc)
 {
+	if(loc->getPath().isNull())
+		return;
+
 	Location* newLoc = new Location(*loc);
 
 	for(int ii = 0; ii < mRecentFiles.length(); ii++)
