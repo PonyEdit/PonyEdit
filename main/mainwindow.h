@@ -4,11 +4,11 @@
 #include <QtGui/QMainWindow>
 #include <QStatusBar>
 #include <QTextEdit>
-#include <QStackedWidget>
 #include <QStatusBar>
 #include <QLabel>
 
 #include "file/location.h"
+#include "windowmanager.h"
 
 class Editor;
 class FileList;
@@ -16,6 +16,7 @@ class BaseFile;
 class SearchBar;
 class UnsavedChangesDialog;
 class ConnectionStatusPane;
+class WindowManager;
 
 #ifdef Q_OS_MAC
 extern void qt_mac_set_dock_menu(QMenu *menu);
@@ -81,7 +82,6 @@ public slots:
 	void showErrorMessage(QString error);
 	void showStatusMessage(QString message);
 
-	void fileClosed(BaseFile* file);
 	void syntaxMenuOptionClicked();
 
 	void currentEditorChanged();
@@ -117,10 +117,9 @@ private:
 	int replace(Editor* editor, const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegexp, bool all);
 
 	FileList* mFileList;
-	QStackedWidget* mEditorStack;
+	WindowManager* mWindowManager;
 	QStatusBar* mStatusBar;
 	QLabel* mStatusLine;
-	QList<Editor*> mEditors;
 
 	QList<Location*> mRecentFiles;
 	QMenu* mRecentFilesMenu;

@@ -278,6 +278,11 @@ void Editor::setFocus()
 	mEditor->setFocus();
 }
 
+bool Editor::hasFocus()
+{
+	return mEditor->hasFocus();
+}
+
 void Editor::applyOptions()
 {
 	QFont font = Options::EditorFont;

@@ -41,6 +41,7 @@ public slots:
 	int find(const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true);
 	int replace(const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegex, bool all);
 	void setFocus();
+	bool hasFocus();
 	void applyOptions();
 	void enableEditing() { setReadOnly(false); }
 	void undo() { mEditor->undo(); }

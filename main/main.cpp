@@ -89,7 +89,6 @@ int main(int argc, char *argv[])
 	delete updateManager;
 	delete gDispatcher;
 	delete gSiteManager;
-	delete gMainWindow;
 
 	Options::save();
 	LocationShared::cleanupIconProvider();

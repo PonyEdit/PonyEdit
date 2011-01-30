@@ -49,9 +49,9 @@ MainWindow::MainWindow(QWidget *parent)
 
 	setAcceptDrops(true);
 
-	mEditorStack = new QStackedWidget(this);
-	mEditorStack->setMinimumWidth(200);
-	setCentralWidget(mEditorStack);
+	mWindowManager = new WindowManager(this);
+	mWindowManager->setMinimumWidth(200);
+	setCentralWidget(mWindowManager);
 
 	mFileList = new FileList();
 	addDockWidget(Qt::LeftDockWidgetArea, mFileList, Qt::Vertical);
@@ -81,8 +81,7 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(gDispatcher, SIGNAL(generalErrorMessage(QString)), this, SLOT(showErrorMessage(QString)), Qt::QueuedConnection);
 	connect(gDispatcher, SIGNAL(generalStatusMessage(QString)), this, SLOT(showStatusMessage(QString)), Qt::QueuedConnection);
 	connect(gDispatcher, SIGNAL(selectFile(BaseFile*)), this, SLOT(fileSelected(BaseFile*)));
-	connect(&gOpenFileManager, SIGNAL(fileClosed(BaseFile*)), this, SLOT(fileClosed(BaseFile*)), Qt::DirectConnection);
-	connect(mEditorStack, SIGNAL(currentChanged(int)), this, SLOT(currentEditorChanged()));
+	connect(mWindowManager, SIGNAL(currentChanged()), this, SLOT(currentEditorChanged()), Qt::QueuedConnection);
 	connect(gDispatcher, SIGNAL(syntaxChanged(BaseFile*)), this, SLOT(updateSyntaxSelection()));
 
 	mRecentFiles = Tools::loadRecentFiles();
@@ -102,6 +101,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+	delete mWindowManager;
 }
 
 void MainWindow::restoreState()
@@ -156,14 +156,9 @@ void MainWindow::newFile()
 	Location location(path);
 	BaseFile* file = location.getFile();
 
-	Editor* newEditor = new Editor(file);
-	mEditorStack->addWidget(newEditor);
-	mEditorStack->setCurrentWidget(newEditor);
-	mEditors.append(newEditor);
+	mWindowManager->displayFile(file);
 
 	gDispatcher->emitSelectFile(file);
-
-	newEditor->setFocus();
 }
 
 void MainWindow::openFile()
@@ -204,14 +199,9 @@ void MainWindow::openSingleFile(Location *loc)
 		if (file->isClosed())
 			file->open();
 
-		Editor* newEditor = new Editor(file);
-		mEditorStack->addWidget(newEditor);
-		mEditorStack->setCurrentWidget(newEditor);
-		mEditors.append(newEditor);
+		mWindowManager->displayFile(file);
 
 		gDispatcher->emitSelectFile(file);
-
-		newEditor->setFocus();
 
 		addRecentFile(loc);
 
@@ -223,7 +213,7 @@ void MainWindow::openSingleFile(Location *loc)
 
 void MainWindow::saveFile()
 {
-	Editor* current = (Editor*)mEditorStack->currentWidget();
+	Editor* current = mWindowManager->currentEditor();
 	if (current)
 	{
 		if(current->getFile()->getLocation().getProtocol() == Location::Unsaved)
@@ -238,7 +228,7 @@ void MainWindow::saveFileAs()
 	FileDialog dlg(this, true);
 	if(dlg.exec())
 	{
-		Editor* current = (Editor*)mEditorStack->currentWidget();
+		Editor* current = mWindowManager->currentEditor();
 		Location loc = dlg.getNewLocation();
 		loc.getFile()->newFile(current->getFile()->getContent());
 
@@ -253,7 +243,7 @@ void MainWindow::saveFileAs()
 
 void MainWindow::closeFile()
 {
-	Editor* current = (Editor*)mEditorStack->currentWidget();
+	Editor* current = mWindowManager->currentEditor();
 	if (current)
 	{
 		QList<BaseFile *> files;
@@ -269,9 +259,7 @@ void MainWindow::fileSelected(BaseFile* file)
 
 	updateTitle(file);
 
-	const QList<Editor*>& editors = file->getAttachedEditors();
-	if (editors.length() > 0)
-		mEditorStack->setCurrentWidget(editors[0]);
+	mWindowManager->displayFile(file);
 }
 
 void MainWindow::updateTitle()
@@ -287,7 +275,7 @@ void MainWindow::updateTitle()
 	bool current = false;
 	foreach(Editor* editor, editors)
 	{
-		if(editor == (Editor*)mEditorStack->currentWidget())
+		if(editor == mWindowManager->currentEditor())
 			current = true;
 	}
 
@@ -499,42 +487,42 @@ void MainWindow::showStatusMessage(QString message)
 
 void MainWindow::undo()
 {
-	Editor* current = (Editor*)mEditorStack->currentWidget();
+	Editor* current = mWindowManager->currentEditor();
 	if(current)
 		current->undo();
 }
 
 void MainWindow::redo()
 {
-	Editor* current = (Editor*)mEditorStack->currentWidget();
+	Editor* current = mWindowManager->currentEditor();
 	if(current)
 		current->redo();
 }
 
 void MainWindow::cut()
 {
-	Editor* current = (Editor*)mEditorStack->currentWidget();
+	Editor* current = mWindowManager->currentEditor();
 	if(current)
 		current->cut();
 }
 
 void MainWindow::copy()
 {
-	Editor* current = (Editor*)mEditorStack->currentWidget();
+	Editor* current = mWindowManager->currentEditor();
 	if(current)
 		current->copy();
 }
 
 void MainWindow::paste()
 {
-	Editor* current = (Editor*)mEditorStack->currentWidget();
+	Editor* current = mWindowManager->currentEditor();
 	if(current)
 		current->paste();
 }
 
 void MainWindow::selectAll()
 {
-	Editor* current = (Editor*)mEditorStack->currentWidget();
+	Editor* current = mWindowManager->currentEditor();
 	if(current)
 		current->selectAll();
 }
@@ -544,7 +532,7 @@ void MainWindow::showGotoLine()
 	GotoLineDialog dlg(this);
 	if(dlg.exec())
 	{
-		Editor* current = (Editor*)mEditorStack->currentWidget();
+		Editor* current = mWindowManager->currentEditor();
 		if(current)
 			current->gotoLine(dlg.lineNumber());
 	}
@@ -571,7 +559,7 @@ void MainWindow::showAdvancedSearch()
 
 void MainWindow::find(const QString &text, bool backwards)
 {
-	Editor* current = (Editor*)mEditorStack->currentWidget();
+	Editor* current = mWindowManager->currentEditor();
 	int found;
 	if (current)
 		found = find((Editor*)current, text, backwards, false, false);
@@ -579,7 +567,7 @@ void MainWindow::find(const QString &text, bool backwards)
 
 void MainWindow::find(const QString &text, bool backwards, bool caseSensitive, bool useRegexp)
 {
-	Editor* current = (Editor*)mEditorStack->currentWidget();
+	Editor* current = mWindowManager->currentEditor();
 	int found;
 	if (current)
 		found = find(current, text, backwards, caseSensitive, useRegexp);
@@ -600,9 +588,12 @@ void MainWindow::globalFind(const QString &text, const QString &filePattern, boo
 #endif
 
 	int filesSearched = 0;
-	for(int ii = mEditorStack->currentIndex(); filesSearched < mEditorStack->count(); (backwards)?(ii--):(ii++))
+	QList<Editor*>* editorList = mWindowManager->getEditors();
+	Editor* currentEditor = mWindowManager->currentEditor();
+
+	for(int ii = editorList->indexOf(currentEditor); filesSearched < editorList->length(); (backwards)?(ii--):(ii++))
 	{
-		current = (Editor*)mEditorStack->widget(ii);
+		current = editorList->at(ii);
 		if(current)
 		{
 			file = current->getFile();
@@ -628,8 +619,8 @@ void MainWindow::globalFind(const QString &text, const QString &filePattern, boo
 		filesSearched++;
 
 		if(ii == 0 && backwards)
-			ii = mEditorStack->count();
-		else if(ii == mEditorStack->count() - 1 && !backwards)
+			ii = editorList->length();
+		else if(ii == editorList->length() - 1 && !backwards)
 			ii = -1;
 	}
 }
@@ -641,7 +632,7 @@ int MainWindow::find(Editor *editor, const QString &text, bool backwards, bool c
 
 void MainWindow::replace(const QString &findText, const QString &replaceText, bool all)
 {
-	Editor* current = (Editor*)mEditorStack->currentWidget();
+	Editor* current = mWindowManager->currentEditor();
 	int replaced;
 	if (current)
 		replaced = replace(current, findText, replaceText, false, false, all);
@@ -649,7 +640,7 @@ void MainWindow::replace(const QString &findText, const QString &replaceText, bo
 
 void MainWindow::replace(const QString &findText, const QString &replaceText, bool caseSensitive, bool useRegexp, bool all)
 {
-	Editor* current = (Editor*)mEditorStack->currentWidget();
+	Editor* current = mWindowManager->currentEditor();
 	int replaced;
 	if (current)
 		replaced = replace(current, findText, replaceText, caseSensitive, useRegexp, all);
@@ -662,6 +653,8 @@ void MainWindow::globalReplace(const QString &findText, const QString &replaceTe
 	Editor* current;
 	BaseFile* file;
 	Location loc;
+	QList<Editor*>* editorList = mWindowManager->getEditors();
+	Editor* currentEditor = mWindowManager->currentEditor();
 
 #ifdef Q_OS_WIN
 	QRegExp regexp(filePattern, Qt::CaseInsensitive, QRegExp::Wildcard);
@@ -673,11 +666,11 @@ void MainWindow::globalReplace(const QString &findText, const QString &replaceTe
 	if(all)
 		ii = 0;
 	else
-		ii = mEditorStack->currentIndex();
+		ii = editorList->indexOf(currentEditor);
 
-	for(; ii < mEditorStack->count(); ii++)
+	for(; ii < editorList->length(); ii++)
 	{
-		current = (Editor*)mEditorStack->widget(ii);
+		current = editorList->at(ii);
 		if(current)
 		{
 			file = current->getFile();
@@ -719,21 +712,6 @@ void MainWindow::closeEvent(QCloseEvent* event)
 	QMainWindow::closeEvent(event);
 }
 
-void MainWindow::fileClosed(BaseFile* file)
-{
-	for (int i = 0; i < mEditors.length(); i++)
-	{
-		Editor* e = mEditors[i];
-		if (e->getFile() == file)
-		{
-			mEditors.removeAt(i);
-			i--;
-
-			delete e;
-		}
-	}
-}
-
 void MainWindow::syntaxMenuOptionClicked()
 {
 	QObject* eventSource = QObject::sender();
@@ -747,7 +725,7 @@ void MainWindow::syntaxMenuOptionClicked()
 
 Editor* MainWindow::getCurrentEditor()
 {
-	return static_cast<Editor*>(mEditorStack->currentWidget());
+	return mWindowManager->currentEditor();
 }
 
 void MainWindow::currentEditorChanged()
@@ -779,28 +757,39 @@ void MainWindow::updateSyntaxSelection()
 
 void MainWindow::nextWindow()
 {
-	Editor *next;
+	Editor* next;
+	Editor* current = mWindowManager->currentEditor();
+	QList<Editor*>* editorList = mWindowManager->getEditors();
 
-	if(mEditorStack->currentIndex() + 1 == mEditorStack->count())
-		next = (Editor*)mEditorStack->widget(0);
+	int currIdx = editorList->indexOf(current);
+
+	if(currIdx + 1 == editorList->length())
+		next = editorList->at(0);
 	else
-		next = (Editor*)mEditorStack->widget(mEditorStack->currentIndex() + 1);
+		next = editorList->at(currIdx + 1);
+
 
 	gDispatcher->emitSelectFile(next->getFile());
-	next->setFocus();
+	mWindowManager->displayFile(next->getFile());
 }
 
 void MainWindow::previousWindow()
 {
 	Editor *prev;
 
-	if(mEditorStack->currentIndex() == 0)
-		prev = (Editor*)mEditorStack->widget(mEditorStack->count() - 1);
+	Editor* current = mWindowManager->currentEditor();
+	QList<Editor*>* editorList = mWindowManager->getEditors();
+
+	int currIdx = editorList->indexOf(current);
+
+
+	if(currIdx == 0)
+		prev = editorList->at(editorList->length() - 1);
 	else
-		prev = (Editor*)mEditorStack->widget(mEditorStack->currentIndex() - 1);
+		prev = editorList->at(currIdx - 1);
 
 	gDispatcher->emitSelectFile(prev->getFile());
-	prev->setFocus();
+	mWindowManager->displayFile(prev->getFile());
 }
 
 void MainWindow::updateRecentFilesMenu()
