@@ -106,7 +106,6 @@ LocationShared::LocationShared()
 	mType = Location::Unknown;
 	mSize = -1;
 	mSelfLoaded = false;
-	mListLoaded = false;
 	mLoading = false;
 	mRemoteHost = NULL;
 	mSudo = false;
@@ -292,7 +291,6 @@ void LocationShared::localLoadListing()
 			fileInfo.lastModified(), fileInfo.isReadable(), fileInfo.isWritable()));
 	}
 
-	mListLoaded = true;
 	mLoading = false;
 	emitListLoadedSignal();
 }
@@ -307,15 +305,10 @@ void LocationShared::emitListLoadError(const QString& error)
 	gDispatcher->emitLocationListFailed(error, mPath);
 }
 
-void Location::asyncGetChildren(bool forceRefresh)
+void Location::asyncGetChildren()
 {
-	mData->mListLoaded = false;
-
-	if (mData->mListLoaded && !forceRefresh)
-		mData->emitListLoadedSignal();
-	else if (!mData->mLoading)
+	if (!mData->mLoading)
 	{
-		mData->mListLoaded = false;
 		mData->mLoading = true;
 		switch (mData->mProtocol)
 		{
@@ -370,7 +363,6 @@ void LocationShared::sshLoadListing()
 void Location::sshChildLoadResponse(const QList<Location>& children)
 {
 	mData->mChildren = children;
-	mData->mListLoaded = true;
 	mData->mLoading = false;
 	mData->emitListLoadedSignal();
 }
@@ -529,8 +521,6 @@ void Location::createNewDirectory(QString name)
 	default:
 		break;
 	}
-
-	currentLocDir.mData->mListLoaded = false;
 }
 
 

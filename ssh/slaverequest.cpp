@@ -423,7 +423,7 @@ void SlaveRequest_createFile::success()
 {
 	mFile->open();
 	Location dir = mFile->getDirectory();
-	dir.asyncGetChildren(true);
+	dir.asyncGetChildren();
 }
 
 void SlaveRequest_createFile::packBody(QByteArray* target)
@@ -450,7 +450,7 @@ void SlaveRequest_createDirectory::error(const QString& error)
 
 void SlaveRequest_createDirectory::success()
 {
-	mLocation.asyncGetChildren(true);
+	mLocation.asyncGetChildren();
 }
 
 void SlaveRequest_createDirectory::packBody(QByteArray* target)

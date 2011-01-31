@@ -52,7 +52,7 @@ public:
 
 	BaseFile* getFile();
 
-	void asyncGetChildren(bool forceRefresh = false);
+	void asyncGetChildren();
 
 	bool operator==(const Location& other) const;
 
@@ -112,7 +112,6 @@ private:
 	QList<Location> mChildren;
 	Location mParent;
 	bool mSelfLoaded;
-	bool mListLoaded;
 	bool mLoading;
 	int mSize;
 	bool mCanRead;
