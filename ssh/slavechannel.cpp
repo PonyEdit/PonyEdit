@@ -3,9 +3,11 @@
 #include "sshconnection.h"
 #include <QDebug>
 
-SlaveChannel::SlaveChannel(RemoteConnection* connection)
-	: RemoteChannel(connection, Slave)
+SlaveChannel::SlaveChannel(RemoteConnection* connection, bool sudo)
+	: RemoteChannel(connection, (sudo ? SudoSlave : Slave))
 {
+	mSudo = sudo;
+	startThread();
 }
 
 void SlaveChannel::threadSendMessages(QList<RemoteRequest*>& messages)
@@ -41,7 +43,7 @@ void SlaveChannel::threadSendMessages(QList<RemoteRequest*>& messages)
 void SlaveChannel::threadConnect()
 {
 	qDebug() << "Connecting slave channel thread...";
-	mRawHandle = mConnection->createRawSlaveChannel();
+	mRawHandle = mConnection->createRawSlaveChannel(mSudo);
 }
 
 

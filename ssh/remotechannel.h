@@ -17,7 +17,16 @@ class RemoteChannel
 public:
 	enum Status { Opening, Open, Error };
 
-	enum Type { Slave = 0x0001, Shell = 0x0002, FTP = 0x0003, BaseTypeMask = 0x0FFF, Sudo = 0x1FFF };
+	enum Type
+	{
+		Slave        = 0x0001,
+		Shell        = 0x0002,
+		FTP          = 0x0003,
+		BaseTypeMask = 0x0FFF,
+
+		Sudo         = 0x1000,
+		SudoSlave    = 0x1001,
+	};
 	Q_DECLARE_FLAGS(Types, Type);
 
 	RemoteChannel(RemoteConnection* connection, Type type);
@@ -29,10 +38,11 @@ public:
 	bool waitUntilOpen(int connectionId);
 
 protected:
+	void startThread();	//	Called in subclass constructor
 	virtual void threadConnect() = 0;
 	virtual void threadSendMessages(QList<RemoteRequest*>& messages) = 0;
 	void setStatus(Status newStatus);
-	inline bool isAcceptingRequests() const { return mStatus == Open; }
+	inline bool isAcceptingRequests() const { return mStatus != Error; }
 
 	RemoteConnection* mConnection;
 	RawChannelHandle* mRawHandle;

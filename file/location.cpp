@@ -109,6 +109,7 @@ LocationShared::LocationShared()
 	mListLoaded = false;
 	mLoading = false;
 	mRemoteHost = NULL;
+	mSudo = false;
 }
 
 Location::~Location()
@@ -246,6 +247,12 @@ void LocationShared::setPath(const QString &path)
 		mRemoteUserName = parts[1];
 		mRemoteHostName = parts[2];
 		mRemotePath = parts[3];
+
+		if (mRemoteUserName.endsWith('*'))
+		{
+			mSudo = true;
+			mRemoteUserName.truncate(mRemoteUserName.length() - 1);
+		}
 	}
 	else if(mPath.length() == 0)
 		mProtocol = Location::Unsaved;
@@ -391,7 +398,7 @@ bool LocationShared::ensureConnected()
 			RemoteConnection* connection = mRemoteHost->getConnection();
 			if (connection)
 			{
-				mSlaveChannel = connection->getSlaveChannel();
+				mSlaveChannel = (mSudo ? connection->getSudoChannel() : connection->getSlaveChannel());
 
 				if (mSlaveChannel)
 				{

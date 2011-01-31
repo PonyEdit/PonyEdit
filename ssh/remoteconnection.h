@@ -45,10 +45,13 @@ public:
 public:
 	RemoteConnection();
 
-	virtual RemoteChannel* getChannel(RemoteChannel::Type type);
+	virtual RemoteChannel* openChannel(RemoteChannel::Type /*type*/) { return NULL; }
+	RemoteChannel* getChannel(RemoteChannel::Type type);
 	SlaveChannel* getSlaveChannel();
+	SlaveChannel* getSudoChannel();
+
 	void registerNewChannel(RemoteChannel* channel);	//	Only call from RemoteChannel constructor
-	virtual RawChannelHandle* createRawSlaveChannel() { throw(tr("Invalid operation")); }
+	virtual RawChannelHandle* createRawSlaveChannel(bool /*sudo*/) { throw(tr("Invalid operation")); }
 	virtual void sendLine(RawChannelHandle* /*handle*/, const QByteArray& /*data*/) { throw(tr("Invalid operation")); }
 	virtual QByteArray readLine(RawChannelHandle* /*handle*/) { throw(tr("Invalid operation")); }
 
@@ -87,7 +90,6 @@ protected:
 	void startConnectionThread();		//	Always called once during the sub-class constructor
 	virtual bool threadConnect() = 0;
 	virtual RemoteChannel* threadOpenPrimaryChannel() = 0;
-	SlaveChannel* threadOpenSlaveChannel();
 
 	void setStatus(Status newStatus);
 

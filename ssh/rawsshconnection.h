@@ -4,6 +4,7 @@
 #include <QByteArray>
 #include <libssh2.h>
 #include <QMap>
+#include <QMutex>
 
 #define SSH_BUFFER_SIZE 4096
 #define SSH_PROMPT "%-ponyedit-%"
@@ -65,6 +66,8 @@ private:
 	QByteArray mServerFingerprint;
 	char mTmpBuffer[SSH_BUFFER_SIZE];
 	QByteArray mReadBuffer;
+
+	QMutex mAccessMutex;
 
 	static QMap<QString, QByteArray> sKnownHostKeys;
 };

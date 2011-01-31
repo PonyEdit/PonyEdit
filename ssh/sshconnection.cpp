@@ -131,7 +131,26 @@ bool SshConnection::threadConnect()
 
 RemoteChannel* SshConnection::threadOpenPrimaryChannel()
 {
-	return threadOpenSlaveChannel();
+	return new SlaveChannel(this, false);
+}
+
+RemoteChannel* SshConnection::openChannel(RemoteChannel::Type type)
+{
+	RemoteChannel::Type baseType = static_cast<RemoteChannel::Type>(type & RemoteChannel::BaseTypeMask);
+	bool sudo = type & RemoteChannel::Sudo;
+
+	if (baseType != RemoteChannel::Slave)
+		throw(tr("Invalid operation: attempting to open an invalid channel via ssh"));
+
+	RemoteChannel* channel = new SlaveChannel(this, sudo);
+/*	bool ok = channel->waitUntilOpen(mConnectionId);
+	if (!ok)
+	{
+		delete channel;
+		throw(tr("Failed to open remote channel!"));
+	}*/
+
+	return channel;
 }
 
 void SshConnection::loadSlaveScript()
@@ -162,7 +181,7 @@ QString SshConnection::getName()
 	return mHost->getName();
 }
 
-RawChannelHandle* SshConnection::createRawSlaveChannel()
+RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 {
 	RawSshConnection::Channel* rawChannel = mRawConnection->createShellChannel();
 
@@ -192,9 +211,26 @@ RawChannelHandle* SshConnection::createRawSlaveChannel()
 	if (remoteMd5 != sSlaveMd5)
 		mRawConnection->writeFile(".ponyedit/slave.pl", sSlaveScript.constData(), sSlaveScript.length());
 
-	//	Run the remote slave script
-	const char* slaveStarter = "perl .ponyedit/slave.pl\n";
-	mRawConnection->writeData(rawChannel, slaveStarter, strlen(slaveStarter));
+	//	If this is a sudo connection, sudo at this point.
+	if (sudo)
+	{
+		//	Run the remote slave script
+		const char* slaveStarter = "sudo -k -p -sudo-prompt%% perl .ponyedit/slave.pl\n";
+		mRawConnection->writeData(rawChannel, slaveStarter, strlen(slaveStarter));
+		QByteArray reply = mRawConnection->readUntil(rawChannel, "%");
+		if (!reply.endsWith("-sudo-prompt"))
+			throw(tr("Failed to execute remote sudo command!"));
+
+		const char* sudoPassword = "XXXXXXX\n";
+		mRawConnection->writeData(rawChannel, sudoPassword, strlen(sudoPassword));
+		mRawConnection->readLine(rawChannel);
+	}
+	else
+	{
+		//	Run the remote slave script
+		const char* slaveStarter = "perl .ponyedit/slave.pl\n";
+		mRawConnection->writeData(rawChannel, slaveStarter, strlen(slaveStarter));
+	}
 
 	//	First line returned from the slave script should be the user's home dir.
 	QString homeDirectory = mRawConnection->readLine(rawChannel).trimmed();

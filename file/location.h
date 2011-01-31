@@ -117,6 +117,7 @@ private:
 	int mSize;
 	bool mCanRead;
 	bool mCanWrite;
+	bool mSudo;
 
 	QString mRemoteHostName;
 	QString mRemoteUserName;

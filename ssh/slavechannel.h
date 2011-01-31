@@ -7,11 +7,13 @@
 class SlaveChannel : public RemoteChannel
 {
 public:
-	SlaveChannel(RemoteConnection* connection);
+	SlaveChannel(RemoteConnection* connection, bool sudo);
 
 protected:
 	virtual void threadConnect();
 	virtual void threadSendMessages(QList<RemoteRequest*>& messages);
+
+	bool mSudo;
 };
 
 #endif // SLAVECHANNEL_H

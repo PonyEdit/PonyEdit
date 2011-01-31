@@ -23,7 +23,8 @@ public:
 	inline RawSshConnection* getRawConnection() const { return mRawConnection; }
 
 	virtual QString getName();
-	virtual RawChannelHandle* createRawSlaveChannel();
+	virtual RawChannelHandle* createRawSlaveChannel(bool sudo);
+	virtual RemoteChannel* openChannel(RemoteChannel::Type /*type*/);
 
 	virtual void sendLine(RawChannelHandle* handle, const QByteArray& data);
 	virtual QByteArray readLine(RawChannelHandle* handle);

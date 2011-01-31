@@ -9,6 +9,7 @@ INCLUDEPATH += $$PWD/deps/libssh2/include/
 win32 {
 	LIBS        += -L$$PWD/deps/lib-win32/ -lwsock32
 	INCLUDEPATH += $$PWD/deps/include-win32/
+	INCLUDEPATH += $$PWD/deps/libssh2/src/
 }
 
 macx {

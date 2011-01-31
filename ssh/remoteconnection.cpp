@@ -106,11 +106,6 @@ void RemoteConnection::waitForInput(DialogFunction dialogFunction, DialogCallbac
 	mDialogCallback = NULL;
 }
 
-SlaveChannel* RemoteConnection::threadOpenSlaveChannel()
-{
-	return new SlaveChannel(this);
-}
-
 void RemoteConnection::disconnect(bool deliberate)
 {
 	if (deliberate) mDeliberatelyDisconnecting = true;
@@ -123,20 +118,14 @@ bool RemoteConnection::isDisconnecting()
 	return (baseStatus == Disconnecting || baseStatus == Disconnected);
 }
 
-SlaveChannel* RemoteConnection::getSlaveChannel()
-{
-	return static_cast<SlaveChannel*>(getChannel(RemoteChannel::Slave));
-}
-
 RemoteChannel* RemoteConnection::getChannel(RemoteChannel::Type type)
 {
 	foreach (RemoteChannel* channel, mOpenChannels)
-	{
 		if (channel->getType() == type)
 			return channel;
-	}
 
-	return NULL;
+	//	Not found. Try to open one
+	return openChannel(type);
 }
 
 bool RemoteConnection::waitUntilOpen()
@@ -160,6 +149,15 @@ bool RemoteConnection::waitUntilOpen()
 	return (getBaseStatus() != Error);
 }
 
+SlaveChannel* RemoteConnection::getSlaveChannel()
+{
+	return static_cast<SlaveChannel*>(getChannel(RemoteChannel::Slave));
+}
+
+SlaveChannel* RemoteConnection::getSudoChannel()
+{
+	return static_cast<SlaveChannel*>(getChannel(RemoteChannel::SudoSlave));
+}
 
 
 

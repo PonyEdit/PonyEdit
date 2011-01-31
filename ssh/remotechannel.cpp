@@ -22,11 +22,6 @@ RemoteChannel::RemoteChannel(RemoteConnection* connection, Type type)
 	mRawHandle = NULL;
 	mType = type;
 
-	qDebug() << "Launching new thread for a remote channel...";
-
-	mThread = new RemoteChannelThread(this);
-	mThread->start();
-
 	connection->registerNewChannel(this);
 }
 
@@ -130,7 +125,11 @@ bool RemoteChannel::waitUntilOpen(int connectionId)
 	return (mStatus == Open);
 }
 
-
+void RemoteChannel::startThread()
+{
+	mThread = new RemoteChannelThread(this);
+	mThread->start();
+}
 
 
 
