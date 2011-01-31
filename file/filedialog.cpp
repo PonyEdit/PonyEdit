@@ -23,6 +23,7 @@
 #define NODETYPE_FAVORITE 2
 #define NODETYPE_ADD_LOCATION 3
 #define NODETYPE_ADD_FAVORITE 4
+#define NODETYPE_LOCAL_NETWORK 5
 
 Location FileDialog::mLastLocation;
 
@@ -124,6 +125,15 @@ void FileDialog::populateFolderTree()
 #endif
 	localComputer->setExpanded(true);
 
+#ifdef Q_OS_WIN
+	mLocalNetworkBranch = new QTreeWidgetItem(QStringList(tr("Local Network")), 0);
+	mLocalNetworkBranch->setIcon(0, mIconProvider.icon(QFileIconProvider::Network));
+
+	mLocalNetworkBranch->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+
+	ui->directoryTree->addTopLevelItem(mLocalNetworkBranch);
+#endif
+
 	//
 	//	Favorite Locations; contains a list of bookmarked locations; local or otherwise
 	//
@@ -209,6 +219,67 @@ void FileDialog::populateRemoteServers()
 	}
 }
 
+#ifdef Q_OS_WIN
+void FileDialog::populateWindowsShares(QTreeWidgetItem *localNetworkItem, LPNETRESOURCE lpnr)
+{
+	DWORD dwResult, dwResultEnum;
+	HANDLE hEnum;
+	DWORD cbBuffer = 16384;
+	DWORD cEntries = -1;
+	LPNETRESOURCE lpnrLocal;
+	DWORD i;
+
+	dwResult = WNetOpenEnum(RESOURCE_GLOBALNET, RESOURCETYPE_DISK, 0, lpnr, &hEnum);
+
+	if (dwResult != NO_ERROR)
+		return;
+
+	lpnrLocal = (LPNETRESOURCE) GlobalAlloc(GPTR, cbBuffer);
+	if (lpnrLocal == NULL)
+		return;
+
+	do {
+		ZeroMemory(lpnrLocal, cbBuffer);
+
+		dwResultEnum = WNetEnumResource(hEnum, &cEntries, lpnrLocal, &cbBuffer);
+
+		if (dwResultEnum == NO_ERROR) {
+			for (i = 0; i < cEntries; i++) {
+				QString name((QChar*)lpnrLocal[i].lpRemoteName);
+				QTreeWidgetItem* item;
+				if(lpnrLocal[i].dwDisplayType == RESOURCEDISPLAYTYPE_SHARE || lpnrLocal[i].dwDisplayType == RESOURCEDISPLAYTYPE_SERVER)
+				{
+					Location loc = Location(name);
+					item = addLocationToTree(localNetworkItem, loc);
+				}
+				else
+				{
+					item = new QTreeWidgetItem(0);
+					item->setText(0, name);
+					item->setIcon(0, mIconProvider.icon(QFileIconProvider::Network));
+					item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
+					item->setData(0, DATA_ROLE, QVariant(0));
+					item->setData(0, EXPANDED_ROLE, QVariant(0));
+					item->setData(0, TYPE_ROLE, QVariant(0));
+				}
+				localNetworkItem->addChild(item);
+
+				if (RESOURCEUSAGE_CONTAINER == (lpnrLocal[i].dwUsage & RESOURCEUSAGE_CONTAINER))
+					populateWindowsShares(item, &lpnrLocal[i]);
+			}
+		}
+		else if (dwResultEnum != ERROR_NO_MORE_ITEMS)
+			break;
+	}
+
+	while (dwResultEnum != ERROR_NO_MORE_ITEMS);
+
+	GlobalFree((HGLOBAL) lpnrLocal);
+
+	WNetCloseEnum(hEnum);
+}
+#endif
+
 QTreeWidgetItem* FileDialog::addLocationToTree(QTreeWidgetItem* parent, const Location& location)
 {
 	QTreeWidgetItem* newItem = new QTreeWidgetItem(0);
@@ -228,6 +299,14 @@ QTreeWidgetItem* FileDialog::addLocationToTree(QTreeWidgetItem* parent, const Lo
 
 void FileDialog::folderTreeItemExpanded(QTreeWidgetItem* item)
 {
+#ifdef Q_OS_WIN
+	if(item == mLocalNetworkBranch)
+	{
+		LPNETRESOURCE lpnr = NULL;
+		populateWindowsShares(item, lpnr);
+	}
+	else
+#endif
 	if (!item->data(0, EXPANDED_ROLE).toInt())
 	{
 		item->setData(0, EXPANDED_ROLE, QVariant(1));

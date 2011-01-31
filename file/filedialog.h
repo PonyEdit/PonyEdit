@@ -10,6 +10,11 @@
 
 #include "location.h"
 
+#ifdef Q_OS_WIN
+	#include <windows.h>
+	#include <winnetwk.h>
+#endif
+
 namespace Ui { class FileDialog; }
 
 class FileDialog : public QDialog
@@ -43,6 +48,9 @@ private slots:
 	void addToFavorites();
 	void directoryTreeContextMenu(QPoint point);
 	void createNewFolder();
+#ifdef Q_OS_WIN
+	void populateWindowsShares(QTreeWidgetItem* localNetworkItem, LPNETRESOURCE lpnr);
+#endif
 
 private:
 	void keyPressEvent(QKeyEvent *);
@@ -58,6 +66,9 @@ private:
 	QStandardItemModel* mFileListModel;
 	QTreeWidgetItem* mRemoteServersBranch;
 	QTreeWidgetItem* mFavoriteLocationsBranch;
+#ifdef Q_OS_WIN
+	QTreeWidgetItem* mLocalNetworkBranch;
+#endif
 
 	QMap<QString, QTreeWidgetItem*> mLoadingLocations;
 
