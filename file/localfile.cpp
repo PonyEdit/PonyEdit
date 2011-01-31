@@ -50,11 +50,7 @@ void LocalFile::save()
 
 	fileHandle.close();
 
-	mLastSavedRevision = mRevision;
-	mLastSavedUndoLength = mDocument->availableUndoSteps();
-	mChanged = false;
-
-	setOpenStatus(Ready);
+	savedRevision(mRevision, mDocument->availableUndoSteps(), QByteArray(getChecksum().toAscii()));
 }
 
 void LocalFile::close()

@@ -187,8 +187,10 @@ void BaseFile::savedRevision(int revision, int undoLength, const QByteArray& che
 {
 	mLastSaveChecksum = checksum;
 	setLastSavedRevision(revision);
+
 	mLastSavedUndoLength = undoLength;
-	mChanged = (undoLength == mDocument->availableUndoSteps());
+	mChanged = (undoLength != mDocument->availableUndoSteps());
+
 	gDispatcher->emitGeneralStatusMessage(QString("Finished saving ") + mLocation.getLabel() + " at revision " + QString::number(revision));
 	qDebug() << "Saved revision " << revision;
 	emit unsavedStatusChanged();
