@@ -126,7 +126,7 @@ void MainWindow::createToolbar()
 	feedbackToolbar->addWidget(spacer);
 
 	QToolButton *feedbackButton = new QToolButton(feedbackToolbar);
-	feedbackButton->setText(tr("Feedback"));
+	feedbackButton->setText(tr("Feedback") + " ");
 
 	QMenu *feedbackMenu = new QMenu(toolbar);
 
