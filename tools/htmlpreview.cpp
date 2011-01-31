@@ -1,3 +1,6 @@
+#include <QTextDocument>
+#include <QDebug>
+
 #include "htmlpreview.h"
 #include "ui_htmlpreview.h"
 
@@ -32,8 +35,12 @@ HTMLPreview::HTMLPreview(MainWindow *parent) :
 	if(current)
 	{
 		BaseFile *file = current->getFile();
+		QTextDocument *doc = file->getTextDocument();
+
 		connect(file, SIGNAL(unsavedStatusChanged()), this, SLOT(fileSaved()));
-		connect(file, SIGNAL(unsavedStatusChanged()), this, SLOT(fileChanged()));
+		connect(doc, SIGNAL(contentsChanged()), this, SLOT(fileChanged()));
+
+		manualRefresh();
 	}
 }
 
@@ -44,8 +51,13 @@ HTMLPreview::~HTMLPreview()
 
 void HTMLPreview::fileSelected(BaseFile *file)
 {
+	if(!file)
+		return;
+
+	QTextDocument *doc = file->getTextDocument();
+
 	connect(file, SIGNAL(unsavedStatusChanged()), this, SLOT(fileSaved()));
-	connect(file, SIGNAL(unsavedStatusChanged()), this, SLOT(fileChanged()));
+	connect(doc, SIGNAL(contentsChanged()), this, SLOT(fileChanged()));
 }
 
 void HTMLPreview::fileSaved()
@@ -74,10 +86,10 @@ void HTMLPreview::fileChanged()
 	if(ui->refreshWhen->currentIndex() != 0)
 		return;
 
-	BaseFile *file = dynamic_cast<BaseFile*>(sender());
+	QTextDocument *doc = dynamic_cast<QTextDocument*>(sender());
 
 	if(ui->refreshFrom->currentIndex() == 0)
-		displayHTML(file->getTextDocument()->toPlainText());
+		displayHTML(doc->toPlainText());
 }
 
 void HTMLPreview::manualRefresh()

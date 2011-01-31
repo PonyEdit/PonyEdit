@@ -47,6 +47,7 @@ void WindowManager::displayFile(BaseFile *file)
 
 			mCurrentEditor = mEditors[ii];
 
+			gDispatcher->emitSelectFile(file);
 			emit currentChanged();
 
 			return;
@@ -66,6 +67,7 @@ void WindowManager::displayFile(BaseFile *file)
 
 	mCurrentEditor = newEditor;
 
+	gDispatcher->emitSelectFile(file);
 	emit currentChanged();
 }
 
