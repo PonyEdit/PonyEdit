@@ -115,7 +115,17 @@ void MainWindow::createToolbar()
 	toolbar->addAction(QIcon(":/icons/open.png"), "Open", this, SLOT(openFile()));
 	toolbar->addAction(QIcon(":/icons/save.png"), "Save", this, SLOT(saveFile()));
 
-	QToolButton *feedbackButton = new QToolButton(toolbar);
+	this->addToolBar(toolbar);
+	toolbar->setObjectName("File Toolbar");
+
+	QToolBar* feedbackToolbar = new QToolBar("Feedback Toolbar");
+	feedbackToolbar->setObjectName("Feedback Toolbar");
+
+	QWidget* spacer = new QWidget();
+	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	feedbackToolbar->addWidget(spacer);
+
+	QToolButton *feedbackButton = new QToolButton(feedbackToolbar);
 	feedbackButton->setText(tr("Feedback"));
 
 	QMenu *feedbackMenu = new QMenu(toolbar);
@@ -124,12 +134,12 @@ void MainWindow::createToolbar()
 	feedbackMenu->addAction(tr("PonyEdit Made Me Sad Because..."), gSiteManager, SLOT(feedbackSad()));
 
 	feedbackButton->setMenu(feedbackMenu);
+
 	feedbackButton->setPopupMode(QToolButton::InstantPopup);
 
-	toolbar->addWidget(feedbackButton);
+	feedbackToolbar->addWidget(feedbackButton);
 
-	this->addToolBar(toolbar);
-	toolbar->setObjectName("File Toolbar");
+	this->addToolBar(feedbackToolbar);
 }
 
 void MainWindow::newFile()
