@@ -15,12 +15,13 @@ class SiteManager : public QObject
 	Q_OBJECT
 
 public:
-	enum Messages {UpdateCheck, UpdateCheckForcedNotification, LicenceCheck};
+	enum Messages {UpdateCheck, UpdateCheckForcedNotification, LicenceCheck, GetTrial};
     SiteManager();
 	~SiteManager();
 
 	void checkForUpdates(bool forceNotification = false);
 	void checkLicence();
+	void getTrial();
 
 public slots:
 	void handleReply(QNetworkReply* reply);
@@ -28,10 +29,13 @@ public slots:
 	void feedbackHappy();
 	void feedbackSad();
 
+	void purchase();
+
 signals:
 	void updateAvailable(const QString& version, const QVariantMap& changes);
 	void noUpdateAvailable();
 	void licenceStatus(bool valid);
+	void gotTrial(const QString& licence);
 
 private:
 	QNetworkAccessManager* mManager;

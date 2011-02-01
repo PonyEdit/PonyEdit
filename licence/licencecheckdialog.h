@@ -15,6 +15,10 @@ public:
     explicit LicenceCheckDialog(QWidget *parent = 0);
     ~LicenceCheckDialog();
 
+public slots:
+	void getTrial();
+	void saveTrial(const QString& key);
+
 private:
     Ui::LicenceCheckDialog *ui;
 };

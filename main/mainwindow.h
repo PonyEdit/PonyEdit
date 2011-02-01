@@ -31,6 +31,8 @@ public:
     ~MainWindow();
 
 public slots:
+	void checkLicence();
+
 	void newFile();
 	void openFile();
 	void openSingleFile(Location* loc = NULL);

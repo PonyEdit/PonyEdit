@@ -57,6 +57,15 @@ void SiteManager::checkLicence()
 	mReplyTypes.append(LicenceCheck);
 }
 
+void SiteManager::getTrial()
+{
+	QUrl url(QString(SITE_URL) + "licence/?f=trial");
+	QNetworkReply* reply = mManager->get(QNetworkRequest(url));
+
+	mReplies.append(reply);
+	mReplyTypes.append(GetTrial);
+}
+
 void SiteManager::handleReply(QNetworkReply *reply)
 {
 	int index = mReplies.indexOf(reply);
@@ -91,6 +100,10 @@ void SiteManager::handleReply(QNetworkReply *reply)
 			case LicenceCheck:
 				emit licenceStatus(data["valid"].toBool());
 				break;
+
+			case GetTrial:
+				emit gotTrial(data["key"].toString());
+				break;
 		}
 
 		mReplies.removeAt(index);
@@ -110,6 +123,13 @@ void SiteManager::feedbackHappy()
 void SiteManager::feedbackSad()
 {
 	QUrl url(QString(SITE_URL) + "feedback/?feedback=sad&version=" + QCoreApplication::applicationVersion());
+
+	QDesktopServices::openUrl(url);
+}
+
+void SiteManager::purchase()
+{
+	QUrl url(QString(SITE_URL) + "buy/");
 
 	QDesktopServices::openUrl(url);
 }
