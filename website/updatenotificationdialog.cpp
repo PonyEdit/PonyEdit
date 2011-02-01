@@ -1,4 +1,5 @@
 #include <QCoreApplication>
+#include <QDesktopServices>
 
 #include "updatenotificationdialog.h"
 #include "ui_updatenotificationdialog.h"
@@ -9,8 +10,14 @@ UpdateNotificationDialog::UpdateNotificationDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+	ui->downloadProgress->hide();
+	ui->downloadLabel->hide();
+
 	ui->changesBrowser->setOpenExternalLinks(true);
-	ui->urlLabel->setOpenExternalLinks(true);
+
+	connect(ui->installLater, SIGNAL(clicked()), this, SLOT(reject()));
+	connect(ui->downloadSite, SIGNAL(clicked()), this, SLOT(openDownloadURL()));
+	connect(ui->installNow, SIGNAL(clicked()), this, SLOT(emitDownloadAndInstall()));
 }
 
 UpdateNotificationDialog::~UpdateNotificationDialog()
@@ -41,8 +48,33 @@ void UpdateNotificationDialog::setChanges(const QVariantMap &changes)
 	ui->changesBrowser->setHtml(changesStr);
 }
 
-void UpdateNotificationDialog::setDownloadURL(const QString &href, const QString &display)
+void UpdateNotificationDialog::setDownloadURL(const QString &downloadURL, const QString& fileURL)
 {
-	QString label = ui->urlLabel->text().arg(href, display);
-	ui->urlLabel->setText(label);
+	mDownloadURL = downloadURL;
+	mFileURL = fileURL;
+}
+
+void UpdateNotificationDialog::emitDownloadAndInstall()
+{
+	emit downloadAndInstall(mFileURL);
+}
+
+void UpdateNotificationDialog::openDownloadURL()
+{
+	QDesktopServices::openUrl(QUrl(mDownloadURL));
+}
+
+QProgressBar* UpdateNotificationDialog::getProgressBar()
+{
+	return ui->downloadProgress;
+}
+
+QLabel* UpdateNotificationDialog::getProgressLabel()
+{
+	return ui->downloadLabel;
+}
+
+QWidget* UpdateNotificationDialog::getButtonWrapper()
+{
+	return ui->buttonWrapper;
 }

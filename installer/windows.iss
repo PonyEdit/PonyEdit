@@ -219,4 +219,4 @@ Name: {commondesktop}\PonyEdit; Filename: {app}\ponyedit.exe; WorkingDir: {app};
 Name: {userdesktop}\PonyEdit; Filename: {app}\ponyedit.exe; WorkingDir: {app}; Comment: "PonyEdit: Enjoy coding again"; Tasks: desktopicon\user
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\PonyEdit"; Filename: {app}\ponyedit.exe; WorkingDir: {app}; Comment: "PonyEdit: Enjoy coding again"; Tasks: quicklaunchicon
 [Run]
-Filename: "{app}\ponyedit.exe"; Description: "Launch PonyEdit"; Flags: postinstall nowait skipifsilent 
+Filename: "{app}\ponyedit.exe"; Description: "Launch PonyEdit"; Flags: postinstall nowait 

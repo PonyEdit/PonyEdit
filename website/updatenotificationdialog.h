@@ -3,6 +3,8 @@
 
 #include <QDialog>
 #include <QVariantMap>
+#include <QProgressBar>
+#include <QLabel>
 
 namespace Ui {
     class UpdateNotificationDialog;
@@ -18,10 +20,24 @@ public:
 
 	void setNewVersion(const QString& version);
 	void setChanges(const QVariantMap& changes);
-	void setDownloadURL(const QString& href, const QString& display);
+	void setDownloadURL(const QString &downloadURL, const QString& fileURL);
+
+	QProgressBar* getProgressBar();
+	QLabel* getProgressLabel();
+	QWidget* getButtonWrapper();
+
+signals:
+	void downloadAndInstall(QString);
+
+private slots:
+	void emitDownloadAndInstall();
+	void openDownloadURL();
 
 private:
     Ui::UpdateNotificationDialog *ui;
+
+	QString mDownloadURL;
+	QString mFileURL;
 };
 
 #endif // UPDATENOTIFICATIONDIALOG_H
