@@ -233,6 +233,14 @@ void MainWindow::saveFileAs()
 	}
 }
 
+void MainWindow::saveAllFiles()
+{
+	QList<BaseFile*> unsavedFiles = gOpenFileManager.getUnsavedFiles(gOpenFileManager.getOpenFiles());
+
+	foreach(BaseFile* file, unsavedFiles)
+		file->save();
+}
+
 void MainWindow::closeFile()
 {
 	Editor* current = mWindowManager->currentEditor();
@@ -243,6 +251,22 @@ void MainWindow::closeFile()
 
 		gOpenFileManager.closeFiles(files);
 	}
+}
+
+void MainWindow::closeAllFiles()
+{
+	gOpenFileManager.closeAllFiles();
+}
+
+void MainWindow::closeAllExceptCurrentFile()
+{
+	QList<BaseFile*> openFiles = gOpenFileManager.getOpenFiles();
+
+	BaseFile* current = mWindowManager->currentEditor()->getFile();
+
+	foreach(BaseFile* file, openFiles)
+		if(file != current)
+			file->close();
 }
 
 void MainWindow::fileSelected(BaseFile* file)
@@ -326,9 +350,15 @@ void MainWindow::createFileMenu()
 
 	fileMenu->addAction(tr("&Save"), this, SLOT(saveFile()),
 						QKeySequence::Save);
+#ifdef Q_OS_WIN
+	fileMenu->addAction(tr("Save &As..."), this, SLOT(saveFileAs()));
 
-	fileMenu->addAction(tr("Save &As..."), this, SLOT(saveFileAs()),
-						QKeySequence::SaveAs);
+	fileMenu->addAction(tr("Save A&ll"), this, SLOT(saveAllFiles()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_S));
+#else
+	fileMenu->addAction(tr("Save &As..."), this, SLOT(saveFileAs()), QKeySequence::SaveAs);
+
+	fileMenu->addAction(tr("Save A&ll"), this, SLOT(saveAllFiles()));
+#endif
 
 	fileMenu->addSeparator();
 
@@ -337,9 +367,13 @@ void MainWindow::createFileMenu()
 
 	fileMenu->addSeparator();
 
+	fileMenu->addAction(tr("&Close"), this, SLOT(closeFile()), QKeySequence(Qt::CTRL + Qt::Key_W));
 
-	fileMenu->addAction(tr("&Close File"), this, SLOT(closeFile()),
-						QKeySequence::Close);
+	fileMenu->addAction(tr("Close All"), this, SLOT(closeAllFiles()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_W));
+
+	fileMenu->addAction(tr("Close All Except Current"), this, SLOT(closeAllExceptCurrentFile()));
+
+	fileMenu->addSeparator();
 
 	fileMenu->addAction(tr("E&xit"), this, SLOT(close()),
 						QKeySequence::Quit);

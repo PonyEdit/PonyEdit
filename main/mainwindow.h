@@ -36,7 +36,10 @@ public slots:
 	void openSingleFile(Location* loc = NULL);
 	void saveFile();
 	void saveFileAs();
+	void saveAllFiles();
 	void closeFile();
+	void closeAllFiles();
+	void closeAllExceptCurrentFile();
 	void fileSelected(BaseFile* file);
 
 	void print();
