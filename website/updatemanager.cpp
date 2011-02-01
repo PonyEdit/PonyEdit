@@ -25,7 +25,7 @@ void UpdateManager::updateFound(const QString& version, const QVariantMap& chang
 	QString ext;
 #ifdef Q_OS_WIN
 	ext = "exe";
-#elif defined Q_OS_OSX
+#elif defined Q_OS_MAC
 	ext = "dmg";
 #endif
 
@@ -88,7 +88,6 @@ void UpdateManager::startDownload(QString file)
 	connect(mDownload, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(downloadProgress(qint64,qint64)));
 	connect(mDownload, SIGNAL(finished()), this, SLOT(downloadFinished()));
 	connect(mDownload, SIGNAL(readyRead()), this, SLOT(downloadReadyRead()));
-
 }
 
 void UpdateManager::downloadProgress(qint64 bytesReceived, qint64 bytesTotal)
@@ -123,16 +122,54 @@ void UpdateManager::downloadFinished()
 
 	QString cmd;
 	QStringList args;
-#ifdef Q_OS_WIN
+
 	QFileInfo info(mTempFile);
+
+	QProcess *installProc = new QProcess();
+
+#ifdef Q_OS_WIN
 	cmd = info.filePath();
 	args << "/verysilent" << "/suppressmsgboxes" << "/norestart";
 
-	QProcess *installProc = new QProcess();
+	installProc->startDetached(cmd, args);
+#elif defined Q_OS_MAC
+	cmd = "hdiutil";
+	args << "attach" << info.filePath();
+
+	installProc->start(cmd, args);
+
+	if(!installProc->waitForFinished())
+	{
+		qDebug() << "Mount failed!";
+		return;
+	}
+
+	QRegExp findMnt("(/Volumes/PonyEdit.*)");
+	QString result = QString::fromUtf8(installProc->readAll());
+
+	findMnt.indexIn(result);
+	QString mnt = findMnt.cap(1).trimmed();
+
+	cmd = "cp";
+	args.clear();
+	args << "-rf" << mnt + "/PonyEdit.app" << "/Applications";
+
+	installProc->execute(cmd, args);
+
+	cmd = "hdiutil";
+	args.clear();
+	args << "detach" << mnt;
+
 	installProc->startDetached(cmd, args);
 
-	QApplication::exit();
+	cmd = "open";
+	args.clear();
+	args << "/Applications/PonyEdit.app";
+
+	installProc->startDetached(cmd, args);
 #endif
+
+	QApplication::exit();
 }
 
 void UpdateManager::downloadReadyRead()
@@ -140,7 +177,7 @@ void UpdateManager::downloadReadyRead()
 	mTempFile.write(mDownload->readAll());
 }
 
-void UpdateManager::downloadAuth(QNetworkReply *reply, QAuthenticator *authenticator)
+void UpdateManager::downloadAuth(QNetworkReply */* reply */, QAuthenticator *authenticator)
 {
 	authenticator->setUser("prealpha");
 	authenticator->setPassword("letmein");
