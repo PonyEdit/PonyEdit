@@ -124,7 +124,7 @@ bool SshConnection::threadConnect()
 		delete mRawConnection;
 		mRawConnection = NULL;
 
-		setErrorStatus(QString("Error while ") + getStatusString() + ": " + err);
+		setErrorStatus(err);
 		return false;
 	}
 }

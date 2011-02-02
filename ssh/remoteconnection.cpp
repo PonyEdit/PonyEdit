@@ -50,7 +50,7 @@ QString RemoteConnection::getStatusString()
 		return tr("Disconnected");
 
 	case Error:
-		return tr("Error");
+		return tr("Error - %1").arg(mErrorMessage);
 
 	default:
 		return tr("Unknown");
