@@ -25,7 +25,12 @@ public:
 		PublicKey = 0x03
 	};
 
-	typedef LIBSSH2_CHANNEL Channel;
+	struct Channel
+	{
+		LIBSSH2_CHANNEL* handle;
+		char tmpBuffer[SSH_BUFFER_SIZE];
+		QByteArray readBuffer;
+	};
 
 public:
 	RawSshConnection();
@@ -64,8 +69,6 @@ private:
 	int mSocket;
 	LIBSSH2_SESSION* mSession;
 	QByteArray mServerFingerprint;
-	char mTmpBuffer[SSH_BUFFER_SIZE];
-	QByteArray mReadBuffer;
 
 	QMutex mAccessMutex;
 
