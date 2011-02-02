@@ -80,8 +80,13 @@ public:
 	static bool DefaultDialogCallback(ConnectionStatusWidget*, RemoteConnection*, QDialogButtonBox::ButtonRole, QVariant) { return true; }
 	inline void inputDialogCompleted() { mInputDialogWait.wakeOne(); }
 
-	bool waitUntilOpen();
+	bool waitUntilOpen(bool waitForChannels = true);
 	inline int getConnectionId() { return mConnectionId; }
+
+	void recordChannelOpening();
+	void recordChannelOpen();
+
+	void channelStateChanged(RemoteChannel* channel);
 
 signals:
 	void statusChanged();
@@ -92,6 +97,7 @@ protected:
 	virtual RemoteChannel* threadOpenPrimaryChannel() = 0;
 
 	void setStatus(Status newStatus);
+	void setBaseStatus(Status baseStatus) { setStatus(static_cast<Status>((mStatus & ~BaseStatusMask) | baseStatus)); }
 
 protected:
 	RemoteConnectionThread* mThread;
@@ -100,6 +106,7 @@ protected:
 
 	bool mDeliberatelyDisconnecting;
 	int mConnectionId;
+	int mChannelsOpening;
 
 	QWaitCondition mStatusWaiter;
 	Status mStatus;

@@ -28,8 +28,6 @@ void RemoteConnectionThread::connect()
 		//	Wait for all of my channels to reconnect (or fail to) before changing state to "Connected"
 		foreach (RemoteChannel* channel, mConnection->mOpenChannels)
 			channel->waitUntilOpen(mConnection->mConnectionId);
-
-		mConnection->setStatus(RemoteConnection::Connected);
 	}
 	else
 		qDebug() << "Connection failed";

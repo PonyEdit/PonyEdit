@@ -140,17 +140,16 @@ const QList<SlaveFile*> SshHost::getOpenFiles() const
 
 SshConnection* SshHost::getConnection()
 {
-	if (mConnection)
-		return mConnection;
+	if (!mConnection)
+		mConnection = new SshConnection(this);
 
-	mConnection = new SshConnection(this);
-	DialogWrapper<ConnectionStatusWidget> dialogWrapper(new ConnectionStatusWidget(mConnection, true));
+	if (!mConnection->waitUntilOpen(true))
+	{
+		delete mConnection;
+		mConnection = NULL;
+	}
 
-	if (dialogWrapper.exec() == QDialog::Accepted)
-		return mConnection;
-
-	delete mConnection;
-	return NULL;
+	return mConnection;
 }
 
 /*

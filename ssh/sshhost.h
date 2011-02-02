@@ -30,6 +30,7 @@ public:
 	inline const QString& getName() const { return mName; }
 	inline bool getSavePassword() const { return mSavePassword; }
 	inline bool getSaveKeyPassphrase() const { return mSaveKeyPassphrase; }
+	inline const QString& getSudoPassword() const { return mSudoPassword; }
 
 	inline void setHostName(const QString& hostName) { mHostName = hostName; }
 	inline void setUserName(const QString& userName) { mUserName = userName; }
@@ -42,6 +43,7 @@ public:
 	inline void setName(const QString& name) { mName = name; }
 	inline void setSavePassword(bool savePassword) { mSavePassword = savePassword; }
 	inline void setSaveKeyPassphrase(bool saveKeyPassphrase) { mSaveKeyPassphrase = saveKeyPassphrase; }
+	inline void setSudoPassword(const QString& sudoPassword) { mSudoPassword = sudoPassword; }
 
 	QString getDefaultPath();
 	Location getDefaultLocation();
@@ -69,6 +71,8 @@ private:
 	QString mKeyPassphrase;
 	bool mSavePassword;
 	bool mSaveKeyPassphrase;
+
+	QString mSudoPassword;
 
 	QString mDefaultDirectory;
 

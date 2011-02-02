@@ -28,6 +28,9 @@ signals:
 	void signalUpdateLayouts();
 	void completed();
 
+protected:
+	void showEvent(QShowEvent* e);
+
 private:
 	void showInput();
 	void hideInput();

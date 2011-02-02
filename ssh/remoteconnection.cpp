@@ -1,6 +1,9 @@
 #include "remoteconnection.h"
 #include "remoteconnectionthread.h"
 #include "slavechannel.h"
+#include "main/tools.h"
+#include "main/dialogwrapper.h"
+#include "ssh/connectionstatuswidget.h"
 #include <QDebug>
 
 RemoteConnection::RemoteConnection()
@@ -38,7 +41,7 @@ QString RemoteConnection::getStatusString()
 		return tr("Connected");
 
 	case OpeningChannels:
-		return tr("Configuring ...");
+		return tr("Opening Channel ...");
 
 	case Disconnecting:
 		return tr("Disconnecting ...");
@@ -120,31 +123,48 @@ bool RemoteConnection::isDisconnecting()
 
 RemoteChannel* RemoteConnection::getChannel(RemoteChannel::Type type)
 {
+	//	See if the channel type is already open
 	foreach (RemoteChannel* channel, mOpenChannels)
+	{
 		if (channel->getType() == type)
-			return channel;
+		{
+			if (channel->waitUntilOpen(mConnectionId))
+				return channel;
 
-	//	Not found. Try to open one
+			return NULL;
+		}
+	}
+
+	//	If it's not already open, start it opening
 	return openChannel(type);
 }
 
-bool RemoteConnection::waitUntilOpen()
+bool RemoteConnection::waitUntilOpen(bool waitForChannels)
 {
-	qDebug() << "Entering RemoteConnection::waitUntilOpen";
-
-	QMutex mutex;
-	mutex.lock();
-
-	while (1)
+	Status baseStatus = getBaseStatus();
+	if (!((baseStatus == OpeningChannels && !waitForChannels) || baseStatus == Connected || baseStatus == Error))
 	{
-		Status baseStatus = getBaseStatus();
-		if (baseStatus == OpeningChannels || baseStatus == Connected || baseStatus == Error)
-			break;
+		if (Tools::isMainThread())
+		{
+			//	If this is the main UI thread, show a dialog and actively wait.
+			DialogWrapper<ConnectionStatusWidget> dialogWrapper(new ConnectionStatusWidget(this, true));
+			dialogWrapper.exec();
+		}
+		else
+		{
+			//	If this is NOT the main UI thread, use mutexes to passively wait
+			QMutex mutex;
+			while (1)
+			{
+				Status baseStatus = getBaseStatus();
+				if ((baseStatus == OpeningChannels && !waitForChannels) || baseStatus == Connected || baseStatus == Error)
+					break;
 
-		mStatusWaiter.wait(&mutex, 1000);
+				mutex.lock();
+				mStatusWaiter.wait(&mutex, 1000);
+			}
+		}
 	}
-
-	qDebug() << "Exiting RemoteConnection::waitUntilOpen";
 
 	return (getBaseStatus() != Error);
 }
@@ -158,6 +178,48 @@ SlaveChannel* RemoteConnection::getSudoChannel()
 {
 	return static_cast<SlaveChannel*>(getChannel(RemoteChannel::SudoSlave));
 }
+
+void RemoteConnection::recordChannelOpening()
+{
+	mChannelsOpening++;
+	if (mChannelsOpening == 1)
+		setBaseStatus(OpeningChannels);
+}
+
+void RemoteConnection::recordChannelOpen()
+{
+	mChannelsOpening--;
+	if (mChannelsOpening <= 0)
+	{
+		mChannelsOpening = 0;
+		setBaseStatus(Connected);
+	}
+}
+
+void RemoteConnection::channelStateChanged(RemoteChannel* /*channel*/)
+{
+	//	Work out a collective state of my channels
+	bool channelOpening = false;
+	bool channelError = false;
+	foreach (RemoteChannel* channel, mOpenChannels)
+	{
+		if (channel->isOpening())
+			channelOpening = true;
+		else if (channel->isError())
+			channelError = true;
+	}
+
+	//	Set my state accordingly
+	if (channelError)
+		setErrorStatus(tr("Connection dropped!"));
+	else if (channelOpening)
+		setBaseStatus(OpeningChannels);
+	else
+		setBaseStatus(Connected);
+}
+
+
+
 
 
 

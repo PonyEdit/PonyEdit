@@ -97,7 +97,7 @@ bool SshConnection::threadConnect()
 					authenticated = mRawConnection->authenticateKeyFile(mHost->getKeyFile().toUtf8(), mHost->getUserName().toUtf8(), mHost->getKeyPassphrase().toUtf8(), &passkeyRejected);
 
 					if (passkeyRejected)
-						waitForInput(SshConnection::passwordInputDialog, SshConnection::passwordInputCallback, QVariant(true));
+						waitForInput(SshConnection::passwordInputDialog, SshConnection::passwordInputCallback, QVariant(KeyPassphrase));
 				}
 			}
 		}
@@ -105,7 +105,7 @@ bool SshConnection::threadConnect()
 		//	Fall back on password entry
 		while (!authenticated)
 		{
-			waitForInput(SshConnection::passwordInputDialog, SshConnection::passwordInputCallback, QVariant(false));
+			waitForInput(SshConnection::passwordInputDialog, SshConnection::passwordInputCallback, QVariant(SshPassword));
 
 			if (isDeliberatelyDisconnecting()) return false;
 			authenticated = mRawConnection->authenticatePassword(mHost->getUserName().toUtf8(), mHost->getPassword().toUtf8());
@@ -143,12 +143,13 @@ RemoteChannel* SshConnection::openChannel(RemoteChannel::Type type)
 		throw(tr("Invalid operation: attempting to open an invalid channel via ssh"));
 
 	RemoteChannel* channel = new SlaveChannel(this, sudo);
-/*	bool ok = channel->waitUntilOpen(mConnectionId);
+
+	bool ok = channel->waitUntilOpen(mConnectionId);
 	if (!ok)
 	{
 		delete channel;
-		throw(tr("Failed to open remote channel!"));
-	}*/
+		return NULL;
+	}
 
 	return channel;
 }
@@ -212,28 +213,53 @@ RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 		mRawConnection->writeFile(".ponyedit/slave.pl", sSlaveScript.constData(), sSlaveScript.length());
 
 	//	If this is a sudo connection, sudo at this point.
+	QByteArray firstLine;
 	if (sudo)
 	{
-		//	Run the remote slave script
+		//	Run the remote slave script inside sudo
 		const char* slaveStarter = "sudo -k -p -sudo-prompt%% perl .ponyedit/slave.pl\n";
 		mRawConnection->writeData(rawChannel, slaveStarter, strlen(slaveStarter));
-		QByteArray reply = mRawConnection->readUntil(rawChannel, "%");
-		if (!reply.endsWith("-sudo-prompt"))
-			throw(tr("Failed to execute remote sudo command!"));
 
-		const char* sudoPassword = "XXXXXXX\n";
-		mRawConnection->writeData(rawChannel, sudoPassword, strlen(sudoPassword));
-		mRawConnection->readLine(rawChannel);
+		//	Try passwords
+		bool firstTry = true;
+		while (1)
+		{
+			//	Check that we haven't run out of tries
+			QByteArray reply = mRawConnection->readUntil(rawChannel, "%").trimmed();
+			if (reply.startsWith("~="))
+			{
+				firstLine = reply;
+				break;	//	Accepted!
+			}
+			if (!reply.endsWith("-sudo-prompt"))
+				throw(tr("Failed to execute remote sudo command!"));
+
+			if (!firstTry)
+				mHost->setSudoPassword("");
+
+			//	Ask the user for a password to use
+			if (mHost->getSudoPassword().isEmpty())
+				waitForInput(passwordInputDialog, passwordInputCallback, QVariant(SudoPassword));
+			if (mHost->getSudoPassword().isEmpty())
+				throw(tr("Sudo cancelled"));
+
+			//	Try the password
+			QString pass = mHost->getSudoPassword() + "\n";
+			mRawConnection->writeData(rawChannel, pass.toUtf8(), pass.length());
+
+			firstTry = false;
+		}
 	}
 	else
 	{
 		//	Run the remote slave script
 		const char* slaveStarter = "perl .ponyedit/slave.pl\n";
 		mRawConnection->writeData(rawChannel, slaveStarter, strlen(slaveStarter));
+		firstLine = mRawConnection->readUntil(rawChannel, "%").trimmed();
 	}
 
 	//	First line returned from the slave script should be the user's home dir.
-	QString homeDirectory = mRawConnection->readLine(rawChannel).trimmed();
+	QString homeDirectory = firstLine.trimmed();
 	if (homeDirectory.startsWith("~="))
 	{
 		if (mHomeDirectory.isEmpty())
@@ -288,34 +314,59 @@ bool SshConnection::hostkeyWarnCallback(ConnectionStatusWidget*, RemoteConnectio
 void SshConnection::passwordInputDialog(ConnectionStatusWidget* widget, RemoteConnection* connection, QWidget* target, QVariant param)
 {
 	SshConnection* sshConnection = static_cast<SshConnection*>(connection);
-	bool keyPassphrase = param.toBool();
+	PasswordType passwordType = static_cast<PasswordType>(param.toInt());
+
+	QString query;
+	bool savePassword;
+	switch (passwordType)
+	{
+	case SshPassword:
+		query = tr("Please enter your password");
+		savePassword = sshConnection->mHost->getSavePassword();
+		break;
+
+	case KeyPassphrase:
+		query = tr("Please enter your key passphrase");
+		savePassword = sshConnection->mHost->getSaveKeyPassphrase();
+		break;
+
+	case SudoPassword:
+		query = tr("Please enter your sudo password");
+		savePassword = false;
+		break;
+	}
 
 	widget->addButton(QDialogButtonBox::YesRole, tr("Connect"));
-	widget->setManualStatus(keyPassphrase ? tr("Please enter your key passphrase") : tr("Please enter your password"), QPixmap(":/icons/question.png"));
+	widget->setManualStatus(query, QPixmap(":/icons/question.png"));
 
 	QVBoxLayout* layout = new QVBoxLayout(target);
 	sshConnection->mPasswordInput = new PasswordInput(target);
 	layout->addWidget(sshConnection->mPasswordInput);
 
-	sshConnection->mPasswordInput->setSavePassword(keyPassphrase ?
-		sshConnection->mHost->getSaveKeyPassphrase() :
-		sshConnection->mHost->getSavePassword());
+	sshConnection->mPasswordInput->setSavePassword(savePassword);
 }
 
 bool SshConnection::passwordInputCallback(ConnectionStatusWidget*, RemoteConnection* connection, QDialogButtonBox::ButtonRole, QVariant param)
 {
 	SshConnection* sshConnection = static_cast<SshConnection*>(connection);
-
+	PasswordType passwordType = static_cast<PasswordType>(param.toInt());
 	SshHost* host = sshConnection->mHost;
-	if (param.toBool())
+
+	switch (passwordType)
 	{
-		host->setKeyPassphrase(sshConnection->mPasswordInput->getEnteredPassword());
-		host->setSaveKeyPassphrase(sshConnection->mPasswordInput->getSavePassword());
-	}
-	else
-	{
+	case SshPassword:
 		host->setPassword(sshConnection->mPasswordInput->getEnteredPassword());
 		host->setSavePassword(sshConnection->mPasswordInput->getSavePassword());
+		break;
+
+	case KeyPassphrase:
+		host->setKeyPassphrase(sshConnection->mPasswordInput->getEnteredPassword());
+		host->setSaveKeyPassphrase(sshConnection->mPasswordInput->getSavePassword());
+		break;
+
+	case SudoPassword:
+		host->setSudoPassword(sshConnection->mPasswordInput->getEnteredPassword());
+		break;
 	}
 
 	return true;

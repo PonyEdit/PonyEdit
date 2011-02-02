@@ -49,6 +49,7 @@ public:
 	bool isDirectory() const;
 	bool canRead() const;
 	bool canWrite() const;
+	bool isSudo() const;
 
 	BaseFile* getFile();
 

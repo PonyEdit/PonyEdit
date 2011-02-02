@@ -1,6 +1,9 @@
 #include "remotechannel.h"
 #include "remoteconnection.h"
 #include "remoterequest.h"
+#include "main/tools.h"
+#include "main/dialogwrapper.h"
+#include "ssh/connectionstatuswidget.h"
 #include <QThread>
 #include <QDebug>
 
@@ -17,18 +20,20 @@ public:
 
 RemoteChannel::RemoteChannel(RemoteConnection* connection, Type type)
 {
-	mStatus = Opening;
 	mConnection = connection;
 	mRawHandle = NULL;
 	mType = type;
 
+	//	Must register the channel before setting the status; otherwise it upsets RemoteConnection.
 	connection->registerNewChannel(this);
+	setStatus(Opening);
 }
 
 void RemoteChannel::setStatus(Status newStatus)
 {
 	mStatus = newStatus;
 	mStatusWaiter.wakeAll();
+	mConnection->channelStateChanged(this);
 }
 
 void RemoteChannel::sendRequest(RemoteRequest* request)
@@ -52,7 +57,7 @@ void RemoteChannel::threadRun()
 	while (!mConnection->isDeliberatelyDisconnecting())
 	{
 		//	Wait for the connection to succeed / fail at connecting
-		bool connectionOk = mConnection->waitUntilOpen();
+		bool connectionOk = mConnection->waitUntilOpen(false);
 		if (!connectionOk)
 			break;
 
@@ -112,17 +117,27 @@ void RemoteChannel::threadRun()
 
 bool RemoteChannel::waitUntilOpen(int connectionId)
 {
-	qDebug() << "Entering RemoteChannel::waitUntilOpen";
+	if (mConnectionId < connectionId || mStatus == Opening)
+	{
+		if (Tools::isMainThread())
+		{
+			//	If this is the main UI thread, show a dialog and actively wait.
+			DialogWrapper<ConnectionStatusWidget> dialogWrapper(new ConnectionStatusWidget(mConnection, true));
+			dialogWrapper.exec();
+		}
+		else
+		{
+			//	If this is NOT the main UI thread, use mutexes to passively wait
+			QMutex mutex;
+			while (mConnectionId < connectionId || mStatus == Opening)
+			{
+				mutex.lock();
+				mStatusWaiter.wait(&mutex, 1000);
+			}
+		}
+	}
 
-	QMutex mutex;
-	mutex.lock();
-
-	while (mConnectionId < connectionId || mStatus == Opening)
-		mStatusWaiter.wait(&mutex, 1000);
-
-	qDebug() << "Exiting RemoteChannel::waitUntilOpen";
-
-	return (mStatus == Open);
+	return (mStatus != Error);
 }
 
 void RemoteChannel::startThread()
@@ -130,12 +145,6 @@ void RemoteChannel::startThread()
 	mThread = new RemoteChannelThread(this);
 	mThread->start();
 }
-
-
-
-
-
-
 
 
 

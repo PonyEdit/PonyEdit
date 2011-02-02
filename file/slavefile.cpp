@@ -35,7 +35,7 @@ void SlaveFile::getChannel()
 	if (!mConnection)
 		throw("Failed to open file: failed to connect to remote host");
 
-	mChannel = mConnection->getSlaveChannel();
+	mChannel = mLocation.isSudo() ? mConnection->getSudoChannel() : mConnection->getSlaveChannel();
 	if (!mChannel)
 		throw("Failed to open file: failed to open a slave channel on remote host");
 
@@ -59,8 +59,8 @@ void SlaveFile::open()
 {
 	if(!mCreatingNewFile)
 	{
-		getChannel();
 		setOpenStatus(BaseFile::Loading);
+		getChannel();
 		connectionStateChanged();
 	}
 
@@ -168,9 +168,9 @@ void SlaveFile::save()
 
 void SlaveFile::connectionStateChanged()
 {
-	SshConnection::Status connectionState = mConnection->getStatus();
+	SshConnection::Status connectionState = mConnection->getBaseStatus();
 
-	bool isConnected = (connectionState == SshConnection::Connected);
+	bool isConnected = (connectionState == SshConnection::Connected || connectionState == SshConnection::OpeningChannels);
 	bool wasConnected = (mOpenStatus != Disconnected);
 
 	if (wasConnected && !isConnected)

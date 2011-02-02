@@ -37,6 +37,9 @@ public:
 
 	bool waitUntilOpen(int connectionId);
 
+	inline bool isOpening() { return mStatus == Opening; }
+	inline bool isError() { return mStatus == Error; }
+
 protected:
 	void startThread();	//	Called in subclass constructor
 	virtual void threadConnect() = 0;

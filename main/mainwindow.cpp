@@ -110,6 +110,7 @@ void MainWindow::restoreState()
 	QSettings settings;
 	restoreGeometry(settings.value("mainwindow/geometry").toByteArray());
 	QMainWindow::restoreState(settings.value("mainwindow/state").toByteArray());
+	mConnectionStatusPane->hide();
 }
 
 void MainWindow::createToolbar()

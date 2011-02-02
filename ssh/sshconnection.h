@@ -17,6 +17,8 @@ class RawSshChannelHandle;
 class SshConnection : public RemoteConnection
 {
 public:
+	enum PasswordType { SshPassword, SudoPassword, KeyPassphrase };
+
 	SshConnection(SshHost* host);
 	~SshConnection();
 

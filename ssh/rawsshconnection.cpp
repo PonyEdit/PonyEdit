@@ -297,7 +297,7 @@ QByteArray RawSshConnection::readUntil(Channel* channel, const char* marker)
 		if (rc > 0)
 		{
 			totalReceived += rc;
-			//qDebug() << QByteArray(mTmpBuffer, rc);
+			qDebug() << QByteArray(mTmpBuffer, rc);
 			mReadBuffer.append(mTmpBuffer, rc);
 		}
 		else if (rc < 0)
@@ -333,7 +333,7 @@ QByteArray RawSshConnection::execute(Channel* channel, const char* command)
 
 void RawSshConnection::writeData(Channel* channel, const char* data, int length)
 {
-	// qDebug() << "SENDING: " << data;
+	qDebug() << "SENDING: " << data;
 	mAccessMutex.lock();
 	int rc = libssh2_channel_write(channel, data, length);
 	mAccessMutex.unlock();

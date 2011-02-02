@@ -430,7 +430,7 @@ sub handleMessage
 errlog( '*************************************** Starting up *********************************************' );
 
 #	Send the current working directory, which should be the user's home dir.
-print '~=' . getcwd() . "\n";
+print '~=' . getcwd() . "%";
 
 mainLoop();
 

@@ -221,6 +221,11 @@ Location::Type Location::getType() const
 	return mData->mType;
 }
 
+bool Location::isSudo() const
+{
+	return mData->mSudo;
+}
+
 bool Location::isDirectory() const
 {
 	if (!mData->mSelfLoaded && mData->mProtocol == Local)

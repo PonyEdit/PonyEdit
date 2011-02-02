@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QDialog>
 #include <QPushButton>
+#include <QTimer>
 
 ConnectionStatusWidget::ConnectionStatusWidget(RemoteConnection* connection, bool modal, QWidget* parent) :
     QWidget(parent),
@@ -19,14 +20,17 @@ ConnectionStatusWidget::ConnectionStatusWidget(RemoteConnection* connection, boo
 	connect(this, SIGNAL(signalUpdateLayouts()), this, SLOT(updateLayouts()), Qt::QueuedConnection);
 	connect(connection, SIGNAL(statusChanged()), this, SLOT(connectionStatusChanged()), Qt::QueuedConnection);
 	connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(buttonClicked(QAbstractButton*)));
-
-	connectionStatusChanged();
 }
 
 ConnectionStatusWidget::~ConnectionStatusWidget()
 {
 	clearExtraButtons();
     delete ui;
+}
+
+void ConnectionStatusWidget::showEvent(QShowEvent*)
+{
+	connectionStatusChanged();
 }
 
 void ConnectionStatusWidget::connectionStatusChanged()
