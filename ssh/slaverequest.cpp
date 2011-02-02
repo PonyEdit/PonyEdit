@@ -211,7 +211,7 @@ void SlaveRequest_open::error(const QString& error)
 
 void SlaveRequest_open::success()
 {
-	mFile->fileOpened(mBufferId, QString::fromUtf8(mData), mChecksum, mReadOnly);
+	mFile->fileOpened(mBufferId, mData.isNull() ? QString() : QString::fromUtf8(mData), mChecksum, mReadOnly);
 }
 
 void SlaveRequest_open::fileOpenProgress(int percent)
