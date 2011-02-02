@@ -6,6 +6,7 @@
 #include <QStringList>
 #include <QProcess>
 #include <QApplication>
+#include <QUuid>
 
 #include "sitemanager.h"
 #include "updatemanager.h"
@@ -133,22 +134,21 @@ void UpdateManager::downloadFinished()
 
 	installProc->startDetached(cmd, args);
 #elif defined Q_OS_MAC
+	QUuid uuid;
+	uuid.createUuid();
+
+	QString mnt = "/Volumes/" + uuid.toString();
+
 	cmd = "hdiutil";
-	args << "attach" << info.filePath();
+	args << "attach" << info.filePath() << "-mountpoint" << mnt << "-noverify" << "-nobrowse" << "-noautoopen";
 
-	installProc->start(cmd, args);
+	installProc->execute(cmd, args);
 
-	if(!installProc->waitForFinished())
-	{
-		qDebug() << "Mount failed!";
-		return;
-	}
+	cmd = "rm";
+	args.clear();
+	args << "-rf" << "/Applications/PonyEdit.app";
 
-	QRegExp findMnt("(/Volumes/PonyEdit.*)");
-	QString result = QString::fromUtf8(installProc->readAll());
-
-	findMnt.indexIn(result);
-	QString mnt = findMnt.cap(1).trimmed();
+	installProc->execute(cmd, args);
 
 	cmd = "cp";
 	args.clear();
