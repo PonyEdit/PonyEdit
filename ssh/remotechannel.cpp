@@ -137,9 +137,9 @@ bool RemoteChannel::waitUntilOpen(int connectionId)
 		{
 			//	If this is NOT the main UI thread, use mutexes to passively wait
 			QMutex mutex;
+			mutex.lock();
 			while (mConnectionId < connectionId || mStatus == Opening)
 			{
-				mutex.lock();
 				mStatusWaiter.wait(&mutex, 1000);
 			}
 		}

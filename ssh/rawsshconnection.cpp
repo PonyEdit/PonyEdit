@@ -231,8 +231,6 @@ RawSshConnection::Channel* RawSshConnection::createShellChannel()
 		throw(QObject::tr("Failed to create SSH channel!"));
 	}
 
-	qDebug() << "channel = " << (void*)channel;
-
 	if (libssh2_channel_request_pty(channel, "vanilla"))
 	{
 		mAccessMutex.unlock();
@@ -251,8 +249,6 @@ RawSshConnection::Channel* RawSshConnection::createShellChannel()
 	libssh2_channel_write(channel, command, strlen(command));
 	mAccessMutex.unlock();
 	readToPrompt(channel);
-
-	qDebug() << "Done!";
 
 	//	Shove a message down the line that should turn stty echo off
 	command = "stty -echo\n";
@@ -300,7 +296,9 @@ QByteArray RawSshConnection::readUntil(Channel* channel, const char* marker)
 		else if (rc < 0)
 			throw(QString("Error while receiving from remote host: ") + getLastError(rc));
 		else if (libssh2_channel_eof(channel))
+		{
 			throw(QString("Connection closed by remote host."));
+		}
 	}
 }
 
