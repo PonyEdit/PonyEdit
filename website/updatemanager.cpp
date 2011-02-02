@@ -158,7 +158,7 @@ void UpdateManager::downloadFinished()
 
 	cmd = "hdiutil";
 	args.clear();
-	args << "detach" << mnt;
+	args << "detach" << mnt << "-force";
 
 	installProc->startDetached(cmd, args);
 
