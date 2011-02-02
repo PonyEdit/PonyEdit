@@ -161,6 +161,8 @@ void SshConnection::loadSlaveScript()
 	{
 #ifdef Q_OS_MAC
 		QFile f(QCoreApplication::applicationDirPath() + QString("/../Resources/slave/slave.pl"));
+#elif defined Q_OS_WIN
+		QFile f(QCoreApplication::applicationDirPath() + QString("/slave/slave.pl"));
 #else
 		QFile f("slave/slave.pl");
 #endif
