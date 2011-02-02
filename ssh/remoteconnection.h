@@ -64,7 +64,7 @@ public:
 	QPixmap getStatusIcon();
 
 	inline bool isDeliberatelyDisconnecting() { return mDeliberatelyDisconnecting; }
-	inline bool isConnected() { return mStatus & Connected; }
+	inline bool isConnected() { return mStatus & (Connected | OpeningChannels); }
 	bool isDisconnecting();
 	inline bool isWaitingOnInput() { return mStatus & WaitingOnInput; }
 

@@ -180,13 +180,16 @@ QString SshConnection::getName()
 
 RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 {
+	qDebug() << "Opening raw channel...";
 	RawSshConnection::Channel* rawChannel = mRawConnection->createShellChannel();
 
 	//	Switch to the remote home directory
+	qDebug() << "Switching to home dir...";
 	mRawConnection->execute(rawChannel, ntr("cd ~\n"));
 
 	//	Check that Perl is installed and a recent version
 	bool validPerl = false;
+	qDebug() << "Checking Perl version...";
 	QByteArray perlVersion = mRawConnection->execute(rawChannel, "perl -v\n");
 	if (perlVersion.length() > 0)
 	{
@@ -203,6 +206,7 @@ RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 
 	//	Make sure the remote slave script is present, and the MD5 hashes match. If not, upload again.
 	loadSlaveScript();
+	qDebug() << "Running remote md5sum...";
 	QByteArray remoteMd5 = mRawConnection->execute(rawChannel, REMOTE_GETSLAVEMD5).toLower();
 	remoteMd5.truncate(32);
 	if (remoteMd5 != sSlaveMd5)
@@ -214,6 +218,7 @@ RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 	{
 		//	Run the remote slave script inside sudo
 		const char* slaveStarter = "sudo -k -p -sudo-prompt%% perl .ponyedit/slave.pl\n";
+		qDebug() << "Sending sudo command...";
 		mRawConnection->writeData(rawChannel, slaveStarter, strlen(slaveStarter));
 
 		//	Try passwords
@@ -221,6 +226,7 @@ RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 		while (1)
 		{
 			//	Check that we haven't run out of tries
+			qDebug() << "Looking for sudo prompt...";
 			QByteArray reply = mRawConnection->readUntil(rawChannel, "%").trimmed();
 			if (reply.startsWith("~="))
 			{
@@ -241,6 +247,7 @@ RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 
 			//	Try the password
 			QString pass = mHost->getSudoPassword() + "\n";
+			qDebug() << "Sending sudo password...";
 			mRawConnection->writeData(rawChannel, pass.toUtf8(), pass.length());
 
 			firstTry = false;
@@ -268,6 +275,8 @@ RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 	}
 	else
 		throw(tr("Failed to start slave script!"));
+
+	qDebug() << "Channel opened!";
 
 	return new RawSshChannelHandle(rawChannel);
 }
