@@ -224,10 +224,7 @@ RawSshConnection::Channel* RawSshConnection::createShellChannel()
 {
 	mAccessMutex.lock();
 
-	qDebug() << "About to call libssh2_channel_open_session";
 	Channel* channel = libssh2_channel_open_session(mSession);
-	qDebug() << "Done!";
-
 	if (!channel)
 	{
 		mAccessMutex.unlock();

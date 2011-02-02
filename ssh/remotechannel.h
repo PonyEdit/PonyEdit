@@ -45,6 +45,7 @@ protected:
 	virtual void threadConnect() = 0;
 	virtual void threadSendMessages(QList<RemoteRequest*>& messages) = 0;
 	void setStatus(Status newStatus);
+	void setErrorStatus(const QString& error);
 	inline bool isAcceptingRequests() const { return mStatus != Error; }
 
 	RemoteConnection* mConnection;
@@ -59,6 +60,7 @@ protected:
 
 	QWaitCondition mStatusWaiter;
 	Status mStatus;
+	QString mErrorMessage;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(RemoteChannel::Types);

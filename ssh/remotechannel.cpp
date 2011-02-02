@@ -63,8 +63,16 @@ void RemoteChannel::threadRun()
 
 		setStatus(Opening);
 		mConnectionId = mConnection->getConnectionId();
-		threadConnect();
-		setStatus(Open);
+		try
+		{
+			threadConnect();
+			setStatus(Open);
+		}
+		catch(QString err)
+		{
+			setErrorStatus(err);
+			break;
+		}
 
 		if (mConnection->isDeliberatelyDisconnecting()) break;
 		//	TODO: Handle connection failure
@@ -146,7 +154,11 @@ void RemoteChannel::startThread()
 	mThread->start();
 }
 
-
+void RemoteChannel::setErrorStatus(const QString& error)
+{
+	mErrorMessage = error;
+	setStatus(Error);
+}
 
 
 
