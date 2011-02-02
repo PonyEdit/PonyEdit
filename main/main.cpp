@@ -53,12 +53,29 @@ int main(int argc, char *argv[])
 		Tools::initialize();
 
 		PonyEdit a(argc, argv);
+
+		if(a.isRunning())
+		{
+			if(argc > 1)
+			{
+				for(int ii = 1; ii < argc; ii++)
+				{
+					QString name(argv[ii]);
+					if(name.trimmed().isNull())
+						continue;
+
+					a.sendMessage(name);
+				}
+			}
+
+			return 0;
+		}
+
 		Options::load();
 
 		gSyntaxDefManager = new SyntaxDefManager();
 		gSiteManager = new SiteManager();
 		updateManager = new UpdateManager();
-
 
 		gMainWindow = new MainWindow();
 		gMainWindow->show();

@@ -1,11 +1,39 @@
 #include <QEvent>
 #include <QFileOpenEvent>
+#include <QDebug>
+#include <QLocalSocket>
+#include <QMessageBox>
 
 #include "ponyedit.h"
 #include "file/location.h"
 #include "mainwindow.h"
 
 PonyEdit::PonyEdit(int argc, char** argv) : QApplication(argc, argv)
+{
+	// UUID used to (hopefully) ensure memory name is unique
+	mKey = "PonyEdit-lock-138ad7e0-2ecb-11e0-91fa-0800200c9a66";
+	mMemoryLock.setKey(mKey);
+
+	if(mMemoryLock.attach())
+		mIsRunning = true;
+	else
+	{
+		mIsRunning = false;
+		// create shared memory.
+		if (!mMemoryLock.create(1))
+		{
+			qDebug() << "Unable to create single instance.";
+			return;
+		}
+
+		// create local server and listen to incomming messages from other instances.
+		mLocalServer = new QLocalServer(this);
+		connect(mLocalServer, SIGNAL(newConnection()), this, SLOT(receiveMessage()));
+		mLocalServer->listen(mKey);
+	}
+}
+
+PonyEdit::~PonyEdit()
 {
 }
 
@@ -34,4 +62,56 @@ bool PonyEdit::event(QEvent *e)
 	}
 
 	return QApplication::event(e);
+}
+void PonyEdit::receiveMessage()
+{
+	QLocalSocket *localSocket = mLocalServer->nextPendingConnection();
+
+	if (!localSocket->waitForReadyRead(mTimeout))
+	{
+		qDebug() << localSocket->errorString().toLatin1();
+		return;
+	}
+	QByteArray byteArray = localSocket->readAll();
+	QString message = QString::fromUtf8(byteArray.constData());
+
+	Location *loc = new Location(message);
+	gMainWindow->openSingleFile(loc);
+	delete loc;
+
+	localSocket->disconnectFromServer();
+}
+
+bool PonyEdit::isRunning()
+{
+	return mIsRunning;
+}
+
+bool PonyEdit::sendMessage(const QString &message)
+{
+	if (!mIsRunning)
+		return false;
+
+	QLocalSocket localSocket(this);
+	localSocket.connectToServer(mKey, QIODevice::WriteOnly);
+
+	//QMessageBox::critical(0, "Sending", message);
+
+	if (!localSocket.waitForConnected(mTimeout))
+	{
+		qDebug() << localSocket.errorString().toLatin1();
+		return false;
+	}
+
+	localSocket.write(message.toUtf8());
+
+	if (!localSocket.waitForBytesWritten(mTimeout))
+	{
+		qDebug() << localSocket.errorString().toLatin1();
+		return false;
+	}
+
+	localSocket.disconnectFromServer();
+
+	return true;
 }
