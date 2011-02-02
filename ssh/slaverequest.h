@@ -50,6 +50,8 @@ public:
 	virtual bool hasManualComponent() { return false; }
 	virtual void doManualWork(RawSshConnection* /*connection*/) {}
 
+	void checkForErrors(const QByteArray& response);
+
 protected:
 
 	//	UNSUPPORTED: Signed 16 and 32-bit numbers. Perl <5.10 can't read 'em without some manual work.
@@ -78,7 +80,7 @@ public:
 	virtual void packBody(QByteArray* target);
 	virtual void handleResponse(const QByteArray& response);
 
-	virtual void error(const QString& error);
+	virtual void error(const Error& err);
 	virtual void success();
 
 private:
@@ -102,7 +104,7 @@ public:
 	virtual bool hasManualComponent() { return true; }
 	virtual void doManualWork(RawSshConnection* connection);
 
-	virtual void error(const QString& error);
+	virtual void error(const Error& err);
 	virtual void success();
 
 	virtual void fileOpenProgress(int percent);
@@ -124,9 +126,8 @@ class SlaveRequest_changeBuffer : public SlaveRequest
 public:
 	SlaveRequest_changeBuffer(quint32 bufferId, quint32 position, quint32 removeCount, const QString& add);
 	virtual void packBody(QByteArray* target);
-	virtual void handleResponse(const QByteArray& response);
 
-	virtual void error(const QString& error);
+	virtual void error(const Error& err);
 
 private:
 	quint32 mPosition;
@@ -143,9 +144,8 @@ class SlaveRequest_saveBuffer : public SlaveRequest
 public:
 	SlaveRequest_saveBuffer(quint32 bufferId, SlaveFile* file, int revision, int undoLength, const QString& fileContent);
 	virtual void packBody(QByteArray* target);
-	virtual void handleResponse(const QByteArray& response);
 
-	virtual void error(const QString& error);
+	virtual void error(const Error& err);
 	virtual void success();
 
 private:
@@ -175,9 +175,8 @@ class SlaveRequest_resyncFile : public SlaveRequest
 public:
 	SlaveRequest_resyncFile(quint32 bufferId, SlaveFile* file, const QString& content, int revision);
 	virtual void packBody(QByteArray* target);
-	virtual void handleResponse(const QByteArray& response);
 
-	virtual void error(const QString& error);
+	virtual void error(const Error& err);
 	virtual void success();
 
 private:
@@ -195,7 +194,7 @@ class SlaveRequest_closeFile : public SlaveRequest
 public:
 	SlaveRequest_closeFile(SlaveFile* file, quint32 bufferId);
 
-	virtual void error(const QString& error);
+	virtual void error(const Error& err);
 	virtual void success();
 
 private:
@@ -212,7 +211,7 @@ public:
 	SlaveRequest_createFile(SlaveFile* file, const QString& content);
 	virtual void packBody(QByteArray* target);
 
-	virtual void error(const QString& error);
+	virtual void error(const Error& err);
 	virtual void success();
 
 private:
@@ -231,7 +230,7 @@ public:
 	SlaveRequest_createDirectory(const Location& location, QString dirName);
 	virtual void packBody(QByteArray* target);
 
-	virtual void error(const QString& error);
+	virtual void error(const Error& err);
 	virtual void success();
 
 private:

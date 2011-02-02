@@ -35,6 +35,10 @@ use constant FILE_ISDIR =>    1;
 use constant FILE_CANREAD =>  2;
 use constant FILE_CANWRITE => 4;
 
+use constant ERR_OK => 0;
+use constant ERR_UNSPECIFIED => 1;
+use constant ERR_PERMISSION => 2;
+
 #
 #	Buffer class
 #
@@ -221,7 +225,7 @@ sub msg_ls
 	}
 	close(DIR);
 
-	die("Permission denied!\n") if ($hits == 0 && !(-r $d));
+	die({msg => "Permission denied!\n", code => ERR_PERMISSION}) if ($hits == 0 && !(-r $d));
 }
 
 #	open
@@ -404,7 +408,7 @@ sub handleMessage
 			die( "Invalid messageId: $messageId" );
 		}
 		$result = DataBlock->new();
-		$result->write( 'C', 1 );
+		$result->write('C', ERR_OK);
 		&{$messageDefs{$messageId}}($buff, $params, $result);
 
 		if ($buff && $buff->{CLOSED})
@@ -416,12 +420,19 @@ sub handleMessage
 	}
 	or do
 	{
-		my $e = $@;
-		$e =~ s/\s+$//;
-		errlog( "Error occurred: $e" );
+		my $msg = $@;
+		my $code = ERR_UNSPECIFIED;
+		if (ref($msg) eq 'HASH')
+		{
+			$code = $msg->{'code'};
+			$msg = $msg->{'msg'};
+		}
+
+		$msg =~ s/\s+$//;
+		errlog( "Error occurred: $msg" );
 		my $err = DataBlock->new();
-		$err->write( 'C', 0 );
-		$err->writeString( $e );
+		$err->write('C', $code);
+		$err->writeString($msg);
 		return $err;
 	};
 	return $result;

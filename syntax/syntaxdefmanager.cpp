@@ -53,13 +53,7 @@ SyntaxDefManager::~SyntaxDefManager()
 
 void SyntaxDefManager::updateIndex()
 {
-#ifdef Q_OS_MAC
-	QDir defDir(QCoreApplication::applicationDirPath() + "/../Resources/syntaxdefs/");
-#elif defined Q_OS_WIN
-	QDir defDir(QCoreApplication::applicationDirPath() + "/syntaxdefs/");
-#else
-	QDir defDir("syntaxdefs/");
-#endif
+	QDir defDir(Tools::getResourcePath("syntaxdefs/"));
 	QFileInfoList fileInfos = defDir.entryInfoList();
 	foreach (QFileInfo info, fileInfos)
 		indexFile(info);

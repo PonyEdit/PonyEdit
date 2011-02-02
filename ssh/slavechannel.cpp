@@ -28,14 +28,19 @@ void SlaveChannel::threadSendMessages(QList<RemoteRequest*>& messages)
 
 		try
 		{
+			rq->checkForErrors(response);
 			rq->handleResponse(response);
 			if (rq->hasManualComponent())
 				rq->doManualWork(static_cast<SshConnection*>(mConnection)->getRawConnection());
 			rq->success();
 		}
-		catch (QString error)
+		catch (SlaveRequest::Error error)
 		{
 			rq->error(error);
+		}
+		catch (QString message)
+		{
+			rq->error(message);
 		}
 	}
 }

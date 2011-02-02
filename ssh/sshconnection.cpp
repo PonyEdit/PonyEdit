@@ -19,6 +19,7 @@
 #include "main/globaldispatcher.h"
 #include "slavechannel.h"
 #include "main/global.h"
+#include "main/tools.h"
 
 #define	KEEPALIVE_TIMEOUT 60000	/* 60 seconds */
 
@@ -159,14 +160,7 @@ void SshConnection::loadSlaveScript()
 	sSlaveScriptMutex.lock();
 	if (!sSlaveLoaded)
 	{
-#ifdef Q_OS_MAC
-		QFile f(QCoreApplication::applicationDirPath() + QString("/../Resources/slave/slave.pl"));
-#elif defined Q_OS_WIN
-		QFile f(QCoreApplication::applicationDirPath() + QString("/slave/slave.pl"));
-#else
-		QFile f("slave/slave.pl");
-#endif
-
+		QFile f(Tools::getResourcePath("slave/slave.pl"));
 		f.open(QFile::ReadOnly);
 		sSlaveScript = f.readAll();
 
@@ -319,7 +313,7 @@ void SshConnection::passwordInputDialog(ConnectionStatusWidget* widget, RemoteCo
 	PasswordType passwordType = static_cast<PasswordType>(param.toInt());
 
 	QString query;
-	bool savePassword;
+	bool savePassword = false;
 	switch (passwordType)
 	{
 	case SshPassword:

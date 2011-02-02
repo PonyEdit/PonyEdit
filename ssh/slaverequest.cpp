@@ -59,6 +59,28 @@ void SlaveRequest::addData(QByteArray* target, unsigned char field, const char* 
 	target->append(d, len);
 }
 
+void SlaveRequest::checkForErrors(const QByteArray& response)
+{
+	const char* cursor = response.constData();
+	ErrorType errorType = static_cast<ErrorType>(*(cursor++));
+	if (errorType != ErrOk)
+	{
+		quint32 errorLength;
+		QString errorString;
+
+		errorLength = *(quint32*)cursor;
+		cursor += 4;
+
+		errorString = QByteArray(cursor, errorLength);
+		cursor += errorLength;
+
+		Error err;
+		err.type = errorType;
+		err.message = errorString;
+		throw(err);
+	}
+}
+
 
 /////////////////////
 //  Message 1: ls  //
@@ -73,27 +95,8 @@ void SlaveRequest_ls::packBody(QByteArray* target)
 
 void SlaveRequest_ls::handleResponse(const QByteArray& response)
 {
-	const char* cursor = response.constData();
+	const char* cursor = response.constData() + 1;
 	const char* dataEnd = response.constData() + response.size();
-
-	//
-	//	Check for errors
-	//
-
-	bool success = *(cursor++);
-	if (!success)
-	{
-		quint32 errorLength;
-		QString errorString;
-
-		errorLength = *(quint32*)cursor;
-		cursor += 4;
-
-		errorString = QByteArray(cursor, errorLength);
-		cursor += errorLength;
-
-		throw(errorString);
-	}
 
 	//
 	//	Read directory structure
@@ -130,9 +133,9 @@ void SlaveRequest_ls::handleResponse(const QByteArray& response)
 	}
 }
 
-void SlaveRequest_ls::error(const QString& error)
+void SlaveRequest_ls::error(const SlaveRequest::Error& err)
 {
-	mLocation.childLoadError(error);
+	mLocation.childLoadError(err.message);
 }
 
 void SlaveRequest_ls::success()
@@ -155,26 +158,7 @@ void SlaveRequest_open::packBody(QByteArray* target)
 
 void SlaveRequest_open::handleResponse(const QByteArray& response)
 {
-	const char* cursor = response.constData();
-
-	//
-	//	Check for errors
-	//
-
-	bool success = *(cursor++);
-	if (!success)
-	{
-		quint32 errorLength;
-		QString errorString;
-
-		errorLength = *(quint32*)cursor;
-		cursor += 4;
-
-		errorString = QByteArray(cursor, errorLength);
-		cursor += errorLength;
-
-		throw(errorString);
-	}
+	const char* cursor = response.constData() + 1;
 
 	//
 	//	Take note of the bufferId & checksum
@@ -204,9 +188,9 @@ void SlaveRequest_open::doManualWork(RawSshConnection* connection)
 	}
 }
 
-void SlaveRequest_open::error(const QString& error)
+void SlaveRequest_open::error(const SlaveRequest::Error& err)
 {
-	mFile->openError(error);
+	mFile->openError(err.message);
 }
 
 void SlaveRequest_open::success()
@@ -238,34 +222,9 @@ void SlaveRequest_changeBuffer::packBody(QByteArray* target)
 	addData(target, 'a', mAdd.toUtf8());
 }
 
-void SlaveRequest_changeBuffer::handleResponse(const QByteArray& response)
+void SlaveRequest_changeBuffer::error(const SlaveRequest::Error& err)
 {
-	const char* cursor = response.constData();
-
-	//
-	//	Check for errors
-	//
-
-	bool success = *(cursor++);
-	if (!success)
-	{
-		quint32 errorLength;
-		QString errorString;
-
-		errorLength = *(quint32*)cursor;
-		cursor += 4;
-
-		errorString = QByteArray(cursor, errorLength);
-		cursor += errorLength;
-
-		throw(errorString);
-	}
-}
-
-
-void SlaveRequest_changeBuffer::error(const QString& error)
-{
-	qDebug() << "Error changing remote buffer: " << error;
+	qDebug() << "Error changing remote buffer: " << err.message;
 }
 
 //////////////////////////////
@@ -290,31 +249,7 @@ void SlaveRequest_saveBuffer::packBody(QByteArray* target)
 	addData(target, 'c', mChecksum);
 }
 
-void SlaveRequest_saveBuffer::handleResponse(const QByteArray& response)
-{
-	const char* cursor = response.constData();
-
-	//
-	//	Check for errors
-	//
-
-	bool success = *(cursor++);
-	if (!success)
-	{
-		quint32 errorLength;
-		QString errorString;
-
-		errorLength = *(quint32*)cursor;
-		cursor += 4;
-
-		errorString = QByteArray(cursor, errorLength);
-		cursor += errorLength;
-
-		throw(errorString);
-	}
-}
-
-void SlaveRequest_saveBuffer::error(const QString& /* error */)
+void SlaveRequest_saveBuffer::error(const SlaveRequest::Error& /* err */)
 {
 	mFile->saveFailed();
 }
@@ -347,33 +282,9 @@ void SlaveRequest_resyncFile::packBody(QByteArray* target)
 	addData(target, 's', quint32(0));
 }
 
-void SlaveRequest_resyncFile::handleResponse(const QByteArray& response)
+void SlaveRequest_resyncFile::error(const SlaveRequest::Error& err)
 {
-	const char* cursor = response.constData();
-
-	//
-	//	Check for errors
-	//
-
-	bool success = *(cursor++);
-	if (!success)
-	{
-		quint32 errorLength;
-		QString errorString;
-
-		errorLength = *(quint32*)cursor;
-		cursor += 4;
-
-		errorString = QByteArray(cursor, errorLength);
-		cursor += errorLength;
-
-		throw(errorString);
-	}
-}
-
-void SlaveRequest_resyncFile::error(const QString& error)
-{
-	mFile->resyncError(error);
+	mFile->resyncError(err.message);
 }
 
 void SlaveRequest_resyncFile::success()
@@ -391,7 +302,7 @@ SlaveRequest_closeFile::SlaveRequest_closeFile(SlaveFile* file, quint32 bufferId
 	mFile = file;
 }
 
-void SlaveRequest_closeFile::error(const QString& /* error */)
+void SlaveRequest_closeFile::error(const SlaveRequest::Error& /* err */)
 {
 	//	Don't care if this fails; the only way it can fail is if the connection drops.
 	//	If the connection drops, the file is essentially closed server-side anyway.
@@ -414,9 +325,9 @@ SlaveRequest_createFile::SlaveRequest_createFile(SlaveFile* file, const QString&
 	mContent = content;
 }
 
-void SlaveRequest_createFile::error(const QString& error)
+void SlaveRequest_createFile::error(const SlaveRequest::Error& err)
 {
-	mFile->openError(error);
+	mFile->openError(err.message);
 }
 
 void SlaveRequest_createFile::success()
@@ -443,9 +354,9 @@ SlaveRequest_createDirectory::SlaveRequest_createDirectory(const Location& locat
 	mDirName = dirName;
 }
 
-void SlaveRequest_createDirectory::error(const QString& error)
+void SlaveRequest_createDirectory::error(const SlaveRequest::Error& err)
 {
-	mLocation.childLoadError(error);
+	mLocation.childLoadError(err.message);
 }
 
 void SlaveRequest_createDirectory::success()
