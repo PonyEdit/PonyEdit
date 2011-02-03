@@ -11,7 +11,7 @@ public:
 
     RemoteRequest();
 
-	virtual void error(const Error& err) {};
+	virtual void error(const Error& /* err */) {}
 	void error(const QString& message);
 	virtual void success() {}
 };
