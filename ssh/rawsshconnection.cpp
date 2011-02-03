@@ -299,9 +299,12 @@ QByteArray RawSshConnection::readUntil(Channel* channel, const char* marker)
 		}
 		else if (rc < 0)
 			throw(QString("Error while receiving from remote host: ") + getLastError(rc));
-		else if (libssh2_channel_eof(channel->handle))
+		else
 		{
-			throw(QString("Connection closed by remote host."));
+			mAccessMutex.lock();
+			bool eof = libssh2_channel_eof(channel->handle);
+			mAccessMutex.unlock();
+			if (eof) throw(QString("Connection closed by remote host."));
 		}
 	}
 }
@@ -310,7 +313,10 @@ QString RawSshConnection::getLastError(int rc)
 {
 	char* errorBuffer;
 	int errorLength;
+
+	mAccessMutex.lock();
 	libssh2_session_last_error(mSession, &errorBuffer, &errorLength, 0);
+	mAccessMutex.unlock();
 
 	QString error;
 	error.sprintf("%d - %s", rc, errorBuffer);
@@ -357,7 +363,9 @@ void RawSshConnection::writeFile(const char* remoteFilename, const char* data, i
 	{
 		char *errmsg;
 		int errlen;
+		mAccessMutex.lock();
 		libssh2_session_last_error(mSession, &errmsg, &errlen, 0);
+		mAccessMutex.unlock();
 		throw(QString(errmsg));
 	}
 
