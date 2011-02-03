@@ -325,7 +325,6 @@ QString RawSshConnection::getLastError(int rc)
 
 QByteArray RawSshConnection::execute(Channel* channel, const char* command)
 {
-	// qDebug() << "SENDING: " << command;
 	int len = strlen(command);
 	mAccessMutex.lock();
 	int rc = libssh2_channel_write(channel->handle, command, len);
@@ -338,11 +337,9 @@ QByteArray RawSshConnection::execute(Channel* channel, const char* command)
 
 void RawSshConnection::writeData(Channel* channel, const char* data, int length)
 {
-	qDebug() << "SENDING: " << data;
 	mAccessMutex.lock();
 	int rc = libssh2_channel_write(channel->handle, data, length);
 	mAccessMutex.unlock();
-	// qDebug() << "Sent bytes: " << rc;
 	if (rc != length)
 		throw(QString("Error while sending to remote host: ") + getLastError(rc));
 }

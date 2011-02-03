@@ -170,7 +170,7 @@ use constant ERR_PERMISSION => 2;
 		my ($messageId, $bufferId, $length) = $self->read( 'vVV' );
 		if( $length > length( $self->{DATA} ) - $self->{CURSOR} )
 		{
-			die( 'Faulty Message Header!' );
+			die("Faulty Message Header: length = $length, dataLength = " . length($self->{DATA}) . ", cursor = " . $self->{CURSOR});
 		}
 		my %params = ();
 		my $target = $self->{CURSOR} + $length;
@@ -352,8 +352,14 @@ sub mainLoop
 {
 	while(1)
 	{
-		my $line = <STDIN>;
-		chomp( $line );
+		my $line;
+		while ($line !~ /%$/)
+		{
+			$line .= <STDIN>;
+			chomp($line);
+		}
+		chop($line);
+
 		eval
 		{
 			$line = decode_base64( $line );
