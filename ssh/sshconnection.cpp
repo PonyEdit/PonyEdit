@@ -161,7 +161,8 @@ void SshConnection::loadSlaveScript()
 	if (!sSlaveLoaded)
 	{
 		QFile f(Tools::getResourcePath("slave/slave.pl"));
-		f.open(QFile::ReadOnly);
+		if (!f.open(QFile::ReadOnly))
+			throw(tr("Unable to find slave script!"));
 		sSlaveScript = f.readAll();
 
 		QCryptographicHash hash(QCryptographicHash::Md5);

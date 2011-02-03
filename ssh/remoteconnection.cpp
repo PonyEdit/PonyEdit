@@ -201,17 +201,21 @@ void RemoteConnection::channelStateChanged(RemoteChannel* /*channel*/)
 	//	Work out a collective state of my channels
 	bool channelOpening = false;
 	bool channelError = false;
+	QString channelErrorText;
 	foreach (RemoteChannel* channel, mOpenChannels)
 	{
 		if (channel->isOpening())
 			channelOpening = true;
 		else if (channel->isError())
+		{
+			channelErrorText = channel->getError();
 			channelError = true;
+		}
 	}
 
 	//	Set my state accordingly
 	if (channelError)
-		setErrorStatus(tr("Connection dropped!"));
+		setErrorStatus(channelErrorText);
 	else if (channelOpening)
 		setBaseStatus(OpeningChannels);
 	else

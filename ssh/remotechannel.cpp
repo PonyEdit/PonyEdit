@@ -103,7 +103,7 @@ void RemoteChannel::threadRun()
 			}
 			catch (QString error)
 			{
-				setStatus(Error);
+				setErrorStatus(error);
 				mConnection->setDisconnected();
 
 				qDebug() << "Channel error: " << error;

@@ -39,6 +39,7 @@ public:
 
 	inline bool isOpening() { return mStatus == Opening; }
 	inline bool isError() { return mStatus == Error; }
+	inline const QString& getError() const { return mErrorMessage; }
 
 protected:
 	void startThread();	//	Called in subclass constructor
