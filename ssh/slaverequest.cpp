@@ -249,9 +249,9 @@ void SlaveRequest_saveBuffer::packBody(QByteArray* target)
 	addData(target, 'c', mChecksum);
 }
 
-void SlaveRequest_saveBuffer::error(const SlaveRequest::Error& /* err */)
+void SlaveRequest_saveBuffer::error(const SlaveRequest::Error& err)
 {
-	mFile->saveFailed();
+	mFile->saveFailed(err);
 }
 
 void SlaveRequest_saveBuffer::success()

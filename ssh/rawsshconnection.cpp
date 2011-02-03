@@ -337,11 +337,21 @@ QByteArray RawSshConnection::execute(Channel* channel, const char* command)
 
 void RawSshConnection::writeData(Channel* channel, const char* data, int length)
 {
-	mAccessMutex.lock();
-	int rc = libssh2_channel_write(channel->handle, data, length);
-	mAccessMutex.unlock();
-	if (rc != length)
-		throw(QString("Error while sending to remote host: ") + getLastError(rc));
+	//	Break the data up into lumps no larger than 32KB so LibSSH2 doesn't freak out
+	int cursor = 0;
+	while (cursor < length)
+	{
+		int sendLength = (length - cursor > 32000 ? 32000 : length - cursor);
+
+		//	Lock mutex with each 32000 block
+		mAccessMutex.lock();
+		int rc = libssh2_channel_write(channel->handle, data+cursor, sendLength);
+		mAccessMutex.unlock();
+		if (rc != sendLength)
+			throw(QString("Error while sending to remote host: ") + getLastError(rc));
+
+		cursor += 32000;
+	}
 }
 
 void RawSshConnection::sendEof(Channel* channel)

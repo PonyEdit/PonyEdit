@@ -76,7 +76,7 @@ signals:
 	void fileOpenProgress(int percent);
 	void openStatusChanged(int newStatus);
 	void unsavedStatusChanged();
-	void saveFailed(const QString& error);
+	void notifySaveFailed(const QString& error);
 
 protected:
 	BaseFile(const Location& location);

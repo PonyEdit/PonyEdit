@@ -269,7 +269,7 @@ void BaseFile::setSyntax(SyntaxDefinition* syntaxDef)
 
 void BaseFile::saveFailed()
 {
-	emit saveFailed(tr("Cannot save file: do not have write permissions"));
+	emit notifySaveFailed(tr("Cannot save file: do not have write permissions"));
 }
 
 void BaseFile::beginRedoBlock()

@@ -204,7 +204,7 @@ void MainWindow::openSingleFile(Location *loc)
 
 		connect(file, SIGNAL(openStatusChanged(int)), this, SLOT(updateTitle()));
 		connect(file, SIGNAL(unsavedStatusChanged()), this, SLOT(updateTitle()));
-		connect(file, SIGNAL(saveFailed(QString)), this, SLOT(saveFailed(QString)));
+		connect(file, SIGNAL(notifySaveFailed(QString)), this, SLOT(saveFailed(QString)));
 	}
 }
 
