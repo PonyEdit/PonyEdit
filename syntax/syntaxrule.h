@@ -43,7 +43,7 @@ public:
 	inline bool isValid() const { return mValid; }
 	inline Type getType() const { return mType; }
 	inline const QString& getStringAttribute() const { return mString; }
-	inline const bool getIncludeAttrib() const { return mIncludeAttrib; }
+        inline bool getIncludeAttrib() const { return mIncludeAttrib; }
 	inline const QString& getContext() const { return mContext; }
 	inline SyntaxDefinition::ItemData* getAttributeLink() const { return mAttributeLink; }
 	inline bool isLookAhead() const { return mLookAhead; }

@@ -69,7 +69,7 @@ void RawSshConnection::connect(const char* host, int port)
 		throw(QObject::tr("Failed to create a socket!"));
 
 	// Disable SIGPIPE on this socket
-#ifndef Q_OS_WIN
+#ifdef Q_OS_OSX
 	int set = 1;
 	setsockopt(sock, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
 #endif

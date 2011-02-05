@@ -1,6 +1,6 @@
 #include <QDebug>
 #include <QCryptographicHash>
-#include "ssh/SlaveRequest.h"
+#include "ssh/slaverequest.h"
 #include "file/slavefile.h"
 #include "main/globaldispatcher.h"
 

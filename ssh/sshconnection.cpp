@@ -12,7 +12,7 @@
 #include <QIcon>
 #include <QCoreApplication>
 #include "sshhost.h"
-#include "SlaveRequest.h"
+#include "slaverequest.h"
 #include "file/slavefile.h"
 #include "connectionstatuswidget.h"
 #include "passwordinput.h"
