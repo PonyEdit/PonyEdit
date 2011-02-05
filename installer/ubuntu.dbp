@@ -1,0 +1,251 @@
+[DEBREATE-1.0]
+<<MODE>>0<</MODE>>
+<<CTRL>>
+Package: ponyedit
+Version: 0.9-prealpha9
+Section: editors
+Maintainer: Gary Pendergast <gary@pento.net>
+Homepage: http://ponyedit.com
+Priority: optional
+Architecture: i386
+Depends: libqt4-webkit, libqt4-script, libqt4-xml, libqt4-network, libqt4-gui, libqt4-core
+Description: The fastest remote code editor ever
+ It rocks, y'all.
+
+<</CTRL>>
+<<FILES>>
+1
+/home/gary/Projects/PonyEdit/PonyEdit-build-desktop/ponyedit* -> ponyedit -> /usr/share/ponyedit
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/rapidq.xml -> rapidq.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/lex.xml -> lex.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/nemerle.xml -> nemerle.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/djangotemplate.xml -> djangotemplate.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/boo.xml -> boo.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/html-php.xml -> html-php.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/e.xml -> e.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/progress.xml -> progress.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/lpc.xml -> lpc.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/postscript.xml -> postscript.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/noweb.xml -> noweb.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/nasm.xml -> nasm.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/objectivecpp.xml -> objectivecpp.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/xmldebug.xml -> xmldebug.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/purebasic.xml -> purebasic.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/velocity.xml -> velocity.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/abc.xml -> abc.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/javadoc.xml -> javadoc.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/modelica.xml -> modelica.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/bibtex.xml -> bibtex.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/grammar.xml -> grammar.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/erlang.xml -> erlang.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/asterisk.xml -> asterisk.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/glsl.xml -> glsl.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/uscript.xml -> uscript.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/sgml.xml -> sgml.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/asm-dsp56k.xml -> asm-dsp56k.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/gettext.xml -> gettext.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/systemc.xml -> systemc.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/idl.xml -> idl.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/go.xml -> go.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/cgis.xml -> cgis.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/literate-haskell.xml -> literate-haskell.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/bash.xml -> bash.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/ada.xml -> ada.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/stata.xml -> stata.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/apache.xml -> apache.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/xharbour.xml -> xharbour.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/gdl.xml -> gdl.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/eiffel.xml -> eiffel.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/texinfo.xml -> texinfo.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/jsp.xml -> jsp.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/sql-mysql.xml -> sql-mysql.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/txt2tags.xml -> txt2tags.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/prolog.xml -> prolog.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/lilypond.xml -> lilypond.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/haskell.xml -> haskell.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/latex.xml -> latex.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/asn1.xml -> asn1.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/vhdl.xml -> vhdl.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/coldfusion.xml -> coldfusion.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/python.xml -> python.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/cue.xml -> cue.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/bmethod.xml -> bmethod.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/rexx.xml -> rexx.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/java.xml -> java.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/rhtml.xml -> rhtml.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/winehq.xml -> winehq.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/ansic89.xml -> ansic89.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/euphoria.xml -> euphoria.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/fstab.xml -> fstab.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/gnuassembler.xml -> gnuassembler.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/gdb.xml -> gdb.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/alert_indent.xml -> alert_indent.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/html.xml -> html.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/objectivec.xml -> objectivec.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/opal.xml -> opal.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/asm-avr.xml -> asm-avr.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/fgl-4gl.xml -> fgl-4gl.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/yacas.xml -> yacas.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/ferite.xml -> ferite.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/dtd.xml -> dtd.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/tibasic.xml -> tibasic.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/sather.xml -> sather.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/css.xml -> css.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/qml.xml -> qml.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/cisco.xml -> cisco.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/octave.xml -> octave.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/doxygen.xml -> doxygen.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/actionscript.xml -> actionscript.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/ahdl.xml -> ahdl.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/scala.xml -> scala.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/modula-2.xml -> modula-2.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/zonnon.xml -> zonnon.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/verilog.xml -> verilog.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/ocaml.xml -> ocaml.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/fgl-per.xml -> fgl-per.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/clipper.xml -> clipper.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/php.xml -> php.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/vrml.xml -> vrml.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/inform.xml -> inform.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/pgn.xml -> pgn.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/povray.xml -> povray.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/cg.xml -> cg.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/css-php.xml -> css-php.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/xslt.xml -> xslt.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/monobasic.xml -> monobasic.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/haxe.xml -> haxe.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/sieve.xml -> sieve.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/r.xml -> r.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/fortran.xml -> fortran.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/cs.xml -> cs.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/maxima.xml -> maxima.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/perl.xml -> perl.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/cmake.xml -> cmake.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/logtalk.xml -> logtalk.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/abap.xml -> abap.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/cpp.xml -> cpp.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/mandoc.xml -> mandoc.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/d.xml -> d.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/xml.xml -> xml.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/xorg.xml -> xorg.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/commonlisp.xml -> commonlisp.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/idconsole.xml -> idconsole.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/ini.xml -> ini.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/asm6502.xml -> asm6502.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/pike.xml -> pike.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/picsrc.xml -> picsrc.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/debiancontrol.xml -> debiancontrol.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/kbasic.xml -> kbasic.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/mips.xml -> mips.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/freebasic.xml -> freebasic.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/sml.xml -> sml.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/asm-m68k.xml -> asm-m68k.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/mergetagtext.xml -> mergetagtext.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/ample.xml -> ample.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/json.xml -> json.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/makefile.xml -> makefile.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/rsiidl.xml -> rsiidl.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/component-pascal.xml -> component-pascal.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/roff.xml -> roff.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/awk.xml -> awk.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/scheme.xml -> scheme.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/mason.xml -> mason.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/yacc.xml -> yacc.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/changelog.xml -> changelog.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/mab.xml -> mab.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/markdown.xml -> markdown.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/javascript.xml -> javascript.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/spice.xml -> spice.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/sql.xml -> sql.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/pango.xml -> pango.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/lua.xml -> lua.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/lsl.xml -> lsl.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/sql-postgresql.xml -> sql-postgresql.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/diff.xml -> diff.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/rpmspec.xml -> rpmspec.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/doxygenlua.xml -> doxygenlua.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/javascript-php.xml -> javascript-php.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/m3u.xml -> m3u.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/alert.xml -> alert.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/xul.xml -> xul.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/mup.xml -> mup.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/matlab.xml -> matlab.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/mediawiki.xml -> mediawiki.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/asp.xml -> asp.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/ilerpg.xml -> ilerpg.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/email.xml -> email.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/c.xml -> c.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/ldif.xml -> ldif.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/tcl.xml -> tcl.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/rib.xml -> rib.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/debianchangelog.xml -> debianchangelog.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/ruby.xml -> ruby.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/sci.xml -> sci.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/desktop.xml -> desktop.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/ansys.xml -> ansys.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/yaml.xml -> yaml.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/gap.xml -> gap.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/syntaxdefs/sisu.xml -> sisu.xml -> /usr/share/ponyedit/syntaxdefs
+/home/gary/Projects/PonyEdit/trunk/slave/slave.pl -> slave.pl -> /usr/share/ponyedit/slave
+<</FILES>>
+<<SCRIPTS>>
+<<PREINST>>
+0
+<</PREINST>>
+<<POSTINST>>
+1
+#! /bin/bash -e
+
+ln -fs "/usr/share/ponyedit/ponyedit" "/usr/bin/ponyedit"
+
+<</POSTINST>>
+<<PRERM>>
+1
+#! /bin/bash -e
+
+rm "/usr/bin/ponyedit"
+
+<</PRERM>>
+<<POSTRM>>
+0
+<</POSTRM>>
+<</SCRIPTS>>
+<<CHANGELOG>>
+<<DEST>>DEFAULT<</DEST>>
+PonyEdit (0.9-prealpha9) lucid; urgency=low
+
+  * ADDED: (Windows/OSX) Automatic update installer
+    ADDED: Initial sudo support
+    ADDED: (Windows) Windows File Shares in the File Dialog
+    ADDED: A few new shortcuts in the File menu
+    CHANGED: (Windows) "Close File" shortcut is now Ctrl+W
+    CHANGED: (Windows) Opening with the context menu shortcut now opens in an existing PonyEdit instance, if there is one
+    FIXED: "As You Type" not working in HTML Preview
+    FIXED: (Windows) Syntax highlighting not working when opened through the context menu
+    FIXED: Large changes of various descriptions could mess things up
+
+ -- Gary Pendergast <gary@pento.net>  Sat, 05 Feb 2011 17:57:57 +1100
+
+
+<</CHANGELOG>>
+<<COPYRIGHT>>
+Copyright (c) 2010-2011 Pentalon
+<</COPYRIGHT>>
+<<MENU>>
+1
+Name=PonyEdit
+Version=1.0
+Exec=/usr/share/ponyedit/ponyedit
+Comment=The fastest code editor
+Icon=
+Type=Application
+Terminal=false
+StartupNotify=true
+Encoding=UTF-8
+Categories=Development;
+<</MENU>>
+<<BUILD>>
+1
+1
+1
+<</BUILD>>
