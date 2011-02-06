@@ -72,7 +72,7 @@ private:
 	Location(LocationShared* data);
 
 	void sshChildLoadResponse(const QList<Location>& children);
-	void childLoadError(const QString& error);
+	void childLoadError(const QString& error, bool permissionError);
 
 	void sshFileOpenResponse(SshConnection* controller, quint32 bufferId, const QByteArray& data);
 	void fileOpenError(const QString& error);
@@ -98,7 +98,7 @@ private:
 	bool ensureConnected();
 
 	void emitListLoadedSignal();
-	void emitListLoadError(const QString& error);
+	void emitListLoadError(const QString& error, bool permissionError);
 	void localLoadSelf();
 	void localLoadListing();
 	void sshLoadListing();

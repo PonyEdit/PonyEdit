@@ -125,9 +125,6 @@ void SlaveRequest_ls::handleResponse(const QByteArray& response)
 		size = *(quint32*)cursor;
 		cursor += 4;
 
-		/*lastModified = *(quint32*)cursor;
-		cursor += 4;*/
-
 		mDirList.append(Location(mLocation, mLocation.getPath() + "/" + filename,
 			isDir?Location::Directory:Location::File, size, QDateTime(), canRead, canWrite));
 	}
@@ -135,7 +132,7 @@ void SlaveRequest_ls::handleResponse(const QByteArray& response)
 
 void SlaveRequest_ls::error(const SlaveRequest::Error& err)
 {
-	mLocation.childLoadError(err.message);
+	mLocation.childLoadError(err.message, err.type == SlaveRequest::ErrPermission);
 }
 
 void SlaveRequest_ls::success()
@@ -356,7 +353,7 @@ SlaveRequest_createDirectory::SlaveRequest_createDirectory(const Location& locat
 
 void SlaveRequest_createDirectory::error(const SlaveRequest::Error& err)
 {
-	mLocation.childLoadError(err.message);
+	mLocation.childLoadError(err.message, false);
 }
 
 void SlaveRequest_createDirectory::success()

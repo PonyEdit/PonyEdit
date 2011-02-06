@@ -301,9 +301,9 @@ void LocationShared::emitListLoadedSignal()
 	gDispatcher->emitLocationListSuccessful(mChildren, mPath);
 }
 
-void LocationShared::emitListLoadError(const QString& error)
+void LocationShared::emitListLoadError(const QString& error, bool permissionError)
 {
-	gDispatcher->emitLocationListFailed(error, mPath);
+	gDispatcher->emitLocationListFailed(error, mPath, permissionError);
 }
 
 void Location::asyncGetChildren()
@@ -356,7 +356,7 @@ SshHost* Location::getRemoteHost() const
 void LocationShared::sshLoadListing()
 {
 	if (!ensureConnected())
-		emitListLoadError("Failed to connect to remote host!");
+		emitListLoadError("Failed to connect to remote host!", false);
 	else
 		mSlaveChannel->sendRequest(new SlaveRequest_ls(Location(this)));
 }
@@ -368,9 +368,9 @@ void Location::sshChildLoadResponse(const QList<Location>& children)
 	mData->emitListLoadedSignal();
 }
 
-void Location::childLoadError(const QString& error)
+void Location::childLoadError(const QString& error, bool permissionError)
 {
-	mData->emitListLoadError(error);
+	mData->emitListLoadError(error, permissionError);
 }
 
 bool LocationShared::ensureConnected()

@@ -69,7 +69,7 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 	connect(ui->fileList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(fileListSelectionChanged(const QItemSelection&, const QItemSelection&)));
 	connect(gDispatcher, SIGNAL(locationListSuccessful(QList<Location>,QString)), this, SLOT(folderChildrenLoaded(QList<Location>,QString)), Qt::QueuedConnection);
-	connect(gDispatcher, SIGNAL(locationListFailed(QString,QString)), this, SLOT(folderChildrenFailed(QString,QString)), Qt::QueuedConnection);
+	connect(gDispatcher, SIGNAL(locationListFailed(QString,QString,bool)), this, SLOT(folderChildrenFailed(QString,QString,bool)), Qt::QueuedConnection);
 	connect(this, SIGNAL(accepted()), this, SLOT(closing()));
 	connect(this, SIGNAL(rejected()), this, SLOT(closing()));
 	connect(ui->newFolderButton, SIGNAL(clicked()), this, SLOT(createNewFolder()));
@@ -404,7 +404,7 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 	}
 }
 
-void FileDialog::folderChildrenFailed(const QString& error, const QString& /*locationPath*/)
+void FileDialog::folderChildrenFailed(const QString& error, const QString& /*locationPath*/, bool permissionError)
 {
 	mFileListModel->clear();
 	ui->loaderIcon->setPixmap(QPixmap(":/icons/error.png"));

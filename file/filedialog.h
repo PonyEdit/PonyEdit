@@ -38,7 +38,7 @@ protected:
 private slots:
 	void folderTreeItemExpanded(QTreeWidgetItem* item);
 	void folderChildrenLoaded(const QList<Location>& children, const QString& locationPath);
-	void folderChildrenFailed(const QString& error, const QString& locationPath);
+	void folderChildrenFailed(const QString& error, const QString& locationPath, bool permissionError);
 	void directoryTreeSelected(QTreeWidgetItem*);
 	void upLevel();
 	void fileDoubleClicked(QModelIndex index);

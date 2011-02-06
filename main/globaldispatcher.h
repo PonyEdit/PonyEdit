@@ -23,7 +23,7 @@ public:
 	void emitGeneralStatusMessage(QString message) { emit generalStatusMessage(message); }
 
 	void emitLocationListSuccessful(const QList<Location>& children, QString locationPath) { emit locationListSuccessful(children, locationPath); }
-	void emitLocationListFailed(const QString& error, QString locationPath) { emit locationListFailed(error, locationPath); }
+	void emitLocationListFailed(const QString& error, QString locationPath, bool permissionError) { emit locationListFailed(error, locationPath, permissionError); }
 
 	void emitSelectFile(BaseFile* file) { emit selectFile(file); }
 	void emitSyntaxChanged(BaseFile* file) { emit syntaxChanged(file); }
@@ -37,7 +37,7 @@ signals:
 	void generalStatusMessage(QString message);
 
 	void locationListSuccessful(const QList<Location>& children, QString locationPath);
-	void locationListFailed(const QString& error, QString locationPath);
+	void locationListFailed(const QString& error, QString locationPath, bool permissionError);
 
 	void selectFile(BaseFile* file);
 	void syntaxChanged(BaseFile* file);
