@@ -7,8 +7,8 @@ Section: editors
 Maintainer: Gary Pendergast <gary@pento.net>
 Homepage: http://ponyedit.com
 Priority: optional
-Architecture: i386
-Depends: libqt4-webkit, libqt4-script, libqt4-xml, libqt4-network, libqt4-gui, libqt4-core
+Architecture: all
+Depends: libc6, libqt4-webkit, libqt4-script, libqt4-xml, libqt4-network, libqt4-gui, libqt4-core
 Description: The fastest remote code editor ever
  It rocks, y'all.
 
