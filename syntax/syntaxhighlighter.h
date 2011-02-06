@@ -7,6 +7,8 @@
 #include <QTextCharFormat>
 #include "syntax/syntaxdefinition.h"
 
+#define MAX_HIGHLIGHT_LENGTH 2000
+
 class QTextDocument;
 
 class SyntaxHighlighter : public QSyntaxHighlighter

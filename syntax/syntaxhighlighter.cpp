@@ -26,9 +26,16 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent, SyntaxDefinition* sy
 	mDefaultColors.insert("dserror", QColor("red"));
 }
 
-void SyntaxHighlighter::highlightBlock(const QString &text)
+void SyntaxHighlighter::highlightBlock(const QString &fullText)
 {
 	QStack<ContextDefLink> contextStack;
+
+	//	Only highlight up to the first MAX_HIGHLIGHT_LENGTH characters.
+	QString truncated;
+	bool isTruncated = fullText.length() > MAX_HIGHLIGHT_LENGTH;
+	if (isTruncated)
+		truncated = fullText.mid(0, MAX_HIGHLIGHT_LENGTH);
+	const QString& text = (isTruncated ? truncated : fullText);
 
 	//	Get a copy of the context stack leftover from the last block
 	QTextBlock previousBlock = currentBlock().previous();
@@ -41,8 +48,6 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 	const SyntaxDefinition::ContextLink* lineEndOverrideContextLink = NULL;
 	while (position < text.length())
 	{
-		QString tmp = text.mid(position);
-
 		//	If there is no current context, create a default one
 		if (contextStack.isEmpty())
 			contextStack.push(mSyntaxDefinition->getDefaultContext());
@@ -129,9 +134,15 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 			position += matchLength;
 	}
 
-	//	Change contexts for line end
-	if (contextStack.size())
+	if (isTruncated)
 	{
+		//	If this line is truncated, drop all context information
+		contextStack.clear();
+	}
+	else if (contextStack.size())
+	{
+		//	Change contexts for line end
+
 		ContextDefLink context = contextStack.top();
 		ContextDefLink lastContext;
 
