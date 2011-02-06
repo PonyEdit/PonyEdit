@@ -201,11 +201,7 @@ QIcon Location::getIcon() const
 		if (isDirectory())
 			return sIconProvider->icon(QFileIconProvider::Folder);
 		else
-			#ifdef Q_OS_LINUX
-				return sIconProvider->icon(QFileInfo(mData->mPath));
-			#else
-				return sIconProvider->icon(QFileIconProvider::File);
-			#endif
+			return sIconProvider->icon(QFileIconProvider::File);
 
 	default:
 		return QIcon();
