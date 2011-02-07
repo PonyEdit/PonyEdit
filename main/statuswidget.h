@@ -20,14 +20,12 @@ public:
 	void clearInputWidget();
 
 	inline bool isShowingInput() const { return mCurrentInputWidget != NULL; }
+	QDialogButtonBox* getButtonBox();
 
 signals:
 	void signalUpdateLayouts();
 	void buttonClicked(QAbstractButton* button);
 	void completed();
-
-protected:
-	QDialogButtonBox* getButtonBox();
 
 private slots:
 	void updateLayouts();

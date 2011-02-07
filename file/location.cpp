@@ -370,6 +370,7 @@ void Location::sshChildLoadResponse(const QList<Location>& children)
 
 void Location::childLoadError(const QString& error, bool permissionError)
 {
+	mData->mLoading = false;
 	mData->emitListLoadError(error, permissionError);
 }
 
@@ -524,5 +525,15 @@ void Location::createNewDirectory(QString name)
 	}
 }
 
+bool Location::canSudo() const
+{
+	return mData->mProtocol == Ssh;
+}
+
+Location Location::getSudoLocation() const
+{
+	if (isSudo()) return *this;
+	return Location(mData->mRemoteUserName + "*@" + mData->mRemoteHostName + ":" + mData->mRemotePath);
+}
 
 

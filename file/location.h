@@ -44,12 +44,15 @@ public:
 	QString getRemotePath() const;
 	SshHost* getRemoteHost() const;
 
+	Location getSudoLocation() const;
+
 	bool isNull() const;
 	bool isHidden() const;
 	bool isDirectory() const;
 	bool canRead() const;
 	bool canWrite() const;
 	bool isSudo() const;
+	bool canSudo() const;
 
 	BaseFile* getFile();
 

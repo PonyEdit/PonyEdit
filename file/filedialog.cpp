@@ -13,6 +13,7 @@
 #include <QSettings>
 #include <QMessageBox>
 #include <QMenu>
+#include <QPushButton>
 
 #define DATA_ROLE (Qt::UserRole)
 #define EXPANDED_ROLE (Qt::UserRole + 1)
@@ -65,14 +66,15 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	connect(ui->upLevelButton, SIGNAL(clicked()), this, SLOT(upLevel()));
 	connect(ui->fileList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(fileDoubleClicked(QModelIndex)));
 	connect(gDispatcher, SIGNAL(sshServersUpdated()), this, SLOT(populateRemoteServers()), Qt::QueuedConnection);
-	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	connect(ui->mainButtonBox, SIGNAL(accepted()), this, SLOT(accept()));
+	connect(ui->mainButtonBox, SIGNAL(rejected()), this, SLOT(reject()));
 	connect(ui->fileList->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(fileListSelectionChanged(const QItemSelection&, const QItemSelection&)));
 	connect(gDispatcher, SIGNAL(locationListSuccessful(QList<Location>,QString)), this, SLOT(folderChildrenLoaded(QList<Location>,QString)), Qt::QueuedConnection);
 	connect(gDispatcher, SIGNAL(locationListFailed(QString,QString,bool)), this, SLOT(folderChildrenFailed(QString,QString,bool)), Qt::QueuedConnection);
 	connect(this, SIGNAL(accepted()), this, SLOT(closing()));
 	connect(this, SIGNAL(rejected()), this, SLOT(closing()));
 	connect(ui->newFolderButton, SIGNAL(clicked()), this, SLOT(createNewFolder()));
+	connect(ui->statusWidget, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(retryButtonClicked(QAbstractButton*)));
 
 	populateFolderTree();
 
@@ -407,9 +409,29 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 void FileDialog::folderChildrenFailed(const QString& error, const QString& /*locationPath*/, bool permissionError)
 {
 	mFileListModel->clear();
-	ui->loaderIcon->setPixmap(QPixmap(":/icons/error.png"));
-	ui->loaderLabel->setText(QString("Error: " + error));
-	ui->fileListStack->setCurrentWidget(ui->loaderLayer);
+
+	showStatus(QPixmap(":/icons/error.png"), QString("Error: " + error));
+	QDialogButtonBox* buttonBox = ui->statusWidget->getButtonBox();
+	if (!mCurrentLocation.isSudo())
+		buttonBox->addButton(tr("Try with sudo"), QDialogButtonBox::ActionRole);
+	buttonBox->addButton(tr("Try again"), QDialogButtonBox::YesRole);
+}
+
+void FileDialog::retryButtonClicked(QAbstractButton* button)
+{
+	QDialogButtonBox::ButtonRole role = ui->statusWidget->getButtonBox()->buttonRole(button);
+	switch (role)
+	{
+	case QDialogButtonBox::ActionRole:
+		showLocation(mCurrentLocation.getSudoLocation());
+		break;
+
+	case QDialogButtonBox::YesRole:
+		showLocation(mCurrentLocation);
+		break;
+
+	default: break;
+	}
 }
 
 void FileDialog::showLocation(const Location& location)
@@ -423,11 +445,16 @@ void FileDialog::showLocation(const Location& location)
 	mCurrentLocation = location;
 
 	mFileListModel->clear();
-	ui->loaderIcon->setPixmap(QPixmap(":/icons/loading.png"));
-	ui->loaderLabel->setText("Loading...");
-	ui->fileListStack->setCurrentWidget(ui->loaderLayer);
+	showStatus(QPixmap(":/icons/loading.png"), tr("Loading ..."));
 
 	mCurrentLocation.asyncGetChildren();
+}
+
+void FileDialog::showStatus(const QPixmap& icon, const QString& text)
+{
+	ui->statusWidget->setStatus(icon, text);
+	ui->fileListStack->setCurrentWidget(ui->loaderLayer);
+	ui->statusWidget->getButtonBox()->clear();
 }
 
 void FileDialog::directoryTreeSelected(QTreeWidgetItem* item)

@@ -7,6 +7,7 @@
 #include <QStandardItemModel>
 #include <QTreeWidgetItem>
 #include <QMouseEvent>
+#include <QAbstractButton>
 
 #include "location.h"
 
@@ -48,6 +49,7 @@ private slots:
 	void addToFavorites();
 	void directoryTreeContextMenu(QPoint point);
 	void createNewFolder();
+	void retryButtonClicked(QAbstractButton* button);	//	Called when "try again" or "sudo" is clicked on an error
 #ifdef Q_OS_WIN
 	void populateWindowsShares(QTreeWidgetItem* localNetworkItem, LPNETRESOURCE lpnr);
 #endif
@@ -55,6 +57,7 @@ private slots:
 private:
 	void keyPressEvent(QKeyEvent *);
 	void restoreState();
+	void showStatus(const QPixmap& icon, const QString& text);
 
 	void populateFolderTree();
 	QTreeWidgetItem* addLocationToTree(QTreeWidgetItem* parent, const Location& location);
