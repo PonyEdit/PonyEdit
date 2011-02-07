@@ -99,7 +99,8 @@ SOURCES += \
     ssh/rawsshconnection.cpp \
     main/ponyedit.cpp \
     main/windowmanager.cpp \
-    licence/licencecheckdialog.cpp
+    licence/licencecheckdialog.cpp \
+    main/statuswidget.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -166,7 +167,8 @@ HEADERS  += \
     ssh/remoterequest.h \
     main/ponyedit.h \
     main/windowmanager.h \
-    licence/licencecheckdialog.h
+    licence/licencecheckdialog.h \
+    main/statuswidget.h
 
 OTHER_FILES += \
     slave/slave.pl \
@@ -517,7 +519,6 @@ FORMS += \
     file/newfolderdialog.ui \
     main/advancedsearchdialog.ui \
     main/gotolinedialog.ui \
-    ssh/connectionstatuswidget.ui \
     ssh/passwordinput.ui \
     website/updatenotificationdialog.ui \
     ssh/serverconfigwidget.ui \
@@ -526,7 +527,8 @@ FORMS += \
     main/aboutdialog.ui \
     options/editoroptionswidget.ui \
     tools/htmlpreview.ui \
-    licence/licencecheckdialog.ui
+    licence/licencecheckdialog.ui \
+    main/statuswidget.ui
 
 RESOURCES += \
 	resources.qrc

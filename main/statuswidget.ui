@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ConnectionStatusWidget</class>
- <widget class="QWidget" name="ConnectionStatusWidget">
+ <class>StatusWidget</class>
+ <widget class="QWidget" name="StatusWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -64,7 +64,7 @@
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel</set>
+      <set>QDialogButtonBox::NoButton</set>
      </property>
      <property name="centerButtons">
       <bool>true</bool>
