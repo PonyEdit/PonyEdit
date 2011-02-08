@@ -281,8 +281,10 @@ void BaseFile::saveFailed(const QString& errorMessage, bool permissionError)
 
 	StatusWidget* errorWidget = new StatusWidget(true);
 	errorWidget->setStatus(QPixmap(":/icons/error.png"), errorMessage);
+	errorWidget->setButtons(StatusWidget::Done);
+	errorWidget->setCloseOnButton(true);
 
-	DialogWrapper<StatusWidget> errorDialog(errorWidget);
+	DialogWrapper<StatusWidget> errorDialog(tr("Error Saving File"), errorWidget, false);
 	errorDialog.exec();
 }
 

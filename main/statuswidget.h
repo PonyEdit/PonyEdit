@@ -33,6 +33,7 @@ public:
 
 	void setButtons(Buttons buttons);
 	inline void setCloseOnButton(bool value) { mCloseOnButton = value; }
+	void setButtonsEnabled(bool enabled);
 
 	inline bool isShowingInput() const { return mCurrentInputWidget != NULL; }
 

@@ -130,7 +130,7 @@ bool RemoteChannel::waitUntilOpen(int connectionId)
 		if (Tools::isMainThread())
 		{
 			//	If this is the main UI thread, show a dialog and actively wait.
-			DialogWrapper<ConnectionStatusWidget> dialogWrapper(new ConnectionStatusWidget(mConnection, true));
+			DialogWrapper<ConnectionStatusWidget> dialogWrapper(QObject::tr("Creating Remote Channel"), new ConnectionStatusWidget(mConnection, true), false);
 			dialogWrapper.exec();
 		}
 		else

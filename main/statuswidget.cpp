@@ -110,8 +110,10 @@ void StatusWidget::setButtons(Buttons buttons)
 		static_cast<QPushButton*>(firstButton)->setDefault(true);
 }
 
-
-
+void StatusWidget::setButtonsEnabled(bool enabled)
+{
+	ui->buttonBox->setEnabled(enabled);
+}
 
 
 

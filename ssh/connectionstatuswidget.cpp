@@ -62,7 +62,10 @@ void ConnectionStatusWidget::onButtonClicked(StatusWidget::Button button)
 	{
 		RemoteConnection::Status status = mConnection->getBaseStatus();
 		if (status != RemoteConnection::Disconnecting && status != RemoteConnection::Disconnected && status != RemoteConnection::Error)
+		{
+			setButtonsEnabled(false);
 			mConnection->disconnect(true);
+		}
 		else
 			close(false);
 	}

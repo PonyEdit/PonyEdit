@@ -147,7 +147,7 @@ bool RemoteConnection::waitUntilOpen(bool waitForChannels)
 		if (Tools::isMainThread())
 		{
 			//	If this is the main UI thread, show a dialog and actively wait.
-			DialogWrapper<ConnectionStatusWidget> dialogWrapper(new ConnectionStatusWidget(this, true));
+			DialogWrapper<ConnectionStatusWidget> dialogWrapper(tr("Opening Connection"), new ConnectionStatusWidget(this, true), false);
 			dialogWrapper.exec();
 		}
 		else

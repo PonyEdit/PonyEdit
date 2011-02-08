@@ -7,21 +7,23 @@
 template<class T> class DialogWrapper : public QDialog
 {
 public:
-	explicit DialogWrapper(T* content, QWidget* parent = 0);
+	explicit DialogWrapper(const QString& title, T* content, bool closeButton, QWidget* parent = 0)
+		: QDialog(parent)
+	{
+		if (!closeButton)
+			setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
+		setWindowTitle(title);
+
+		mContent = content;
+
+		QVBoxLayout* layout = new QVBoxLayout(this);
+		content->setParent(this);
+		layout->addWidget(content);
+		content->show();
+	}
 
 private:
 	T* mContent;
 };
-
-template <class T> DialogWrapper<T>::DialogWrapper(T* content, QWidget* parent) :
-	QDialog(parent)
-{
-	mContent = content;
-
-	QVBoxLayout* layout = new QVBoxLayout(this);
-	content->setParent(this);
-	layout->addWidget(content);
-	content->show();
-}
 
 #endif // DIALOGWRAPPER_H
