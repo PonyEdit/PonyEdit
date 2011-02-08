@@ -248,7 +248,7 @@ void SlaveRequest_saveBuffer::packBody(QByteArray* target)
 
 void SlaveRequest_saveBuffer::error(const SlaveRequest::Error& err)
 {
-	mFile->saveFailed(err);
+	mFile->saveFailed(err.message, err.type == SlaveRequest::ErrPermission);
 }
 
 void SlaveRequest_saveBuffer::success()

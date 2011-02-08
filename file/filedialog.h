@@ -10,6 +10,7 @@
 #include <QAbstractButton>
 
 #include "location.h"
+#include "main/statuswidget.h"
 
 #ifdef Q_OS_WIN
 	#include <windows.h>
@@ -49,7 +50,7 @@ private slots:
 	void addToFavorites();
 	void directoryTreeContextMenu(QPoint point);
 	void createNewFolder();
-	void retryButtonClicked(QAbstractButton* button);	//	Called when "try again" or "sudo" is clicked on an error
+	void retryButtonClicked(StatusWidget::Button button);	//	Called when "try again" or "sudo" is clicked on an error
 #ifdef Q_OS_WIN
 	void populateWindowsShares(QTreeWidgetItem* localNetworkItem, LPNETRESOURCE lpnr);
 #endif

@@ -44,8 +44,6 @@ public:
 	void savedRevision(int revision, int undoLength, const QByteArray& checksum);
 	void fileOpenProgressed(int percent);
 
-	void saveFailed();
-
 	inline const QList<Editor*>& getAttachedEditors() { return mAttachedEditors; }
 	void editorAttached(Editor* editor);	//	Call only from Editor constructor.
 	void editorDetached(Editor* editor);	//	Call only from Editor destructor.
@@ -69,14 +67,15 @@ public slots:
 	void fileOpened(const QString& content, bool readOnly);
 	void documentChanged(int position, int removeChars, int added);
 	void closeCompleted();
+	void saveFailed(const QString& errorMessage, bool permissionError);
 
 signals:
 	void fileOpenedRethreadSignal(const QString& content, bool readOnly);
 	void closeCompletedRethreadSignal();
+	void saveFailedRethreadSignal(const QString& errorMessage, bool permissionError);
 	void fileOpenProgress(int percent);
 	void openStatusChanged(int newStatus);
 	void unsavedStatusChanged();
-	void notifySaveFailed(const QString& error);
 
 protected:
 	BaseFile(const Location& location);

@@ -204,7 +204,6 @@ void MainWindow::openSingleFile(Location *loc)
 
 		connect(file, SIGNAL(openStatusChanged(int)), this, SLOT(updateTitle()));
 		connect(file, SIGNAL(unsavedStatusChanged()), this, SLOT(updateTitle()));
-		connect(file, SIGNAL(notifySaveFailed(QString)), this, SLOT(saveFailed(QString)));
 	}
 }
 
@@ -707,19 +706,6 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 	Location loc(fileName);
 	openSingleFile(&loc);
-}
-
-void MainWindow::saveFailed(const QString &error)
-{
-	QMessageBox dlg(this);
-
-	dlg.setWindowTitle(tr("Unable to Save"));
-	dlg.setText(tr("Unable to save this file."));
-	dlg.setInformativeText(error);
-	dlg.setIcon(QMessageBox::Critical);
-	dlg.setStandardButtons(QMessageBox::Ok);
-
-	dlg.exec();
 }
 
 void MainWindow::showHTMLPreview()

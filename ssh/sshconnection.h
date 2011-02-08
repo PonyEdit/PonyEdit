@@ -36,10 +36,10 @@ protected:
 	virtual RemoteChannel* threadOpenPrimaryChannel();
 
 	static void hostkeyWarnDialog(ConnectionStatusWidget* widget, RemoteConnection* connection, QWidget* target, QVariant param);
-	static bool hostkeyWarnCallback(ConnectionStatusWidget* widget, RemoteConnection* connection, QDialogButtonBox::ButtonRole buttonRole, QVariant param);
+	static bool hostkeyWarnCallback(ConnectionStatusWidget* widget, RemoteConnection* connection, StatusWidget::Button button, QVariant param);
 
 	static void passwordInputDialog(ConnectionStatusWidget* widget, RemoteConnection* connection, QWidget* target, QVariant param);
-	static bool passwordInputCallback(ConnectionStatusWidget* widget, RemoteConnection* connection, QDialogButtonBox::ButtonRole buttonRole, QVariant param);
+	static bool passwordInputCallback(ConnectionStatusWidget* widget, RemoteConnection* connection, StatusWidget::Button button, QVariant param);
 
 private:
 	void loadSlaveScript();

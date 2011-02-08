@@ -12,6 +12,8 @@
 #include "syntax/syntaxhighlighter.h"
 #include "syntax/syntaxdefinition.h"
 #include "syntax/syntaxdefmanager.h"
+#include "main/dialogwrapper.h"
+#include "main/statuswidget.h"
 
 const char* BaseFile::sStatusLabels[] =  { "Closed", "Loading...", "Error while loading", "Ready", "Disconnected", "Reconnecting...", "Lost Synchronization; Repairing", "Syncronization Error", "Closing" };
 
@@ -78,6 +80,7 @@ BaseFile::BaseFile(const Location& location = NULL)
 	connect(mDocument, SIGNAL(contentsChange(int,int,int)), this, SLOT(documentChanged(int,int,int)));
 	connect(this, SIGNAL(fileOpenedRethreadSignal(QString,bool)), this, SLOT(fileOpened(QString,bool)), Qt::QueuedConnection);
 	connect(this, SIGNAL(closeCompletedRethreadSignal()), this, SLOT(closeCompleted()), Qt::QueuedConnection);
+	connect(this, SIGNAL(saveFailedRethreadSignal(QString,bool)), this, SLOT(saveFailed(QString,bool)), Qt::QueuedConnection);
 }
 
 void BaseFile::documentChanged(int position, int removeChars, int charsAdded)
@@ -267,9 +270,20 @@ void BaseFile::setSyntax(SyntaxDefinition* syntaxDef)
 	gDispatcher->emitSyntaxChanged(this);
 }
 
-void BaseFile::saveFailed()
+void BaseFile::saveFailed(const QString& errorMessage, bool permissionError)
 {
-	emit notifySaveFailed(tr("Cannot save file: do not have write permissions"));
+	//	Make sure this is always run in the UI thread
+	if (!Tools::isMainThread())
+	{
+		emit saveFailedRethreadSignal(errorMessage, permissionError);
+		return;
+	}
+
+	StatusWidget* errorWidget = new StatusWidget(true);
+	errorWidget->setStatus(QPixmap(":/icons/error.png"), errorMessage);
+
+	DialogWrapper<StatusWidget> errorDialog(errorWidget);
+	errorDialog.exec();
 }
 
 void BaseFile::beginRedoBlock()

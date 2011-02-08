@@ -4,12 +4,12 @@
 #include <QObject>
 #include <QPixmap>
 #include <QWidget>
-#include <QDialogButtonBox>
 #include <QWaitCondition>
 #include <QMutex>
 #include <QFlags>
 #include <QVariant>
 #include "remotechannel.h"
+#include "main/statuswidget.h"
 
 class RemoteConnection;
 class ConnectionStatusWidget;
@@ -17,7 +17,7 @@ class RemoteConnectionThread;
 class SlaveChannel;
 
 typedef void(*DialogFunction)(ConnectionStatusWidget*, RemoteConnection*, QWidget*, QVariant);
-typedef bool(*DialogCallback)(ConnectionStatusWidget*, RemoteConnection*, QDialogButtonBox::ButtonRole, QVariant);
+typedef bool(*DialogCallback)(ConnectionStatusWidget*, RemoteConnection*, StatusWidget::Button, QVariant);
 
 class RawChannelHandle {};
 
@@ -76,8 +76,8 @@ public:
 
 	void waitForInput(DialogFunction dialogFunction, DialogCallback callbackFunction = DefaultDialogCallback, QVariant param = QVariant());
 	inline void populateInputDialog(ConnectionStatusWidget* statusWidget, QWidget* target) { mInputDialog(statusWidget, this, target, mDialogParameter); }
-	inline bool inputDialogCallback(ConnectionStatusWidget* statusWidget, QDialogButtonBox::ButtonRole buttonRole) { return mDialogCallback(statusWidget, this, buttonRole, mDialogParameter); }
-	static bool DefaultDialogCallback(ConnectionStatusWidget*, RemoteConnection*, QDialogButtonBox::ButtonRole, QVariant) { return true; }
+	inline bool inputDialogCallback(ConnectionStatusWidget* statusWidget, StatusWidget::Button button) { return mDialogCallback(statusWidget, this, button, mDialogParameter); }
+	static bool DefaultDialogCallback(ConnectionStatusWidget*, RemoteConnection*, StatusWidget::Button, QVariant) { return true; }
 	inline void inputDialogCompleted() { mInputDialogWait.wakeOne(); }
 
 	bool waitUntilOpen(bool waitForChannels = true);

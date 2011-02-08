@@ -12,16 +12,14 @@ ConnectionStatusWidget::ConnectionStatusWidget(RemoteConnection* connection, boo
 {
 	mConnection = connection;
 
-	getButtonBox()->setStandardButtons(QDialogButtonBox::Cancel);
-	getButtonBox()->button(QDialogButtonBox::Cancel)->setDefault(false);
+	setButtons(Cancel);
 
 	connect(connection, SIGNAL(statusChanged()), this, SLOT(connectionStatusChanged()), Qt::QueuedConnection);
-	connect(this, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(onButtonClicked(QAbstractButton*)));
+	connect(this, SIGNAL(buttonClicked(StatusWidget::Button)), this, SLOT(onButtonClicked(StatusWidget::Button)));
 }
 
 ConnectionStatusWidget::~ConnectionStatusWidget()
 {
-	clearExtraButtons();
 }
 
 void ConnectionStatusWidget::showEvent(QShowEvent*)
@@ -52,48 +50,31 @@ void ConnectionStatusWidget::connectionStatusChanged()
 	}
 	else
 	{
+		setButtons(Cancel);
 		clearInputWidget();
 		setStatus(mConnection->getStatusIcon(), mConnection->getName() + ": " + mConnection->getStatusString());
 	}
 }
 
-void ConnectionStatusWidget::addButton(QDialogButtonBox::ButtonRole role, const QString& label)
+void ConnectionStatusWidget::onButtonClicked(StatusWidget::Button button)
 {
-	QPushButton* button = getButtonBox()->addButton(label, role);
-	mExtraButtons.push_back(button);
-	button->setDefault(true);
-	button->setFocus();
-}
-
-void ConnectionStatusWidget::onButtonClicked(QAbstractButton *button)
-{
-	QDialogButtonBox* buttonBox = getButtonBox();
-	QDialogButtonBox::ButtonRole role = buttonBox->buttonRole(button);
-	if (role == QDialogButtonBox::RejectRole)
+	if (button == StatusWidget::Cancel)
 	{
-		buttonBox->setEnabled(false);
-
 		RemoteConnection::Status status = mConnection->getBaseStatus();
 		if (status != RemoteConnection::Disconnecting && status != RemoteConnection::Disconnected && status != RemoteConnection::Error)
 			mConnection->disconnect(true);
 		else
 			close(false);
 	}
-	else if (mConnection->inputDialogCallback(this, role))
+	else if (mConnection->inputDialogCallback(this, button))
 	{
+		setButtons(Cancel);
 		clearInputWidget();
-		clearExtraButtons();
 		setStatus(mConnection->getStatusIcon(), mConnection->getName() + ": " + mConnection->getStatusString());
 		mConnection->inputDialogCompleted();
 	}
 }
 
-void ConnectionStatusWidget::clearExtraButtons()
-{
-	foreach (QPushButton* b, mExtraButtons)
-		b->deleteLater();
-	mExtraButtons.clear();
-}
 
 
 

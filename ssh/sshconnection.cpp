@@ -291,7 +291,7 @@ void SshConnection::hostkeyWarnDialog(ConnectionStatusWidget* widget, RemoteConn
 		widget->setStatus(QPixmap(":/icons/question.png"), tr("Verify Host Fingerprint"));
 	else
 		widget->setStatus(QPixmap(":/icons/warning.png"), tr("Host Fingerprint Changed!"));
-	widget->addButton(QDialogButtonBox::YesRole, tr("Connect"));
+	widget->setButtons(StatusWidget::Connect | StatusWidget::Cancel);
 
 	QVBoxLayout* layout = new QVBoxLayout(target);
 	QString text = newKey ?
@@ -310,7 +310,7 @@ void SshConnection::hostkeyWarnDialog(ConnectionStatusWidget* widget, RemoteConn
 	layout->addWidget(question);
 }
 
-bool SshConnection::hostkeyWarnCallback(ConnectionStatusWidget*, RemoteConnection* connection, QDialogButtonBox::ButtonRole, QVariant /* param */)
+bool SshConnection::hostkeyWarnCallback(ConnectionStatusWidget*, RemoteConnection* connection, StatusWidget::Button, QVariant /* param */)
 {
 	SshConnection* sshConnection = static_cast<SshConnection*>(connection);
 	RawSshConnection::saveFingerprint(sshConnection->mHost->getHostName(), sshConnection->mRawConnection->getServerFingerprint());
@@ -342,7 +342,7 @@ void SshConnection::passwordInputDialog(ConnectionStatusWidget* widget, RemoteCo
 		break;
 	}
 
-	widget->addButton(QDialogButtonBox::YesRole, tr("Connect"));
+	widget->setButtons(StatusWidget::Connect | StatusWidget::Cancel);
 	widget->setStatus(QPixmap(":/icons/question.png"), query);
 
 	QVBoxLayout* layout = new QVBoxLayout(target);
@@ -352,7 +352,7 @@ void SshConnection::passwordInputDialog(ConnectionStatusWidget* widget, RemoteCo
 	sshConnection->mPasswordInput->setSavePassword(savePassword);
 }
 
-bool SshConnection::passwordInputCallback(ConnectionStatusWidget*, RemoteConnection* connection, QDialogButtonBox::ButtonRole, QVariant param)
+bool SshConnection::passwordInputCallback(ConnectionStatusWidget*, RemoteConnection* connection, StatusWidget::Button, QVariant param)
 {
 	SshConnection* sshConnection = static_cast<SshConnection*>(connection);
 	PasswordType passwordType = static_cast<PasswordType>(param.toInt());

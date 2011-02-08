@@ -74,7 +74,7 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	connect(this, SIGNAL(accepted()), this, SLOT(closing()));
 	connect(this, SIGNAL(rejected()), this, SLOT(closing()));
 	connect(ui->newFolderButton, SIGNAL(clicked()), this, SLOT(createNewFolder()));
-	connect(ui->statusWidget, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(retryButtonClicked(QAbstractButton*)));
+	connect(ui->statusWidget, SIGNAL(buttonClicked(StatusWidget::Button)), this, SLOT(retryButtonClicked(StatusWidget::Button)));
 
 	populateFolderTree();
 
@@ -411,22 +411,18 @@ void FileDialog::folderChildrenFailed(const QString& error, const QString& /*loc
 	mFileListModel->clear();
 
 	showStatus(QPixmap(":/icons/error.png"), QString("Error: " + error));
-	QDialogButtonBox* buttonBox = ui->statusWidget->getButtonBox();
-	if (!mCurrentLocation.isSudo())
-		buttonBox->addButton(tr("Try with sudo"), QDialogButtonBox::ActionRole);
-	buttonBox->addButton(tr("Try again"), QDialogButtonBox::YesRole);
+	ui->statusWidget->setButtons(StatusWidget::Retry | (!mCurrentLocation.isSudo() && mCurrentLocation.canSudo() ? StatusWidget::SudoRetry : StatusWidget::None));
 }
 
-void FileDialog::retryButtonClicked(QAbstractButton* button)
+void FileDialog::retryButtonClicked(StatusWidget::Button button)
 {
-	QDialogButtonBox::ButtonRole role = ui->statusWidget->getButtonBox()->buttonRole(button);
-	switch (role)
+	switch (button)
 	{
-	case QDialogButtonBox::ActionRole:
+	case StatusWidget::SudoRetry:
 		showLocation(mCurrentLocation.getSudoLocation());
 		break;
 
-	case QDialogButtonBox::YesRole:
+	case StatusWidget::Retry:
 		showLocation(mCurrentLocation);
 		break;
 
@@ -454,7 +450,7 @@ void FileDialog::showStatus(const QPixmap& icon, const QString& text)
 {
 	ui->statusWidget->setStatus(icon, text);
 	ui->fileListStack->setCurrentWidget(ui->loaderLayer);
-	ui->statusWidget->getButtonBox()->clear();
+	ui->statusWidget->setButtons(StatusWidget::None);
 }
 
 void FileDialog::directoryTreeSelected(QTreeWidgetItem* item)

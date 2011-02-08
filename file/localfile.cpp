@@ -39,7 +39,7 @@ void LocalFile::save()
 
 	if(!(fileHandle.permissions() & QFile::WriteUser))
 	{
-		saveFailed();
+		saveFailed(tr("Permission denied!"), true);
 		return;
 	}
 

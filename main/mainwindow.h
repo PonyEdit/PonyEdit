@@ -80,8 +80,6 @@ public slots:
 	void currentEditorChanged();
 	void updateSyntaxSelection();
 
-	void saveFailed(const QString& error);
-
 	Editor* getCurrentEditor();
 
 protected:

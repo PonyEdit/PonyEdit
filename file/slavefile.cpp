@@ -210,10 +210,7 @@ void SlaveFile::close()
 	mChannel->sendRequest(new SlaveRequest_closeFile(this, mBufferId));
 }
 
-void SlaveFile::saveFailed(RemoteRequest::Error err)
-{
-	emit notifySaveFailed(tr("Cannot save file: %1").arg(err.message));
-}
+
 
 
 

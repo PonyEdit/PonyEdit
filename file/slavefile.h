@@ -21,7 +21,6 @@ public:
 	void reconnect();
 
 	void resyncError(const QString& error);
-	void saveFailed(RemoteRequest::Error err);
 
 public slots:
 	void connectionStateChanged();
