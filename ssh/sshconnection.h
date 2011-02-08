@@ -32,6 +32,8 @@ public:
 	virtual QByteArray readLine(RawChannelHandle* handle);
 
 protected:
+	inline void checkForDeliberateDisconnect() { if (isDeliberatelyDisconnecting()) throw(tr("Connection Cancelled")); }
+
 	virtual bool threadConnect();
 	virtual RemoteChannel* threadOpenPrimaryChannel();
 

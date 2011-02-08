@@ -8,7 +8,7 @@ RemoteConnectionThread::RemoteConnectionThread(RemoteConnection* connection) :
 	mConnection = connection;
 }
 
-void RemoteConnectionThread::connect()
+bool RemoteConnectionThread::connect()
 {
 	qDebug() << "Attempting to connect...";
 
@@ -30,7 +30,9 @@ void RemoteConnectionThread::connect()
 			channel->waitUntilOpen(mConnection->mConnectionId);
 	}
 	else
-		qDebug() << "Connection failed";
+		return false;
+
+	return true;
 }
 
 void RemoteConnectionThread::run()

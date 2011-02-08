@@ -62,7 +62,7 @@ bool SshConnection::threadConnect()
 		qDebug() << "Connecting...";
 
 		mRawConnection->connect(mHost->getHostName().toUtf8(), mHost->getPort());
-		if (isDeliberatelyDisconnecting()) return false;
+		checkForDeliberateDisconnect();
 
 		qDebug() << "Checking server fingerprint...";
 
@@ -71,7 +71,7 @@ bool SshConnection::threadConnect()
 		QByteArray knownFingerprint = mRawConnection->getExpectedFingerprint(mHost->getHostName());
 		if (knownFingerprint != fingerprint)
 			waitForInput(hostkeyWarnDialog, hostkeyWarnCallback, QVariant(knownFingerprint.isEmpty()));
-		if (isDeliberatelyDisconnecting()) return false;
+		checkForDeliberateDisconnect();
 
 		//
 		//	Handle authentication
@@ -108,13 +108,13 @@ bool SshConnection::threadConnect()
 		{
 			waitForInput(SshConnection::passwordInputDialog, SshConnection::passwordInputCallback, QVariant(SshPassword));
 
-			if (isDeliberatelyDisconnecting()) return false;
+			checkForDeliberateDisconnect();
 			authenticated = mRawConnection->authenticatePassword(mHost->getUserName().toUtf8(), mHost->getPassword().toUtf8());
 
 			if(!authenticated)
 				mHost->setPassword(QString());
 		}
-		if (isDeliberatelyDisconnecting()) return false;
+		checkForDeliberateDisconnect();
 
 		return true;
 	}
@@ -125,7 +125,10 @@ bool SshConnection::threadConnect()
 		delete mRawConnection;
 		mRawConnection = NULL;
 
-		setErrorStatus(err);
+		if (isDeliberatelyDisconnecting())
+			setStatus(Disconnected);
+		else
+			setErrorStatus(err);
 		return false;
 	}
 }

@@ -17,7 +17,7 @@ public:
 	void wake();
 
 protected:
-	void connect();
+	bool connect();
 	void run();
 
 	RemoteConnection* mConnection;

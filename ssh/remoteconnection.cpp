@@ -166,7 +166,7 @@ bool RemoteConnection::waitUntilOpen(bool waitForChannels)
 		}
 	}
 
-	return (getBaseStatus() != Error);
+	return isConnected();
 }
 
 SlaveChannel* RemoteConnection::getSlaveChannel()
