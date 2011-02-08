@@ -12,8 +12,9 @@
 #include "options.h"
 #include "fontoptionswidget.h"
 #include "editoroptionswidget.h"
+#include "startupoptionswidget.h"
 
-QString OptionsDialog::sOptionsStrings[] = { tr("Editor"), tr("SSH Servers"), tr("Fonts & Colors") };
+QString OptionsDialog::sOptionsStrings[] = { tr("Editor"), tr("SSH Servers"), tr("Fonts & Colors"), tr("Startup") };
 
 OptionsDialog::OptionsDialog(QWidget *parent) :
     QDialog(parent),
@@ -35,6 +36,7 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
 	addPage(new EditorOptionsWidget(this));
 	addPage(new SshServerOptionsWidget(this));
 	addPage(new FontOptionsWidget(this));
+	addPage(new StartupOptionsWidget(this));
 
 	ui->optionList->setCurrentRow(0);
 	updateSelectedOption(0);

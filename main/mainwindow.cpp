@@ -38,6 +38,7 @@
 #include "tools/htmlpreview.h"
 #include "licence/licence.h"
 #include "licence/licencecheckdialog.h"
+#include "shutdownprompt.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -590,6 +591,9 @@ void MainWindow::showAdvancedSearch()
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
+	nextStartupPrompt();
+	Tools::saveCurrentFiles();
+
 	if (!gOpenFileManager.closeAllFiles())
 	{
 		event->ignore();
@@ -601,6 +605,15 @@ void MainWindow::closeEvent(QCloseEvent* event)
 	settings.setValue("mainwindow/geometry", saveGeometry());
 	settings.setValue("mainwindow/state", saveState());
 	QMainWindow::closeEvent(event);
+}
+
+void MainWindow::nextStartupPrompt()
+{
+	if(!Options::ShutdownPrompt)
+		return;
+
+	ShutdownPrompt dlg(this);
+	dlg.exec();
 }
 
 void MainWindow::syntaxMenuOptionClicked()

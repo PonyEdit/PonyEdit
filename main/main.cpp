@@ -80,6 +80,8 @@ int main(int argc, char *argv[])
 		gMainWindow = new MainWindow();
 		gMainWindow->show();
 
+		Tools::loadStartupFiles();
+
 		if(argc > 1)
 		{
 			for(int ii = 1; ii < argc; ii++)

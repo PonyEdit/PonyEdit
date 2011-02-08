@@ -100,7 +100,9 @@ SOURCES += \
     main/ponyedit.cpp \
     main/windowmanager.cpp \
     licence/licencecheckdialog.cpp \
-    main/statuswidget.cpp
+    main/statuswidget.cpp \
+    options/startupoptionswidget.cpp \
+    main/shutdownprompt.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -168,7 +170,9 @@ HEADERS  += \
     main/ponyedit.h \
     main/windowmanager.h \
     licence/licencecheckdialog.h \
-    main/statuswidget.h
+    main/statuswidget.h \
+    options/startupoptionswidget.h \
+    main/shutdownprompt.h
 
 OTHER_FILES += \
     slave/slave.pl \
@@ -528,7 +532,9 @@ FORMS += \
     options/editoroptionswidget.ui \
     tools/htmlpreview.ui \
     licence/licencecheckdialog.ui \
-    main/statuswidget.ui
+    main/statuswidget.ui \
+    options/startupoptionswidget.ui \
+    main/shutdownprompt.ui
 
 RESOURCES += \
 	resources.qrc

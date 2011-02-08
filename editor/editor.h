@@ -28,6 +28,7 @@ public:
 	void fileClosed();				//	Called when the file this editor is attached to, is closed.
 
 	void gotoLine(int lineNumber);
+	int currentLine() const { return mEditor->textCursor().blockNumber(); }
 	void gotoEnd();
 
 	void setReadOnly(bool readOnly);

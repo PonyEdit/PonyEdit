@@ -17,7 +17,7 @@ class OptionsDialog : public QDialog
     Q_OBJECT
 
 public:
-	enum Options { Editor, SshServers, FontsAndColors, NumOptions };
+	enum Options { Editor, SshServers, FontsAndColors, Startup, NumOptions };
 	static QString sOptionsStrings[];
 
 	explicit OptionsDialog(QWidget *parent = 0);

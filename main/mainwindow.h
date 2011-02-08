@@ -103,6 +103,8 @@ private:
 	void updateRecentFilesMenu();
 	void addRecentFile(Location* loc);
 
+	void nextStartupPrompt();
+
 	FileList* mFileList;
 	WindowManager* mWindowManager;
 	QStatusBar* mStatusBar;

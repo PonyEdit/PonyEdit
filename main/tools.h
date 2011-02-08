@@ -21,6 +21,9 @@ public:
 	static QList<Location*> loadRecentFiles();
 	static void saveRecentFiles(QList<Location*> recentFiles);
 
+	static void loadStartupFiles();
+	static void saveCurrentFiles();
+
 	static void initialize();
 
 	static QString squashLabel(const QString& label, const QFontMetrics& metrics, int width);

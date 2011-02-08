@@ -1,5 +1,11 @@
 #include "main/tools.h"
 #include "ssh/sshhost.h"
+#include "options/options.h"
+#include "mainwindow.h"
+#include "windowmanager.h"
+#include "editor/editor.h"
+#include "file/openfilemanager.h"
+
 #include <QSettings>
 #include <QDebug>
 #include <QThread>
@@ -78,6 +84,7 @@ void Tools::loadServers()
 
 		SshHost::recordKnownHost(host);
 	}
+	settings.endArray();
 }
 
 QList<Location*> Tools::loadRecentFiles()
@@ -94,6 +101,7 @@ QList<Location*> Tools::loadRecentFiles()
 
 		recentFiles.append(loc);
 	}
+	settings.endArray();
 
 	return recentFiles;
 }
@@ -213,15 +221,50 @@ QString Tools::getResourcePath(const QString& subpath)
 #endif
 }
 
+void Tools::loadStartupFiles()
+{
+	Location *loc;
+	switch(Options::StartupAction)
+	{
+		case Options::BlankFile:
+			loc = new Location("");
+			gMainWindow->openSingleFile(loc);
+			delete loc;
+			break;
+		case Options::SetFiles:
+		case Options::ReopenFiles:
+			for(int ii = 0; ii < Options::StartupFiles.length(); ii++)
+			{
+				loc = new Location(Options::StartupFiles[ii]);
+				gMainWindow->openSingleFile(loc);
+				delete loc;
 
+				Editor* current = gMainWindow->getCurrentEditor();
+				current->gotoLine(Options::StartupFilesLineNo[ii]);
+			}
+			break;
+		case Options::NoFiles:
+		default:
+			return;
+	}
+}
 
+void Tools::saveCurrentFiles()
+{
+	if(Options::StartupAction != Options::ReopenFiles)
+		return;
 
+	Options::StartupFiles.clear();
+	Options::StartupFilesLineNo.clear();
 
+	QList<BaseFile*> files = gOpenFileManager.getOpenFiles();
 
+	foreach(BaseFile* file, files)
+	{
+		Location loc = file->getLocation();
+		Options::StartupFiles.append(loc.getDisplayPath());
+		Options::StartupFilesLineNo.append(file->getAttachedEditors().at(0)->currentLine());
+	}
 
-
-
-
-
-
-
+	Options::save();
+}
