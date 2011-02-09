@@ -34,7 +34,7 @@ void StatusWidget::close(bool operationSuccessful)
 			parentDialog->reject();
 	}
 	emit completed();
-	delete this;
+	this->deleteLater();
 }
 
 void StatusWidget::setStatus(const QPixmap &pixmap, const QString &message)

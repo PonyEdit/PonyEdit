@@ -53,12 +53,18 @@ void ConnectionStatusWidget::connectionStatusChanged()
 		setButtons(Cancel);
 		clearInputWidget();
 		setStatus(mConnection->getStatusIcon(), mConnection->getName() + ": " + mConnection->getStatusString());
+
+		if (status & RemoteConnection::Error)
+		{
+			setButtons(Done);
+			this->setButtonsEnabled(true);
+		}
 	}
 }
 
 void ConnectionStatusWidget::onButtonClicked(StatusWidget::Button button)
 {
-	if (button == StatusWidget::Cancel)
+	if (button == Cancel)
 	{
 		RemoteConnection::Status status = mConnection->getBaseStatus();
 		if (status != RemoteConnection::Disconnecting && status != RemoteConnection::Disconnected && status != RemoteConnection::Error)
@@ -69,6 +75,8 @@ void ConnectionStatusWidget::onButtonClicked(StatusWidget::Button button)
 		else
 			close(false);
 	}
+	else if (button == Done)
+		close(false);
 	else if (mConnection->inputDialogCallback(this, button))
 	{
 		setButtons(Cancel);

@@ -186,10 +186,12 @@ RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 {
 	qDebug() << "Opening raw channel...";
 	RawSshConnection::Channel* rawChannel = mRawConnection->createShellChannel();
+	checkForDeliberateDisconnect();
 
 	//	Switch to the remote home directory
 	qDebug() << "Switching to home dir...";
 	mRawConnection->execute(rawChannel, ntr("cd ~\n"));
+	checkForDeliberateDisconnect();
 
 	//	Check that Perl is installed and a recent version
 	bool validPerl = false;
@@ -207,6 +209,7 @@ RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 		}
 	}
 	if (!validPerl) throw(tr("No usable version of Perl found!"));
+	checkForDeliberateDisconnect();
 
 	//	Make sure the remote slave script is present, and the MD5 hashes match. If not, upload again.
 	loadSlaveScript();
@@ -215,6 +218,7 @@ RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 	remoteMd5.truncate(32);
 	if (remoteMd5 != sSlaveMd5)
 		mRawConnection->writeFile(".ponyedit/slave.pl", sSlaveScript.constData(), sSlaveScript.length());
+	checkForDeliberateDisconnect();
 
 	//	If this is a sudo connection, sudo at this point.
 	QByteArray firstLine;
@@ -240,6 +244,8 @@ RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 			if (!reply.endsWith("-sudo-prompt"))
 				throw(tr("Failed to execute remote sudo command!"));
 
+			checkForDeliberateDisconnect();
+
 			if (!firstTry)
 				mHost->setSudoPassword("");
 
@@ -264,6 +270,7 @@ RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 		mRawConnection->writeData(rawChannel, slaveStarter, strlen(slaveStarter));
 		firstLine = mRawConnection->readUntil(rawChannel, "%").trimmed();
 	}
+	checkForDeliberateDisconnect();
 
 	//	First line returned from the slave script should be the user's home dir.
 	QString homeDirectory = firstLine.trimmed();
