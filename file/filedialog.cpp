@@ -411,7 +411,8 @@ void FileDialog::folderChildrenFailed(const QString& error, const QString& /*loc
 	mFileListModel->clear();
 
 	showStatus(QPixmap(":/icons/error.png"), QString("Error: " + error));
-	ui->statusWidget->setButtons(StatusWidget::Retry | (!mCurrentLocation.isSudo() && mCurrentLocation.canSudo() ? StatusWidget::SudoRetry : StatusWidget::None));
+	ui->statusWidget->setButtons(StatusWidget::Retry |
+		(permissionError && !mCurrentLocation.isSudo() && mCurrentLocation.canSudo() ? StatusWidget::SudoRetry : StatusWidget::None));
 }
 
 void FileDialog::retryButtonClicked(StatusWidget::Button button)

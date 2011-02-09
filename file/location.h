@@ -100,6 +100,8 @@ private:
 	void setPath(const QString& path);
 	bool ensureConnected();
 
+	void childLoadError(const QString& error, bool permissionError);
+
 	void emitListLoadedSignal();
 	void emitListLoadError(const QString& error, bool permissionError);
 	void localLoadSelf();

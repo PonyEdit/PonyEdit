@@ -356,7 +356,7 @@ SshHost* Location::getRemoteHost() const
 void LocationShared::sshLoadListing()
 {
 	if (!ensureConnected())
-		emitListLoadError("Failed to connect to remote host!", false);
+		childLoadError(QObject::tr("Failed to connect to remote host!"), false);
 	else
 		mSlaveChannel->sendRequest(new SlaveRequest_ls(Location(this)));
 }
@@ -370,8 +370,13 @@ void Location::sshChildLoadResponse(const QList<Location>& children)
 
 void Location::childLoadError(const QString& error, bool permissionError)
 {
-	mData->mLoading = false;
-	mData->emitListLoadError(error, permissionError);
+	mData->childLoadError(error, permissionError);
+}
+
+void LocationShared::childLoadError(const QString& error, bool permissionError)
+{
+	mLoading = false;
+	emitListLoadError(error, permissionError);
 }
 
 bool LocationShared::ensureConnected()
@@ -410,7 +415,6 @@ bool LocationShared::ensureConnected()
 		}
 	}
 
-	mPath = "";
 	return false;
 }
 
