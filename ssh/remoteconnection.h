@@ -35,8 +35,8 @@ public:
 		OpeningChannels = 0x0004,
 		Connected       = 0x0008,
 		Disconnecting   = 0x0010,
-		Disconnected    = 0x0011,
-		Error           = 0x0012,
+		Disconnected    = 0x0020,
+		Error           = 0x0040,
 		BaseStatusMask  = 0x0FFF,
 
 		WaitingOnInput  = 0x1000
