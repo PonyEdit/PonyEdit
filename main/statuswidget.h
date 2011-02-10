@@ -36,6 +36,7 @@ public:
 	void setButtonsEnabled(bool enabled);
 
 	inline bool isShowingInput() const { return mCurrentInputWidget != NULL; }
+	inline Button getResult() const { return mResult; }
 
 signals:
 	void signalUpdateLayouts();
@@ -52,6 +53,7 @@ private:
 	bool mDialogChild;
 	bool mCloseOnButton;
 	QMap<QAbstractButton*, Button> mButtons;
+	Button mResult;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(StatusWidget::Buttons);

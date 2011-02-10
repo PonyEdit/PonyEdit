@@ -10,6 +10,7 @@ StatusWidget::StatusWidget(bool dialogChild, QWidget *parent) :
 	mDialogChild = dialogChild;
 	mCurrentInputWidget = NULL;
 	mCloseOnButton = false;
+	mResult = None;
 
 	ui->setupUi(this);
 
@@ -75,6 +76,7 @@ void StatusWidget::updateLayouts()
 void StatusWidget::buttonClicked(QAbstractButton *button)
 {
 	Button buttonType = mButtons.value(button);
+	mResult = buttonType;
 	if (mCloseOnButton)
 		this->close(true);
 	else
