@@ -235,7 +235,12 @@ void Tools::loadStartupFiles()
 		case Options::ReopenFiles:
 			for(int ii = 0; ii < Options::StartupFiles.length(); ii++)
 			{
-				loc = new Location(Options::StartupFiles[ii]);
+				QString name = Options::StartupFiles[ii].trimmed();
+
+				if(name.isNull())
+					continue;
+
+				loc = new Location(name);
 				gMainWindow->openSingleFile(loc);
 				delete loc;
 
@@ -262,6 +267,9 @@ void Tools::saveCurrentFiles()
 	foreach(BaseFile* file, files)
 	{
 		Location loc = file->getLocation();
+		if(loc.getProtocol() == Location::Unsaved)
+			continue;
+
 		Options::StartupFiles.append(loc.getDisplayPath());
 		Options::StartupFilesLineNo.append(file->getAttachedEditors().at(0)->currentLine());
 	}
