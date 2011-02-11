@@ -6,4 +6,9 @@
 
 #define ntr(x) x
 
+#define LOCK_MUTEX(x) x.lock()
+#define UNLOCK_MUTEX(x) x.unlock()
+//#define LOCK_MUTEX(x) { qDebug() << "Locking mutex " #x " at line " << __LINE__ << " in file " << __FILE__ << " in object " << (void*)this << ", thread " << (void*)QThread::currentThread(); x.lock(); }
+//#define UNLOCK_MUTEX(x) { qDebug() << "Unlocking mutex " #x " at line " << __LINE__ << " in file " << __FILE__ << " in object " << (void*)this << ", thread " << (void*)QThread::currentThread(); x.unlock(); }
+
 #endif // GLOBAL_H

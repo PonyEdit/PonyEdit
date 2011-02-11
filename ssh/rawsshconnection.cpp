@@ -16,6 +16,7 @@
 #include <QTime>
 #include <QSettings>
 #include <QMessageBox>
+#include <QThread>
 #include "main/global.h"
 
 QMap<QString, QByteArray> RawSshConnection::sKnownHostKeys;
@@ -222,20 +223,20 @@ bool RawSshConnection::authenticateAgent(const char* username)
 
 RawSshConnection::Channel* RawSshConnection::createShellChannel()
 {
-	mAccessMutex.lock();
+	LOCK_MUTEX(mAccessMutex);
 
 	Channel* channel = new Channel();
 	channel->handle = libssh2_channel_open_session(mSession);
 	if (!channel)
 	{
-		mAccessMutex.unlock();
+		UNLOCK_MUTEX(mAccessMutex);
 		delete channel;
 		throw(QObject::tr("Failed to create SSH channel!"));
 	}
 
 	if (libssh2_channel_request_pty(channel->handle, "vanilla"))
 	{
-		mAccessMutex.unlock();
+		UNLOCK_MUTEX(mAccessMutex);
 		delete channel;
 		throw(QObject::tr("Failed to set vanilla pty mode"));
 	}
@@ -243,7 +244,7 @@ RawSshConnection::Channel* RawSshConnection::createShellChannel()
 	//	Start up a shell
 	if (libssh2_channel_shell(channel->handle))
 	{
-		mAccessMutex.unlock();
+		UNLOCK_MUTEX(mAccessMutex);
 		delete channel;
 		throw(QObject::tr("Failed to create a shell"));
 	}
@@ -251,14 +252,14 @@ RawSshConnection::Channel* RawSshConnection::createShellChannel()
 	//	Shove a message down the line that should change the user's prompt...
 	const char* command = "export PS1=\\%-ponyedit-\\%\n";
 	libssh2_channel_write(channel->handle, command, strlen(command));
-	mAccessMutex.unlock();
+	UNLOCK_MUTEX(mAccessMutex);
 	readToPrompt(channel);
 
 	//	Shove a message down the line that should turn stty echo off
 	command = "stty -echo\n";
-	mAccessMutex.lock();
+	LOCK_MUTEX(mAccessMutex);
 	libssh2_channel_write(channel->handle, command, strlen(command));
-	mAccessMutex.unlock();
+	UNLOCK_MUTEX(mAccessMutex);
 	readToPrompt(channel);
 
 	return channel;
@@ -287,9 +288,9 @@ QByteArray RawSshConnection::readUntil(Channel* channel, const char* marker)
 			return result;
 		}
 
-		mAccessMutex.lock();
+		LOCK_MUTEX(mAccessMutex);
 		int rc = libssh2_channel_read(channel->handle, channel->tmpBuffer, SSH_BUFFER_SIZE);
-		mAccessMutex.unlock();
+		UNLOCK_MUTEX(mAccessMutex);
 
 		if (rc > 0)
 		{
@@ -301,9 +302,9 @@ QByteArray RawSshConnection::readUntil(Channel* channel, const char* marker)
 			throw(QString("Error while receiving from remote host: ") + getLastError(rc));
 		else
 		{
-			mAccessMutex.lock();
+			LOCK_MUTEX(mAccessMutex);
 			bool eof = libssh2_channel_eof(channel->handle);
-			mAccessMutex.unlock();
+			UNLOCK_MUTEX(mAccessMutex);
 			if (eof) throw(QString("Connection closed by remote host."));
 		}
 	}
@@ -314,9 +315,9 @@ QString RawSshConnection::getLastError(int rc)
 	char* errorBuffer;
 	int errorLength;
 
-	mAccessMutex.lock();
+	LOCK_MUTEX(mAccessMutex);
 	libssh2_session_last_error(mSession, &errorBuffer, &errorLength, 0);
-	mAccessMutex.unlock();
+	UNLOCK_MUTEX(mAccessMutex);
 
 	QString error;
 	error.sprintf("%d - %s", rc, errorBuffer);
@@ -326,9 +327,9 @@ QString RawSshConnection::getLastError(int rc)
 QByteArray RawSshConnection::execute(Channel* channel, const char* command)
 {
 	int len = strlen(command);
-	mAccessMutex.lock();
+	LOCK_MUTEX(mAccessMutex);
 	int rc = libssh2_channel_write(channel->handle, command, len);
-	mAccessMutex.unlock();
+	UNLOCK_MUTEX(mAccessMutex);
 	if (rc != len)
 		throw(QString("Error while sending to remote host: ") + getLastError(rc));
 
@@ -344,9 +345,9 @@ void RawSshConnection::writeData(Channel* channel, const char* data, int length)
 		int sendLength = (length - cursor > 32000 ? 32000 : length - cursor);
 
 		//	Lock mutex with each 32000 block
-		mAccessMutex.lock();
+		LOCK_MUTEX(mAccessMutex);
 		int rc = libssh2_channel_write(channel->handle, data+cursor, sendLength);
-		mAccessMutex.unlock();
+		UNLOCK_MUTEX(mAccessMutex);
 		if (rc != sendLength)
 			throw(QString("Error while sending to remote host: ") + getLastError(rc));
 
@@ -356,27 +357,28 @@ void RawSshConnection::writeData(Channel* channel, const char* data, int length)
 
 void RawSshConnection::sendEof(Channel* channel)
 {
-	mAccessMutex.lock();
+	LOCK_MUTEX(mAccessMutex);
 	libssh2_channel_send_eof(channel->handle);
-	mAccessMutex.unlock();
+	UNLOCK_MUTEX(mAccessMutex);
 }
 
 void RawSshConnection::writeFile(const char* remoteFilename, const char* data, int length)
 {
-	mAccessMutex.lock();
+	LOCK_MUTEX(mAccessMutex);
 	LIBSSH2_CHANNEL* tmpChannel = libssh2_scp_send(mSession, remoteFilename, 0777, length);
-	mAccessMutex.unlock();
+	UNLOCK_MUTEX(mAccessMutex);
+
 	if (!tmpChannel)
 	{
 		char *errmsg;
 		int errlen;
-		mAccessMutex.lock();
+		LOCK_MUTEX(mAccessMutex);
 		libssh2_session_last_error(mSession, &errmsg, &errlen, 0);
-		mAccessMutex.unlock();
+		UNLOCK_MUTEX(mAccessMutex);
 		throw(QString(errmsg));
 	}
 
-	mAccessMutex.lock();
+	LOCK_MUTEX(mAccessMutex);
 	if (libssh2_channel_write(tmpChannel, data, length) < 0)
 		throw(QString("Error sending file!"));
 
@@ -384,19 +386,22 @@ void RawSshConnection::writeFile(const char* remoteFilename, const char* data, i
 
 	libssh2_channel_wait_closed(tmpChannel);
 	libssh2_channel_free(tmpChannel);
-	mAccessMutex.unlock();
+	UNLOCK_MUTEX(mAccessMutex);
 }
 
 QByteArray RawSshConnection::readFile(const char* filename, ISshConnectionCallback* callback)
 {
-	mAccessMutex.lock();
+	LOCK_MUTEX(mAccessMutex);
 
 	struct stat fileInfo;
 	LIBSSH2_CHANNEL* tmpChannel = libssh2_scp_recv(mSession, filename, &fileInfo);
 	if (!tmpChannel)
+	{
+		UNLOCK_MUTEX(mAccessMutex);
 		throw(QString("Failed to open remote file!"));
+	}
 
-	mAccessMutex.unlock();
+	UNLOCK_MUTEX(mAccessMutex);
 
 	QByteArray fileContent;
 	char tmpBuffer[SSH_BUFFER_SIZE];
@@ -408,9 +413,9 @@ QByteArray RawSshConnection::readFile(const char* filename, ISshConnectionCallba
 		if (fileInfo.st_size - fileContent.length() < amount)
 			amount = fileInfo.st_size - fileContent.length();
 
-		mAccessMutex.lock();
+		LOCK_MUTEX(mAccessMutex);
 		int rc = libssh2_channel_read(tmpChannel, tmpBuffer, amount);
-		mAccessMutex.unlock();
+		UNLOCK_MUTEX(mAccessMutex);
 		if (rc > 0)
 			fileContent.append(tmpBuffer, rc);
 		else if (rc < 0)

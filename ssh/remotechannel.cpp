@@ -4,6 +4,7 @@
 #include "main/tools.h"
 #include "main/dialogwrapper.h"
 #include "ssh/connectionstatuswidget.h"
+#include "main/global.h"
 #include <QThread>
 #include <QDebug>
 
@@ -40,9 +41,9 @@ void RemoteChannel::sendRequest(RemoteRequest* request)
 {
 	if (isAcceptingRequests())
 	{
-		mRequestQueueLock.lock();
+		LOCK_MUTEX(mRequestQueueLock);
 		mRequestQueue.append(request);
-		mRequestQueueLock.unlock();
+		UNLOCK_MUTEX(mRequestQueueLock);
 		mRequestQueueWaiter.wakeAll();
 	}
 	else
@@ -92,10 +93,10 @@ void RemoteChannel::threadRun()
 				}
 
 				//	Check the request queue for messages
-				mRequestQueueLock.lock();
+				LOCK_MUTEX(mRequestQueueLock);
 				sendingMessages = mRequestQueue;
 				mRequestQueue.clear();
-				mRequestQueueLock.unlock();
+				UNLOCK_MUTEX(mRequestQueueLock);
 
 				//	If there are messages to send, the subclass will handle them
 				if (sendingMessages.length())
