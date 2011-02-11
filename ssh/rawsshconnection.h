@@ -63,7 +63,7 @@ public:
 	Channel* createShellChannel();
 
 private:
-	QString getLastError(int rc);
+	QString getLastError(int rc = -1);
 	static void saveKnownHostKeys();
 
 	int mSocket;

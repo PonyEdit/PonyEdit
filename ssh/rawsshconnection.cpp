@@ -398,7 +398,7 @@ QByteArray RawSshConnection::readFile(const char* filename, ISshConnectionCallba
 	if (!tmpChannel)
 	{
 		UNLOCK_MUTEX(mAccessMutex);
-		throw(QString("Failed to open remote file!"));
+		throw(QString("Failed to open remote file: ") + getLastError());
 	}
 
 	UNLOCK_MUTEX(mAccessMutex);
@@ -424,6 +424,10 @@ QByteArray RawSshConnection::readFile(const char* filename, ISshConnectionCallba
 		if (callback != NULL)
 			callback->fileOpenProgress((fileContent.length() * 100) / fileInfo.st_size);
 	}
+
+	LOCK_MUTEX(mAccessMutex);
+	libssh2_channel_free(tmpChannel);
+	UNLOCK_MUTEX(mAccessMutex);
 
 	return fileContent;
 }
