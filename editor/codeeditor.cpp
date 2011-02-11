@@ -75,7 +75,7 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 	qreal bottom = blockBoundingGeometry(block).translated(contentOffset()).bottom();
 
 	while (block.isValid() && top <= event->rect().bottom()) {
-		if (block.isVisible() && bottom >= event->rect().top()) {
+		if (block.isVisible() && bottom <= frameRect().height()) {
 			QString number = QString::number(blockNumber + 1);
 			painter.setPen(Qt::black);
 			painter.drawText(0, (int)(top + offset), mLineNumberWidget->width(), fontMetrics().height(),
