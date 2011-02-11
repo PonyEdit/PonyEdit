@@ -63,6 +63,8 @@ public:
 	void endUndoBlock();
 	void endRedoBlock();
 
+	virtual void changeLocation(const Location& location);
+
 public slots:
 	void fileOpened(const QString& content, bool readOnly);
 	void documentChanged(int position, int removeChars, int added);
@@ -83,6 +85,8 @@ protected:
 
 	virtual void handleDocumentChange(int position, int removeChars, const QString& insert);
 	virtual void setLastSavedRevision(int lastSavedRevision);
+
+	virtual void reconnect() {}		//	Called when connection dropouts have recovered or relocating a file
 
 	void autodetectSyntax();
 

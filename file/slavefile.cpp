@@ -67,6 +67,13 @@ void SlaveFile::open()
 	mChannel->sendRequest(new SlaveRequest_open(this, SlaveRequest_open::Content));
 }
 
+void SlaveFile::reconnect()
+{
+	//	Open the buffer remotely, ask for a checksum to be returned; not the whole file.
+	setOpenStatus(Reconnecting);
+	mChannel->sendRequest(new SlaveRequest_open(this, SlaveRequest_open::Checksum));
+}
+
 void SlaveFile::fileOpened(int bufferId, const QString& content, const QString& checksum, bool readOnly)
 {
 	mBufferId = bufferId;
@@ -79,6 +86,7 @@ void SlaveFile::fileOpened(int bufferId, const QString& content, const QString& 
 	}
 	else
 	{
+		//	This must be a reconnection attempt. Check the checksum.
 		if (mLastSaveChecksum == checksum)
 		{
 			//	If the file's checksum matches the last save, just pump the change queue from the last save...
@@ -181,10 +189,7 @@ void SlaveFile::connectionStateChanged()
 	else if (isConnected && !wasConnected)
 	{
 		qDebug() << "SlaveFile reconnecting... ";
-
-		//	If reconnecting, reopen the file and just ask for a checksum to be returned; not the whole file.
-		setOpenStatus(Reconnecting);
-		mChannel->sendRequest(new SlaveRequest_open(this, SlaveRequest_open::Checksum));
+		reconnect();
 	}
 }
 
@@ -210,7 +215,18 @@ void SlaveFile::close()
 	mChannel->sendRequest(new SlaveRequest_closeFile(this, mBufferId));
 }
 
+void SlaveFile::changeLocation(const Location& location)
+{
+	BaseFile::changeLocation(location);
 
+	mHost = location.getRemoteHost();
+	mHost->registerOpenFile(this);
+
+	getChannel();
+	connectionStateChanged();
+
+	reconnect();
+}
 
 
 

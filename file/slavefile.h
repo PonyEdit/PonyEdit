@@ -17,10 +17,11 @@ public:
 	void close();
 	void fileOpened(int bufferId, const QString& content, const QString& checksum, bool readOnly);
 
-	SlaveFile(const Location& location);	//	Do not call; use File::getFile instead.
-	void reconnect();
+	SlaveFile(const Location& location);	//	Do not call; use File::getFile instead
 
 	void resyncError(const QString& error);
+
+	virtual void changeLocation(const Location& location);
 
 public slots:
 	void connectionStateChanged();
@@ -37,6 +38,8 @@ protected:
 	void resync();
 	void movePumpCursor(int revision);
 	void getChannel();
+
+	void reconnect();
 
 	SshHost* mHost;
 	RemoteConnection* mConnection;

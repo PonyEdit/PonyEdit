@@ -281,8 +281,8 @@ void BaseFile::saveFailed(const QString& errorMessage, bool permissionError)
 
 	StatusWidget* errorWidget = new StatusWidget(true);
 	errorWidget->setStatus(QPixmap(":/icons/error.png"), errorMessage);
-	errorWidget->setButtons(StatusWidget::Retry | StatusWidget::Cancel);/* |
-		(permissionError && mLocation.canSudo() && !mLocation.isSudo() ? StatusWidget::SudoRetry : StatusWidget::None));*/
+	errorWidget->setButtons(StatusWidget::Retry | StatusWidget::Cancel |
+		(permissionError && mLocation.canSudo() && !mLocation.isSudo() ? StatusWidget::SudoRetry : StatusWidget::None));
 	errorWidget->setCloseOnButton(true);
 
 	DialogWrapper<StatusWidget> errorDialog(tr("Error Saving File"), errorWidget, false);
@@ -296,6 +296,7 @@ void BaseFile::saveFailed(const QString& errorMessage, bool permissionError)
 		break;
 
 	case StatusWidget::SudoRetry:
+		changeLocation(mLocation.getSudoLocation());
 		break;
 
 	default: break;
@@ -326,6 +327,10 @@ void BaseFile::endRedoBlock()
 		mInRedoBlock = 0;
 }
 
+void BaseFile::changeLocation(const Location& location)
+{
+	mLocation = location;
+}
 
 
 
