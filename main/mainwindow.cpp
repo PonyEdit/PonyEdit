@@ -222,10 +222,13 @@ void MainWindow::saveFile()
 
 void MainWindow::saveFileAs()
 {
+	Editor* current = mWindowManager->currentEditor();
+	if (current == NULL)
+		return;
+
 	FileDialog dlg(this, true);
 	if(dlg.exec())
 	{
-		Editor* current = mWindowManager->currentEditor();
 		Location loc = dlg.getNewLocation();
 		loc.getFile()->newFile(current->getFile()->getContent());
 
