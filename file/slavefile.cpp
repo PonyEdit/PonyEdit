@@ -5,6 +5,10 @@
 #include "ssh/sshconnection.h"
 #include "main/tools.h"
 #include "ssh/slavechannel.h"
+#include "file/openfilemanager.h"
+#include "filestatuswidget.h"
+#include "main/dialogwrapper.h"
+#include <QMessageBox>
 
 SlaveFile::SlaveFile(const Location& location) : BaseFile(location)
 {
@@ -212,20 +216,34 @@ void SlaveFile::setLastSavedRevision(int lastSavedRevision)
 void SlaveFile::close()
 {
 	setOpenStatus(Closing);
-	mChannel->sendRequest(new SlaveRequest_closeFile(this, mBufferId));
+	mChannel->sendRequest(new SlaveRequest_closeFile(this, mBufferId, true));
 }
 
-void SlaveFile::changeLocation(const Location& location)
+void SlaveFile::sudo()
 {
-	BaseFile::changeLocation(location);
+	//	Close the old buffer. Don't bother checking if it succeeds; the only possible
+	//	cause of failure from closing a buffer is disconnection, and that drops it anyway.
+	mChannel->sendRequest(new SlaveRequest_closeFile(this, mBufferId, false));
+	mHost->unregisterOpenFile(this);
 
-	mHost = location.getRemoteHost();
-	mHost->registerOpenFile(this);
+	//	Break off connection with my current server
+	disconnect(mConnection, SIGNAL(statusChanged()), this, SLOT(connectionStateChanged()));
+	mBufferId = -1;
+	mChannel = NULL;
+	mConnection = NULL;
 
+	//	Change location
+	mLocation = mLocation.getSudoLocation();
+	mHost = mLocation.getRemoteHost();
+
+	//	Open a channel and begin connecting to the remote file
 	getChannel();
-	connectionStateChanged();
-
 	reconnect();
+
+	//	Throw up a dialog to wait for the reconnection to be successful or fail
+	DialogWrapper<FileStatusWidget> dialogWrapper(tr("Reopening with sudo"), new FileStatusWidget(this, NULL), false);
+	if (!dialogWrapper.exec())
+		throw(tr("Failed to reopen remote file."));
 }
 
 

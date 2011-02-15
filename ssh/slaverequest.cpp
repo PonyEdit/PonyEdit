@@ -293,22 +293,23 @@ void SlaveRequest_resyncFile::success()
 //  Message 7: closeFile  //
 ////////////////////////////
 
-SlaveRequest_closeFile::SlaveRequest_closeFile(SlaveFile* file, quint32 bufferId)
+SlaveRequest_closeFile::SlaveRequest_closeFile(SlaveFile* file, quint32 bufferId, bool reply)
 	: SlaveRequest(7, bufferId)
 {
 	mFile = file;
+	mReply = reply;
 }
 
 void SlaveRequest_closeFile::error(const SlaveRequest::Error& /* err */)
 {
 	//	Don't care if this fails; the only way it can fail is if the connection drops.
 	//	If the connection drops, the file is essentially closed server-side anyway.
-	mFile->closeCompleted();
+	if (mReply) mFile->closeCompleted();
 }
 
 void SlaveRequest_closeFile::success()
 {
-	mFile->closeCompleted();
+	if (mReply) mFile->closeCompleted();
 }
 
 

@@ -21,7 +21,7 @@ public:
 
 	void resyncError(const QString& error);
 
-	virtual void changeLocation(const Location& location);
+	virtual void sudo();
 
 public slots:
 	void connectionStateChanged();

@@ -192,13 +192,14 @@ private:
 class SlaveRequest_closeFile : public SlaveRequest
 {
 public:
-	SlaveRequest_closeFile(SlaveFile* file, quint32 bufferId);
+	SlaveRequest_closeFile(SlaveFile* file, quint32 bufferId, bool reply);
 
 	virtual void error(const Error& err);
 	virtual void success();
 
 private:
 	SlaveFile* mFile;
+	bool mReply;
 };
 
 /////////////////////////////

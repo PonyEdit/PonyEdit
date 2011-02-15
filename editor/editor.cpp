@@ -312,6 +312,26 @@ void Editor::showReadOnlyWarning()
 
 	mReadOnlyWarning = new EditorWarningBar(this, QPixmap(":/icons/warning.png"),
 		tr("You do not have write access to this file. It has been opened in read-only mode."));
-	mReadOnlyWarning->addButton(tr("Enable Editing"), this, SLOT(enableEditing()));
+
+	if (mFile->getLocation().canSudo() && !mFile->getLocation().isSudo())
+		mReadOnlyWarning->addButton(tr("Sudo and Edit"), this, SLOT(sudo()));
+
+	mReadOnlyWarning->addButton(tr("Edit Anyway"), this, SLOT(enableEditing()));
 	mEditorPaneLayout->insertWidget(0, mReadOnlyWarning);
 }
+
+void Editor::sudo()
+{
+	mFile->sudo();
+	setReadOnly(false);
+}
+
+
+
+
+
+
+
+
+
+

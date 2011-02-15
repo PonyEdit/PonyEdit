@@ -51,6 +51,7 @@ public slots:
 	void cut() { mEditor->cut(); }
 	void paste() { mEditor->paste(); }
 	void selectAll() { mEditor->selectAll(); }
+	void sudo();
 
 private:
 	void showLoading();

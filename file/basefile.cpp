@@ -296,7 +296,8 @@ void BaseFile::saveFailed(const QString& errorMessage, bool permissionError)
 		break;
 
 	case StatusWidget::SudoRetry:
-		changeLocation(mLocation.getSudoLocation());
+		sudo();
+		save();
 		break;
 
 	default: break;
@@ -327,10 +328,13 @@ void BaseFile::endRedoBlock()
 		mInRedoBlock = 0;
 }
 
-void BaseFile::changeLocation(const Location& location)
+void BaseFile::sudo()
 {
-	mLocation = location;
+	throw(tr("Invalid operation: Sudo called on incompatible file type"));
 }
+
+
+
 
 
 

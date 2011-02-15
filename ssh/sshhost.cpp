@@ -4,7 +4,6 @@
 #include <QMessageBox>
 #include "main/globaldispatcher.h"
 #include <QDebug>
-#include "connectionstatuswidget.h"
 #include "main/dialogwrapper.h"
 
 QList<SshHost*> SshHost::sKnownHosts;
@@ -151,56 +150,3 @@ SshConnection* SshHost::getConnection()
 
 	return mConnection;
 }
-
-/*
-bool SshHost::isConnected() const
-{
-	return (mController != NULL && mController->getStatus() == SshConnection::Connected);
-}
-
-bool SshHost::connect()
-{
-	disconnect();
-
-	//	Show a connection dialog; it will manage the whole connection process
-	mController = new SshConnection(this);
-	ConnectionStatusWidget* statusWidget = new ConnectionStatusWidget(mController, true);
-	statusWidget);
-
-	return (dialogWrapper.exec() == QDialog::Accepted);
-}
-
-void SshHost::disconnect()
-{
-	if (mController != NULL)
-	{
-		delete mController;
-		mController = NULL;
-	}
-}
-
-bool SshHost::ensureConnection()
-{
-	return isConnected() || connect();
-}
-
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

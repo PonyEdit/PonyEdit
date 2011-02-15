@@ -102,7 +102,8 @@ SOURCES += \
     licence/licencecheckdialog.cpp \
     main/statuswidget.cpp \
     options/startupoptionswidget.cpp \
-    main/shutdownprompt.cpp
+    main/shutdownprompt.cpp \
+    file/filestatuswidget.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -172,7 +173,8 @@ HEADERS  += \
     licence/licencecheckdialog.h \
     main/statuswidget.h \
     options/startupoptionswidget.h \
-    main/shutdownprompt.h
+    main/shutdownprompt.h \
+    file/filestatuswidget.h
 
 OTHER_FILES += \
     slave/slave.pl \

@@ -63,7 +63,7 @@ public:
 	void endUndoBlock();
 	void endRedoBlock();
 
-	virtual void changeLocation(const Location& location);
+	virtual void sudo();
 
 public slots:
 	void fileOpened(const QString& content, bool readOnly);
