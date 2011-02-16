@@ -124,16 +124,20 @@ void UpdateManager::downloadFinished()
 	QString cmd;
 	QStringList args;
 
+	QLabel* progressLabel = mNotificationDlg->getProgressLabel();
+
 	QFileInfo info(mTempFile);
 
 	QProcess *installProc = new QProcess();
 
 #ifdef Q_OS_WIN
+	progressLabel->setText(tr("Installing..."));
 	cmd = info.filePath();
 	args << "/verysilent" << "/suppressmsgboxes" << "/norestart";
 
 	installProc->startDetached(cmd, args);
 #elif defined Q_OS_MAC
+	progressLabel->setText(tr("Extracting..."));
 	QUuid uuid;
 	uuid.createUuid();
 
@@ -143,6 +147,8 @@ void UpdateManager::downloadFinished()
 	args << "attach" << info.filePath() << "-mountpoint" << mnt << "-noverify" << "-nobrowse" << "-noautoopen";
 
 	installProc->execute(cmd, args);
+
+	progressLabel->setText(tr("Installing..."));
 
 	cmd = "rm";
 	args.clear();
@@ -161,6 +167,8 @@ void UpdateManager::downloadFinished()
 	args << "detach" << mnt << "-force";
 
 	installProc->startDetached(cmd, args);
+
+	progressLabel->setText(tr("Restarting..."));
 
 	cmd = "open";
 	args.clear();
