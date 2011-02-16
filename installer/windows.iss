@@ -196,11 +196,13 @@ DefaultGroupName=PonyEdit
 OutputBaseFilename=PonyEdit-0.9-prealphaX
 UninstallDisplayName=PonyEdit
 LicenseFile=C:\Users\Thingalon\Documents\Projects\remoted\remoted\licence.rtf
+WizardImageFile=E:\Projects\RemoteED\trunk\installer\windows\large-logo.bmp
+WizardSmallImageFile=E:\Projects\RemoteED\trunk\installer\windows\small-logo.bmp
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\ponyedit.exe"; ValueName: ""; ValueType: string; ValueData: "{app}\ponyedit.exe"; Flags: uninsdeletekey
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\ponyedit.exe"; ValueName: "Path"; ValueType: string; ValueData: "{app}"
 Root: HKCR; Subkey: "*\shell\Edit with PonyEdit"; Flags: uninsdeletekey; Tasks: contextoption
-Root: HKCR; Subkey: "*\shell\Edit with PonyEdit"; ValueName: "icon"; ValueType: string; ValueData: "ponyedit.exe,1"; Tasks: contextoption
+Root: HKCR; Subkey: "*\shell\Edit with PonyEdit"; ValueName: "icon"; ValueType: string; ValueData: "{app}ponyedit.exe,0"; Tasks: contextoption
 Root: HKCR; Subkey: "*\shell\Edit with PonyEdit\command"; ValueName: ""; ValueType: string; ValueData: "ponyedit.exe %1"; Tasks: contextoption
 [Dirs]
 Name: {app}\slave
