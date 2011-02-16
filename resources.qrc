@@ -20,5 +20,6 @@
         <file>icons/unreadable.png</file>
         <file>icons/add.png</file>
         <file>icons/arrow-right-double.png</file>
+        <file>icons/ponyedit.ico</file>
     </qresource>
 </RCC>

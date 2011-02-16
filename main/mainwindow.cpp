@@ -48,6 +48,7 @@ MainWindow::MainWindow(QWidget *parent)
 	mCurrentSyntaxMenuItem = NULL;
 
 	setWindowTitle(tr("PonyEdit"));
+	setWindowIcon(QIcon(":/icons/ponyedit.ico"));
 
 	setAcceptDrops(true);
 
@@ -315,6 +316,7 @@ void MainWindow::updateTitle(BaseFile* file)
 	if(file->hasUnsavedChanges())
 		modified = true;
 
+#if Q_OS_MAC
 	if(file->getLocation().getProtocol() == Location::Local)
 		setWindowFilePath(file->getLocation().getPath());
 	else
@@ -323,6 +325,7 @@ void MainWindow::updateTitle(BaseFile* file)
 		QIcon icon = file->getLocation().getIcon();
 		setWindowIcon(icon);
 	}
+#endif
 
 	setWindowTitle(title);
 	setWindowModified(modified);
