@@ -201,7 +201,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -221,22 +221,15 @@
        inkscape:export-filename="C:\Users\Thingalon\Documents\Projects\remoted\logo-glossred-subtleolivegreen-128.png"
        inkscape:export-xdpi="12.38327"
        inkscape:export-ydpi="12.38327" />
-    <text
-       xml:space="preserve"
-       style="font-size:949.54681396000001000px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#c4c8b7;fill-opacity:1;stroke:#000000;stroke-width:19.99999998;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:Franklin Gothic Demi;-inkscape-font-specification:Franklin Gothic Demi Bold"
-       x="246.43974"
-       y="1190.7369"
-       id="text3911"
-       sodipodi:linespacing="125%"
+    <g
        transform="scale(0.89410506,1.1184368)"
-       inkscape:export-filename="C:\Users\Thingalon\Documents\Projects\remoted\cadmiumredgray2.png"
-       inkscape:export-xdpi="3.23"
-       inkscape:export-ydpi="3.23"><tspan
-         sodipodi:role="line"
-         id="tspan3913"
-         x="246.43974"
-         y="1190.7369"
-         style="fill:#c4c8b7;stroke-width:19.99999998;stroke-miterlimit:4;stroke-dasharray:none">P</tspan></text>
+       style="font-size:949.54681396px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#c4c8b7;fill-opacity:1;stroke:#000000;stroke-width:20;stroke-miterlimit:4;stroke-opacity:1;font-family:Franklin Gothic Demi;-inkscape-font-specification:Franklin Gothic Demi Bold"
+       id="text3911">
+      <path
+         d="m 476.40811,960.24697 0,230.48993 -168.12959,0 0,-639.04891 254.74444,0 c 55.81101,6.4e-4 99.00248,6.15843 129.57454,18.47339 30.57118,12.31621 57.79586,34.23311 81.67413,65.75079 23.87721,31.51878 35.81608,70.0255 35.81664,115.52027 -5.6e-4,31.76016 -6.33222,62.83406 -18.99499,93.22181 -12.66386,30.38844 -30.6591,54.37243 -53.98577,71.95205 -23.32765,17.58016 -45.95934,29.24857 -67.89515,35.00526 -21.93664,5.75717 -55.50747,8.63564 -100.71258,8.63541 z m -5.01317,-131.26975 84.35458,0 c 32.72533,3.6e-4 55.49708,-7.34552 68.31532,-22.03767 12.81749,-14.69138 19.22642,-31.68688 19.22682,-50.98656 -4e-4,-22.46705 -7.15309,-40.24978 -21.45811,-53.34826 -14.30577,-13.09749 -36.47865,-19.64648 -66.5187,-19.64699 l -83.91991,0 z"
+         style="fill:#c4c8b7"
+         id="path3057" />
+    </g>
     <g
        id="g3909-3"
        style="fill:#000000;fill-opacity:0.78306879;stroke:none;filter:url(#filter4159)"
