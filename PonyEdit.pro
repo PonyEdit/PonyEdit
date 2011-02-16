@@ -10,6 +10,8 @@ win32 {
 	LIBS        += -L$$PWD/deps/lib-win32/ -lwsock32 -lmpr
 	INCLUDEPATH += $$PWD/deps/include-win32/
 	INCLUDEPATH += $$PWD/deps/libssh2/src/
+
+	RC_FILE = ponyedit.rc
 }
 
 macx {
@@ -35,6 +37,8 @@ macx {
 	QMAKE_BUNDLE_DATA += data
 
 	CONFIG += x86
+
+	ICON = icons/ponyedit.icns
 }
 
 SOURCES += \
@@ -514,7 +518,8 @@ OTHER_FILES += \
     syntaxdefs/actionscript.xml \
     syntaxdefs/abc.xml \
     syntaxdefs/abap.xml \
-    syntaxdefs/markdown.xml
+    syntaxdefs/markdown.xml \
+    ponyedit.rc
 
 FORMS += \
     file/filedialog.ui \

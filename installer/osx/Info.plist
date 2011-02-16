@@ -720,7 +720,7 @@
 	<key>CFBundleGetInfoString</key>
 	<string>PonyEdit</string>
 	<key>CFBundleIconFile</key>
-	<string></string>
+	<string>ponyedit.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.Pentalon.PonyEdit</string>
 	<key>CFBundleName</key>
