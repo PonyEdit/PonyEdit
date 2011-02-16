@@ -615,6 +615,9 @@ void MainWindow::nextStartupPrompt()
 	if(!Options::ShutdownPrompt)
 		return;
 
+	if(mWindowManager->getEditors()->length() == 0)
+		return;
+
 	ShutdownPrompt dlg(this);
 	dlg.exec();
 }
