@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 
 		QCoreApplication::setOrganizationName("Pentalon");
 		QCoreApplication::setApplicationName("PonyEdit");
-		QCoreApplication::setApplicationVersion("0.9-prealpha10");
+		QCoreApplication::setApplicationVersion("0.9-prealphaX");
 		gDispatcher = new GlobalDispatcher();
 
 		RawSshConnection::initializeLib();
