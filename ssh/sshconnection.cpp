@@ -298,9 +298,9 @@ void SshConnection::hostkeyWarnDialog(ConnectionStatusWidget* widget, RemoteConn
 	bool newKey = param.toBool();
 
 	if (newKey)
-		widget->setStatus(QPixmap(":/icons/question.png"), tr("Verify Host Fingerprint"));
+		widget->setStatus(QPixmap(":/icons/question.png"), tr("%1: Verify Host Fingerprint").arg(sshConnection->getName()));
 	else
-		widget->setStatus(QPixmap(":/icons/warning.png"), tr("Host Fingerprint Changed!"));
+		widget->setStatus(QPixmap(":/icons/warning.png"), tr("%1: Host Fingerprint Changed!").arg(sshConnection->getName()));
 	widget->setButtons(StatusWidget::Connect | StatusWidget::Cancel);
 
 	QVBoxLayout* layout = new QVBoxLayout(target);
@@ -353,7 +353,7 @@ void SshConnection::passwordInputDialog(ConnectionStatusWidget* widget, RemoteCo
 	}
 
 	widget->setButtons(StatusWidget::Connect | StatusWidget::Cancel);
-	widget->setStatus(QPixmap(":/icons/question.png"), query);
+	widget->setStatus(QPixmap(":/icons/question.png"), tr("%1: %2").arg(sshConnection->getName()).arg(query));
 
 	QVBoxLayout* layout = new QVBoxLayout(target);
 	sshConnection->mPasswordInput = new PasswordInput(target);
