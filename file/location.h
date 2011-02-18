@@ -68,7 +68,7 @@ public:
 	static void loadFavorites();
 	static inline QList<Favorite>& getFavorites() { return sFavorites; }
 
-	void createNewDirectory(QString name);
+	bool createNewDirectory(QString name);
 
 private:
 	Location(const Location& parent, const QString& path, Type type, int size, QDateTime lastModified, bool canRead, bool canWrite);
@@ -79,6 +79,8 @@ private:
 
 	void sshFileOpenResponse(SshConnection* controller, quint32 bufferId, const QByteArray& data);
 	void fileOpenError(const QString& error);
+
+	bool sshCreateDirectory(QString name);
 
 	LocationShared* mData;
 

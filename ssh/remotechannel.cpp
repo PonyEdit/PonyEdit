@@ -7,6 +7,9 @@
 #include "main/global.h"
 #include <QThread>
 #include <QDebug>
+#include "requeststatuswidget.h"
+#include "main/dialogwrapper.h"
+#include <QMessageBox>
 
 //	Really small skeleton class; actual work done in RemoteChannel and its subclasses
 class RemoteChannelThread : public QThread
@@ -116,7 +119,7 @@ void RemoteChannel::threadRun()
 
 				foreach (RemoteRequest* rq, sendingMessages)
 				{
-					rq->error(QObject::tr("Connection lost: %1").arg(error));
+					rq->handleError(QObject::tr("Connection lost: %1").arg(error));
 					delete rq;
 				}
 			}
@@ -160,6 +163,25 @@ void RemoteChannel::setErrorStatus(const QString& error)
 	mErrorMessage = error;
 	setStatus(Error);
 }
+
+RequestStatusWidget::Result RemoteChannel::waitForRequest(RemoteRequest* request, const QString& description, bool allowSudo)
+{
+	DialogWrapper<RequestStatusWidget> dlg(QObject::tr("Please wait..."),
+		new RequestStatusWidget(this, request, description, allowSudo), true);
+	return static_cast<RequestStatusWidget::Result>(dlg.exec());
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

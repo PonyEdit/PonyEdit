@@ -24,15 +24,12 @@ StatusWidget::~StatusWidget()
 	delete ui;
 }
 
-void StatusWidget::close(bool operationSuccessful)
+void StatusWidget::close(Result result)
 {
 	if (mDialogChild)
 	{
 		QDialog* parentDialog = static_cast<QDialog*>(parentWidget());
-		if (operationSuccessful)
-			parentDialog->accept();
-		else
-			parentDialog->reject();
+		parentDialog->done(result);
 	}
 	emit completed();
 	this->deleteLater();

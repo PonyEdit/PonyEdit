@@ -35,5 +35,3 @@ void FileStatusWidget::openStatusChanged()
 		close(false);
 }
 
-enum OpenStatus { Closed, Loading, LoadError, Ready, Disconnected, Reconnecting, Repairing, SyncError, Closing };
-

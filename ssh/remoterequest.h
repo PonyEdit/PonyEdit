@@ -3,6 +3,7 @@
 
 #include <QString>
 
+class RequestStatusWidget;
 class RemoteRequest
 {
 public:
@@ -11,9 +12,18 @@ public:
 
     RemoteRequest();
 
+	void setStatusWidget(RequestStatusWidget* statusWidget);
+
+	void handleError(const QString& message);
+	void handleError(const Error& err);
+	void handleSuccess();
+
+protected:
 	virtual void error(const Error& /* err */) {}
-	void error(const QString& message);
 	virtual void success() {}
+
+private:
+	RequestStatusWidget* mStatusWidget;
 };
 
 #endif // REMOTEREQUEST_H

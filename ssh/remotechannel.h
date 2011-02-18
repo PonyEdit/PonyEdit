@@ -6,6 +6,7 @@
 #include <QList>
 #include <QWaitCondition>
 #include <QObject>
+#include "requeststatuswidget.h"
 
 class RemoteConnection;
 class RawChannelHandle;
@@ -32,6 +33,8 @@ public:
 	RemoteChannel(RemoteConnection* connection, Type type);
 
 	void sendRequest(RemoteRequest* request);
+	RequestStatusWidget::Result waitForRequest(RemoteRequest* request, const QString& description, bool allowSudo);
+
 	inline Type getType() const { return mType; }
 	void threadRun();	//	Only called from RemoteChannelThread::run
 

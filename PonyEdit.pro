@@ -107,7 +107,8 @@ SOURCES += \
     main/statuswidget.cpp \
     options/startupoptionswidget.cpp \
     main/shutdownprompt.cpp \
-    file/filestatuswidget.cpp
+    file/filestatuswidget.cpp \
+    ssh/requeststatuswidget.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -178,7 +179,8 @@ HEADERS  += \
     main/statuswidget.h \
     options/startupoptionswidget.h \
     main/shutdownprompt.h \
-    file/filestatuswidget.h
+    file/filestatuswidget.h \
+    ssh/requeststatuswidget.h
 
 OTHER_FILES += \
     slave/slave.pl \

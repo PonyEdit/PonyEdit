@@ -10,9 +10,11 @@
 #include <QDebug>
 #include <QDir>
 #include <QSettings>
+#include <QMessageBox>
 #include "main/global.h"
 #include "file/favoritelocationdialog.h"
 #include "ssh/slavechannel.h"
+#include "ssh/requeststatuswidget.h"
 
 QRegExp gSshServerRegExp("^(?:([^@:]+)@)?([^:]+\\.[^:]+):([^:]+)?");
 QRegExp gLocalPathSeparators("/");
@@ -508,25 +510,41 @@ QString Location::getDefaultFavoriteName()
 	}
 }
 
-void Location::createNewDirectory(QString name)
+bool Location::createNewDirectory(QString name)
 {
 	QDir currentDir;
 	Location currentLocDir = this->getDirectory();
 	switch(mData->mProtocol)
 	{
 	case Ssh:
-		mData->mSlaveChannel->sendRequest(new SlaveRequest_createDirectory(Location(*this), name));
+		return sshCreateDirectory(name);
 		break;
 
 	case Local:
 		currentDir.setPath(currentLocDir.getPath());
-		currentDir.mkdir(name);
+		return currentDir.mkdir(name);
 		break;
 
-	case Unsaved:
-	default:
-		break;
+	default: break;
 	}
+
+	return false;
+}
+
+bool Location::sshCreateDirectory(QString name)
+{
+	if (!mData->ensureConnected())
+		return false;
+
+	RequestStatusWidget::Result result = mData->mSlaveChannel->waitForRequest(new SlaveRequest_createDirectory(Location(*this), name),
+																			  QObject::tr("Creating New Folder"), !isSudo() && canSudo());
+	if (result == RequestStatusWidget::SudoRequestedResult)
+	{
+		Location sudoLocation = getSudoLocation();
+		return sudoLocation.createNewDirectory(name);
+	}
+	else
+		return result == RequestStatusWidget::SuccessResult;
 }
 
 bool Location::canSudo() const

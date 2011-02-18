@@ -22,12 +22,14 @@ public:
 		Retry     = 0x0010,
 	};
 	Q_DECLARE_FLAGS(Buttons, Button);
+	enum Result { SuccessResult = 1, FailureResult = 0, SudoRequestedResult = -1 };
 
 	explicit StatusWidget(bool dialogChild, QWidget *parent = 0);
 	~StatusWidget();
 
 	void setStatus(const QPixmap& pixmap, const QString& message);
-	void close(bool operationSuccessful);
+	void close(Result result);
+	void close(bool result) { close(result ? SuccessResult : FailureResult); }
 	void setInputWidget(QWidget* widget);
 	void clearInputWidget();
 
