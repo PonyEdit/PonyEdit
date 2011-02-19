@@ -36,6 +36,23 @@
           <iconset resource="../resources.qrc">
            <normaloff>:/icons/up.png</normaloff>:/icons/up.png</iconset>
          </property>
+         <property name="checkable">
+          <bool>false</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="refreshButton">
+         <property name="text">
+          <string>...</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../resources.qrc">
+           <normaloff>:/icons/resync.png</normaloff>:/icons/resync.png</iconset>
+         </property>
         </widget>
        </item>
        <item>
@@ -46,6 +63,12 @@
          <property name="icon">
           <iconset resource="../resources.qrc">
            <normaloff>:/icons/newfolder.png</normaloff>:/icons/newfolder.png</iconset>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
          </property>
         </widget>
        </item>

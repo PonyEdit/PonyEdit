@@ -51,6 +51,7 @@ private slots:
 	void directoryTreeContextMenu(QPoint point);
 	void createNewFolder();
 	void retryButtonClicked(StatusWidget::Button button);	//	Called when "try again" or "sudo" is clicked on an error
+	void refresh();
 #ifdef Q_OS_WIN
 	void populateWindowsShares(QTreeWidgetItem* localNetworkItem, LPNETRESOURCE lpnr);
 #endif

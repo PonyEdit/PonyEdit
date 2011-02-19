@@ -64,6 +64,7 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	connect(ui->directoryTree, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(folderTreeItemExpanded(QTreeWidgetItem*)));
 	connect(ui->directoryTree, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(directoryTreeSelected(QTreeWidgetItem*)));
 	connect(ui->upLevelButton, SIGNAL(clicked()), this, SLOT(upLevel()));
+	connect(ui->refreshButton, SIGNAL(clicked()), this, SLOT(refresh()));
 	connect(ui->fileList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(fileDoubleClicked(QModelIndex)));
 	connect(gDispatcher, SIGNAL(sshServersUpdated()), this, SLOT(populateRemoteServers()), Qt::QueuedConnection);
 	connect(ui->mainButtonBox, SIGNAL(accepted()), this, SLOT(accept()));
@@ -699,4 +700,9 @@ void FileDialog::dropEvent(QDropEvent *event)
 		showLocation(loc.getDirectory());
 		mSelectFile = loc.getLabel();
 	}
+}
+
+void FileDialog::refresh()
+{
+	showLocation(mCurrentLocation);
 }
