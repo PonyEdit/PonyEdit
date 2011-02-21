@@ -196,8 +196,8 @@ DefaultGroupName=PonyEdit
 OutputBaseFilename=PonyEdit-0.9-prealphaXI
 UninstallDisplayName=PonyEdit
 LicenseFile=C:\Users\Thingalon\Documents\Projects\remoted\remoted\licence.rtf
-WizardImageFile=E:\Projects\RemoteED\trunk\installer\windows\large-logo.bmp
-WizardSmallImageFile=E:\Projects\RemoteED\trunk\installer\windows\small-logo.bmp
+WizardImageFile=C:\Users\Thingalon\Documents\Projects\remoted\remoted\installer\windows\large-logo.bmp
+WizardSmallImageFile=C:\Users\Thingalon\Documents\Projects\remoted\remoted\installer\windows\small-logo.bmp
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\ponyedit.exe"; ValueName: ""; ValueType: string; ValueData: "{app}\ponyedit.exe"; Flags: uninsdeletekey
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\ponyedit.exe"; ValueName: "Path"; ValueType: string; ValueData: "{app}"
