@@ -19,6 +19,8 @@ void OpenFileItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 {
 	Location location = index.data(OpenFileTreeModel::LocationRole).value<Location>();
 	BaseFile* file = (BaseFile*)index.data(OpenFileTreeModel::FileRole).value<void*>();
+	OpenFileTreeModel::Level level = (OpenFileTreeModel::Level)index.data(OpenFileTreeModel::TypeRole).toInt();
+	QString label = index.data(OpenFileTreeModel::LabelRole).toString();
 
 	//	Always paint the default background
 	QStyledItemDelegate::paint(painter, option, index);
@@ -41,7 +43,7 @@ void OpenFileItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 		{
 			QStylePainter sp(device, mParent);
 
-			if (file)
+			if (level == OpenFileTreeModel::File)
 			{
 				BaseFile::OpenStatus fileStatus = file->getOpenStatus();
 				if (fileStatus == BaseFile::Loading)
@@ -98,20 +100,31 @@ void OpenFileItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 			labelRect.adjust(2, 0, -2, 0);
 
 			//	Actually draw the text
-			sp.setFont(option.font);
-			sp.setBrush(option.palette.text());
-
-			QString label;
-			if (file)
-				label = option.fontMetrics.elidedText(location.getLabel(), Qt::ElideMiddle, labelRect.width());
-			else
+			QFontMetrics fontMetrics = option.fontMetrics;
+			if (level == OpenFileTreeModel::Host)
 			{
-				label = location.getPath();
-				if(label == "")
-					label = "New Files";
-				label = Tools::squashLabel(label, option.fontMetrics, labelRect.width());
+				sp.setPen(QColor(0x6490C1));//0x365F91));
+				QFont f = option.font;
+				f.setPointSize(f.pointSize() - 2);
+				f.setItalic(true);
+				f.setBold(true);
+				sp.setFont(f);
+				labelRect.adjust(0, 0, 0, -3);
+				fontMetrics = QFontMetrics(f);
+
+				sp.drawLine(option.rect.left(), option.rect.bottom() - 2, option.rect.right(), option.rect.bottom() - 2);
 			}
-			sp.drawText(labelRect, label);
+			else
+				sp.setFont(option.font);
+
+			if (level == OpenFileTreeModel::File)
+				label = option.fontMetrics.elidedText(label, Qt::ElideMiddle, labelRect.width());
+			else
+				label = Tools::squashLabel(label, option.fontMetrics, labelRect.width());
+
+			QTextOption o;
+			o.setAlignment(Qt::AlignBottom | Qt::AlignLeft);
+			sp.drawText(labelRect, label, o);
 		}
 
 		painter->begin(device);

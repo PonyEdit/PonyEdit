@@ -9,7 +9,7 @@
 OpenFileTreeModel::OpenFileTreeModel(QObject* parent, int flags, const QList<BaseFile*>* files) : QAbstractItemModel(parent)
 {
 	mOptionFlags = flags;
-	mTopLevelEntry = new Entry();
+	mTopLevelNode = new Node(Root);
 
 	mExplicitFiles = (files != NULL);
 	if (mExplicitFiles)
@@ -32,22 +32,121 @@ OpenFileTreeModel::OpenFileTreeModel(QObject* parent, int flags, const QList<Bas
 
 OpenFileTreeModel::~OpenFileTreeModel()
 {
-	delete mTopLevelEntry;
+	delete mTopLevelNode;
+}
+
+QString OpenFileTreeModel::Node::getLabel()
+{
+	switch (level)
+	{
+	case Host:
+		return location.getHostName();
+
+	case Directory:
+		return location.getHostlessPath();
+
+	case File:
+		return location.getLabel();
+
+	default:
+		return "";
+	}
+}
+
+OpenFileTreeModel::Node* OpenFileTreeModel::Node::findChildNode(const QString& label)
+{
+	foreach (Node* node, children)
+		if (node->getLabel() == label)
+			return node;
+	return NULL;
+}
+
+OpenFileTreeModel::Node* OpenFileTreeModel::Node::findChildNode(const Location& location)
+{
+	foreach (Node* node, children)
+		if (node->location == location)
+			return node;
+	return NULL;
+}
+
+OpenFileTreeModel::Node* OpenFileTreeModel::Node::findChildNode(BaseFile* file)
+{
+	foreach (Node* node, children)
+		if (node->file == file)
+			return node;
+	return NULL;
+}
+
+QModelIndex OpenFileTreeModel::getNodeIndex(Node* node) const
+{
+	Node* parentNode = node->parent;
+	if (!parentNode) return QModelIndex();
+	int row = 0;
+	for (; row < parentNode->children.length() && parentNode->children[row] != node; row++);
+	return createIndex(row, 0, static_cast<void*>(node));
+}
+
+void OpenFileTreeModel::addNodeToTree(Node* parentNode, Node* node)
+{
+	QModelIndex parentIndex = getNodeIndex(parentNode);
+
+	//	Work out where within the parent to insert this new item... (Sorting alphabetically)
+	int insertIndex;
+	for (insertIndex = 0; insertIndex < parentNode->children.length(); insertIndex++)
+		if (parentNode->children[insertIndex]->location.getPath() > node->location.getPath())
+			break;
+
+	//	Lock the model, insert the row, unlock the model.
+	beginInsertRows(parentIndex, insertIndex, insertIndex);
+	parentNode->children.insert(insertIndex, node);
+	node->parent = parentNode;
+	endInsertRows();
+}
+
+OpenFileTreeModel::Node* OpenFileTreeModel::getHostNode(const Location& location)
+{
+	//	See if there is already an Node for this location.
+	Node* existingNode = mTopLevelNode->findChildNode(location.getHostName());
+	if (existingNode)
+		return existingNode;
+
+	Node* newNode = new Node(Host);
+	newNode->location = location;
+	addNodeToTree(mTopLevelNode, newNode);
+	return newNode;
+}
+
+OpenFileTreeModel::Node* OpenFileTreeModel::getDirectoryNode(const Location& location)
+{
+	//	New files don't show directory subtrees.
+	if (location.getPath().isEmpty())
+		return getHostNode(location);
+
+	//	Find / Create a node for the host this directory is on
+	Node* hostNode = getHostNode(location);
+
+	//	See if there is already a Node for this directory
+	Node* existingNode = hostNode->findChildNode(location);
+	if (existingNode)
+		return existingNode;
+
+	Node* newNode = new Node(Directory);
+	newNode->location = location;
+	addNodeToTree(hostNode, newNode);
+	return newNode;
 }
 
 void OpenFileTreeModel::fileOpened(BaseFile* file)
 {
-	//	Create an Entry for the new file
-	Entry* newEntry = new Entry();
-	newEntry->file = file;
-	newEntry->location = file->getLocation();
-	mFileLookup.insert(file, newEntry);
+	//	Find / Create a node for the directory this file is in
+	Node* directoryNode = getDirectoryNode(file->getLocation().getDirectory());
 
-	//	Work out where this belongs in the tree... (create a directory branch if necessary)
-	QModelIndex directoryIndex = registerDirectory(file->getDirectory());
-
-	//	Insert it.
-	addToTree(directoryIndex, newEntry);
+	//	Create a Node for the new file
+	Node* newNode = new Node(File);
+	newNode->file = file;
+	newNode->location = file->getLocation();
+	addNodeToTree(directoryNode, newNode);
+	mFileLookup.insert(file, newNode);
 
 	connect(file, SIGNAL(openStatusChanged(int)), this, SLOT(fileChanged()));
 	connect(file, SIGNAL(fileOpenProgress(int)), this, SLOT(fileChanged()));
@@ -62,75 +161,39 @@ void OpenFileTreeModel::fileClosed(BaseFile* file)
 void OpenFileTreeModel::fileChanged()
 {
 	BaseFile* file = (BaseFile*)QObject::sender();
-	Entry* fileEntry = mFileLookup.value(file);
-	if (fileEntry && fileEntry->parent)
+	Node* fileNode = mFileLookup.value(file);
+	if (fileNode)
 	{
-		int row = fileEntry->parent->children.indexOf(fileEntry);
-		if (row >= 0)
-			emit dataChanged(createIndex(row, 0, fileEntry), createIndex(row, 1, fileEntry));
+		QModelIndex index = getNodeIndex(fileNode);
+		if (index.isValid())
+			emit dataChanged(index, index.sibling(index.row(), 1));
 	}
-}
-
-QModelIndex OpenFileTreeModel::addToTree(QModelIndex parent, Entry* entry)
-{
-	Entry* parentEntry = parent.isValid() ? static_cast<Entry*>(parent.internalPointer()) : mTopLevelEntry;
-
-	//	Work out where within the parent to insert this new item... (Maintaining alphabetic sorting)
-	int insertIndex;
-	for (insertIndex = 0; insertIndex < parentEntry->children.length(); insertIndex++)
-		if (parentEntry->children[insertIndex]->location.getPath() > entry->location.getPath())
-			break;
-
-	//	Insert it!
-	beginInsertRows(parent, insertIndex, insertIndex);
-	parentEntry->children.insert(insertIndex, entry);
-	entry->parent = parentEntry;
-	endInsertRows();
-
-	QModelIndex index = createIndex(insertIndex, 0, entry);
-	return index;
-}
-
-QModelIndex OpenFileTreeModel::registerDirectory(const Location& location)
-{
-	//	First see if the directory is already in the tree...
-	for (int row = 0; row < mTopLevelEntry->children.length(); row++)
-		if (mTopLevelEntry->children[row]->location == location)
-			return createIndex(row, 0, mTopLevelEntry->children[row]);
-
-	//	Since it is not, add it.
-	Entry* newEntry = new Entry();
-	newEntry->location = location;
-	return addToTree(QModelIndex(), newEntry);
 }
 
 QModelIndex OpenFileTreeModel::index(int row, int column, const QModelIndex &parent) const
 {
-	Entry* parentEntry = (parent.isValid() ? static_cast<Entry*>(parent.internalPointer()) : mTopLevelEntry);
-	if (parentEntry->children.length() <= row)
+	Node* parentNode = (parent.isValid() ? static_cast<Node*>(parent.internalPointer()) : mTopLevelNode);
+	if (parentNode->children.length() <= row)
 		return QModelIndex();
-	Entry* entry = parentEntry->children[row];
+	Node* Node = parentNode->children[row];
 
-	return createIndex(row, column, entry);
+	return createIndex(row, column, Node);
 }
 
 QModelIndex OpenFileTreeModel::parent(const QModelIndex& index) const
 {
-	Entry* entry = static_cast<Entry*>(index.internalPointer());
-	if (!entry || !entry->parent || entry->parent == mTopLevelEntry)
+	Node* node = static_cast<Node*>(index.internalPointer());
+	if (!node || !node->parent || node->parent == mTopLevelNode)
 		return QModelIndex();
 
-	Entry* parentEntry = entry->parent;
-	Entry* grandparentEntry = parentEntry->parent;
-
-	int row = grandparentEntry->children.indexOf(parentEntry);
-	return createIndex(row, 0, parentEntry);
+	Node* parentNode = node->parent;
+	return getNodeIndex(parentNode);
 }
 
 int OpenFileTreeModel::rowCount(const QModelIndex& parent) const
 {
-	Entry* parentEntry = (parent.isValid() ? static_cast<Entry*>(parent.internalPointer()) : mTopLevelEntry);
-	return parentEntry->children.length();
+	Node* parentNode = (parent.isValid() ? static_cast<Node*>(parent.internalPointer()) : mTopLevelNode);
+	return parentNode->children.length();
 }
 
 int OpenFileTreeModel::columnCount(const QModelIndex& /*parent*/) const
@@ -143,95 +206,104 @@ QVariant OpenFileTreeModel::data(const QModelIndex &index, int role) const
 	if (!index.isValid())
 		return QVariant();
 
-	Entry* entry = static_cast<Entry*>(index.internalPointer());
+	Node* node = static_cast<Node*>(index.internalPointer());
 	if (role == Qt::ToolTipRole)
 	{
-		QString tooltip = entry->location.getPath();
-		if (entry->file)
+		QString tooltip = node->location.getPath();
+		if (node->file)
 		{
-			if (entry->file->hasUnsavedChanges()) tooltip += "\nUnsaved Changes";
-			tooltip += QString("\n") + entry->file->sStatusLabels[entry->file->getOpenStatus()];
+			if (node->file->hasUnsavedChanges()) tooltip += "\nUnsaved Changes";
+			tooltip += QString("\n") + node->file->sStatusLabels[node->file->getOpenStatus()];
 		}
 		return QVariant(tooltip);
 	}
 	else if (role < Qt::UserRole)
 		 return QVariant();
 
-	if (role == LocationRole)
-		return QVariant::fromValue<Location>(entry->location);
-	else
-		return QVariant::fromValue<void*>(entry->file);
+	switch (role)
+	{
+	case LocationRole:
+		return QVariant::fromValue<Location>(node->location);
+
+	case FileRole:
+		return QVariant::fromValue<void*>(node->file);
+
+	case TypeRole:
+		return QVariant(static_cast<int>(node->level));
+
+	case LabelRole:
+		return node->getLabel();
+	}
+
+	return QVariant();
 }
 
 Qt::ItemFlags OpenFileTreeModel::flags(const QModelIndex &index) const
 {
-	Entry* entry = static_cast<Entry*>(index.internalPointer());
-	return (entry->file ? Qt::ItemIsSelectable | Qt::ItemIsEnabled : Qt::NoItemFlags) ;
+	Node* node = static_cast<Node*>(index.internalPointer());
+	return (node->file ? Qt::ItemIsSelectable | Qt::ItemIsEnabled : Qt::NoItemFlags) ;
 }
 
 QModelIndex OpenFileTreeModel::findFile(BaseFile* file) const
 {
-	Entry* fileEntry = mFileLookup.value(file);
-	if (fileEntry && fileEntry->parent)
+	Node* fileNode = mFileLookup.value(file);
+	if (fileNode && fileNode->parent)
 	{
-		int row = fileEntry->parent->children.indexOf(fileEntry);
+		int row = fileNode->parent->children.indexOf(fileNode);
 		if (row >= 0)
-			return createIndex(row, 0, fileEntry);
+			return createIndex(row, 0, fileNode);
 	}
 
 	return QModelIndex();
 }
 
-void OpenFileTreeModel::removeEntry(Entry* entry)
+void OpenFileTreeModel::removeNode(Node* node)
 {
-	Entry* parentEntry = entry->parent;
-	int row = parentEntry->children.indexOf(entry);
+	Node* parentNode = node->parent;
+	int row = parentNode->children.indexOf(node);
 
-	QModelIndex index = createIndex(row, 0, entry);
+	QModelIndex index = createIndex(row, 0, node);
 	QModelIndex parentIndex = parent(index);
 
 	beginRemoveRows(parentIndex, row, row);
-	parentEntry->children.removeAt(row);
+	parentNode->children.removeAt(row);
 	endRemoveRows();
 
-	//	If this is a file being removed, also remove the directory above it if its now empty
-	if (entry->file)
-		if (parentEntry->children.length() == 0)
-			removeEntry(parentEntry);
+	//	If the parent is not the top level, remove it if it's empty.
+	if (parentNode->level != Root && parentNode->children.length() == 0)
+		removeNode(parentNode);
 }
 
 BaseFile* OpenFileTreeModel::getFileAtIndex(const QModelIndex& index)
 {
 	if (index.isValid())
 	{
-		Entry* entry = static_cast<Entry*>(index.internalPointer());
-		if (entry)
-			return entry->file;
+		Node* node = static_cast<Node*>(index.internalPointer());
+		if (node)
+			return node->file;
 	}
 
 	return NULL;
 }
 
+QList<BaseFile*> OpenFileTreeModel::getIndexAndChildFiles(Node* node)
+{
+	QList<BaseFile*> files;
+	if (!node) return files;
+
+	if (node->file)
+		files.append(node->file);
+
+	foreach (Node* childNode, node->children)
+		files.append(getIndexAndChildFiles(childNode));
+
+	return files;
+}
+
 QList<BaseFile*> OpenFileTreeModel::getIndexAndChildFiles(const QModelIndex& index)
 {
-	QList<BaseFile*> closingFiles;
-
-	if (!index.isValid()) return closingFiles;
-
-	Entry* entry = static_cast<Entry*>(index.internalPointer());
-	if (!entry) return closingFiles;
-
-	if (entry->file)
-		closingFiles.append(entry->file);
-	else
-	{
-		//	Close a whole path
-		foreach (Entry* childEntry, entry->children)
-			if (childEntry->file)
-				closingFiles.append(childEntry->file);
-	}
-
-	return closingFiles;
+	if (!index.isValid()) return QList<BaseFile*>();
+	return getIndexAndChildFiles(static_cast<Node*>(index.internalPointer()));
 }
 
 void OpenFileTreeModel::removeFile(BaseFile* file)
@@ -239,8 +311,8 @@ void OpenFileTreeModel::removeFile(BaseFile* file)
 	QModelIndex index = findFile(file);
 	if (index.isValid())
 	{
-		Entry* entry = static_cast<Entry*>(index.internalPointer());
-		removeEntry(entry);
+		Node* node = static_cast<Node*>(index.internalPointer());
+		removeNode(node);
 	}
 
 	mFiles.removeAll(file);

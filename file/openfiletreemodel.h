@@ -11,7 +11,8 @@ class OpenFileTreeModel : public QAbstractItemModel
 {
     Q_OBJECT
 public:
-	enum Roles { LocationRole = Qt::UserRole, FileRole = Qt::UserRole + 1 };
+	enum Roles { LocationRole = Qt::UserRole, FileRole = Qt::UserRole + 1, TypeRole = Qt::UserRole + 2, LabelRole = Qt::UserRole + 3 };
+	enum Level { Root, Host, Directory, File };
 
 	OpenFileTreeModel(QObject* parent, int flags, const QList<BaseFile*>* explicitFiles = NULL);    // Displays explicitFiles if specified; if left NULL, gets a list of all currently open files
 	~OpenFileTreeModel();
@@ -35,23 +36,32 @@ private slots:
 	void fileChanged();
 
 private:
-	struct Entry
+	class Node
 	{
-		Entry() : parent(0), file(0) {}
+	public:
+		Node(Level l) : level(l), parent(0), file(0) {}
+		Node* findChildNode(const QString& label);
+		Node* findChildNode(const Location& location);
+		Node* findChildNode(BaseFile* file);
+		QString getLabel();
 
-		Entry* parent;
+		Level level;
+		Node* parent;
 		BaseFile* file;
 		Location location;
-		QList<Entry*> children;
+		QList<Node*> children;
 	};
 
-	QModelIndex registerDirectory(const Location& location);
-	QModelIndex addToTree(QModelIndex parent, Entry* entry);
-	void removeEntry(Entry* entry);
+	QModelIndex getNodeIndex(Node* node) const;
+	void addNodeToTree(Node* parentNode, Node* node);
+	Node* getHostNode(const Location& location);
+	Node* getDirectoryNode(const Location& location);
+	void removeNode(Node* Node);
+	QList<BaseFile*> getIndexAndChildFiles(Node* node);
 
 	QList<BaseFile*> mFiles;   // Used if a list of files explicitly supplied
-	Entry* mTopLevelEntry;
-	QMap<BaseFile*, Entry*> mFileLookup;
+	Node* mTopLevelNode;
+	QMap<BaseFile*, Node*> mFileLookup;
 
 	int mOptionFlags;
 	bool mExplicitFiles;

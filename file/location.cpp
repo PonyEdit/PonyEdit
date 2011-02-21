@@ -137,6 +137,39 @@ const QDateTime& Location::getLastModified() const { return mData->mLastModified
 bool Location::canRead() const { return mData->mCanRead; }
 bool Location::canWrite() const { return mData->mCanWrite; }
 
+QString Location::getHostName() const
+{
+	switch (mData->mProtocol)
+	{
+	case Local:
+		return QObject::tr("Local Computer");
+
+	case Ssh:
+		return mData->mRemoteHost->getHostName();
+
+	case Unsaved:
+		return QObject::tr("New Files");
+
+	default:
+		throw(QObject::tr("Unknown protocol"));
+	}
+}
+
+QString Location::getHostlessPath() const
+{
+	switch (mData->mProtocol)
+	{
+	case Local:
+		return mData->mPath;
+
+	case Ssh:
+		return mData->mRemotePath;
+
+	default:
+		throw(QObject::tr("Unknown protocol"));
+	}
+}
+
 bool Location::operator==(const Location& other) const
 {
 	return mData->mPath == other.mData->mPath;

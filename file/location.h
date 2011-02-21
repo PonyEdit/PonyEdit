@@ -37,6 +37,8 @@ public:
 	int getSize() const;
 	const QDateTime& getLastModified() const;
 	Protocol getProtocol() const;
+	QString getHostName() const;		//	Regardless of protocol. Returns "Local Computer" for local files.
+	QString getHostlessPath() const;	//	Gets the path without the host specifier. Same as getRemotePath for remote files.
 
 	const Location& getParent() const;
 	const Location& getDirectory() const;		// Returns self if is directory, or parent if is file.
