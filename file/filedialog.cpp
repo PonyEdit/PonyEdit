@@ -324,7 +324,7 @@ void FileDialog::folderTreeItemExpanded(QTreeWidgetItem* item)
 			item->addChild(loadingItem);
 
 			mLoadingLocations.insert(location.getPath(), item);
-			location.asyncGetChildren();
+			location.asyncGetChildren(false);
 		}
 	}
 }
@@ -356,34 +356,30 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 		headerLabels.append("Last Modified");
 		mFileListModel->setHorizontalHeaderLabels(headerLabels);
 		ui->fileList->setColumnWidth(0, 250);
-		bool showHidden = ui->showHidden->isChecked();
 
 		foreach (Location childLocation, children)
 		{
-			if (showHidden || !childLocation.isHidden())
-			{
-				QList<QStandardItem*> row;
+			QList<QStandardItem*> row;
 
-				QStandardItem* item = new QStandardItem();
-				item->setIcon(childLocation.getIcon());
-				item->setText(childLocation.getLabel());
-				item->setData(QVariant::fromValue<Location>(childLocation), DATA_ROLE);
-				row.append(item);
+			QStandardItem* item = new QStandardItem();
+			item->setIcon(childLocation.getIcon());
+			item->setText(childLocation.getLabel());
+			item->setData(QVariant::fromValue<Location>(childLocation), DATA_ROLE);
+			row.append(item);
 
-				item = new QStandardItem();
-				item->setText(childLocation.isDirectory() ? "" : Tools::humanReadableBytes(childLocation.getSize()));
-				row.append(item);
+			item = new QStandardItem();
+			item->setText(childLocation.isDirectory() ? "" : Tools::humanReadableBytes(childLocation.getSize()));
+			row.append(item);
 
-				item = new QStandardItem();
-				item->setText(childLocation.getLastModified().toString());
-				row.append(item);
+			item = new QStandardItem();
+			item->setText(childLocation.getLastModified().toString());
+			row.append(item);
 
-				item = new QStandardItem();
-				item->setText(childLocation.isDirectory() ? "D" : "F");
-				row.append(item);
+			item = new QStandardItem();
+			item->setText(childLocation.isDirectory() ? "D" : "F");
+			row.append(item);
 
-				mFileListModel->appendRow(row);
-			}
+			mFileListModel->appendRow(row);
 		}
 
 		ui->fileList->resizeColumnsToContents();
@@ -447,7 +443,7 @@ void FileDialog::showLocation(const Location& location)
 	mFileListModel->clear();
 	showStatus(QPixmap(":/icons/loading.png"), tr("Loading ..."));
 
-	mCurrentLocation.asyncGetChildren();
+	mCurrentLocation.asyncGetChildren(ui->showHidden->isChecked());
 }
 
 void FileDialog::showStatus(const QPixmap& icon, const QString& text)

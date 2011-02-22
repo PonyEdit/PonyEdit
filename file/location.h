@@ -58,7 +58,7 @@ public:
 
 	BaseFile* getFile();
 
-	void asyncGetChildren();
+	void asyncGetChildren(bool includeHidden);
 
 	bool operator==(const Location& other) const;
 
@@ -109,8 +109,8 @@ private:
 	void emitListLoadedSignal();
 	void emitListLoadError(const QString& error, bool permissionError);
 	void localLoadSelf();
-	void localLoadListing();
-	void sshLoadListing();
+	void localLoadListing(bool includeHidden);
+	void sshLoadListing(bool includeHidden);
 
 	int mReferences;
 	QString mPath;

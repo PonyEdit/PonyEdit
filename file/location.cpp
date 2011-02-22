@@ -16,6 +16,10 @@
 #include "ssh/slavechannel.h"
 #include "ssh/requeststatuswidget.h"
 
+#ifdef Q_OS_WIN32
+	#include <windows.h>
+#endif
+
 QRegExp gSshServerRegExp("^(?:([^@:]+)@)?([^:]+\\.[^:]+):([^:]+)?");
 QRegExp gLocalPathSeparators("/");
 QRegExp gSshPathSeparators("[/:]");
@@ -131,11 +135,27 @@ Location::~Location()
 const QString& Location::getPath() const { return mData->mPath; }
 const QString& Location::getLabel() const { return mData->mLabel; }
 bool Location::isNull() const { return (mData == NULL || getPath() == ""); }
-bool Location::isHidden() const { return (mData->mLabel.startsWith('.')); }
 int Location::getSize() const { return mData->mSize; }
 const QDateTime& Location::getLastModified() const { return mData->mLastModified; }
 bool Location::canRead() const { return mData->mCanRead; }
 bool Location::canWrite() const { return mData->mCanWrite; }
+
+bool Location::isHidden() const
+{
+#ifdef Q_OS_WIN32
+	if (mData->mProtocol == Local)
+	{
+		WCHAR* wchar = (WCHAR*)malloc((mData->mPath.length() + 1) * sizeof(WCHAR));
+		wchar[mData->mPath.toWCharArray(wchar)] = 0;
+		DWORD result = GetFileAttributes(wchar);
+		delete wchar;
+
+		return result & FILE_ATTRIBUTE_HIDDEN;
+	}
+	else
+#endif
+		return (mData->mLabel.startsWith('.'));
+}
 
 QString Location::getHostName() const
 {
@@ -310,7 +330,7 @@ void LocationShared::localLoadSelf()
 	mSelfLoaded = true;
 }
 
-void LocationShared::localLoadListing()
+void LocationShared::localLoadListing(bool includeHidden)
 {
 	if (!mSelfLoaded)
 		localLoadSelf();
@@ -318,9 +338,16 @@ void LocationShared::localLoadListing()
 	mChildren.clear();
 
 	QDir directory(mPath);
-	QStringList entries = directory.entryList(QDir::AllEntries | QDir::NoDotAndDotDot);
+	QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot;
+	if (includeHidden)
+		filters |= QDir::Hidden;
+
+	QStringList entries = directory.entryList(filters);
 	foreach (QString entry, entries)
 	{
+		if (!includeHidden && entry.startsWith('.'))
+			continue;
+
 		QFileInfo fileInfo(mPath + "/" + entry);
 		mChildren.append(Location(Location(this), fileInfo.absoluteFilePath(),
 			fileInfo.isDir() ? Location::Directory : Location::File, fileInfo.size(),
@@ -341,7 +368,7 @@ void LocationShared::emitListLoadError(const QString& error, bool permissionErro
 	gDispatcher->emitLocationListFailed(error, mPath, permissionError);
 }
 
-void Location::asyncGetChildren()
+void Location::asyncGetChildren(bool includeHidden)
 {
 	if (!mData->mLoading)
 	{
@@ -349,11 +376,11 @@ void Location::asyncGetChildren()
 		switch (mData->mProtocol)
 		{
 		case Local:
-			mData->localLoadListing();
+			mData->localLoadListing(includeHidden);
 			break;
 
 		case Ssh:
-			mData->sshLoadListing();
+			mData->sshLoadListing(includeHidden);
 			break;
 
 		default:
@@ -388,12 +415,12 @@ SshHost* Location::getRemoteHost() const
 	return mData->mRemoteHost;
 }
 
-void LocationShared::sshLoadListing()
+void LocationShared::sshLoadListing(bool includeHidden)
 {
 	if (!ensureConnected())
 		childLoadError(QObject::tr("Failed to connect to remote host!"), false);
 	else
-		mSlaveChannel->sendRequest(new SlaveRequest_ls(Location(this)));
+		mSlaveChannel->sendRequest(new SlaveRequest_ls(Location(this), includeHidden));
 }
 
 void Location::sshChildLoadResponse(const QList<Location>& children)

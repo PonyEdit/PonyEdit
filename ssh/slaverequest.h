@@ -76,7 +76,7 @@ protected:
 class SlaveRequest_ls : public SlaveRequest
 {
 public:
-	SlaveRequest_ls(const Location& location);
+	SlaveRequest_ls(const Location& location, bool includeHidden);
 	virtual void packBody(QByteArray* target);
 	virtual void handleResponse(const QByteArray& response);
 
@@ -86,6 +86,7 @@ public:
 private:
 	Location mLocation;
 	QList<Location> mDirList;
+	bool mIncludeHidden;
 };
 
 ///////////////////////

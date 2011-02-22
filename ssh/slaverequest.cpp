@@ -86,11 +86,12 @@ void SlaveRequest::checkForErrors(const QByteArray& response)
 //  Message 1: ls  //
 /////////////////////
 
-SlaveRequest_ls::SlaveRequest_ls(const Location& location) : SlaveRequest(1, 0), mLocation(location) {}
+SlaveRequest_ls::SlaveRequest_ls(const Location& location, bool includeHidden) : SlaveRequest(1, 0), mLocation(location), mIncludeHidden(includeHidden) {}
 
 void SlaveRequest_ls::packBody(QByteArray* target)
 {
 	addData(target, 'd', (const char*)mLocation.getRemotePath().toUtf8());
+	addData(target, 'h', (quint16)mIncludeHidden);
 }
 
 void SlaveRequest_ls::handleResponse(const QByteArray& response)
@@ -331,8 +332,6 @@ void SlaveRequest_createFile::error(const SlaveRequest::Error& err)
 void SlaveRequest_createFile::success()
 {
 	mFile->open();
-	Location dir = mFile->getDirectory();
-	dir.asyncGetChildren();
 }
 
 void SlaveRequest_createFile::packBody(QByteArray* target)
@@ -359,7 +358,6 @@ void SlaveRequest_createDirectory::error(const SlaveRequest::Error& err)
 
 void SlaveRequest_createDirectory::success()
 {
-	mLocation.asyncGetChildren();
 }
 
 void SlaveRequest_createDirectory::packBody(QByteArray* target)
