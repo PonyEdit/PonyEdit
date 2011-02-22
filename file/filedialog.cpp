@@ -76,6 +76,7 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	connect(this, SIGNAL(rejected()), this, SLOT(closing()));
 	connect(ui->newFolderButton, SIGNAL(clicked()), this, SLOT(createNewFolder()));
 	connect(ui->statusWidget, SIGNAL(buttonClicked(StatusWidget::Button)), this, SLOT(retryButtonClicked(StatusWidget::Button)));
+	connect(ui->showHidden, SIGNAL(stateChanged(int)), this, SLOT(refresh()));
 
 	populateFolderTree();
 
@@ -355,10 +356,11 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 		headerLabels.append("Last Modified");
 		mFileListModel->setHorizontalHeaderLabels(headerLabels);
 		ui->fileList->setColumnWidth(0, 250);
+		bool showHidden = ui->showHidden->isChecked();
 
 		foreach (Location childLocation, children)
 		{
-			if (!childLocation.isHidden())
+			if (showHidden || !childLocation.isHidden())
 			{
 				QList<QStandardItem*> row;
 

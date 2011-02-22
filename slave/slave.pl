@@ -211,6 +211,8 @@ sub msg_ls
 	my $hits = 0;
 	while( my $filename = readdir( DIR ) )
 	{
+		next if ($filename eq '.' || $filename eq '..');	#' This comment here to un-break Qt Creators highlighting.
+
 		my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,
 		$atime,$mtime,$ctime,$blksize,$blocks) = stat( "$d/$filename" );
 
