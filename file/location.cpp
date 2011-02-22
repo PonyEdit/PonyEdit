@@ -145,6 +145,8 @@ QString Location::getHostName() const
 		return QObject::tr("Local Computer");
 
 	case Ssh:
+		if (mData->mRemoteHost == NULL)
+			mData->mRemoteHost = SshHost::getHost(mData->mRemoteHostName, mData->mRemoteUserName);
 		return mData->mRemoteHost->getHostName();
 
 	case Unsaved:
