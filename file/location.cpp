@@ -145,9 +145,7 @@ QString Location::getHostName() const
 		return QObject::tr("Local Computer");
 
 	case Ssh:
-		if (mData->mRemoteHost == NULL)
-			mData->mRemoteHost = SshHost::getHost(mData->mRemoteHostName, mData->mRemoteUserName);
-		return mData->mRemoteHost->getHostName();
+		return mData->mRemoteUserName + (mData->mSudo ? "*@" : "@") + mData->mRemoteHostName + ":" + mData->mRemotePath;
 
 	case Unsaved:
 		return QObject::tr("New Files");

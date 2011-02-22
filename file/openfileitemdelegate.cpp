@@ -103,7 +103,7 @@ void OpenFileItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 			QFontMetrics fontMetrics = option.fontMetrics;
 			if (level == OpenFileTreeModel::Host)
 			{
-				sp.setPen(QColor(0x6490C1));//0x365F91));
+				sp.setPen(location.isSudo() ? QColor(0xCE4848) : QColor(0x6490C1));
 				QFont f = option.font;
 				f.setPointSize(f.pointSize() - 2);
 				f.setItalic(true);
@@ -120,7 +120,7 @@ void OpenFileItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 			if (level == OpenFileTreeModel::File)
 				label = option.fontMetrics.elidedText(label, Qt::ElideMiddle, labelRect.width());
 			else
-				label = Tools::squashLabel(label, option.fontMetrics, labelRect.width());
+				label = Tools::squashLabel(label, fontMetrics, labelRect.width());
 
 			QTextOption o;
 			o.setAlignment(Qt::AlignBottom | Qt::AlignLeft);
