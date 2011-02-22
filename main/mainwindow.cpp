@@ -347,46 +347,37 @@ void MainWindow::createFileMenu()
 	QMenu *fileMenu = new QMenu(tr("&File"), this);
 	menuBar()->addMenu(fileMenu);
 
-	fileMenu->addAction(tr("&New File"), this, SLOT(newFile()),
-						QKeySequence::New);
-
-	fileMenu->addAction(tr("&Open..."), this, SLOT(openFile()),
-						QKeySequence::Open);
+	fileMenu->addAction(tr("&New File"), this, SLOT(newFile()), QKeySequence::New);
+	fileMenu->addAction(tr("&Open..."), this, SLOT(openFile()), QKeySequence::Open);
+	fileMenu->addAction(tr("Reload File"), this, SLOT(reloadFile()));
 
 	mRecentFilesMenu = new QMenu(tr("&Recent Files"), fileMenu);
 	fileMenu->addMenu(mRecentFilesMenu);
 
 	fileMenu->addSeparator();
 
-	fileMenu->addAction(tr("&Save"), this, SLOT(saveFile()),
-						QKeySequence::Save);
+	fileMenu->addAction(tr("&Save"), this, SLOT(saveFile()), QKeySequence::Save);
 #ifdef Q_OS_WIN
 	fileMenu->addAction(tr("Save &As..."), this, SLOT(saveFileAs()));
-
 	fileMenu->addAction(tr("Save A&ll"), this, SLOT(saveAllFiles()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_S));
 #else
 	fileMenu->addAction(tr("Save &As..."), this, SLOT(saveFileAs()), QKeySequence::SaveAs);
-
 	fileMenu->addAction(tr("Save A&ll"), this, SLOT(saveAllFiles()));
 #endif
 
 	fileMenu->addSeparator();
 
-	fileMenu->addAction(tr("&Print..."), this, SLOT(print()),
-						QKeySequence::Print);
+	fileMenu->addAction(tr("&Print..."), this, SLOT(print()), QKeySequence::Print);
 
 	fileMenu->addSeparator();
 
 	fileMenu->addAction(tr("&Close"), this, SLOT(closeFile()), QKeySequence(Qt::CTRL + Qt::Key_W));
-
 	fileMenu->addAction(tr("Close All"), this, SLOT(closeAllFiles()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_W));
-
 	fileMenu->addAction(tr("Close All Except Current"), this, SLOT(closeAllExceptCurrentFile()));
 
 	fileMenu->addSeparator();
 
-	fileMenu->addAction(tr("E&xit"), this, SLOT(close()),
-						QKeySequence::Quit);
+	fileMenu->addAction(tr("E&xit"), this, SLOT(close()), QKeySequence::Quit);
 }
 
 void MainWindow::createEditMenu()
@@ -801,3 +792,20 @@ void MainWindow::toggleFullScreen()
 		showFullScreen();
 	}
 }
+
+void MainWindow::reloadFile()
+{
+	Editor* editor = this->getCurrentEditor();
+	if (editor)
+	{
+		BaseFile* file = editor->getFile();
+		Location location = file->getLocation();
+		QList<BaseFile*> files;
+		files.append(file);
+		if (gOpenFileManager.closeFiles(files))
+			openSingleFile(&location);
+	}
+}
+
+
+

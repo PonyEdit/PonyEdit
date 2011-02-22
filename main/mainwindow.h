@@ -43,6 +43,7 @@ public slots:
 	void closeAllFiles();
 	void closeAllExceptCurrentFile();
 	void fileSelected(BaseFile* file);
+	void reloadFile();
 
 	void print();
 

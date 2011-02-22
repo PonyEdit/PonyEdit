@@ -28,8 +28,8 @@ void OpenFileManager::registerFile(BaseFile* file)
 
 void OpenFileManager::deregisterFile(BaseFile* file)
 {
-	mOpenFiles.removeAll(file);
-	emit fileClosed(file);
+	if (mOpenFiles.removeAll(file))
+		emit fileClosed(file);
 }
 
 void OpenFileManager::reregisterFile(BaseFile* file)
@@ -54,8 +54,13 @@ bool OpenFileManager::closeFiles(const QList<BaseFile*>& files, bool /* force */
 	}
 
 	foreach (BaseFile* file, files)
+	{
 		if (mOpenFiles.contains(file))
+		{
 			file->close();
+			deregisterFile(file);
+		}
+	}
 
 	return true;
 }
