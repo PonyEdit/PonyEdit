@@ -57,7 +57,15 @@ bool OpenFileManager::closeFiles(const QList<BaseFile*>& files, bool /* force */
 	{
 		if (mOpenFiles.contains(file))
 		{
-			file->close();
+			try
+			{
+				file->close();
+			}
+			catch(QString &e)
+			{
+				qDebug() << e;
+			}
+
 			deregisterFile(file);
 		}
 	}

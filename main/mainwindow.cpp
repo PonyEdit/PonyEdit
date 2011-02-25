@@ -193,7 +193,17 @@ void MainWindow::openSingleFile(Location *loc)
 
 	if (loc && !loc->isDirectory())
 	{
-		BaseFile* file = loc->getFile();
+		BaseFile* file;
+		try
+		{
+			file = loc->getFile();
+		}
+		catch(QString &e)
+		{
+			qDebug() << e;
+			return;
+		}
+
 		if (file->isClosed())
 			file->open();
 
