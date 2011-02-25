@@ -11,6 +11,7 @@
 #include "file/basefile.h"
 #include "searchbar.h"
 #include "mainwindow.h"
+#include "regexptester.h"
 
 class MainWindow;
 
@@ -50,6 +51,7 @@ public slots:
 	void globalReplace(const QString& findText, const QString& replaceText, const QString& filePattern, bool caseSensitive, bool useRegexp, bool all);
 
 	void showSearchBar();
+	void showRegExpTester();
 
 	void previousWindow();
 	void nextWindow();
@@ -59,6 +61,7 @@ private:
 	int replace(Editor* editor, const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegexp, bool all);
 
 	void createSearchBar();
+	void createRegExpTester();
 
 	MainWindow *mParent;
 
@@ -68,6 +71,9 @@ private:
 
 	QDockWidget* mSearchBarWrapper;
 	SearchBar* mSearchBar;
+
+	QDockWidget* mRegExpTesterWrapper;
+	RegExpTester* mRegExpTester;
 
 	/*QMap< QSplitter*, QList<Editor*> > mLeftEditors;
 	QMap< QSplitter*, QList<Editor*> > mRightEditors;

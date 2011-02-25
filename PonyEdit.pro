@@ -108,7 +108,8 @@ SOURCES += \
     options/startupoptionswidget.cpp \
     main/shutdownprompt.cpp \
     file/filestatuswidget.cpp \
-    ssh/requeststatuswidget.cpp
+    ssh/requeststatuswidget.cpp \
+    main/regexptester.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -180,7 +181,8 @@ HEADERS  += \
     options/startupoptionswidget.h \
     main/shutdownprompt.h \
     file/filestatuswidget.h \
-    ssh/requeststatuswidget.h
+    ssh/requeststatuswidget.h \
+    main/regexptester.h
 
 OTHER_FILES += \
     slave/slave.pl \
@@ -543,7 +545,8 @@ FORMS += \
     licence/licencecheckdialog.ui \
     main/statuswidget.ui \
     options/startupoptionswidget.ui \
-    main/shutdownprompt.ui
+    main/shutdownprompt.ui \
+    main/regexptester.ui
 
 RESOURCES += \
 	resources.qrc

@@ -36,6 +36,8 @@ public:
 
 	inline void print(QPrinter *printer) { mEditor->print(printer); }
 
+	CodeEditor* getCodeEditor() { return mEditor; }
+
 public slots:
 	void openStatusChanged(int openStatus);
 	void fileOpenProgress(int percent);

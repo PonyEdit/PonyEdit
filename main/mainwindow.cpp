@@ -471,8 +471,8 @@ void MainWindow::createToolsMenu()
 	QMenu *toolsMenu = new QMenu(tr("&Tools"), this);
 	menuBar()->addMenu(toolsMenu);
 
+	toolsMenu->addAction(tr("&Regular Expression Tester..."), mWindowManager, SLOT(showRegExpTester()));
 	toolsMenu->addAction(tr("&HTML Preview..."), this, SLOT(showHTMLPreview()));
-
 	toolsMenu->addAction(tr("&Options..."), this, SLOT(options()), QKeySequence::Preferences);
 }
 

@@ -16,6 +16,7 @@ WindowManager::WindowManager(QWidget *parent) :
 	mLayout->setMargin(0);
 
 	createSearchBar();
+	createRegExpTester();
 
 	connect(&gOpenFileManager, SIGNAL(fileClosed(BaseFile*)), this, SLOT(fileClosed(BaseFile*)), Qt::DirectConnection);
 }
@@ -293,5 +294,32 @@ void WindowManager::showSearchBar()
 {
 	mSearchBarWrapper->show();
 	mSearchBar->takeFocus();
+}
+
+void WindowManager::createRegExpTester()
+{
+	mRegExpTester = new RegExpTester();
+	mRegExpTesterWrapper = new QDockWidget(tr("Regular Expression Tester"), 0);
+	mRegExpTesterWrapper->setWidget(mRegExpTester);
+
+	mParent->addDockWidget(Qt::BottomDockWidgetArea, mRegExpTesterWrapper, Qt::Horizontal);
+
+	mRegExpTesterWrapper->hide();
+	mRegExpTesterWrapper->setObjectName("Search Bar");
+}
+
+void WindowManager::showRegExpTester()
+{
+	mRegExpTesterWrapper->show();
+
+	Editor* editor = currentEditor();
+	QString selectedText;
+	if (editor)
+	{
+		CodeEditor* codeEditor = editor->getCodeEditor();
+		selectedText = codeEditor->textCursor().selectedText();
+	}
+
+	mRegExpTester->takeFocus(selectedText);
 }
 
