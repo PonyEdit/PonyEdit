@@ -7,9 +7,36 @@
 #include "ponyedit.h"
 #include "file/location.h"
 #include "mainwindow.h"
+#include "ssh/rawsshconnection.h"
+#include "main/globaldispatcher.h"
+#include "file/location.h"
+#include "main/tools.h"
+#include "main/mainwindow.h"
+#include "website/sitemanager.h"
+#include "syntax/syntaxrule.h"
+#include "syntax/syntaxdefmanager.h"
+#include "main/stringtrie.h"
+#include "options/options.h"
 
 PonyEdit::PonyEdit(int argc, char** argv) : QApplication(argc, argv)
 {
+#ifndef Q_OS_LINUX
+	QStringList substitutions;
+	substitutions.append("consolas");
+	substitutions.append("courier new");
+	substitutions.append("helvetica");
+	QFont::insertSubstitutions("inconsolata", substitutions);
+#endif
+
+	qRegisterMetaType<Location>("Location");
+	qRegisterMetaType< QList<Location> >("QList<Location>");
+
+	RawSshConnection::initializeLib();
+
+	Tools::loadServers();
+	Location::loadFavorites();
+	Tools::initialize();
+
 	// UUID used to (hopefully) ensure memory name is unique
 	mKey = "PonyEdit-lock-138ad7e0-2ecb-11e0-91fa-0800200c9a66";
 	mMemoryLock.setKey(mKey);
@@ -31,10 +58,30 @@ PonyEdit::PonyEdit(int argc, char** argv) : QApplication(argc, argv)
 		connect(mLocalServer, SIGNAL(newConnection()), this, SLOT(receiveMessage()));
 		mLocalServer->listen(mKey);
 	}
+
+	Options::load();
+
+	gSyntaxDefManager = new SyntaxDefManager();
+	gSiteManager = new SiteManager();
+	gDispatcher = new GlobalDispatcher();
+
+	gMainWindow = new MainWindow();
+	gMainWindow->show();
+
+	Tools::loadStartupFiles();
 }
 
 PonyEdit::~PonyEdit()
 {
+	delete gDispatcher;
+	delete gSiteManager;
+	delete gSyntaxDefManager;
+	delete gMainWindow;
+
+	Options::save();
+	LocationShared::cleanupIconProvider();
+	StringTrie::cleanup();
+	SyntaxRule::cleanup();
 }
 
 bool PonyEdit::event(QEvent *e)

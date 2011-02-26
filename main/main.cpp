@@ -4,17 +4,10 @@
 #include <QMetaType>
 #include <QFont>
 
-#include "main/globaldispatcher.h"
-#include "ssh/rawsshconnection.h"
-#include "file/location.h"
-#include "main/tools.h"
-#include "main/mainwindow.h"
-#include "website/sitemanager.h"
 #include "website/updatemanager.h"
-#include "syntax/syntaxrule.h"
+#include "main/globaldispatcher.h"
+#include "website/sitemanager.h"
 #include "syntax/syntaxdefmanager.h"
-#include "main/stringtrie.h"
-#include "options/options.h"
 #include "ponyedit.h"
 
 GlobalDispatcher* gDispatcher = NULL;
@@ -30,29 +23,13 @@ int main(int argc, char *argv[])
 
 	try
 	{
-#ifndef Q_OS_LINUX
-		QStringList substitutions;
-		substitutions.append("consolas");
-		substitutions.append("courier new");
-		substitutions.append("helvetica");
-		QFont::insertSubstitutions("inconsolata", substitutions);
-#endif
-
-		qRegisterMetaType<Location>("Location");
-		qRegisterMetaType< QList<Location> >("QList<Location>");
-
 		QCoreApplication::setOrganizationName("Pentalon");
 		QCoreApplication::setApplicationName("PonyEdit");
 		QCoreApplication::setApplicationVersion("0.9-prealphaXI");
-		gDispatcher = new GlobalDispatcher();
-
-		RawSshConnection::initializeLib();
-
-		Tools::loadServers();
-		Location::loadFavorites();
-		Tools::initialize();
 
 		PonyEdit a(argc, argv);
+
+		updateManager = new UpdateManager();
 
 		if(a.isRunning())
 		{
@@ -70,17 +47,6 @@ int main(int argc, char *argv[])
 
 			return 0;
 		}
-
-		Options::load();
-
-		gSyntaxDefManager = new SyntaxDefManager();
-		gSiteManager = new SiteManager();
-		updateManager = new UpdateManager();
-
-		gMainWindow = new MainWindow();
-		gMainWindow->show();
-
-		Tools::loadStartupFiles();
 
 		if(argc > 1)
 		{
@@ -106,13 +72,5 @@ int main(int argc, char *argv[])
 	}
 
 	delete updateManager;
-	delete gDispatcher;
-	delete gSiteManager;
-
-	Options::save();
-	LocationShared::cleanupIconProvider();
-	StringTrie::cleanup();
-	SyntaxRule::cleanup();
-
 	return result;
 }
