@@ -5,15 +5,8 @@
 #include <QFont>
 
 #include "website/updatemanager.h"
-#include "main/globaldispatcher.h"
 #include "website/sitemanager.h"
-#include "syntax/syntaxdefmanager.h"
 #include "ponyedit.h"
-
-GlobalDispatcher* gDispatcher = NULL;
-SiteManager* gSiteManager = NULL;
-SyntaxDefManager* gSyntaxDefManager = NULL;
-MainWindow* gMainWindow = NULL;
 
 int main(int argc, char *argv[])
 {

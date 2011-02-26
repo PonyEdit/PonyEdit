@@ -18,6 +18,11 @@
 #include "main/stringtrie.h"
 #include "options/options.h"
 
+GlobalDispatcher* gDispatcher = NULL;
+SiteManager* gSiteManager = NULL;
+SyntaxDefManager* gSyntaxDefManager = NULL;
+MainWindow* gMainWindow = NULL;
+
 PonyEdit::PonyEdit(int argc, char** argv) : QApplication(argc, argv)
 {
 #ifndef Q_OS_LINUX
