@@ -226,7 +226,16 @@ void MainWindow::saveFile()
 		if(current->getFile()->getLocation().getProtocol() == Location::Unsaved)
 			saveFileAs();
 		else
-			current->save();
+		{
+			try
+			{
+				current->save();
+			}
+			catch(QString &e)
+			{
+				qDebug() << e;
+			}
+		}
 	}
 }
 
@@ -240,7 +249,15 @@ void MainWindow::saveFileAs()
 	if(dlg.exec())
 	{
 		Location loc = dlg.getNewLocation();
-		loc.getFile()->newFile(current->getFile()->getContent());
+		try
+		{
+			loc.getFile()->newFile(current->getFile()->getContent());
+		}
+		catch(QString &e)
+		{
+			qDebug() << e;
+			return;
+		}
 
 		loc.getFile()->open();
 
