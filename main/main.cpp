@@ -1,3 +1,5 @@
+#ifndef TESTPONY
+
 #include <QtGui/QApplication>
 #include <QString>
 #include <QDebug>
@@ -67,3 +69,5 @@ int main(int argc, char *argv[])
 	delete updateManager;
 	return result;
 }
+
+#endif

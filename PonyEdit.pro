@@ -4,41 +4,36 @@
 #
 #-------------------------------------------------
 
-INCLUDEPATH += $$PWD/deps/libssh2/include/
+macx: DEFINES += __DARWIN_64_BIT_INO_T
 
-win32 {
-	LIBS        += -L$$PWD/deps/lib-win32/ -lwsock32 -lmpr
-	INCLUDEPATH += $$PWD/deps/include-win32/
-	INCLUDEPATH += $$PWD/deps/libssh2/src/
+!PONYTEST {
+	INCLUDEPATH += $$PWD/deps/libssh2/include/
 
-	RC_FILE = ponyedit.rc
-}
+	win32 {
+		LIBS        += -L$$PWD/deps/lib-win32/ -lwsock32 -lmpr
+		INCLUDEPATH += $$PWD/deps/include-win32/
+		INCLUDEPATH += $$PWD/deps/libssh2/src/
 
-macx {
-	DEFINES += __DARWIN_64_BIT_INO_T
-}
+		RC_FILE = ponyedit.rc
+	}
 
-LIBS	+= -lssh2 -lcrypto -lssl
+	macx {
+		data.files = syntaxdefs slave
+		data.path = Contents/Resources
 
-QT       += core gui network xml script webkit
+		QMAKE_BUNDLE_DATA += data
 
-macx {
-	TARGET  = PonyEdit
-}
-!macx {
-	TARGET = ponyedit
-}
-TEMPLATE = app
+		CONFIG += x86
 
-macx {
-	data.files = syntaxdefs slave
-	data.path = Contents/Resources
+		ICON = icons/ponyedit.icns
+		TARGET = PonyEdit
+	}
 
-	QMAKE_BUNDLE_DATA += data
+	!macx: TARGET = ponyedit
 
-	CONFIG += x86
-
-	ICON = icons/ponyedit.icns
+	QT      += core gui network xml script webkit
+	LIBS	+= -lssh2 -lcrypto -lssl
+	TEMPLATE = app
 }
 
 SOURCES += \
@@ -57,8 +52,8 @@ SOURCES += \
     main/tools.cpp \
     main/searchbar.cpp \
     main/mainwindow.cpp \
-    main/main.cpp \
     main/json.cpp \
+	main/main.cpp \
     options/optionsdialog.cpp \
     ssh/sshconnection.cpp \
     ssh/sshhost.cpp \
