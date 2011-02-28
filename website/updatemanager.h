@@ -20,7 +20,7 @@ public:
 signals:
 
 public slots:
-	void updateFound(const QString& version, const QVariantMap& changes);
+	void updateFound(const QVariantMap& version, const QVariantMap& changes);
 	void noUpdateFound();
 
 	void startDownload(QString file);

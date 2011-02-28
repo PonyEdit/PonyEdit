@@ -9,7 +9,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-	ui->versionLabel->setText(ui->versionLabel->text().arg(QCoreApplication::applicationVersion()));
+	ui->versionLabel->setText(ui->versionLabel->text().arg(QCoreApplication::applicationVersion()).arg(MAJOR_VERSION).arg(MINOR_VERSION).arg(REVISION));
 }
 
 AboutDialog::~AboutDialog()

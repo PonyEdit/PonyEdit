@@ -38,7 +38,8 @@ SiteManager::~SiteManager()
 
 void SiteManager::checkForUpdates(bool forceNotification)
 {
-	QUrl url(QString(SITE_URL) + "version/?v=" + QCoreApplication::applicationVersion() + "&u=testuser&key=5555555");
+	QString version = QString("vmaj=%1&vmin=%2&rev=%3").arg(MAJOR_VERSION).arg(MINOR_VERSION).arg(REVISION);
+	QUrl url(QString(SITE_URL) + "version/?" + version + "&u=testuser&key=5555555");
 	QNetworkReply* reply = mManager->get(QNetworkRequest(url));
 
 	mReplies.append(reply);
@@ -50,7 +51,8 @@ void SiteManager::checkForUpdates(bool forceNotification)
 
 void SiteManager::checkLicence()
 {
-	QUrl url(QString(SITE_URL) + "licence/?v=" + QCoreApplication::applicationVersion() + "&u=testuser&key=5555555");
+	QString version = QString("vmaj=%1&vmin=%2&rev=%3").arg(MAJOR_VERSION).arg(MINOR_VERSION).arg(REVISION);
+	QUrl url(QString(SITE_URL) + "licence/?" + version + "&u=testuser&key=5555555");
 	QNetworkReply* reply = mManager->get(QNetworkRequest(url));
 
 	mReplies.append(reply);
@@ -82,16 +84,18 @@ void SiteManager::handleReply(QNetworkReply *reply)
 			return;
 		}
 
-		QString version;
+		QVariantMap version;
 		QVariantMap changes;
 
 		switch(mReplyTypes[index])
 		{
 			case UpdateCheck:
 			case UpdateCheckForcedNotification:
-				version = data[mOS].toString();
+				version = data[mOS].toMap();
 				changes = data["changes"].toMap();
-				if(version > QCoreApplication::applicationVersion())
+				if(version["major"].toInt() > MAJOR_VERSION ||
+						(version["major"].toInt() == MAJOR_VERSION && version["minor"].toInt() > MINOR_VERSION) ||
+						(version["major"].toInt() == MAJOR_VERSION && version["minor"].toInt() == MINOR_VERSION && version["revision"].toInt() > REVISION))
 					emit updateAvailable(version, changes);
 				else if(mReplyTypes[index] == UpdateCheckForcedNotification)
 					emit noUpdateAvailable();

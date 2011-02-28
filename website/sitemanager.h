@@ -32,7 +32,7 @@ public slots:
 	void purchase();
 
 signals:
-	void updateAvailable(const QString& version, const QVariantMap& changes);
+	void updateAvailable(const QVariantMap& version, const QVariantMap& changes);
 	void noUpdateAvailable();
 	void licenceStatus(bool valid);
 	void gotTrial(const QString& licence);

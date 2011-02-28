@@ -16,11 +16,11 @@
 UpdateManager::UpdateManager(QObject *parent) :
     QObject(parent)
 {
-	connect(gSiteManager, SIGNAL(updateAvailable(const QString&, const QVariantMap&)), this, SLOT(updateFound(const QString&, const QVariantMap&)));
+	connect(gSiteManager, SIGNAL(updateAvailable(const QVariantMap&, const QVariantMap&)), this, SLOT(updateFound(const QVariantMap&, const QVariantMap&)));
 	connect(gSiteManager, SIGNAL(noUpdateAvailable()), this, SLOT(noUpdateFound()));
 }
 
-void UpdateManager::updateFound(const QString& version, const QVariantMap& changes)
+void UpdateManager::updateFound(const QVariantMap& version, const QVariantMap& changes)
 {
 	QString url = QString("%1download/").arg(SITE_URL);
 	QString ext;
@@ -30,7 +30,7 @@ void UpdateManager::updateFound(const QString& version, const QVariantMap& chang
 	ext = "dmg";
 #endif
 
-	QString fullURL = QString("%1files/PonyEdit-%2.%3").arg(SITE_URL, version, ext);
+	QString fullURL = QString("%1files/PonyEdit-%2.%3").arg(SITE_URL, version["pretty"].toString(), ext);
 
 	mNotificationDlg = new UpdateNotificationDialog();
 
@@ -46,7 +46,7 @@ void UpdateManager::updateFound(const QString& version, const QVariantMap& chang
 			relevantChanges.insert(ii.key(), ii.value());
 	}
 
-	mNotificationDlg->setNewVersion(version);
+	mNotificationDlg->setNewVersion(version["pretty"].toString());
 	mNotificationDlg->setChanges(relevantChanges);
 	mNotificationDlg->setDownloadURL(url, fullURL);
 

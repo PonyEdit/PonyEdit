@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 	{
 		QCoreApplication::setOrganizationName("Pentalon");
 		QCoreApplication::setApplicationName("PonyEdit");
-		QCoreApplication::setApplicationVersion("0.9-prealphaXI");
+		QCoreApplication::setApplicationVersion(PRETTY_VERSION);
 
 		PonyEdit a(argc, argv);
 

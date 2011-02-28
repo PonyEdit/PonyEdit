@@ -13,8 +13,8 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="1">
     <widget class="QLabel" name="iconLabel">
      <property name="minimumSize">
       <size>
@@ -22,12 +22,27 @@
        <height>100</height>
       </size>
      </property>
+     <property name="maximumSize">
+      <size>
+       <width>100</width>
+       <height>100</height>
+      </size>
+     </property>
      <property name="text">
-      <string>Icon goes here.</string>
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../resources.qrc">:/icons/ponyedit.ico</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0" colspan="3">
     <widget class="QLabel" name="nameLabel">
      <property name="text">
       <string>&lt;span style=&quot; font-size:16pt; font-weight:bold;&quot;&gt;PonyEdit&lt;/span&gt;</string>
@@ -37,17 +52,17 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item row="2" column="0" colspan="3">
     <widget class="QLabel" name="versionLabel">
      <property name="text">
-      <string>Verson %1</string>
+      <string>Version %1 (%2.%3.%4)</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>
-   <item>
+   <item row="3" column="0" colspan="3">
     <widget class="QLabel" name="copyRightLabel">
      <property name="text">
       <string>Copyright 2010-2011 Pentalon.&lt;br /&gt;All Rights Reserved.</string>
@@ -57,7 +72,7 @@
      </property>
     </widget>
    </item>
-   <item>
+   <item row="4" column="0" colspan="3">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -67,9 +82,37 @@
      </property>
     </widget>
    </item>
+   <item row="0" column="0">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="2">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

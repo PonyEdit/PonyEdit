@@ -4,6 +4,12 @@
 #
 #-------------------------------------------------
 
+DEFINES += "MAJOR_VERSION=0"
+DEFINES += "MINOR_VERSION=9"
+DEFINES += "REVISION=11"
+DEFINES += "PRETTY_VERSION=\\\"0.9-prealphaXI\\\""
+
+
 macx: DEFINES += __DARWIN_64_BIT_INO_T
 
 !PONYTEST {
