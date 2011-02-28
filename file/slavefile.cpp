@@ -216,7 +216,15 @@ void SlaveFile::setLastSavedRevision(int lastSavedRevision)
 void SlaveFile::close()
 {
 	setOpenStatus(Closing);
-	mChannel->sendRequest(new SlaveRequest_closeFile(this, mBufferId, true));
+	try
+	{
+		mChannel->sendRequest(new SlaveRequest_closeFile(this, mBufferId, true));
+	}
+	catch(QString &e)
+	{
+		qDebug() << e;
+		BaseFile::closeCompleted();
+	}
 }
 
 void SlaveFile::sudo()

@@ -63,16 +63,41 @@ void UnsavedChangesDialog::buttonClicked(QAbstractButton* button)
 				}
 			}
 			else
-				file->save();
+			{
+				try
+				{
+					file->save();
+				}
+				catch(QString &e)
+				{
+					qDebug() << e;
+				}
+			}
 
-			file->close();
+			try
+			{
+				file->close();
+			}
+			catch(QString &e)
+			{
+				qDebug() << e;
+			}
 		}
 	}
 	else if (button == (QAbstractButton*)mButtonBox->button(QDialogButtonBox::Discard))
 	{
 		//	Discard
 		foreach (BaseFile* file, selectedFiles)
-			file->close();
+		{
+			try
+			{
+				file->close();
+			}
+			catch(QString &e)
+			{
+				qDebug() << e;
+			}
+		}
 	}
 }
 
@@ -93,7 +118,16 @@ void UnsavedChangesDialog::fileStateChanged()
 		qDebug() << "Status = " << status << " closed = " << BaseFile::Closed;
 
 		if (status != BaseFile::Closed && status != BaseFile::Closing)
-			file->close();
+		{
+			try
+			{
+				file->close();
+			}
+			catch(QString &e)
+			{
+				qDebug() << e;
+			}
+		}
 	}
 }
 
