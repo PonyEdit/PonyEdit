@@ -111,7 +111,7 @@ void RemoteConnection::waitForInput(DialogFunction dialogFunction, DialogCallbac
 
 void RemoteConnection::disconnect(bool deliberate)
 {
-	if (deliberate) mDeliberatelyDisconnecting = true;
+	mDeliberatelyDisconnecting = deliberate;
 	setStatus(Disconnecting);
 }
 

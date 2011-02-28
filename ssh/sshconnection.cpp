@@ -61,6 +61,12 @@ bool SshConnection::threadConnect()
 
 		qDebug() << "Connecting...";
 
+		if(NULL == mRawConnection)
+		{
+			mRawConnection = new RawSshConnection();
+			startConnectionThread();
+		}
+
 		mRawConnection->connect(mHost->getHostName().toUtf8(), mHost->getPort());
 		checkForDeliberateDisconnect();
 

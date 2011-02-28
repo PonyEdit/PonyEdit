@@ -45,7 +45,7 @@ void RemoteConnectionThread::run()
 		if (!mConnection->isConnected())
 			connect();
 
-		mSleeper.wait(&mutex);
+		mSleeper.wait(&mutex, 5000);
 
 		qDebug() << "ZZzzzzz--** RemoteConnectionThread woken from its sleep. Status = " << mConnection->mStatus;
 	}
