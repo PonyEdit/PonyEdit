@@ -78,7 +78,7 @@ public:
 	inline void populateInputDialog(ConnectionStatusWidget* statusWidget, QWidget* target) { mInputDialog(statusWidget, this, target, mDialogParameter); }
 	inline bool inputDialogCallback(ConnectionStatusWidget* statusWidget, StatusWidget::Button button) { return mDialogCallback(statusWidget, this, button, mDialogParameter); }
 	static bool DefaultDialogCallback(ConnectionStatusWidget*, RemoteConnection*, StatusWidget::Button, QVariant) { return true; }
-	inline void inputDialogCompleted() { mInputDialogWait.wakeOne(); }
+	inline void inputDialogCompleted() { mInputDialogWait.wakeAll(); }
 
 	bool waitUntilOpen(bool waitForChannels = true);
 	inline int getConnectionId() { return mConnectionId; }

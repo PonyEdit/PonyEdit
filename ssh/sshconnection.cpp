@@ -105,6 +105,8 @@ bool SshConnection::threadConnect()
 
 					if (passkeyRejected)
 						waitForInput(SshConnection::passwordInputDialog, SshConnection::passwordInputCallback, QVariant(KeyPassphrase));
+
+					checkForDeliberateDisconnect();
 				}
 			}
 		}

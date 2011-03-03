@@ -71,6 +71,7 @@ void ConnectionStatusWidget::onButtonClicked(StatusWidget::Button button)
 		{
 			setButtonsEnabled(false);
 			mConnection->disconnect(true);
+			mConnection->inputDialogCompleted();
 		}
 		else
 			close(false);
