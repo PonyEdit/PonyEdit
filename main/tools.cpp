@@ -133,6 +133,9 @@ void Tools::initialize()
 QString Tools::squashLabel(const QString& label, const QFontMetrics& metrics, int availableWidth)
 {
 	QRegExp separators("[\\/\\\\@\\:\\.]");
+	#ifdef Q_OS_MAC
+		availableWidth -= 5;
+	#endif
 
 	int fullWidth = metrics.size(Qt::TextSingleLine, label).width();
 	int shortFall = fullWidth - availableWidth;
