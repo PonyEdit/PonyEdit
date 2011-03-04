@@ -134,10 +134,10 @@ QString Tools::squashLabel(const QString& label, const QFontMetrics& metrics, in
 {
 	QRegExp separators("[\\/\\\\@\\:\\.]");
 	#ifdef Q_OS_MAC
-		availableWidth -= 5;
+		availableWidth -= 2;
 	#endif
 
-	int fullWidth = metrics.size(Qt::TextSingleLine, label).width();
+	int fullWidth = metrics.boundingRect(label).width();
 	int shortFall = fullWidth - availableWidth;
 
 	int cursor = 0;
@@ -149,7 +149,7 @@ QString Tools::squashLabel(const QString& label, const QFontMetrics& metrics, in
 			return metrics.elidedText(result, Qt::ElideMiddle, availableWidth);
 
 		QString shorten = result.mid(cursor, nextSeparator - cursor);
-		int cullLength = metrics.size(Qt::TextSingleLine, shorten.mid(1)).width();
+		int cullLength = metrics.boundingRect(shorten.mid(1)).width();
 
 		result.replace(cursor, shorten.length(), shorten[0]);
 		cursor = cursor + 2;
