@@ -20,7 +20,7 @@
 	#include <windows.h>
 #endif
 
-QRegExp gSshServerRegExp("^(?:([^@:]+)@)?([a-zA-Z0-9_\-.]{2,}):(.+)?");
+QRegExp gSshServerRegExp("^(?:([^@:]+)@)?([a-zA-Z0-9_\\-.]{2,}):(.+)?");
 QRegExp gLocalPathSeparators("/");
 QRegExp gSshPathSeparators("[/:]");
 QList<Location::Favorite> Location::sFavorites;

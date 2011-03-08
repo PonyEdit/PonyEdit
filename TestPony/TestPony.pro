@@ -26,9 +26,11 @@ win32 {
 }
 
 SOURCES += \
-    itest_localfiles.cpp \
-    testmain.cpp
+    testmain.cpp \
+    itestsshfiles.cpp \
+    testthread.cpp
 
 HEADERS += \
-    itest_localfiles.h \
-    globals.h
+    globals.h \
+    itestsshfiles.h \
+    testthread.h
