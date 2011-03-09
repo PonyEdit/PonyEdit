@@ -426,7 +426,7 @@ int SyntaxRule::match(const QString &string, int position)
 				innerLen = detectStringChar(string, position + 1);
 
 			s += innerLen;
-			if (!s->isNull())
+			if (!s->isNull() && *s == '\'')
 				match = innerLen + 2;
 		}
 		break;
