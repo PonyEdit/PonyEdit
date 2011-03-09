@@ -12,35 +12,33 @@ DEFINES += "PRETTY_VERSION=\\\"0.9-prealphaXII\\\""
 
 macx: DEFINES += __DARWIN_64_BIT_INO_T
 
-!PONYTEST {
-	INCLUDEPATH += $$PWD/deps/libssh2/include/
+INCLUDEPATH += $$PWD/deps/libssh2/include/
 
-	win32 {
-		LIBS        += -L$$PWD/deps/lib-win32/ -lwsock32 -lmpr
-		INCLUDEPATH += $$PWD/deps/include-win32/
-		INCLUDEPATH += $$PWD/deps/libssh2/src/
+win32 {
+	LIBS        += -L$$PWD/deps/lib-win32/ -lwsock32 -lmpr
+	INCLUDEPATH += $$PWD/deps/include-win32/
+	INCLUDEPATH += $$PWD/deps/libssh2/src/
 
-		RC_FILE = ponyedit.rc
-	}
-
-	macx {
-		data.files = syntaxdefs slave
-		data.path = Contents/Resources
-
-		QMAKE_BUNDLE_DATA += data
-
-		CONFIG += x86
-
-		ICON = icons/ponyedit.icns
-		TARGET = PonyEdit
-	}
-
-	!macx: TARGET = ponyedit
-
-	QT      += core gui network xml script webkit
-	LIBS	+= -lssh2 -lcrypto -lssl
-	TEMPLATE = app
+	RC_FILE = ponyedit.rc
 }
+
+macx {
+	data.files = syntaxdefs slave
+	data.path = Contents/Resources
+
+	QMAKE_BUNDLE_DATA += data
+
+	CONFIG += x86
+
+	ICON = icons/ponyedit.icns
+	TARGET = PonyEdit
+}
+
+!macx: TARGET = ponyedit
+
+QT      += core gui network xml script webkit
+LIBS	+= -lssh2 -lcrypto -lssl
+TEMPLATE = app
 
 SOURCES += \
     editor/linenumberwidget.cpp \
