@@ -248,7 +248,8 @@ void Tools::loadStartupFiles()
 				delete loc;
 
 				Editor* current = gMainWindow->getCurrentEditor();
-				current->gotoLine(Options::StartupFilesLineNo[ii]);
+				if (current)
+					current->gotoLine(Options::StartupFilesLineNo[ii]);
 			}
 			break;
 		case Options::NoFiles:
