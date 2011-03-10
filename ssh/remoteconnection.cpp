@@ -11,6 +11,26 @@ RemoteConnection::RemoteConnection()
 	mStatus = Uninitialized;
 	mDeliberatelyDisconnecting = false;
 	mConnectionId = 0;
+	mThread = NULL;
+
+	qDebug() << "New remote connection object at " << (void*)this;
+}
+
+RemoteConnection::~RemoteConnection()
+{
+	//	Slaughter my thread.
+	mDeliberatelyDisconnecting = true;
+	mThread->wake();
+	if (mThread)
+	{
+		//	Give threads 5 seconds to comply....
+		if (!mThread->wait(5000))
+		{
+			//	... then just shoot them.
+			mThread->terminate();
+			mThread->wait();
+		}
+	}
 }
 
 void RemoteConnection::startConnectionThread()

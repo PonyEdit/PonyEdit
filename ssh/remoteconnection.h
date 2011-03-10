@@ -8,6 +8,7 @@
 #include <QMutex>
 #include <QFlags>
 #include <QVariant>
+#include <QDebug>
 #include "remotechannel.h"
 #include "main/statuswidget.h"
 
@@ -44,6 +45,7 @@ public:
 
 public:
 	RemoteConnection();
+	~RemoteConnection();
 
 	virtual RemoteChannel* openChannel(RemoteChannel::Type /*type*/) { return NULL; }
 	RemoteChannel* getChannel(RemoteChannel::Type type);
