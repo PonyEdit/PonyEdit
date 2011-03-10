@@ -222,7 +222,10 @@ bool SyntaxDefXmlHandler::characters(const QString &ch)
 	{
 		QString trimmed = ch.trimmed();
 		if (!trimmed.isEmpty())
+		{
 			mKeywordList->items.addWord(trimmed);
+			mKeywordList->lcItems.addWord(trimmed.toLower());
+		}
 	}
 
 	return true;

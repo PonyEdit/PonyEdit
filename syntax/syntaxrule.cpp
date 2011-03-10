@@ -298,14 +298,15 @@ int SyntaxRule::match(const QString &string, int position)
 	case Keyword:
 		if (position == 0 || mDefinition->isDeliminator(string.at(position - 1)))
 		{
+			bool caseSensitive = mDefinition->getKeywordCaseSensitivity();
 			const QChar* s = string.constData() + position;
-			const StringTrie::Node* scan = mKeywordLink->items.startScan();
+			const StringTrie::Node* scan = (caseSensitive ? mKeywordLink->items : mKeywordLink->lcItems).startScan();
 			int length = 0;
 
 
 			while (!s->isNull() && !mDefinition->isDeliminator(*s))
 			{
-				if (mKeywordLink->items.continueScan(&scan, static_cast<unsigned char>(s->toLatin1())))
+				if (mKeywordLink->items.continueScan(&scan, static_cast<unsigned char>(caseSensitive ? s->toLatin1() : s->toLower().toLatin1())))
 					length++;
 				else
 				{

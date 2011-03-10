@@ -65,6 +65,7 @@ public:
 	{
 		QString name;
 		StringTrie items;
+		StringTrie lcItems;		//	For case-insensitive matching.
 	};
 
 	SyntaxDefinition(const QString& filename);
