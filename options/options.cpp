@@ -56,7 +56,7 @@ void Options::load()
 
 	EditorFontZoom = settings.value(ntr("editorFontZoom"), QVariant(100)).toInt();
 	WordWrap = settings.value(ntr("wordWrap"), QVariant(false)).toBool();
-	TabStopWidth = settings.value(ntr("TabStopWidth"), QVariant(8)).toInt();
+	TabStopWidth = settings.value(ntr("tabStopWidth"), QVariant(8)).toInt();
 	IndentMode = static_cast<IndentModes>(settings.value(ntr("indentMode"), QVariant(static_cast<int>(KeepIndentOnNextLine))).toInt());
 
 	StartupAction = static_cast<StartupActions>(settings.value(ntr("StartupAction"), QVariant(static_cast<int>(NoFiles))).toInt());
