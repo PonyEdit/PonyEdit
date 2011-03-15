@@ -45,6 +45,11 @@ void RawSshConnection::initializeLib()
 	}
 }
 
+void RawSshConnection::cleanup()
+{
+    libssh2_exit();
+}
+
 RawSshConnection::RawSshConnection()
 	: mSocket(-1), mSession(0)
 {}

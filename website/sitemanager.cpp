@@ -30,6 +30,10 @@ SiteManager::SiteManager()
 
 SiteManager::~SiteManager()
 {
+	//	Clean out any leftover replies
+	foreach (QNetworkReply* reply, mReplies)
+		delete reply;
+
 	if(mManager)
 		delete mManager;
 

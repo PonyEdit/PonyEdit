@@ -87,6 +87,7 @@ PonyEdit::~PonyEdit()
 	LocationShared::cleanupIconProvider();
 	StringTrie::cleanup();
 	SyntaxRule::cleanup();
+        RawSshConnection::cleanup();
 }
 
 bool PonyEdit::event(QEvent *e)

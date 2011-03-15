@@ -55,6 +55,7 @@ public:
 	void sendEof(Channel* channel);
 
 	static void initializeLib();
+        static void cleanup();
 
 	inline const QByteArray& getServerFingerprint() { return mServerFingerprint; }
 	inline static QByteArray getExpectedFingerprint(const QString& host) { return sKnownHostKeys.value(host); }
