@@ -61,13 +61,13 @@ void SyntaxDefManager::updateIndex()
 
 void SyntaxDefManager::indexFile(const QFileInfo& fileinfo)
 {
-	Record* record = new Record();
-	record->lastUpdated = QDateTime::currentDateTime();
-	record->filename = fileinfo.filePath();
-
-	//	Open the file and read just enough to pull out the <language> block
 	if (fileinfo.isFile())
 	{
+		Record* record = new Record();
+		record->lastUpdated = QDateTime::currentDateTime();
+		record->filename = fileinfo.filePath();
+
+		//	Open the file and read just enough to pull out the <language> block
 		QFile file(fileinfo.filePath());
 		if (file.open(QFile::ReadOnly))
 		{
@@ -77,10 +77,12 @@ void SyntaxDefManager::indexFile(const QFileInfo& fileinfo)
 			reader.setErrorHandler(&handler);
 			reader.parse(&file);
 		}
-	}
 
-	if (record->valid)
-		addRecord(record);
+		if (record->valid)
+			addRecord(record);
+		else
+			delete record;
+	}
 }
 
 void SyntaxDefManager::addRecord(Record *record)

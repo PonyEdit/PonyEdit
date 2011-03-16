@@ -21,6 +21,14 @@ WindowManager::WindowManager(QWidget *parent) :
 	connect(&gOpenFileManager, SIGNAL(fileClosed(BaseFile*)), this, SLOT(fileClosed(BaseFile*)), Qt::DirectConnection);
 }
 
+WindowManager::~WindowManager()
+{
+	mSearchBar->deleteLater();
+	mSearchBarWrapper->deleteLater();
+	mRegExpTester->deleteLater();
+	mRegExpTesterWrapper->deleteLater();
+}
+
 void WindowManager::displayFile(BaseFile *file)
 {
 	Location loc = file->getLocation();

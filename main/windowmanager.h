@@ -20,6 +20,7 @@ class WindowManager : public QWidget
     Q_OBJECT
 public:
     explicit WindowManager(QWidget *parent = 0);
+	~WindowManager();
 
 	/*void splitCurrent();
 	void unsplitCurrent();
