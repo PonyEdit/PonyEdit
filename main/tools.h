@@ -18,8 +18,8 @@ public:
 	static void loadServers();
 	static bool isMainThread();
 
-	static QList<Location*> loadRecentFiles();
-	static void saveRecentFiles(QList<Location*> recentFiles);
+	static QList<Location> loadRecentFiles();
+	static void saveRecentFiles(QList<Location> recentFiles);
 
 	static void loadStartupFiles();
 	static void saveCurrentFiles();

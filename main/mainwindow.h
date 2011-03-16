@@ -35,7 +35,8 @@ public slots:
 
 	void newFile();
 	void openFile();
-	void openSingleFile(Location* loc = NULL);
+	void openSingleFile();
+	void openSingleFile(const Location& loc);
 	void saveFile();
 	void saveFileAs();
 	void saveAllFiles();
@@ -102,7 +103,7 @@ private:
 	void restoreState();
 
 	void updateRecentFilesMenu();
-	void addRecentFile(Location* loc);
+	void addRecentFile(const Location& loc);
 
 	void nextStartupPrompt();
 
@@ -111,7 +112,7 @@ private:
 	QStatusBar* mStatusBar;
 	QLabel* mStatusLine;
 
-	QList<Location*> mRecentFiles;
+	QList<Location> mRecentFiles;
 	QMenu* mRecentFilesMenu;
 
 	QMap<QString, QAction*> mSyntaxMenuEntries;

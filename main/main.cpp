@@ -51,9 +51,7 @@ int main(int argc, char *argv[])
 				if(name.trimmed().isNull())
 					continue;
 
-				Location *loc = new Location(name);
-				gMainWindow->openSingleFile(loc);
-				delete loc;
+				gMainWindow->openSingleFile(Location(name));
 			}
 		}
 

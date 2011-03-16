@@ -87,35 +87,33 @@ void Tools::loadServers()
 	settings.endArray();
 }
 
-QList<Location*> Tools::loadRecentFiles()
+QList<Location> Tools::loadRecentFiles()
 {
 	QSettings settings;
 
-	QList<Location*> recentFiles;
+	QList<Location> recentFiles;
 
 	int count = settings.beginReadArray("recentFiles");
 	for (int i = 0; i < count; i++)
 	{
 		settings.setArrayIndex(i);
-		Location *loc = new Location(settings.value("path").toString());
-
-		recentFiles.append(loc);
+		recentFiles.append(Location(settings.value("path").toString()));
 	}
 	settings.endArray();
 
 	return recentFiles;
 }
 
-void Tools::saveRecentFiles(QList<Location*> recentFiles)
+void Tools::saveRecentFiles(QList<Location> recentFiles)
 {
 	QSettings settings;
 
 	int index = 0;
 	settings.beginWriteArray("recentFiles");
-	foreach (Location* loc, recentFiles)
+	foreach (Location loc, recentFiles)
 	{
 		settings.setArrayIndex(index++);
-		settings.setValue("path", loc->getDisplayPath());
+		settings.setValue("path", loc.getDisplayPath());
 	}
 	settings.endArray();
 }
@@ -226,13 +224,10 @@ QString Tools::getResourcePath(const QString& subpath)
 
 void Tools::loadStartupFiles()
 {
-	Location *loc;
 	switch(Options::StartupAction)
 	{
 		case Options::BlankFile:
-			loc = new Location("");
-			gMainWindow->openSingleFile(loc);
-			delete loc;
+			gMainWindow->openSingleFile(Location());
 			break;
 		case Options::SetFiles:
 		case Options::ReopenFiles:
@@ -243,9 +238,7 @@ void Tools::loadStartupFiles()
 				if(name.isNull())
 					continue;
 
-				loc = new Location(name);
-				gMainWindow->openSingleFile(loc);
-				delete loc;
+				gMainWindow->openSingleFile(Location(name));
 
 				Editor* current = gMainWindow->getCurrentEditor();
 				if (current)

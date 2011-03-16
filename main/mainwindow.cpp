@@ -178,25 +178,25 @@ void MainWindow::openFile()
 				return;
 		}
 		foreach (Location location, locations)
-			openSingleFile(&location);
+			openSingleFile(location);
 	}
 }
 
-void MainWindow::openSingleFile(Location *loc)
+void MainWindow::openSingleFile()
 {
-	if(!loc)
-	{
-		QAction* action = static_cast<QAction*>(sender());
-		if(action)
-			loc = mRecentFiles[action->data().toInt()];
-	}
+	QAction* action = static_cast<QAction*>(sender());
+	if(action)
+		openSingleFile(mRecentFiles[action->data().toInt()]);
+}
 
-	if (loc && !loc->isDirectory())
+void MainWindow::openSingleFile(const Location& loc)
+{
+	if (!loc.isDirectory())
 	{
 		BaseFile* file;
 		try
 		{
-			file = loc->getFile();
+			file = Location(loc).getFile();
 		}
 		catch(QString &e)
 		{
@@ -261,7 +261,7 @@ void MainWindow::saveFileAs()
 
 		loc.getFile()->open();
 
-		openSingleFile(&loc);
+		openSingleFile(loc);
 
 		if(current->getFile()->getLocation().getProtocol() == Location::Unsaved)
 			current->close();
@@ -691,27 +691,25 @@ void MainWindow::updateRecentFilesMenu()
 
 	for(int ii = 0; ii < mRecentFiles.length(); ii++)
 	{
-		QAction* action = mRecentFilesMenu->addAction(mRecentFiles[ii]->getDisplayPath(), this, SLOT(openSingleFile()));
+		QAction* action = mRecentFilesMenu->addAction(mRecentFiles[ii].getDisplayPath(), this, SLOT(openSingleFile()));
 		action->setData(ii);
 	}
 }
 
-void MainWindow::addRecentFile(Location *loc)
+void MainWindow::addRecentFile(const Location& loc)
 {
-	if(loc->getPath().isNull())
+	if(loc.isNull())
 		return;
-
-	Location* newLoc = new Location(*loc);
 
 	for(int ii = 0; ii < mRecentFiles.length(); ii++)
 	{
-		if(newLoc->getDisplayPath() == mRecentFiles[ii]->getDisplayPath())
+		if(loc.getDisplayPath() == mRecentFiles[ii].getDisplayPath())
 		{
 			mRecentFiles.removeAt(ii);
 			ii--;
 		}
 	}
-	mRecentFiles.push_front(newLoc);
+	mRecentFiles.push_front(loc);
 
 	// Only keep the 10 most recent files
 	for(int ii = 9; ii < mRecentFiles.length(); ii++)
@@ -743,8 +741,7 @@ void MainWindow::dropEvent(QDropEvent *event)
 	if (fileName.isEmpty())
 		return;
 
-	Location loc(fileName);
-	openSingleFile(&loc);
+	openSingleFile(Location(fileName));
 }
 
 void MainWindow::showHTMLPreview()
@@ -830,7 +827,7 @@ void MainWindow::reloadFile()
 		QList<BaseFile*> files;
 		files.append(file);
 		if (gOpenFileManager.closeFiles(files))
-			openSingleFile(&location);
+			openSingleFile(location);
 	}
 }
 

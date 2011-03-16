@@ -105,11 +105,7 @@ bool PonyEdit::event(QEvent *e)
 
 		e->accept();
 
-		Location *loc = new Location(name);
-
-		gMainWindow->openSingleFile(loc);
-
-		delete loc;
+		gMainWindow->openSingleFile(Location(name));
 
 		return true;
 	}
@@ -128,9 +124,7 @@ void PonyEdit::receiveMessage()
 	QByteArray byteArray = localSocket->readAll();
 	QString message = QString::fromUtf8(byteArray.constData());
 
-	Location *loc = new Location(message);
-	gMainWindow->openSingleFile(loc);
-	delete loc;
+	gMainWindow->openSingleFile(Location(message));
 
 	localSocket->disconnectFromServer();
 }
