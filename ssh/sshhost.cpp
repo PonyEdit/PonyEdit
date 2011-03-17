@@ -83,6 +83,7 @@ SshHost::SshHost()
 	mSave = true;
 	mSavePassword = false;
 	mPort = 22;
+	mSaveKeyPassphrase = false;
 }
 
 SshHost::SshHost(const QString& hostName, const QString& userName)
@@ -93,7 +94,8 @@ SshHost::SshHost(const QString& hostName, const QString& userName)
 	mPort = 22;
 	mDefaultDirectory = "~";
 	mSavePassword = false;
-	mSave = false;
+	mSave = true;
+	mSaveKeyPassphrase = false;
 }
 
 SshHost::~SshHost()
