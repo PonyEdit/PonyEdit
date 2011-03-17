@@ -1,0 +1,417 @@
+{
+   Problem_in_lib_png
+   Memcheck:Cond
+   fun:inflateReset2
+   fun:inflateInit2_
+}
+{
+   Problem_in_glib
+   Memcheck:Leak
+   fun:malloc
+   fun:g_malloc
+   ...
+   obj:/lib/libglib-2.0.so.0.2600.1
+   ...
+   fun:g_thread_init
+}
+{
+   Problem_with_kde_themes
+   Memcheck:Leak
+   fun:_Znwj
+   fun:_ZN10QMutexPool3getEPKv
+   obj:/usr/lib/libQtCore.so.4.7.0
+}
+{
+   Problem_with_glibc
+   Memcheck:Leak
+   fun:malloc
+   ...
+   fun:IceRegisterForProtocolSetup
+}
+{
+   Some_kind_of_qt_metatype_leak
+   Memcheck:Leak
+   ...
+   obj:/usr/lib/libQtDBus.so.4.7.0
+   ...
+   obj:/usr/lib/qt4/plugins/bearer/libqnmbearer.so
+}
+{
+   x11_crap
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/libX11.so.*
+}
+{
+   qobject_appears_to_be_leaking
+   Memcheck:Leak
+   ...
+   obj:/usr/lib/libQtCore.so.4.7.0
+   fun:_ZN7QObjectC2EPS_
+   fun:_ZN15OpenFileManagerC1Ev
+}
+{
+   kde_global_settings_suckage
+   Memcheck:Leak
+   fun:malloc
+   ...
+   fun:_ZN15KGlobalSettingsC1Ev
+}
+{
+   why_does_starting_threads_leak
+   Memcheck:Leak
+   fun:_Znwj
+   ...
+   fun:start_thread
+   fun:clone
+}
+{
+   bloody_qnm_bearer
+   Memcheck:Leak
+   fun:_Znwj
+   obj:/usr/lib/qt4/plugins/bearer/libqnmbearer.so
+}
+{
+   fucking_kde_leaks_like_a_bitch
+   Memcheck:Leak
+   fun:_Znwj
+   ...   
+   obj:/usr/lib/kde4/plugins/styles/oxygen.so
+}
+{
+   more_glibc_problems
+   Memcheck:Leak
+   fun:calloc
+   fun:g_malloc0
+   ...
+   fun:g_thread_init
+}
+{
+   fuck_you_dbus
+   Memcheck:Leak
+   fun:malloc
+   fun:dbus_malloc
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   ...
+   fun:IceProcessMessages
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   ...
+   obj:/usr/lib/libfontconfig.so.*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   ...
+   fun:FcInit
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   ...
+   fun:_ZN19QApplicationPrivate9constructEP9_XDisplaymm
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwj
+   obj:/usr/lib/libQtCore.so.4.7.0
+   fun:_ZN10QTextCodec14codecForLocaleEv
+   fun:_ZNK7QString11toLocal8BitEv
+   obj:/usr/lib/libQtCore.so.4.7.0
+   fun:_ZN5QFile10encodeNameERK7QString
+   obj:/usr/lib/libQtCore.so.4.7.0
+   fun:_ZN13QFSFileEngineC1ERK7QString
+   fun:_ZN19QAbstractFileEngine6createERK7QString
+   obj:/usr/lib/libQtCore.so.4.7.0
+   fun:_ZN9QFileInfoC1ERK7QString
+   fun:_ZN16QCoreApplication19applicationFilePathEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:calloc
+   obj:/usr/lib/libQtCore.so.4.7.0
+   obj:/usr/lib/libQtCore.so.4.7.0
+   obj:/usr/lib/libQtCore.so.4.7.0
+   obj:/usr/lib/libQtCore.so.4.7.0
+   obj:/usr/lib/libQtCore.so.4.7.0
+   obj:/usr/lib/libQtCore.so.4.7.0
+   fun:_Z10qHBNewFacePvPF8HB_ErrorS_jPhPjE
+   obj:/usr/lib/libQtGui.so.4.7.0
+   fun:_ZN13QFontEngineFT4initEN11QFontEngine6FaceIdEbNS_11GlyphFormatE
+   fun:_ZN16QFontEngineX11FTC1EP10_FcPatternRK8QFontDefi
+   fun:_ZN18QFontEngineMultiFT10loadEngineEi
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwj
+   ...
+   obj:/lib/ld-2.12.1.so
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   ...
+   fun:_ZN19QApplicationPrivate9constructEP9_XDisplaymm
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   ...   
+   fun:libssh2_init
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   ...
+   obj:/usr/lib/libgtk-x11-*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   ...
+   obj:/usr/lib/libgobject-*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   ...
+   obj:/usr/lib/libORBit-*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   ...
+   obj:/usr/lib/libgconf-*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:qt_plugin_instance
+   ...
+   obj:/usr/lib/libQtGui.so.*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwj
+   fun:qt_plugin_instance
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   ...   
+   obj:/usr/lib/qt4/plugins/inputmethods/libqimsw-multi.so
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   ...   
+   obj:/usr/lib/libQtDBus.so.*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   ...
+   obj:/lib/libglib-*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwj
+   ...   
+   obj:/usr/lib/qt4/plugins/inputmethods/libqimsw-multi.so
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwj
+   ...
+   obj:/usr/lib/libQtCore.so.*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:realloc
+   ...
+   obj:/usr/lib/libX11.so.*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:calloc
+   ...   
+   obj:/lib/libdbus-1.so.*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   ...   
+   obj:/usr/lib/libQtCore.so.4.7.0
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:realloc
+   ...
+   obj:/lib/libdbus-1.so.*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:realloc
+   ...   
+   obj:/lib/libglib-2.0.so.*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:realloc
+   ...   
+   obj:/usr/lib/libQtDBus.so.*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:calloc
+   ...
+   obj:/usr/lib/libQtCore.so.*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:*alloc
+   ...
+   fun:libssh2_init
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znaj
+   ...
+   obj:/usr/lib/libQtDBus.so.*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znaj
+   ...
+   obj:/usr/lib/libQtCore.so.*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:memalign
+   ...
+   obj:/lib/libglib-*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:_Znwj
+   ...
+   obj:/usr/lib/libQtGui.so.*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:realloc
+   ...
+   obj:/usr/lib/libfontconfig.so.*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   ...
+   fun:openaux
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:realloc
+   ...
+   obj:/usr/lib/libQtXml.so.*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   ...
+   obj:/lib/libdbus-1.so.*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:calloc
+   ...
+   fun:openaux
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
