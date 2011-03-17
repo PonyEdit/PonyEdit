@@ -24,6 +24,7 @@ public:
 
 RemoteChannel::RemoteChannel(RemoteConnection* connection, Type type)
 {
+	mConnectionId = -1;
 	mConnection = connection;
 	mRawHandle = NULL;
 	mType = type;
