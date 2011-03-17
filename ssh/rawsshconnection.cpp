@@ -399,6 +399,7 @@ QByteArray RawSshConnection::readFile(const char* filename, ISshConnectionCallba
 	LOCK_MUTEX(mAccessMutex);
 
 	struct stat fileInfo;
+	memset(&fileInfo, 0, sizeof(fileInfo));
 	LIBSSH2_CHANNEL* tmpChannel = libssh2_scp_recv(mSession, filename, &fileInfo);
 	if (!tmpChannel)
 	{

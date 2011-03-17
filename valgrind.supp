@@ -367,6 +367,12 @@
    ...
    fun:openaux
 }
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Param
+   socketcall.send(msg)
+   fun:send
+}
 
 
 

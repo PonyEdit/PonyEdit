@@ -48,6 +48,7 @@ StringTrie::Node* StringTrie::allocateNode()
 	{
 		sNodeHeapCursor = 0;
 		QVector<Node>* newVector = new QVector<Node>(NODE_HEAP_SIZE);
+		memset(newVector->data(), 0, newVector->size() * sizeof(Node));
 		sNodeHeaps.append(newVector);
 		sCurrentNodeHeap = newVector;
 	}
