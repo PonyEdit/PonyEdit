@@ -49,6 +49,10 @@ void RemoteConnectionThread::run()
 
 		qDebug() << "ZZzzzzz--** RemoteConnectionThread woken from its sleep. Status = " << mConnection->mStatus;
 	}
+
+	//	Make sure all attached channel threads die before this one does.
+	foreach (RemoteChannel* channel, mConnection->mOpenChannels)
+		channel->killThread();
 }
 
 void RemoteConnectionThread::wake()

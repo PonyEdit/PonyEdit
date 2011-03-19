@@ -56,6 +56,26 @@ void RemoteChannel::sendRequest(RemoteRequest* request)
 	}
 }
 
+void RemoteChannel::killThread()
+{
+	//	Slaughter my thread.
+	if (mThread)
+	{
+		mRequestQueueWaiter.wakeAll();
+
+		//	Give threads 2 seconds to comply....
+		if (!mThread->wait(2000))
+		{
+			//	... then just shoot them.
+			mThread->terminate();
+			mThread->wait();
+		}
+
+		delete mThread;
+		mThread = NULL;
+	}
+}
+
 void RemoteChannel::threadRun()
 {
 	//	Outer loop: connects and tries to pump the queue

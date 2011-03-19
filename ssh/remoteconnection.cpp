@@ -23,6 +23,7 @@ RemoteConnection::~RemoteConnection()
 
 void RemoteConnection::startConnectionThread()
 {
+	qDebug() << "Creating a new connection thread in RemoteConnection @ " << (void*)this;
 	mThread = new RemoteConnectionThread(this);
 	mThread->start();
 }
@@ -236,18 +237,27 @@ void RemoteConnection::killThread()
 	mDeliberatelyDisconnecting = true;
 	if (mThread)
 	{
+		qDebug() << "RemoteConnection::killThread - waking thread --- RC = " << (void*)this << " --- thread = " << (void*)mThread;
 		mThread->wake();
 
 		//	Give threads 5 seconds to comply....
 		if (!mThread->wait(5000))
 		{
+			qDebug() << "Waiting for the thread failed, terminating.... --- RC = " << (void*)this << " --- thread = " << (void*)mThread;
+
 			//	... then just shoot them.
 			mThread->terminate();
 			mThread->wait();
 		}
 
+		qDebug() << "Waiting for the thread succeeded. Deleting. --- RC = " << (void*)this << " --- thread = " << (void*)mThread;
+
 		delete mThread;
 		mThread = NULL;
+	}
+	else
+	{
+		qDebug() << "RemoteConnection::killThread - skipping because mThread is already NULL --- RC = " << (void*)this << " --- thread = " << (void*)mThread;
 	}
 }
 

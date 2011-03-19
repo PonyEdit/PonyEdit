@@ -44,6 +44,8 @@ public:
 	inline bool isError() { return mStatus == Error; }
 	inline const QString& getError() const { return mErrorMessage; }
 
+	void killThread();
+
 protected:
 	void startThread();	//	Called in subclass constructor
 	virtual void threadConnect() = 0;
