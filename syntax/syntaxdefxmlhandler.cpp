@@ -57,7 +57,6 @@ bool SyntaxDefXmlHandler::startElement(const QString &/* namespaceURI */, const 
 				mCurrentBlocks |= List;
 				mKeywordList = new SyntaxDefinition::KeywordList();
 				mKeywordList->name = Tools::getStringXmlAttribute(atts, "name");
-				qDebug() << (void*)&mKeywordList->items;
 				mDefinition->addKeywordList(mKeywordList);
 			}
 			else if (localName.compare("contexts", Qt::CaseInsensitive) == 0)
@@ -143,10 +142,10 @@ bool SyntaxDefXmlHandler::startElement(const QString &/* namespaceURI */, const 
 		case Language|General|Comments:
 			if (localName.compare("comment", Qt::CaseInsensitive) == 0)
 			{
-				SyntaxDefinition::CommentStyle* style = new SyntaxDefinition::CommentStyle();
+				/*SyntaxDefinition::CommentStyle* style = new SyntaxDefinition::CommentStyle();
 				style->multiline = (Tools::getStringXmlAttribute(atts, "name").compare("multiline", Qt::CaseInsensitive) == 0);
 				style->start = Tools::getStringXmlAttribute(atts, "start");
-				style->end = Tools::getStringXmlAttribute(atts, "end");
+				style->end = Tools::getStringXmlAttribute(atts, "end");*/
 			}
 			break;
 	}

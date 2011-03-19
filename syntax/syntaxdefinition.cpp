@@ -32,6 +32,12 @@ SyntaxDefinition::SyntaxDefinition(const QString& filename)
 
 void SyntaxDefinition::unlink()
 {
+	foreach (KeywordList* list, mKeywordLists)
+		delete list;
+
+	foreach (ItemData* itemData, mItemDatas)
+		delete itemData;
+
 	foreach (QSharedPointer<ContextDef> context, mContextList)
 	{
 		context->fallthroughContextLink = ContextLink();
