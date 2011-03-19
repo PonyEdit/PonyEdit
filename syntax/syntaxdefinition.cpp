@@ -5,7 +5,7 @@
 #include "syntaxdefinition.h"
 #include "syntaxdefxmlhandler.h"
 
-SyntaxDefinition::ContextDef::ContextDef() : fallthrough(false), dynamic(false), listIndex(0), attributeLink(NULL) {};
+SyntaxDefinition::ContextDef::ContextDef() : fallthrough(false), dynamic(false), listIndex(0), attributeLink(NULL) {}
 SyntaxDefinition::ContextDef::~ContextDef() {}
 
 SyntaxDefinition::SyntaxDefinition(const QString& filename)
@@ -28,6 +28,19 @@ SyntaxDefinition::SyntaxDefinition(const QString& filename)
 
 	if (!mValid)
 		qDebug() << "Failed to read syntax definition";
+}
+
+void SyntaxDefinition::unlink()
+{
+	foreach (QSharedPointer<ContextDef> context, mContextList)
+	{
+		context->fallthroughContextLink = ContextLink();
+		context->lineBeginContextLink = ContextLink();
+		context->lineEndContextLink = ContextLink();
+
+		foreach (QSharedPointer<SyntaxRule> rule, context->rules)
+			rule->unlink();
+	}
 }
 
 bool SyntaxDefinition::link()
@@ -81,7 +94,7 @@ bool SyntaxDefinition::link()
 					}
 
 					int insertionOffset = 0;
-					foreach (const QSharedPointer<SyntaxRule>& copyRule, sourceContext->rules)
+					foreach (QSharedPointer<SyntaxRule> copyRule, sourceContext->rules)
 						context->rules.insert(i + insertionOffset++, copyRule);
 				}
 

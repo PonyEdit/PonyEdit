@@ -73,7 +73,7 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttrib
 	}
 }
 
-SyntaxRule::SyntaxRule(SyntaxRule* parent, const QSharedPointer<SyntaxRule>& other, bool duplicateChildren, bool maintainLinks)
+SyntaxRule::SyntaxRule(SyntaxRule* parent, QSharedPointer<SyntaxRule> other, bool duplicateChildren, bool maintainLinks)
 {
 	mParent = parent;
 
@@ -109,7 +109,7 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QSharedPointer<SyntaxRule>& oth
 
 	if (duplicateChildren)
 	{
-		foreach (const QSharedPointer<SyntaxRule>& otherChild, other->mChildRules)
+		foreach (QSharedPointer<SyntaxRule> otherChild, other->mChildRules)
 			mChildRules.append(QSharedPointer<SyntaxRule>(new SyntaxRule(this, otherChild, duplicateChildren, maintainLinks)));
 	}
 	else
@@ -147,6 +147,14 @@ void SyntaxRule::applyDynamicCaptures(const QStringList& captures)
 		if (mType == RegExpr)
 			prepareRegExp();
 	}
+}
+
+void SyntaxRule::unlink()
+{
+	foreach (QSharedPointer<SyntaxRule> rule, mChildRules)
+		rule->unlink();
+
+	mContextLink = SyntaxDefinition::ContextLink();
 }
 
 bool SyntaxRule::link(SyntaxDefinition* def)
@@ -217,7 +225,7 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 				else
 				{
 					if (c >= '0' && c <= '9')
-						this->mDynamicStringSlots.push_front(DynamicSlot(index, c - '0'));
+						mDynamicStringSlots.push_front(DynamicSlot(index, c - '0'));
 					mString.remove(index, 2);
 				}
 				index++;

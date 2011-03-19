@@ -69,10 +69,11 @@ public:
 	};
 
 	SyntaxDefinition(const QString& filename);
+	~SyntaxDefinition() { unlink(); }
 
 	inline bool isValid() const { return mValid; }
-	inline const QSharedPointer<ContextDef>& getContextByIndex(int index) const { return mContextList.at(index); }
-	inline const QSharedPointer<ContextDef>& getDefaultContext() const { return mDefaultContext; }
+	inline QSharedPointer<ContextDef> getContextByIndex(int index) const { return mContextList.at(index); }
+	inline QSharedPointer<ContextDef> getDefaultContext() const { return mDefaultContext; }
 	inline QSharedPointer<ContextDef> getContext(const QString& name) const { return mContextMap.value(name.toLower()); }
 	inline KeywordList* getKeywordList(const QString& name) const { return mKeywordLists.value(name.toLower()); }
 	inline ItemData* getItemData(const QString& name) const { return mItemDatas.value(name.toLower()); }
@@ -97,6 +98,7 @@ public:
 
 private:
 	bool link();
+	void unlink();
 
 	bool mValid;
 	QString mSyntaxName;

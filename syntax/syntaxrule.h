@@ -35,7 +35,7 @@ public:
 	static void cleanup() { if (sTypeMap) delete sTypeMap; }
 
 	SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttributes& attributes);
-	SyntaxRule(SyntaxRule* parent, const QSharedPointer<SyntaxRule>& other, bool duplicateChildren, bool maintainLinks);
+	SyntaxRule(SyntaxRule* parent, QSharedPointer<SyntaxRule> other, bool duplicateChildren, bool maintainLinks);
 	~SyntaxRule();
 
 	SyntaxRule* getParent() const { return mParent; }
@@ -55,6 +55,7 @@ public:
 	int match(const QString& string, int position);
 	void addChildRule(QSharedPointer<SyntaxRule> rule);
 	bool link(SyntaxDefinition* def);
+	void unlink();
 
 	void applyDynamicCaptures(const QStringList& captures);
 	void prepareRegExp();

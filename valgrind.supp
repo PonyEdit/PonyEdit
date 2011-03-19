@@ -373,8 +373,20 @@
    socketcall.send(msg)
    fun:send
 }
-
-
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:malloc
+   ...
+   obj:/lib/libcrypto.so.0.9.8
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   fun:realloc
+   ...
+   obj:/usr/lib/libQtCore.so.4.7.0
+}
 
 
 
