@@ -1,8 +1,20 @@
 #include <QDockWidget>
+#include <QtAlgorithms>
 
 #include "windowmanager.h"
 #include "file/openfilemanager.h"
 #include "globaldispatcher.h"
+
+bool editorSortLessThan(const Editor* e1, const Editor* e2)
+{
+	Location loc1 = e1->getLocation();
+	Location loc2 = e2->getLocation();
+
+	if(loc1.getParentPath() == loc2.getParentPath())
+		return loc1.getPath() < loc2.getPath();
+
+	return loc1.getParentPath() < loc2.getParentPath();
+}
 
 WindowManager::WindowManager(QWidget *parent) :
     QWidget(parent)
@@ -65,6 +77,8 @@ void WindowManager::displayFile(BaseFile *file)
 
 	Editor *newEditor = new Editor(file);
 	mEditors.append(newEditor);
+
+	qSort(mEditors.begin(), mEditors.end(), editorSortLessThan);
 
 	mLayout->addWidget(newEditor);
 

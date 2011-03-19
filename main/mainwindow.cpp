@@ -498,7 +498,11 @@ void MainWindow::createWindowMenu()
 	QMenu *windowMenu = new QMenu(tr("&Window"), this);
 	menuBar()->addMenu(windowMenu);
 
+#ifdef Q_OS_MAC
+	windowMenu->addAction(tr("&Previous Window"), mWindowManager, SLOT(previousWindow()), QKeySequence::PreviousChild);
+#else
 	windowMenu->addAction(tr("&Previous Window"), mWindowManager, SLOT(previousWindow()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Tab));
+#endif
 	windowMenu->addAction(tr("&Next Window"), mWindowManager, SLOT(nextWindow()), QKeySequence::NextChild);
 }
 
