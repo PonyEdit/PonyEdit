@@ -105,6 +105,8 @@ bool SshConnection::threadConnect()
 				{
 					authenticated = mRawConnection->authenticateKeyFile(mHost->getKeyFile().toUtf8(), mHost->getUserName().toUtf8(), mHost->getKeyPassphrase().toUtf8(), &passkeyRejected);
 
+					checkForDeliberateDisconnect();
+
 					if (passkeyRejected)
 						waitForInput(SshConnection::passwordInputDialog, SshConnection::passwordInputCallback, QVariant(KeyPassphrase));
 
@@ -116,6 +118,8 @@ bool SshConnection::threadConnect()
 		//	Fall back on password entry
 		while (!authenticated)
 		{
+			checkForDeliberateDisconnect();
+
 			waitForInput(SshConnection::passwordInputDialog, SshConnection::passwordInputCallback, QVariant(SshPassword));
 
 			checkForDeliberateDisconnect();

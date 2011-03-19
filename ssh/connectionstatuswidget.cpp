@@ -41,6 +41,7 @@ void ConnectionStatusWidget::connectionStatusChanged()
 
 	if (status & RemoteConnection::WaitingOnInput)
 	{
+		setButtonsEnabled(true);
 		if (!isShowingInput())
 		{
 			QWidget* inputWidget = new QWidget(this);
@@ -50,14 +51,18 @@ void ConnectionStatusWidget::connectionStatusChanged()
 	}
 	else
 	{
-		setButtons(Cancel);
 		clearInputWidget();
 		setStatus(mConnection->getStatusIcon(), mConnection->getName() + ": " + mConnection->getStatusString());
 
 		if (status & RemoteConnection::Error)
 		{
 			setButtons(Done);
-			this->setButtonsEnabled(true);
+			setButtonsEnabled(true);
+		}
+		else
+		{
+			setButtons(Cancel);
+			if (mConnection->isDeliberatelyDisconnecting()) setButtonsEnabled(false);
 		}
 	}
 }
@@ -69,7 +74,6 @@ void ConnectionStatusWidget::onButtonClicked(StatusWidget::Button button)
 		RemoteConnection::Status status = mConnection->getBaseStatus();
 		if (status != RemoteConnection::Disconnecting && status != RemoteConnection::Disconnected && status != RemoteConnection::Error)
 		{
-			setButtonsEnabled(false);
 			mConnection->disconnect(true);
 			mConnection->inputDialogCompleted();
 		}
