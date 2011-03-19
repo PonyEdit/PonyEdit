@@ -15,6 +15,7 @@ public:
 	static SshHost* getBlankHost(bool save = false);
 	static SshHost* createHost(const QString& hostName = QString(), const QString& userName = QString(), bool save = false);
 	static QList<SshHost*>& getKnownHosts() { return sKnownHosts; }
+	static void cleanupHosts();
 	~SshHost();
 
 	static void recordKnownHost(SshHost* host);	//	Only use at load-time.

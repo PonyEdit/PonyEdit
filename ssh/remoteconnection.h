@@ -97,6 +97,7 @@ protected:
 	void startConnectionThread();		//	Always called once during the sub-class constructor
 	virtual bool threadConnect() = 0;
 	virtual RemoteChannel* threadOpenPrimaryChannel() = 0;
+	void killThread();
 
 	void setStatus(Status newStatus);
 	void setBaseStatus(Status baseStatus) { setStatus(static_cast<Status>((mStatus & ~BaseStatusMask) | baseStatus)); }

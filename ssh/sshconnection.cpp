@@ -49,6 +49,8 @@ SshConnection::SshConnection(SshHost* host)
 
 SshConnection::~SshConnection()
 {
+	killThread();
+	delete mRawConnection;
 }
 
 bool SshConnection::threadConnect()

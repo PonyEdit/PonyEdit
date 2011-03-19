@@ -18,19 +18,7 @@ RemoteConnection::RemoteConnection()
 
 RemoteConnection::~RemoteConnection()
 {
-	//	Slaughter my thread.
-	mDeliberatelyDisconnecting = true;
-	mThread->wake();
-	if (mThread)
-	{
-		//	Give threads 5 seconds to comply....
-		if (!mThread->wait(5000))
-		{
-			//	... then just shoot them.
-			mThread->terminate();
-			mThread->wait();
-		}
-	}
+	killThread();
 }
 
 void RemoteConnection::startConnectionThread()
@@ -242,8 +230,26 @@ void RemoteConnection::channelStateChanged(RemoteChannel* /*channel*/)
 		setBaseStatus(Connected);
 }
 
+void RemoteConnection::killThread()
+{
+	//	Slaughter my thread.
+	mDeliberatelyDisconnecting = true;
+	if (mThread)
+	{
+		mThread->wake();
 
+		//	Give threads 5 seconds to comply....
+		if (!mThread->wait(5000))
+		{
+			//	... then just shoot them.
+			mThread->terminate();
+			mThread->wait();
+		}
 
+		delete mThread;
+		mThread = NULL;
+	}
+}
 
 
 

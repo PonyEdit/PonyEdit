@@ -17,6 +17,7 @@
 #include "syntax/syntaxdefmanager.h"
 #include "main/stringtrie.h"
 #include "options/options.h"
+#include "ssh/sshhost.h"
 
 GlobalDispatcher* gDispatcher = NULL;
 SiteManager* gSiteManager = NULL;
@@ -88,6 +89,7 @@ PonyEdit::~PonyEdit()
 	StringTrie::cleanup();
 	SyntaxRule::cleanup();
 	RawSshConnection::cleanup();
+	SshHost::cleanupHosts();
 }
 
 bool PonyEdit::event(QEvent *e)

@@ -42,6 +42,12 @@ SshHost* SshHost::getHost(const QString& hostName, const QString& userName, bool
 	return host;
 }
 
+void SshHost::cleanupHosts()
+{
+	while (sKnownHosts.length())
+		delete(sKnownHosts[0]);
+}
+
 SshHost* SshHost::getBlankHost(bool save)
 {
 	SshHost* host = new SshHost("", "");
@@ -100,7 +106,8 @@ SshHost::SshHost(const QString& hostName, const QString& userName)
 
 SshHost::~SshHost()
 {
-	//	TODO: Disconnect before deletion
+	if (mConnection)
+		delete mConnection;
 	sKnownHosts.removeAll(this);
 }
 

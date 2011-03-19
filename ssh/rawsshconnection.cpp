@@ -99,7 +99,6 @@ void RawSshConnection::connect(const char* host, int port)
 
 	//	Create an SSH2 session
 	mSession = libssh2_session_init();
-	qDebug() << "New SSH session = " << (void*)mSession;
 	libssh2_session_flag(mSession, LIBSSH2_FLAG_SIGPIPE, 1);
 	if (libssh2_session_startup(mSession, mSocket))
 	{
@@ -118,6 +117,7 @@ void RawSshConnection::disconnect()
 	{
 		libssh2_session_disconnect(mSession, "Closing connection");
 		libssh2_session_free(mSession);
+		qDebug() << "Session free called on " << (void*)mSession;
 		mSession = NULL;
 	}
 
