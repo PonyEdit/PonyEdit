@@ -53,6 +53,7 @@ public:
 	void unregisterOpenFile(SlaveFile* file);
 	int numOpenFiles() const;
 	const QList<SlaveFile*> getOpenFiles() const;
+	bool needsConnection();		//	Returns true if this host is in use by things that require an open connection. eg; open files.
 
 	//	Connection stuff
 	SshConnection* getConnection();		//	*NOT RE-ENTRANT* If already connected, this returns the connection. Otherwise, this connects!!

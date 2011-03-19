@@ -40,7 +40,7 @@ QByteArray SshConnection::sSlaveMd5;
 
 /*****************************************************************************/
 
-SshConnection::SshConnection(SshHost* host)
+SshConnection::SshConnection(SshHost* host) : RemoteConnection(host)
 {
 	mHost = host;
 	mRawConnection = new RawSshConnection();

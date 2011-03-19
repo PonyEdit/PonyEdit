@@ -4,10 +4,12 @@
 #include "main/tools.h"
 #include "main/dialogwrapper.h"
 #include "ssh/connectionstatuswidget.h"
+#include "sshhost.h"
 #include <QDebug>
 
-RemoteConnection::RemoteConnection()
+RemoteConnection::RemoteConnection(SshHost* host)
 {
+	mHost = host;
 	mStatus = Uninitialized;
 	mDeliberatelyDisconnecting = false;
 	mConnectionId = 0;
@@ -261,7 +263,10 @@ void RemoteConnection::killThread()
 	}
 }
 
-
+bool RemoteConnection::hasReasonToLive()
+{
+	return mHost->needsConnection();
+}
 
 
 

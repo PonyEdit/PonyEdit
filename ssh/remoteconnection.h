@@ -16,6 +16,7 @@ class RemoteConnection;
 class ConnectionStatusWidget;
 class RemoteConnectionThread;
 class SlaveChannel;
+class SshHost;
 
 typedef void(*DialogFunction)(ConnectionStatusWidget*, RemoteConnection*, QWidget*, QVariant);
 typedef bool(*DialogCallback)(ConnectionStatusWidget*, RemoteConnection*, StatusWidget::Button, QVariant);
@@ -44,7 +45,7 @@ public:
 	};
 
 public:
-	RemoteConnection();
+	RemoteConnection(SshHost* host);
 	~RemoteConnection();
 
 	virtual RemoteChannel* openChannel(RemoteChannel::Type /*type*/) { return NULL; }
@@ -90,6 +91,8 @@ public:
 
 	void channelStateChanged(RemoteChannel* channel);
 
+	bool hasReasonToLive();		//	Returns true if something (eg; a file) is dependant on this connection. Used when deciding whether to reconnect or just die.
+
 signals:
 	void statusChanged();
 
@@ -106,6 +109,7 @@ protected:
 	RemoteConnectionThread* mThread;
 	QList<RemoteChannel*> mOpenChannels;
 	QString mHomeDirectory;
+	SshHost* mHost;
 
 	bool mDeliberatelyDisconnecting;
 	int mConnectionId;

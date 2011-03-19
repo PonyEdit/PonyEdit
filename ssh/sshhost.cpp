@@ -159,3 +159,20 @@ SshConnection* SshHost::getConnection()
 
 	return mConnection;
 }
+
+bool SshHost::needsConnection()
+{
+	return mOpenFiles.length() > 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+

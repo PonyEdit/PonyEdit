@@ -39,15 +39,16 @@ void RemoteConnectionThread::run()
 {
 	while (!mConnection->isDeliberatelyDisconnecting())
 	{
-		QMutex mutex;
-		mutex.lock();
+		//	If in an error state, and there is no reason to continue living, just give up.
+		if (mConnection->getStatus() & RemoteConnection::Error && !mConnection->hasReasonToLive())
+			break;
 
 		if (!mConnection->isConnected())
 			connect();
 
+		QMutex mutex;
+		mutex.lock();
 		mSleeper.wait(&mutex, 5000);
-
-		qDebug() << "ZZzzzzz--** RemoteConnectionThread woken from its sleep. Status = " << mConnection->mStatus;
 	}
 
 	//	Make sure all attached channel threads die before this one does.
