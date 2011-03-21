@@ -15,6 +15,7 @@ public:
 		bool isSimpleExtension;
 		QRegExp regExp;
 		QString extension;
+		QString rawPattern;
 	};
 
 	struct Record
@@ -41,6 +42,7 @@ public:
 
 	QStringList getDefinitionCategories() const;
 	QStringList getSyntaxesInCategory(const QString& category) const;
+	QStringList getFiltersForCategory(const QString& category) const;
 
 private:
 	void updateIndex();
@@ -51,6 +53,7 @@ private:
 	QList<Record*> mRecordList;
 	QMap<QString, Record*> mRecordsByName;
 	QMap<QString, QString> mSyntaxesByCategory;
+	QMap<QString, QString> mFiltersByCategory;
 
 	QList<SyntaxDefinition*> mOpenDefinitionList;
 	QMap<QString, SyntaxDefinition*> mOpenDefinitionsByName;

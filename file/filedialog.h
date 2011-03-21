@@ -59,11 +59,12 @@ private slots:
 private:
 	void keyPressEvent(QKeyEvent *);
 	void restoreState();
-	void showStatus(const QPixmap& icon, const QString& text);
+        void showStatus(const QPixmap& icon, const QString& text);
 
 	void populateFolderTree();
 	QTreeWidgetItem* addLocationToTree(QTreeWidgetItem* parent, const Location& location);
 	void updateFavorites();
+        void populateFilterList();
 
 	Ui::FileDialog *ui;
 	QFileIconProvider mIconProvider;

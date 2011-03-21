@@ -6,6 +6,7 @@
 #include "newfolderdialog.h"
 #include "ssh/serverconfigdlg.h"
 #include "file/filelistdelegate.h"
+#include "syntax/syntaxdefmanager.h"
 
 #include <QDir>
 #include <QDebug>
@@ -77,9 +78,10 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	connect(ui->newFolderButton, SIGNAL(clicked()), this, SLOT(createNewFolder()));
 	connect(ui->statusWidget, SIGNAL(buttonClicked(StatusWidget::Button)), this, SLOT(retryButtonClicked(StatusWidget::Button)));
 	connect(ui->showHidden, SIGNAL(stateChanged(int)), this, SLOT(refresh()));
+	connect(ui->filterList, SIGNAL(currentIndexChanged(int)), this, SLOT(refresh()));
 
+		populateFilterList();
 	populateFolderTree();
-
 	restoreState();
 
 	showLocation(mLastLocation);
@@ -357,13 +359,33 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 		mFileListModel->setHorizontalHeaderLabels(headerLabels);
 		ui->fileList->setColumnWidth(0, 250);
 
+		QVariant itemData = ui->filterList->itemData(ui->filterList->currentIndex());
+		QList<QVariant> filters = (itemData.isValid() ? ui->filterList->itemData(ui->filterList->currentIndex()).toList() : QList<QVariant>());
+
 		foreach (Location childLocation, children)
 		{
+			const QString& name = childLocation.getLabel();
+			if (!childLocation.isDirectory() && filters.length())
+			{
+				bool match = false;
+				foreach (QVariant filter, filters)
+				{
+					if (filter.toRegExp().exactMatch(name))
+					{
+						match = true;
+						break;
+					}
+				}
+
+				if (!match)
+					continue;
+			}
+
 			QList<QStandardItem*> row;
 
 			QStandardItem* item = new QStandardItem();
 			item->setIcon(childLocation.getIcon());
-			item->setText(childLocation.getLabel());
+			item->setText(name);
 			item->setData(QVariant::fromValue<Location>(childLocation), DATA_ROLE);
 			row.append(item);
 
@@ -704,3 +726,38 @@ void FileDialog::refresh()
 {
 	showLocation(mCurrentLocation);
 }
+
+void FileDialog::populateFilterList()
+{
+	ui->filterList->addItem(tr("All Files"));
+
+	QStringList categories = gSyntaxDefManager->getDefinitionCategories();
+	foreach (QString category, categories)
+	{
+		QStringList filterStrings = gSyntaxDefManager->getFiltersForCategory(category);
+		QList<QVariant> filterRegExps;
+		foreach (const QString& filter, filterStrings)
+			filterRegExps.append(QVariant(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard)));
+
+		ui->filterList->addItem(category, filterRegExps);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

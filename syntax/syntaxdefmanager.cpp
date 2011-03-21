@@ -24,6 +24,7 @@ void SyntaxDefManager::Record::pack(const QXmlAttributes& atts)
 
 SyntaxDefManager::FilePattern::FilePattern(const QString& pattern)
 {
+	rawPattern = pattern;
 	if ((isSimpleExtension = (pattern.startsWith("*.") && pattern.indexOf('*', 2) == -1)))
 		extension = pattern.mid(1);
 	else
@@ -96,7 +97,18 @@ void SyntaxDefManager::addRecord(Record *record)
 	}
 	mRecordList.insert(i, record);
 	mRecordsByName.insert(record->syntaxName, record);
-	if (!record->hidden) mSyntaxesByCategory.insertMulti(record->category, record->syntaxName);
+	if (!record->hidden)
+	{
+		mSyntaxesByCategory.insertMulti(record->category, record->syntaxName);
+
+		foreach (const FilePattern& pattern, record->patterns)
+			mFiltersByCategory.insertMulti(record->category, pattern.rawPattern);
+	}
+}
+
+QStringList SyntaxDefManager::getFiltersForCategory(const QString& category) const
+{
+	return mFiltersByCategory.values(category);
 }
 
 QStringList SyntaxDefManager::getDefinitionCategories() const
@@ -154,7 +166,6 @@ SyntaxDefManager::Record* SyntaxDefManager::getRecordFor(const QString& filename
 				return record;
 	return NULL;
 }
-
 
 
 
