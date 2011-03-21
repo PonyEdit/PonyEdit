@@ -81,9 +81,7 @@ QModelIndex OpenFileTreeModel::getNodeIndex(Node* node) const
 {
 	Node* parentNode = node->parent;
 	if (!parentNode) return QModelIndex();
-	int row = 0;
-	for (; row < parentNode->children.length() && parentNode->children[row] != node; row++) ;
-	return createIndex(row, 0, static_cast<void*>(node));
+        return createIndex(parentNode->children.indexOf(node), 0, static_cast<void*>(node));
 }
 
 void OpenFileTreeModel::addNodeToTree(Node* parentNode, Node* node)
