@@ -48,7 +48,6 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	ui->fileList->verticalHeader()->hide();
 	if (mSaveAs)
 		ui->fileList->setSelectionMode(QAbstractItemView::SingleSelection);
-	ui->fileList->setSelectionBehavior(QAbstractItemView::SelectRows);
 	ui->fileList->setWordWrap(false);
 	ui->fileList->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->fileList->setFocus();

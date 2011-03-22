@@ -8,6 +8,7 @@
 #include <QTreeWidgetItem>
 #include <QMouseEvent>
 #include <QAbstractButton>
+#include <QTableView>
 
 #include "location.h"
 #include "main/statuswidget.h"
@@ -18,6 +19,18 @@
 #endif
 
 namespace Ui { class FileDialog; }
+
+//	Specialty tableview; used in the file list to force selection cursor to leftmost column
+class SelectionlessTable : public QTableView
+{
+public:
+	SelectionlessTable(QWidget* p) : QTableView(p) {}
+	virtual void currentChanged(const QModelIndex& current, const QModelIndex& previous)
+	{
+		if (current.column() > 0)
+			this->setCurrentIndex(current.sibling(current.row(), 0));
+	}
+};
 
 class FileDialog : public QDialog
 {
