@@ -223,7 +223,7 @@ sub msg_ls
 			(-w "$d/$filename" ? FILE_CANWRITE : 0);
 
 		$result->writeString( $filename );
-		$result->write( 'CL', $flags, $size );
+		$result->write( 'CLL', $flags, $size, $mtime );
 		$hits++;
 	}
 	close(DIR);

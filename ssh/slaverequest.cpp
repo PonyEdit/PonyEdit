@@ -107,7 +107,8 @@ void SlaveRequest_ls::handleResponse(const QByteArray& response)
 	{
 		quint32 filenameLength;
 		QString filename;
-		quint64 size;
+		quint32 size;
+		quint64 lastModified;
 		quint8 flags;
 
 		filenameLength = *(quint32*)cursor;
@@ -126,8 +127,12 @@ void SlaveRequest_ls::handleResponse(const QByteArray& response)
 		size = *(quint32*)cursor;
 		cursor += 4;
 
+		lastModified = *(quint32*)cursor;
+		cursor += 4;
+
 		mDirList.append(Location(mLocation, mLocation.getPath() + "/" + filename,
-			isDir?Location::Directory:Location::File, size, QDateTime(), canRead, canWrite));
+			isDir ? Location::Directory : Location::File, size,
+			QDateTime::fromMSecsSinceEpoch(lastModified * 1000), canRead, canWrite));
 	}
 }
 
