@@ -171,6 +171,12 @@
           <property name="wordWrap">
            <bool>false</bool>
           </property>
+          <attribute name="horizontalHeaderStretchLastSection">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
          </widget>
         </item>
        </layout>
@@ -252,9 +258,6 @@ border: 1px solid grey;
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="fileName"/>
-     </item>
      <item row="0" column="2" colspan="2">
       <widget class="QComboBox" name="filterList">
        <property name="sizePolicy">
@@ -285,6 +288,19 @@ border: 1px solid grey;
        </property>
       </widget>
      </item>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="fileName">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="editable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
@@ -304,9 +320,21 @@ border: 1px solid grey;
   <customwidget>
    <class>SelectionlessTable</class>
    <extends>QTableView</extends>
-   <header>file/filedialog.h</header>
+   <header location="global">file/filedialog.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>currentPath</tabstop>
+  <tabstop>upLevelButton</tabstop>
+  <tabstop>refreshButton</tabstop>
+  <tabstop>newFolderButton</tabstop>
+  <tabstop>directoryTree</tabstop>
+  <tabstop>fileList</tabstop>
+  <tabstop>fileName</tabstop>
+  <tabstop>filterList</tabstop>
+  <tabstop>showHidden</tabstop>
+  <tabstop>mainButtonBox</tabstop>
+ </tabstops>
  <resources>
   <include location="../resources.qrc"/>
  </resources>

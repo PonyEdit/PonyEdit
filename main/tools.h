@@ -33,6 +33,7 @@ public:
 	static int getIntXmlAttribute(const QXmlAttributes& attribs, const QString& key, int defaulVal);
 
 	static bool compareSubstring(const QString& superstring, const QString& substring, int superstringIndex, Qt::CaseSensitivity caseSensitivity);
+	static QStringList splitQuotedList(const QString& list, QChar separator);
 
 	static QString getResourcePath(const QString& subpath);
 };

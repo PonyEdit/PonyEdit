@@ -41,11 +41,11 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	setAcceptDrops(true);
 
 	mSaveAs = saveAs;
+	mInEditHandler = false;
 	setWindowTitle(saveAs ? tr("Save As") : tr("Open File"));
 
 	ui->fileList->setModel(mFileListModel);
 	ui->fileList->setShowGrid(false);
-	ui->fileList->verticalHeader()->hide();
 	if (mSaveAs)
 		ui->fileList->setSelectionMode(QAbstractItemView::SingleSelection);
 	ui->fileList->setWordWrap(false);
@@ -78,6 +78,8 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	connect(ui->statusWidget, SIGNAL(buttonClicked(StatusWidget::Button)), this, SLOT(retryButtonClicked(StatusWidget::Button)));
 	connect(ui->showHidden, SIGNAL(stateChanged(int)), this, SLOT(refresh()));
 	connect(ui->filterList, SIGNAL(currentIndexChanged(int)), this, SLOT(refresh()));
+	connect(ui->fileName, SIGNAL(currentIndexChanged(int)), this, SLOT(fileNameIndexChanged()));
+	connect(ui->fileName, SIGNAL(editTextChanged(QString)), this, SLOT(fileNameIndexChanged()));
 
 		populateFilterList();
 	populateFolderTree();
@@ -351,6 +353,8 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 		ui->fileListStack->setCurrentWidget(ui->fileListLayer);
 		mFileListModel->clear();
 
+		ui->fileName->clear();
+
 		QStringList headerLabels;
 		headerLabels.append("Filename");
 		headerLabels.append("Size");
@@ -380,6 +384,8 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 					continue;
 			}
 
+			if (!childLocation.isDirectory()) ui->fileName->addItem(name);
+
 			QList<QStandardItem*> row;
 
 			QStandardItem* item = new QStandardItem();
@@ -402,6 +408,8 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 
 			mFileListModel->appendRow(row);
 		}
+
+		ui->fileName->setCurrentIndex(-1);
 
 		ui->fileList->resizeColumnsToContents();
 		ui->fileList->resizeRowsToContents();
@@ -523,7 +531,7 @@ void FileDialog::keyPressEvent(QKeyEvent *event)
 	else if ((focusWidget() == ui->fileList || focusWidget() == ui->fileName) && (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return))
 	{
 		QList<Location> selections = getSelectedLocations();
-		if(selections.length() > 1 || (selections.length() > 0 && !selections[0].isDirectory()) || (selections.length() == 0 && ui->fileName->text().length() > 0))
+		if(selections.length() > 1 || (selections.length() > 0 && !selections[0].isDirectory()) || (selections.length() == 0 && ui->fileName->currentText().length() > 0))
 			accept();
 		else if(selections.length() > 0 && selections[0].isDirectory())
 			showLocation(selections[0]);
@@ -552,14 +560,26 @@ void FileDialog::fileDoubleClicked(QModelIndex index)
 
 void FileDialog::fileListSelectionChanged(const QItemSelection&, const QItemSelection&)
 {
+	if (mInEditHandler) return;
+	mInEditHandler = true;
+
 	QList<Location> selections = getSelectedLocations();
 	QStringList selectionLabels;
 
 	foreach (Location l, selections)
+	{
 		if (!l.isDirectory())
-			selectionLabels.append(QString('"') + l.getLabel() + '"');
+		{
+			QString label = l.getLabel();
+			label.replace('\\', "\\\\");
+			label.replace('"', '\"');
+			selectionLabels.append('"' + label + '"');
+		}
+	}
 
-	ui->fileName->setText(selectionLabels.join(", "));
+	ui->fileName->lineEdit()->setText(selectionLabels.join(", "));
+
+	mInEditHandler = false;
 }
 
 QList<Location> FileDialog::getSelectedLocations() const
@@ -579,9 +599,11 @@ Location FileDialog::getNewLocation() const
 	if(selections.length() > 0)
 		return selections[0];
 
-	Location newFile(mCurrentLocation.getPath() + "/" + ui->fileName->text());
+	QStringList entries = Tools::splitQuotedList(ui->fileName->currentText(), ',');
+	if (entries.length())
+		return Location(mCurrentLocation.getPath() + "/" + entries[0]);
 
-	return newFile;
+	return Location();
 }
 
 void FileDialog::accept()
@@ -742,6 +764,29 @@ void FileDialog::populateFilterList()
 	}
 }
 
+void FileDialog::fileNameIndexChanged()
+{
+	if (mInEditHandler) return;
+	mInEditHandler = true;
+
+	QString text = ui->fileName->currentText();
+	ui->fileList->clearSelection();
+
+	if (text.length())
+	{
+		QStringList filenames = Tools::splitQuotedList(text, ',');
+
+		QAbstractItemModel* model = ui->fileList->model();
+		int rows = model->rowCount();
+		for (int row = 0; row < rows; row++)
+		{
+			if (filenames.contains(model->data(model->index(row, 0)).toString(), Qt::CaseSensitive))
+				ui->fileList->selectRow(row);
+		}
+	}
+
+	mInEditHandler = false;
+}
 
 
 

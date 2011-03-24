@@ -65,6 +65,7 @@ private slots:
 	void createNewFolder();
 	void retryButtonClicked(StatusWidget::Button button);	//	Called when "try again" or "sudo" is clicked on an error
 	void refresh();
+	void fileNameIndexChanged();
 #ifdef Q_OS_WIN
 	void populateWindowsShares(QTreeWidgetItem* localNetworkItem, LPNETRESOURCE lpnr);
 #endif
@@ -94,6 +95,7 @@ private:
 	static Location mLastLocation;
 
 	bool mSaveAs;
+	bool mInEditHandler;
 
 	QString mSelectFile;
 };
