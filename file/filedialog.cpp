@@ -20,6 +20,7 @@
 #define EXPANDED_ROLE (Qt::UserRole + 1)
 #define TYPE_ROLE (Qt::UserRole + 2)
 #define HOST_ROLE (Qt::UserRole + 3)
+#define SORT_ROLE (Qt::UserRole + 4)
 
 #define NODETYPE_LOCATION 1
 #define NODETYPE_FAVORITE 2
@@ -36,6 +37,7 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	ui->setupUi(this);
 
 	mFileListModel = new QStandardItemModel();
+	mFileListModel->setSortRole(SORT_ROLE);
 	ui->fileList->setItemDelegate(new FileListDelegate(this));
 
 	setAcceptDrops(true);
@@ -52,6 +54,7 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	ui->fileList->setEditTriggers(QAbstractItemView::NoEditTriggers);
 	ui->fileList->setFocus();
 	ui->fileList->horizontalHeader()->setHighlightSections(false);
+	ui->fileList->horizontalHeader()->setSortIndicatorShown(true);
 
 	QList<int> sizes = ui->splitter->sizes();
 	sizes[0] = 1;
@@ -80,8 +83,9 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	connect(ui->filterList, SIGNAL(currentIndexChanged(int)), this, SLOT(refresh()));
 	connect(ui->fileName, SIGNAL(currentIndexChanged(int)), this, SLOT(fileNameIndexChanged()));
 	connect(ui->fileName, SIGNAL(editTextChanged(QString)), this, SLOT(fileNameIndexChanged()));
+	connect(ui->fileList->horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(columnHeaderClicked(int)));
 
-		populateFilterList();
+	populateFilterList();
 	populateFolderTree();
 	restoreState();
 
@@ -100,6 +104,8 @@ void FileDialog::restoreState()
 {
 	QSettings settings;
 	restoreGeometry(settings.value("filedialog/geometry").toByteArray());
+	mSortingColumn = settings.value("filedialog/sortColumn", QVariant(0)).toInt();
+	mReverseSorting = settings.value("filedialog/reverseSort", QVariant(false)).toBool();
 }
 
 void FileDialog::populateFolderTree()
@@ -392,18 +398,23 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 			item->setIcon(childLocation.getIcon());
 			item->setText(name);
 			item->setData(QVariant::fromValue<Location>(childLocation), DATA_ROLE);
+			item->setData(QVariant(name.toLower()), SORT_ROLE);
+			row.append(item);
+
+			int size = childLocation.getSize();
+			item = new QStandardItem();
+			item->setText(childLocation.isDirectory() ? "" : Tools::humanReadableBytes(size));
+			item->setData(QVariant(size), SORT_ROLE);
+			row.append(item);
+
+			QDateTime lastModified = childLocation.getLastModified();
+			item = new QStandardItem();
+			item->setText(lastModified.toString());
+			item->setData(QVariant(lastModified), SORT_ROLE);
 			row.append(item);
 
 			item = new QStandardItem();
-			item->setText(childLocation.isDirectory() ? "" : Tools::humanReadableBytes(childLocation.getSize()));
-			row.append(item);
-
-			item = new QStandardItem();
-			item->setText(childLocation.getLastModified().toString());
-			row.append(item);
-
-			item = new QStandardItem();
-			item->setText(childLocation.isDirectory() ? "D" : "F");
+			item->setData(QVariant(childLocation.isDirectory() ? 0 : 1), SORT_ROLE);
 			row.append(item);
 
 			mFileListModel->appendRow(row);
@@ -416,8 +427,8 @@ void FileDialog::folderChildrenLoaded(const QList<Location>& children, const QSt
 		ui->fileList->setColumnWidth(0, ui->fileList->columnWidth(0) + 30);
 		ui->fileList->setColumnWidth(1, ui->fileList->columnWidth(1) + 30);
 		ui->fileList->setColumnHidden(3, true);
-		mFileListModel->sort(0, (Qt::SortOrder)(Qt::AscendingOrder | Qt::CaseInsensitive));
-		mFileListModel->sort(3, (Qt::SortOrder)(Qt::AscendingOrder | Qt::CaseInsensitive));
+
+		applySort();
 
 		if(!mSelectFile.isNull())
 		{
@@ -441,6 +452,29 @@ void FileDialog::folderChildrenFailed(const QString& error, const QString& /*loc
 	showStatus(QPixmap(":/icons/error.png"), QString("Error: " + error));
 	ui->statusWidget->setButtons(StatusWidget::Retry |
 		(permissionError && !mCurrentLocation.isSudo() && mCurrentLocation.canSudo() ? StatusWidget::SudoRetry : StatusWidget::None));
+}
+
+void FileDialog::columnHeaderClicked(int column)
+{
+	if (mSortingColumn == column)
+		mReverseSorting = !mReverseSorting;
+	else
+	{
+		mSortingColumn = column;
+		mReverseSorting = false;
+	}
+	applySort();
+}
+
+void FileDialog::applySort()
+{
+	Qt::SortOrder order = (mReverseSorting ? Qt::DescendingOrder : Qt::AscendingOrder);
+	mFileListModel->sort(mSortingColumn, order);
+
+	//	Always sort directories separately from files.
+	mFileListModel->sort(3, order);
+
+	ui->fileList->horizontalHeader()->setSortIndicator(mSortingColumn, order);
 }
 
 void FileDialog::retryButtonClicked(StatusWidget::Button button)
@@ -628,6 +662,8 @@ void FileDialog::closing()
 	//	Save the geometry of this window on the way out
 	QSettings settings;
 	settings.setValue("filedialog/geometry", saveGeometry());
+	settings.setValue("filedialog/sortColumn", QVariant(mSortingColumn));
+	settings.setValue("filedialog/reverseSort", QVariant(mReverseSorting));
 }
 
 void FileDialog::addToFavorites()

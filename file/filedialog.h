@@ -66,6 +66,7 @@ private slots:
 	void retryButtonClicked(StatusWidget::Button button);	//	Called when "try again" or "sudo" is clicked on an error
 	void refresh();
 	void fileNameIndexChanged();
+	void columnHeaderClicked(int column);
 #ifdef Q_OS_WIN
 	void populateWindowsShares(QTreeWidgetItem* localNetworkItem, LPNETRESOURCE lpnr);
 #endif
@@ -73,7 +74,8 @@ private slots:
 private:
 	void keyPressEvent(QKeyEvent *);
 	void restoreState();
-        void showStatus(const QPixmap& icon, const QString& text);
+	void showStatus(const QPixmap& icon, const QString& text);
+	void applySort();
 
 	void populateFolderTree();
 	QTreeWidgetItem* addLocationToTree(QTreeWidgetItem* parent, const Location& location);
@@ -96,6 +98,8 @@ private:
 
 	bool mSaveAs;
 	bool mInEditHandler;
+	int mSortingColumn;
+	bool mReverseSorting;
 
 	QString mSelectFile;
 };
