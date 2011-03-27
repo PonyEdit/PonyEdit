@@ -185,21 +185,15 @@ void RemoteChannel::setErrorStatus(const QString& error)
 	setStatus(Error);
 }
 
+bool RemoteChannel::isAcceptingRequests()
+{
+	return (mStatus != Error) && !mConnection->isDeliberatelyDisconnecting();
+}
+
 RequestStatusWidget::Result RemoteChannel::waitForRequest(RemoteRequest* request, const QString& description, bool allowSudo)
 {
 	DialogWrapper<RequestStatusWidget> dlg(QObject::tr("Please wait..."),
 		new RequestStatusWidget(this, request, description, allowSudo), true);
 	return static_cast<RequestStatusWidget::Result>(dlg.exec());
 }
-
-
-
-
-
-
-
-
-
-
-
 

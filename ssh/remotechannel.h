@@ -52,7 +52,7 @@ protected:
 	virtual void threadSendMessages(QList<RemoteRequest*>& messages) = 0;
 	void setStatus(Status newStatus);
 	void setErrorStatus(const QString& error);
-	inline bool isAcceptingRequests() const { return mStatus != Error; }
+	bool isAcceptingRequests();
 
 	RemoteConnection* mConnection;
 	RawChannelHandle* mRawHandle;
