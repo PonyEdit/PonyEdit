@@ -25,7 +25,7 @@ class SelectionlessTable : public QTableView
 {
 public:
 	SelectionlessTable(QWidget* p) : QTableView(p) {}
-	virtual void currentChanged(const QModelIndex& current, const QModelIndex& previous)
+	virtual void currentChanged(const QModelIndex& current, const QModelIndex& /*previous*/)
 	{
 		if (current.column() > 0)
 			this->setCurrentIndex(current.sibling(current.row(), 0));

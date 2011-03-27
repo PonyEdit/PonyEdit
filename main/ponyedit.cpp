@@ -47,6 +47,11 @@ PonyEdit::PonyEdit(int argc, char** argv) : QApplication(argc, argv)
 	mKey = "PonyEdit-lock-138ad7e0-2ecb-11e0-91fa-0800200c9a66";
 	mMemoryLock.setKey(mKey);
 
+	// In case PonyEdit crashed last run, attach() and detach(), to force the
+	// system to recognise that nothing is connected to this shared memory.
+	mMemoryLock.attach();
+	mMemoryLock.detach();
+
 	if(mMemoryLock.attach())
 		mIsRunning = true;
 	else
