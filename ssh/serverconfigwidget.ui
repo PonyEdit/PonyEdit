@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>610</width>
-    <height>356</height>
+    <width>454</width>
+    <height>381</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -282,6 +282,21 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>userName</tabstop>
+  <tabstop>hostName</tabstop>
+  <tabstop>hostPort</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>password</tabstop>
+  <tabstop>savePassword</tabstop>
+  <tabstop>keyFile</tabstop>
+  <tabstop>keyPassphrase</tabstop>
+  <tabstop>saveKeyPassphrase</tabstop>
+  <tabstop>keyFileBrowse</tabstop>
+  <tabstop>saveServer</tabstop>
+  <tabstop>serverName</tabstop>
+  <tabstop>defaultDirectory</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
