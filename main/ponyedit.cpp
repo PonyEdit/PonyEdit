@@ -68,18 +68,18 @@ PonyEdit::PonyEdit(int argc, char** argv) : QApplication(argc, argv)
 		mLocalServer = new QLocalServer(this);
 		connect(mLocalServer, SIGNAL(newConnection()), this, SLOT(receiveMessage()));
 		mLocalServer->listen(mKey);
+
+		Options::load();
+
+		gSyntaxDefManager = new SyntaxDefManager();
+		gSiteManager = new SiteManager();
+		gDispatcher = new GlobalDispatcher();
+
+		gMainWindow = new MainWindow();
+		gMainWindow->show();
+
+		Tools::loadStartupFiles();
 	}
-
-	Options::load();
-
-	gSyntaxDefManager = new SyntaxDefManager();
-	gSiteManager = new SiteManager();
-	gDispatcher = new GlobalDispatcher();
-
-	gMainWindow = new MainWindow();
-	gMainWindow->show();
-
-	Tools::loadStartupFiles();
 }
 
 PonyEdit::~PonyEdit()

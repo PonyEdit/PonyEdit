@@ -24,8 +24,6 @@ int main(int argc, char *argv[])
 
 		PonyEdit a(argc, argv);
 
-		updateManager = new UpdateManager();
-
 		if(a.isRunning())
 		{
 			if(argc > 1)
@@ -54,6 +52,8 @@ int main(int argc, char *argv[])
 				gMainWindow->openSingleFile(Location(name));
 			}
 		}
+
+		updateManager = new UpdateManager();
 
 		gSiteManager->checkForUpdates();
 
