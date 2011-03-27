@@ -276,7 +276,7 @@ void Tools::saveCurrentFiles()
 
 QStringList Tools::splitQuotedList(const QString& quotedList, QChar separator)
 {
-	bool inQuotes;
+	bool inQuotes = false;
 	QStringList result;
 	QString current;
 
