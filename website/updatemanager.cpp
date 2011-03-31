@@ -36,18 +36,8 @@ void UpdateManager::updateFound(const QVariantMap& version, const QVariantMap& c
 
 	connect(mNotificationDlg, SIGNAL(downloadAndInstall(QString)), this, SLOT(startDownload(QString)));
 
-	QVariantMap relevantChanges;
-
-	QMapIterator<QString, QVariant> ii(changes);
-	while(ii.hasNext())
-	{
-		ii.next();
-		if(ii.key() > QCoreApplication::applicationVersion())
-			relevantChanges.insert(ii.key(), ii.value());
-	}
-
 	mNotificationDlg->setNewVersion(version["pretty"].toString());
-	mNotificationDlg->setChanges(relevantChanges);
+	mNotificationDlg->setChanges(changes);
 	mNotificationDlg->setDownloadURL(url, fullURL);
 
 	mNotificationDlg->exec();

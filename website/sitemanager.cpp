@@ -116,7 +116,7 @@ void SiteManager::handleReply(QNetworkReply *reply)
 		}
 	}
 
-	if(index >= 0 )
+	if(index >= 0)
 	{
 		mReplies.removeAt(index);
 		mReplyTypes.removeAt(index);
