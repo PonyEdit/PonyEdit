@@ -75,6 +75,7 @@ void SiteManager::getTrial()
 void SiteManager::handleReply(QNetworkReply *reply)
 {
 	int index = mReplies.indexOf(reply);
+
 	if(index >= 0 && reply->error() == QNetworkReply::NoError)
 	{
 		QByteArray result = reply->readAll();
@@ -113,7 +114,10 @@ void SiteManager::handleReply(QNetworkReply *reply)
 				emit gotTrial(data["key"].toString());
 				break;
 		}
+	}
 
+	if(index >= 0 )
+	{
 		mReplies.removeAt(index);
 		mReplyTypes.removeAt(index);
 	}
