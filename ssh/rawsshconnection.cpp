@@ -255,13 +255,13 @@ RawSshConnection::Channel* RawSshConnection::createShellChannel()
 	}
 
 	//	Shove a message down the line that should change the user's prompt...
-	const char* command = "export PS1=\\%-ponyedit-\\%\n";
+	const char* command = " export PS1=\\%-ponyedit-\\%\n";
 	libssh2_channel_write(channel->handle, command, strlen(command));
 	UNLOCK_MUTEX(mAccessMutex);
 	readToPrompt(channel);
 
 	//	Shove a message down the line that should turn stty echo off
-	command = "stty -echo\n";
+	command = " stty -echo\n";
 	LOCK_MUTEX(mAccessMutex);
 	libssh2_channel_write(channel->handle, command, strlen(command));
 	UNLOCK_MUTEX(mAccessMutex);

@@ -23,7 +23,7 @@
 
 #define	KEEPALIVE_TIMEOUT 60000	/* 60 seconds */
 
-#define REMOTE_GETSLAVEMD5 "if [ ! -d ~/.ponyedit ]; then mkdir ~/.ponyedit; fi; " \
+#define REMOTE_GETSLAVEMD5 " if [ ! -d ~/.ponyedit ]; then mkdir ~/.ponyedit; fi; " \
 	"if [ -e ~/.ponyedit/slave.pl ]; then md5sum ~/.ponyedit/slave.pl; else echo x; fi\n"
 
 class RawSshChannelHandle : public RawChannelHandle
@@ -204,13 +204,13 @@ RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 
 	//	Switch to the remote home directory
 	qDebug() << "Switching to home dir...";
-	mRawConnection->execute(rawChannel, ntr("cd ~\n"));
+	mRawConnection->execute(rawChannel, ntr(" cd ~\n"));
 	checkForDeliberateDisconnect();
 
 	//	Check that Perl is installed and a recent version
 	bool validPerl = false;
 	qDebug() << "Checking Perl version...";
-	QByteArray perlVersion = mRawConnection->execute(rawChannel, "perl -v\n");
+	QByteArray perlVersion = mRawConnection->execute(rawChannel, " perl -v\n");
 	if (perlVersion.length() > 0)
 	{
 		QRegExp perlVersionRx("This is perl, v(\\d+)\\.(\\d+)");
@@ -239,7 +239,7 @@ RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 	if (sudo)
 	{
 		//	Run the remote slave script inside sudo
-		const char* slaveStarter = "sudo -k -p -sudo-prompt%% perl .ponyedit/slave.pl\n";
+		const char* slaveStarter = " sudo -k -p -sudo-prompt%% perl .ponyedit/slave.pl\n";
 		qDebug() << "Sending sudo command...";
 		mRawConnection->writeData(rawChannel, slaveStarter, strlen(slaveStarter));
 
@@ -280,7 +280,7 @@ RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 	else
 	{
 		//	Run the remote slave script
-		const char* slaveStarter = "perl .ponyedit/slave.pl\n";
+		const char* slaveStarter = " perl .ponyedit/slave.pl\n";
 		mRawConnection->writeData(rawChannel, slaveStarter, strlen(slaveStarter));
 		firstLine = mRawConnection->readUntil(rawChannel, "%").trimmed();
 	}
