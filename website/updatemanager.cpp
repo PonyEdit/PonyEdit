@@ -108,6 +108,21 @@ void UpdateManager::downloadFinished()
 {
 	mTempFile.close();
 
+	if(mDownload->error() != QNetworkReply::NoError)
+	{
+		QMessageBox msg;
+		msg.setWindowTitle(tr("Update unavailable"));
+		msg.setText(tr("There was a problem downloading the update."));
+		msg.setInformativeText(tr("Please try again later. If this error persists, please let us know on the <a href='%1'>support forum.</a>").arg(QString(SITE_URL) + "forum/"));
+		msg.setStandardButtons(QMessageBox::Ok);
+
+		msg.exec();
+
+		mNotificationDlg->reject();
+
+		return;
+	}
+
 	if (!gOpenFileManager.closeAllFiles())
 		return;
 
