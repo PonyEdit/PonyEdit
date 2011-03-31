@@ -26,5 +26,5 @@ shell> cp ../trunk/installer/OSX/Info.plist PonyEdit/PonyEdit.app/Contents
 
 Make sure all PonyEdit dmg files are unmounted before running this command:
 
-shell> ../trunk/installer/osx/create-dmg --volname PonyEdit --background ../trunk/installer/osx/background.png --window-size 400 300 --icon "Applications" 300 200 --icon "PonyEdit" 50 200 --icon-size 64 PonyEdit.dmg PonyEdit
+shell> ../trunk/installer/osx/create-dmg --volname PonyEdit --background ../trunk/installer/osx/background.png --window-size 400 300 --icon "Applications" 320 180 --icon "PonyEdit" 50 180 --icon-size 128 PonyEdit.dmg PonyEdit
 
