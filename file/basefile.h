@@ -40,6 +40,7 @@ public:
 	virtual void open() = 0;
 	virtual void save() = 0;
 	virtual void close() = 0;	// Warning: This call is asynchronous in some kinds of file; eg SshFile.
+	virtual bool canClose() { return true; }
 	void openError(const QString& error);
 	void savedRevision(int revision, int undoLength, const QByteArray& checksum);
 	void fileOpenProgressed(int percent);

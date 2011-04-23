@@ -5,6 +5,7 @@
 #include "main/dialogwrapper.h"
 #include "ssh/connectionstatuswidget.h"
 #include "sshhost.h"
+#include "ssh/ftpchannel.h"
 #include <QDebug>
 
 RemoteConnection::RemoteConnection(SshHost* host)
@@ -188,6 +189,11 @@ SlaveChannel* RemoteConnection::getSlaveChannel()
 SlaveChannel* RemoteConnection::getSudoChannel()
 {
 	return static_cast<SlaveChannel*>(getChannel(RemoteChannel::SudoSlave));
+}
+
+FTPChannel* RemoteConnection::getFtpChannel()
+{
+	return static_cast<FTPChannel*>(getChannel(RemoteChannel::FTP));
 }
 
 void RemoteConnection::recordChannelOpening()

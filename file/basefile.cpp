@@ -3,6 +3,7 @@
 
 #include "slavefile.h"
 #include "localfile.h"
+#include "ftpfile.h"
 #include "unsavedfile.h"
 #include "basefile.h"
 #include "main/tools.h"
@@ -35,6 +36,10 @@ BaseFile* BaseFile::getFile(const Location& location)
 
 	case Location::Local:
 		newFile = new LocalFile(location);
+		break;
+
+	case Location::Sftp:
+		newFile = new FtpFile(location);
 		break;
 
 	default:

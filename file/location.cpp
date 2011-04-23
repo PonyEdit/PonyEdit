@@ -15,12 +15,15 @@
 #include "file/favoritelocationdialog.h"
 #include "ssh/slavechannel.h"
 #include "ssh/requeststatuswidget.h"
+#include "ssh/ftprequest.h"
+#include "ssh/ftpchannel.h"
 
 #ifdef Q_OS_WIN32
 	#include <windows.h>
 #endif
 
 QRegExp gSshServerRegExp("^(?:([^@:]+)@)?([a-zA-Z0-9_\\-.]{2,}):(.+)?");
+QRegExp gSftpServerRegExp("^sftp://(([^@/]+)@)?([^/]+)(.*)");
 QRegExp gLocalPathSeparators("/");
 QRegExp gSshPathSeparators("[/:]");
 QList<Location::Favorite> Location::sFavorites;
@@ -167,6 +170,9 @@ QString Location::getHostName() const
 	case Ssh:
 		return mData->mRemoteUserName + (mData->mSudo ? "*@" : "@") + mData->mRemoteHostName;
 
+	case Sftp:
+		return "sftp://" + mData->mRemoteUserName + "@" + mData->mRemoteHostName;
+
 	case Unsaved:
 		return QObject::tr("New Files");
 
@@ -183,6 +189,7 @@ QString Location::getHostlessPath() const
 		return mData->mPath;
 
 	case Ssh:
+	case Sftp:
 		return mData->mRemotePath;
 
 	default:
@@ -249,10 +256,11 @@ QIcon Location::getIcon() const
 	//	do something nicer for Windows.
 	switch (mData->mProtocol)
 	{
-	case Location::Local:
+	case Local:
 		return sIconProvider->icon(QFileInfo(mData->mPath));
 
-	case Location::Ssh:
+	case Ssh:
+	case Sftp:
 		if (isDirectory())
 			return sIconProvider->icon(QFileIconProvider::Folder);
 		else
@@ -295,7 +303,15 @@ void LocationShared::setPath(const QString &path)
 		mPath.truncate(mPath.length() - 1);
 
 	//	Work out what kind of path this is. Default if no pattern matches, is local.
-	if (gSshServerRegExp.indexIn(mPath) > -1)
+	if (gSftpServerRegExp.indexIn(mPath) > -1)
+	{
+		mProtocol = Location::Sftp;
+		QStringList parts = gSftpServerRegExp.capturedTexts();
+		mRemoteUserName = parts[2];
+		mRemoteHostName = parts[3];
+		mRemotePath = parts[4];
+	}
+	else if (gSshServerRegExp.indexIn(mPath) > -1)
 	{
 		mProtocol = Location::Ssh;
 		QStringList parts = gSshServerRegExp.capturedTexts();
@@ -315,7 +331,7 @@ void LocationShared::setPath(const QString &path)
 		mProtocol = Location::Local;
 
 	//	Work out what to label this path...
-	int lastSeparatorIndex = mPath.lastIndexOf(mProtocol == Location::Ssh ? gSshPathSeparators : gLocalPathSeparators);
+	int lastSeparatorIndex = mPath.lastIndexOf(mProtocol == Location::Ssh || mProtocol == Location::Sftp ? gSshPathSeparators : gLocalPathSeparators);
 	mLabel = mPath.mid(lastSeparatorIndex + 1);
 	if (mPath == "/")
 		mLabel = "Root (/)";
@@ -383,6 +399,10 @@ void Location::asyncGetChildren(bool includeHidden)
 			mData->sshLoadListing(includeHidden);
 			break;
 
+		case Sftp:
+			mData->sftpLoadListing(includeHidden);
+			break;
+
 		default:
 			throw(QString("Invalid file protocol!"));
 		}
@@ -413,6 +433,14 @@ SshHost* Location::getRemoteHost() const
 		throw(QString("Failed to connect to remote host!"));
 
 	return mData->mRemoteHost;
+}
+
+void LocationShared::sftpLoadListing(bool includeHidden)
+{
+	if (!ensureConnected())
+		childLoadError(QObject::tr("Failed to connect to remote host!"), false);
+	else
+		mFtpChannel->sendRequest(new FTPRequest(FTPRequest::Ls, Location(this), NULL, includeHidden ? FTPRequest::IncludeHidden : 0));
 }
 
 void LocationShared::sshLoadListing(bool includeHidden)
@@ -449,7 +477,7 @@ bool LocationShared::ensureConnected()
 	// Unsaved files are always connected
 	if (mProtocol == Location::Unsaved) return true;
 
-	if (mProtocol == Location::Ssh)
+	if (mProtocol == Location::Ssh || mProtocol == Location::Sftp)
 	{
 		if (mRemoteHost == NULL)
 			mRemoteHost = SshHost::getHost(mRemoteHostName, mRemoteUserName);
@@ -459,19 +487,28 @@ bool LocationShared::ensureConnected()
 			RemoteConnection* connection = mRemoteHost->getConnection();
 			if (connection)
 			{
-				mSlaveChannel = (mSudo ? connection->getSudoChannel() : connection->getSlaveChannel());
-
-				if (mSlaveChannel)
+				if (mProtocol == Location::Ssh)
 				{
-					mPath.replace("~", connection->getHomeDirectory());
-					mRemotePath.replace("~", connection->getHomeDirectory());
-					mPath = mPath.trimmed();
-					mRemotePath = mRemotePath.trimmed();
+					mSlaveChannel = (mSudo ? connection->getSudoChannel() : connection->getSlaveChannel());
 
-					if (mRemotePath.length() == 0)
-						mRemotePath = "/";
+					if (mSlaveChannel)
+					{
+						mPath.replace("~", connection->getHomeDirectory());
+						mRemotePath.replace("~", connection->getHomeDirectory());
+						mPath = mPath.trimmed();
+						mRemotePath = mRemotePath.trimmed();
 
-					return true;
+						if (mRemotePath.length() == 0)
+							mRemotePath = "/";
+
+						return true;
+					}
+				}
+				else
+				{
+					mFtpChannel = connection->getFtpChannel();
+					if (mFtpChannel)
+						return true;
 				}
 			}
 		}
@@ -559,6 +596,7 @@ QString Location::getDefaultFavoriteName()
 	switch (mData->mProtocol)
 	{
 	case Ssh:
+	case Sftp:
 		return QObject::tr("%1 on %2", "eg: ~ on Server X").arg(getLabel()).arg(mData->mRemoteHostName);
 
 	case Unsaved:
@@ -578,12 +616,13 @@ bool Location::createNewDirectory(QString name)
 	{
 	case Ssh:
 		return sshCreateDirectory(name);
-		break;
+
+	case Sftp:
+		throw("Unsupported");
 
 	case Local:
 		currentDir.setPath(currentLocDir.getPath());
 		return currentDir.mkdir(name);
-		break;
 
 	default: break;
 	}

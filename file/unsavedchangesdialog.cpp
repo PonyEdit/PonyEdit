@@ -76,7 +76,8 @@ void UnsavedChangesDialog::buttonClicked(QAbstractButton* button)
 
 			try
 			{
-				file->close();
+				if (file->canClose())
+					file->close();
 			}
 			catch(QString &e)
 			{
@@ -91,7 +92,7 @@ void UnsavedChangesDialog::buttonClicked(QAbstractButton* button)
 		{
 			try
 			{
-				file->close();
+				if (file->canClose()) file->close();
 			}
 			catch(QString &e)
 			{
@@ -121,7 +122,7 @@ void UnsavedChangesDialog::fileStateChanged()
 		{
 			try
 			{
-				file->close();
+				if (file->canClose()) file->close();
 			}
 			catch(QString &e)
 			{

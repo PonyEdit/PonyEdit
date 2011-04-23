@@ -10,23 +10,22 @@ class BaseFile;
 class LocationShared;
 class SshConnection;
 class SlaveChannel;
+class FTPChannel;
 
 class Location
 {
 	friend class LocationShared;
-	friend class SlaveRequest_ls;
-	friend class SlaveRequest_open;
-	friend class SlaveRequest_createDirectory;
 
 public:
-	enum Type { Unknown = 0, File = 1, Directory = 2 };
-	enum Protocol { Local = 0, Ssh = 1, Unsaved = 2 };
+	enum Type { Unknown, File, Directory };
+	enum Protocol { Local, Ssh, Sftp, Unsaved };
 
 public:
 	Location();
 	Location(const Location& other);
 	Location& operator=(const Location& other);
 	Location(const QString& path);
+	Location(const Location& parent, const QString& path, Type type, int size, QDateTime lastModified, bool canRead, bool canWrite);
 	~Location();
 
 	QString getDisplayPath() const;
@@ -72,12 +71,11 @@ public:
 
 	bool createNewDirectory(QString name);
 
-private:
-	Location(const Location& parent, const QString& path, Type type, int size, QDateTime lastModified, bool canRead, bool canWrite);
-	Location(LocationShared* data);
-
 	void sshChildLoadResponse(const QList<Location>& children);
 	void childLoadError(const QString& error, bool permissionError);
+
+private:
+	Location(LocationShared* data);
 
 	void sshFileOpenResponse(SshConnection* controller, quint32 bufferId, const QByteArray& data);
 	void fileOpenError(const QString& error);
@@ -111,6 +109,7 @@ private:
 	void localLoadSelf();
 	void localLoadListing(bool includeHidden);
 	void sshLoadListing(bool includeHidden);
+	void sftpLoadListing(bool includeHidden);
 
 	int mReferences;
 	QString mPath;
@@ -133,6 +132,7 @@ private:
 	QString mRemotePath;
 	SshHost* mRemoteHost;
 	SlaveChannel* mSlaveChannel;
+	FTPChannel* mFtpChannel;
 };
 
 Q_DECLARE_METATYPE (Location);

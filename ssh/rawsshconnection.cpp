@@ -19,6 +19,8 @@
 #include <QThread>
 #include "main/global.h"
 
+#define DEFAULT_PERMISSIONS LIBSSH2_SFTP_S_IRUSR | LIBSSH2_SFTP_S_IWUSR | LIBSSH2_SFTP_S_IRGRP | LIBSSH2_SFTP_S_IROTH
+
 QMap<QString, QByteArray> RawSshConnection::sKnownHostKeys;
 
 void RawSshConnection::initializeLib()
@@ -224,6 +226,24 @@ bool RawSshConnection::authenticateAgent(const char* username)
 	}
 
 	return success;
+}
+
+RawSshConnection::Channel* RawSshConnection::createFTPChannel()
+{
+	LOCK_MUTEX(mAccessMutex);
+
+	Channel* channel = new Channel();
+	channel->sftpSession = libssh2_sftp_init(mSession);
+	if (!channel)
+	{
+		UNLOCK_MUTEX(mAccessMutex);
+		delete channel;
+		throw(QObject::tr("Failed to create SFTP channel!"));
+	}
+
+	UNLOCK_MUTEX(mAccessMutex);
+
+	return channel;
 }
 
 RawSshConnection::Channel* RawSshConnection::createShellChannel()
@@ -461,9 +481,105 @@ void RawSshConnection::saveKnownHostKeys()
 	settings.endArray();
 }
 
+QString RawSshConnection::tidyFtpPath(const QString& path)
+{
+	QString tidyPath = path;
+	if (tidyPath.startsWith("/~"))
+		tidyPath = "." + tidyPath.mid(2);
 
+	return tidyPath;
+}
 
+QList<Location> RawSshConnection::getFTPListing(Channel* channel, const Location& parent, bool includeHidden)
+{
+	QList<Location> result;
+	QString realPath = tidyFtpPath(parent.getRemotePath());
+	if (!realPath.endsWith('/'))
+		realPath += "/";
 
+	LIBSSH2_SFTP_HANDLE* handle = libssh2_sftp_opendir(channel->sftpSession, realPath.toLatin1());
+	if (handle == NULL)
+		throw(QObject::tr("Failed to open directory for reading"));
+
+	//	Loop until reading an entry fails
+	while (1)
+	{
+		char buffer[1024];
+		char longEntry[2048];
+		LIBSSH2_SFTP_ATTRIBUTES attribs;
+
+		int rc = libssh2_sftp_readdir_ex(handle, buffer, sizeof(buffer), longEntry, sizeof(longEntry), &attribs);
+		if (rc <= 0)
+			break;
+
+		//	Skip hidden and . and .. entries
+		if (buffer[0] == '.')
+			if (!includeHidden || buffer[1] == 0 || (buffer[2] == '.' && buffer[3] == 0)) continue;
+
+		result.append(Location(parent, parent.getPath() + "/" + buffer,
+			S_ISDIR(attribs.permissions) ? Location::Directory : Location::File, attribs.filesize,
+			QDateTime::fromMSecsSinceEpoch(attribs.mtime * 1000), true, true));
+	}
+
+	libssh2_sftp_closedir(handle);
+	return result;
+}
+
+QByteArray RawSshConnection::readFTPFile(Channel* channel, const Location& location, ISshConnectionCallback* callback)
+{
+	QString path = tidyFtpPath(location.getRemotePath());
+	LIBSSH2_SFTP_HANDLE* handle = libssh2_sftp_open(channel->sftpSession, path.toAscii(), LIBSSH2_FXF_READ,	DEFAULT_PERMISSIONS);
+
+	if (handle == NULL)
+		throw(QObject::tr("Failed to open file for reading via SFTP"));
+
+	int size = location.getSize();
+
+	char buffer[2048];
+	QByteArray data;
+	while (1)
+	{
+		int rc = libssh2_sftp_read(handle, buffer, sizeof(buffer));
+		if (rc > 0)
+		{
+			data.append(buffer, rc);
+			if (callback && size) callback->fileOpenProgress((data.length() * 100) / size);
+		}
+		else if (rc == 0)
+		{
+			if (callback) callback->fileOpenProgress(100);
+			break;
+		}
+		else
+			throw("Failed to read remote file via SFTP");
+	}
+
+	libssh2_sftp_close(handle);
+	return data;
+}
+
+void RawSshConnection::writeFTPFile(Channel* channel, const Location& location, const QByteArray& content)
+{
+	QString path = tidyFtpPath(location.getRemotePath());
+	LIBSSH2_SFTP_HANDLE* handle = libssh2_sftp_open(channel->sftpSession, path.toAscii(),
+		LIBSSH2_FXF_TRUNC | LIBSSH2_FXF_CREAT | LIBSSH2_FXF_WRITE, DEFAULT_PERMISSIONS);
+
+	if (handle == NULL)
+		throw(QObject::tr("Failed to open file for writing via SFTP"));
+
+	const char* ptr = content.constData();
+	const char* end = content.constData() + content.size();
+	while (ptr < end)
+	{
+		int rc = libssh2_sftp_write(handle, ptr, end - ptr);
+		if (rc >= 0)
+			ptr += rc;
+		else
+			throw("Failed to write data over SFTP!");
+	}
+
+	libssh2_sftp_close(handle);
+}
 
 
 

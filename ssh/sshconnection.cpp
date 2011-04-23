@@ -20,6 +20,7 @@
 #include "slavechannel.h"
 #include "main/global.h"
 #include "main/tools.h"
+#include "ftpchannel.h"
 
 #define	KEEPALIVE_TIMEOUT 60000	/* 60 seconds */
 
@@ -149,18 +150,29 @@ bool SshConnection::threadConnect()
 
 RemoteChannel* SshConnection::threadOpenPrimaryChannel()
 {
-	return new SlaveChannel(this, false);
+	if (mHost->getConnectionType() == SshHost::SFTP)
+		return new FTPChannel(this);
+	else
+		return new SlaveChannel(this, false);
 }
 
 RemoteChannel* SshConnection::openChannel(RemoteChannel::Type type)
 {
-	RemoteChannel::Type baseType = static_cast<RemoteChannel::Type>(type & RemoteChannel::BaseTypeMask);
-	bool sudo = type & RemoteChannel::Sudo;
+	RemoteChannel* channel;
+	if (type == RemoteChannel::FTP)
+	{
+		channel = new FTPChannel(this);
+	}
+	else
+	{
+		RemoteChannel::Type baseType = static_cast<RemoteChannel::Type>(type & RemoteChannel::BaseTypeMask);
+		bool sudo = type & RemoteChannel::Sudo;
 
-	if (baseType != RemoteChannel::Slave)
-		throw(tr("Invalid operation: attempting to open an invalid channel via ssh"));
+		if (baseType != RemoteChannel::Slave)
+			throw(tr("Invalid operation: attempting to open an invalid channel via ssh"));
 
-	RemoteChannel* channel = new SlaveChannel(this, sudo);
+		channel = new SlaveChannel(this, sudo);
+	}
 
 	bool ok = channel->waitUntilOpen(mConnectionId);
 	if (!ok)
@@ -194,6 +206,12 @@ void SshConnection::loadSlaveScript()
 QString SshConnection::getName()
 {
 	return mHost->getName();
+}
+
+RawChannelHandle* SshConnection::createRawFTPChannel()
+{
+	RawSshConnection::Channel* rawChannel = mRawConnection->createFTPChannel();
+	return new RawSshChannelHandle(rawChannel);
 }
 
 RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
@@ -411,4 +429,30 @@ QByteArray SshConnection::readLine(RawChannelHandle* handle)
 {
 	return mRawConnection->readLine(static_cast<RawSshChannelHandle*>(handle)->Channel);
 }
+
+QList<Location> SshConnection::cthGetFTPListing(RawChannelHandle* handle, const Location& parent, bool includeHidden)
+{
+	return mRawConnection->getFTPListing(static_cast<RawSshChannelHandle*>(handle)->Channel, parent, includeHidden);
+}
+
+QByteArray SshConnection::cthReadFTPFile(RawChannelHandle* handle, const Location& location, ISshConnectionCallback* callback)
+{
+	return mRawConnection->readFTPFile(static_cast<RawSshChannelHandle*>(handle)->Channel, location, callback);
+}
+
+void SshConnection::cthWriteFTPFile(RawChannelHandle* handle, const Location& location, const QByteArray& content)
+{
+	mRawConnection->writeFTPFile(static_cast<RawSshChannelHandle*>(handle)->Channel, location, content);
+}
+
+
+
+
+
+
+
+
+
+
+
 

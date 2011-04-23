@@ -111,7 +111,9 @@ SOURCES += \
     main/shutdownprompt.cpp \
     file/filestatuswidget.cpp \
     ssh/requeststatuswidget.cpp \
-    main/regexptester.cpp
+    main/regexptester.cpp \
+    ssh/ftpchannel.cpp \
+    file/ftpfile.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -184,7 +186,10 @@ HEADERS  += \
     main/shutdownprompt.h \
     file/filestatuswidget.h \
     ssh/requeststatuswidget.h \
-    main/regexptester.h
+    main/regexptester.h \
+    ssh/ftpchannel.h \
+    ssh/ftprequest.h \
+    file/ftpfile.h
 
 OTHER_FILES += \
     slave/slave.pl \

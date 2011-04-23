@@ -3,8 +3,10 @@
 
 #include <QByteArray>
 #include <libssh2.h>
+#include <libssh2_sftp.h>
 #include <QMap>
 #include <QMutex>
+#include "file/location.h"
 
 #define SSH_BUFFER_SIZE 4096
 #define SSH_PROMPT "%-ponyedit-%"
@@ -28,6 +30,7 @@ public:
 	struct Channel
 	{
 		LIBSSH2_CHANNEL* handle;
+		LIBSSH2_SFTP* sftpSession;
 		char tmpBuffer[SSH_BUFFER_SIZE];
 		QByteArray readBuffer;
 	};
@@ -54,18 +57,24 @@ public:
 	void writeData(Channel* channel, const char* data, int length);
 	void sendEof(Channel* channel);
 
+	QList<Location> getFTPListing(Channel* channel, const Location& parent, bool includeHidden);
+	QByteArray readFTPFile(Channel* channel, const Location& location, ISshConnectionCallback* callback);
+	void writeFTPFile(Channel* channel, const Location& location, const QByteArray& content);
+
 	static void initializeLib();
-        static void cleanup();
+	static void cleanup();
 
 	inline const QByteArray& getServerFingerprint() { return mServerFingerprint; }
 	inline static QByteArray getExpectedFingerprint(const QString& host) { return sKnownHostKeys.value(host); }
 	static void saveFingerprint(const QString& host, const QByteArray& fingerprint);
 
 	Channel* createShellChannel();
+	Channel* createFTPChannel();
 
 private:
 	QString getLastError(int rc = -1);
 	static void saveKnownHostKeys();
+	QString tidyFtpPath(const QString& path);
 
 	int mSocket;
 	LIBSSH2_SESSION* mSession;

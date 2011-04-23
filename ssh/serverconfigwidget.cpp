@@ -18,6 +18,9 @@ ServerConfigWidget::ServerConfigWidget(QWidget *parent) :
 	connect(ui->hostName, SIGNAL(textEdited(QString)), this, SLOT(updateName()));
 	connect(ui->userName, SIGNAL(textEdited(QString)), this, SLOT(updateName()));
 	connect(ui->keyFileBrowse, SIGNAL(clicked()), this, SLOT(browseForKeyFile()));
+
+	ui->connectionType->addItem(tr("SSH (fast)"), QVariant(SshHost::SSH));
+	ui->connectionType->addItem(tr("SFTP (slow)"), QVariant(SshHost::SFTP));
 }
 
 ServerConfigWidget::~ServerConfigWidget()
@@ -62,6 +65,10 @@ void ServerConfigWidget::setEditHost(SshHost* host)
 	ui->keyFile->setText(host->getKeyFile());
 	ui->keyPassphrase->setText(host->getKeyPassphrase());
 
+	int index = ui->connectionType->findData(QVariant(static_cast<int>(host->getConnectionType())));
+	if (index > -1)
+		ui->connectionType->setCurrentIndex(index);
+
 	mLastAutoName = getAutoName();
 	updateName();
 }
@@ -86,6 +93,7 @@ void ServerConfigWidget::acceptedHandler()
 	mEditHost->setKeyFile(ui->keyFile->text());
 	mEditHost->setKeyPassphrase(ui->keyPassphrase->text());
 	mEditHost->setSaveKeyPassphrase(ui->saveKeyPassphrase->isChecked());
+	mEditHost->setConnectionType(static_cast<SshHost::ConnectionType>(ui->connectionType->itemData(ui->connectionType->currentIndex()).toInt()));
 }
 
 QString ServerConfigWidget::getAutoName()

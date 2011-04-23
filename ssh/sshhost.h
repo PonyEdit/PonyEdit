@@ -10,6 +10,8 @@ class SlaveFile;
 class SshHost
 {
 public:
+	enum ConnectionType { SSH = 0, SFTP = 1 };
+
 	SshHost(); 	//	Only use the default constructor at load-time. Otherwise notifications of new SshHosts won't be sent to UI.
 	static SshHost* getHost(const QString& hostName = QString(), const QString& userName = QString(), bool save = false);
 	static SshHost* getBlankHost(bool save = false);
@@ -32,6 +34,7 @@ public:
 	inline bool getSavePassword() const { return mSavePassword; }
 	inline bool getSaveKeyPassphrase() const { return mSaveKeyPassphrase; }
 	inline const QString& getSudoPassword() const { return mSudoPassword; }
+	inline ConnectionType getConnectionType() const { return mConnectionType; }
 
 	inline void setHostName(const QString& hostName) { mHostName = hostName; }
 	inline void setUserName(const QString& userName) { mUserName = userName; }
@@ -45,6 +48,7 @@ public:
 	inline void setSavePassword(bool savePassword) { mSavePassword = savePassword; }
 	inline void setSaveKeyPassphrase(bool saveKeyPassphrase) { mSaveKeyPassphrase = saveKeyPassphrase; }
 	inline void setSudoPassword(const QString& sudoPassword) { mSudoPassword = sudoPassword; }
+	inline void setConnectionType(ConnectionType type) { mConnectionType = type; }
 
 	QString getDefaultPath();
 	Location getDefaultLocation();
@@ -66,6 +70,7 @@ private:
 
 	QString mHostName;
 	int mPort;
+	ConnectionType mConnectionType;
 
 	QString mUserName;
 	QString mPassword;

@@ -26,10 +26,14 @@ public:
 
 	virtual QString getName();
 	virtual RawChannelHandle* createRawSlaveChannel(bool sudo);
+	virtual RawChannelHandle* createRawFTPChannel();
 	virtual RemoteChannel* openChannel(RemoteChannel::Type /*type*/);
 
 	virtual void sendLine(RawChannelHandle* handle, const QByteArray& data);
 	virtual QByteArray readLine(RawChannelHandle* handle);
+	virtual QList<Location> cthGetFTPListing(RawChannelHandle* handle, const Location& parent, bool includeHidden);
+	virtual QByteArray cthReadFTPFile(RawChannelHandle* handle, const Location& location, ISshConnectionCallback* callback);
+	virtual void cthWriteFTPFile(RawChannelHandle* handle, const Location& location, const QByteArray& content);
 
 protected:
 	inline void checkForDeliberateDisconnect() { if (isDeliberatelyDisconnecting()) throw(tr("Connection Cancelled")); }

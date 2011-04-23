@@ -127,6 +127,19 @@
         </property>
        </widget>
       </item>
+      <item row="3" column="1">
+       <widget class="QLabel" name="label_12">
+        <property name="text">
+         <string>Connection Type : </string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2" colspan="3">
+       <widget class="QComboBox" name="connectionType"/>
+      </item>
      </layout>
     </widget>
    </item>

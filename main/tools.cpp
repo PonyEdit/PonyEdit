@@ -53,6 +53,7 @@ void Tools::saveServers()
 			settings.setValue("keyPassphrase", host->getSaveKeyPassphrase() ? host->getKeyPassphrase().toUtf8().toBase64() : "");
 			settings.setValue("name", host->getName());
 			settings.setValue("defaultDirectory", host->getDefaultDirectory());
+			settings.setValue("connectionType", host->getConnectionType());
 		}
 	}
 	settings.endArray();
@@ -81,6 +82,8 @@ void Tools::loadServers()
 
 		host->setName(settings.value("name").toString());
 		host->setDefaultDirectory(settings.value("defaultDirectory", QVariant("~")).toString());
+
+		host->setConnectionType(static_cast<SshHost::ConnectionType>(settings.value("connectionType", QVariant(SshHost::SSH)).toInt()));
 
 		SshHost::recordKnownHost(host);
 	}

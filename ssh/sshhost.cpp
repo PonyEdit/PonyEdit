@@ -118,7 +118,10 @@ void SshHost::recordKnownHost(SshHost* host)
 
 QString SshHost::getDefaultPath()
 {
-	return (mUserName.isEmpty() ? "" : mUserName + "@") + mHostName + ":" + mDefaultDirectory;
+	if (mConnectionType == SFTP)
+		return "sftp://" + (mUserName.isEmpty() ? "" : mUserName + "@") + mHostName + "/" + mDefaultDirectory;
+	else
+		return (mUserName.isEmpty() ? "" : mUserName + "@") + mHostName + ":" + mDefaultDirectory;
 }
 
 Location SshHost::getDefaultLocation()

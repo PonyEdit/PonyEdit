@@ -130,7 +130,8 @@ void Editor::save()
 
 void Editor::close()
 {
-	mFile->close();
+	if (mFile->canClose())
+		mFile->close();
 }
 
 int Editor::find(const QString &text, bool backwards, bool caseSensitive, bool useRegexp, bool loop)

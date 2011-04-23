@@ -11,12 +11,15 @@
 #include <QDebug>
 #include "remotechannel.h"
 #include "main/statuswidget.h"
+#include "file/location.h"
 
 class RemoteConnection;
 class ConnectionStatusWidget;
 class RemoteConnectionThread;
 class SlaveChannel;
+class FTPChannel;
 class SshHost;
+class ISshConnectionCallback;
 
 typedef void(*DialogFunction)(ConnectionStatusWidget*, RemoteConnection*, QWidget*, QVariant);
 typedef bool(*DialogCallback)(ConnectionStatusWidget*, RemoteConnection*, StatusWidget::Button, QVariant);
@@ -52,11 +55,16 @@ public:
 	RemoteChannel* getChannel(RemoteChannel::Type type);
 	SlaveChannel* getSlaveChannel();
 	SlaveChannel* getSudoChannel();
+	FTPChannel* getFtpChannel();
 
 	void registerNewChannel(RemoteChannel* channel);	//	Only call from RemoteChannel constructor
 	virtual RawChannelHandle* createRawSlaveChannel(bool /*sudo*/) { throw(tr("Invalid operation")); }
+	virtual RawChannelHandle* createRawFTPChannel() { throw(tr("Invalid operation")); }
 	virtual void sendLine(RawChannelHandle* /*handle*/, const QByteArray& /*data*/) { throw(tr("Invalid operation")); }
 	virtual QByteArray readLine(RawChannelHandle* /*handle*/) { throw(tr("Invalid operation")); }
+	virtual QList<Location> cthGetFTPListing(RawChannelHandle* /*handle*/, const Location& /*parent*/, bool /*includeHidden*/) { throw (tr("Invalid operation")); }
+	virtual QByteArray cthReadFTPFile(RawChannelHandle* /*handle*/, const Location& /*location*/, ISshConnectionCallback* /*callback*/) { throw (tr("Invalid operation")); }
+	virtual void cthWriteFTPFile(RawChannelHandle* /*handle*/, const Location& /*location*/, const QByteArray& /*content*/) { throw(tr("Invalid operation")); }
 
 	inline void setHomeDirectory(const QString& homeDirectory) { mHomeDirectory = homeDirectory; }
 	inline const QString& getHomeDirectory() { return mHomeDirectory; }
