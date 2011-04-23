@@ -90,12 +90,6 @@ void OpenFileItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 				labelRect.adjust(16, 0, 0, 0);
 			}
 
-			if(mParent->getSelectedFile() == file)
-			{
-				// This item is currently selected
-				sp.drawPixmap(labelRect.left() - 32, labelRect.top(), 16, 16, QPixmap(":/icons/arrow-right-double.png"));
-			}
-
 			//	Add some padding around the text...
 			labelRect.adjust(2, 0, -2, 0);
 
