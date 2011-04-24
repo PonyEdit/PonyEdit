@@ -10,8 +10,6 @@ DEFINES += "REVISION=13"
 DEFINES += "PRETTY_VERSION=\\\"0.9-prealpha13\\\""
 
 
-macx: DEFINES += __DARWIN_64_BIT_INO_T
-
 INCLUDEPATH += $$PWD/deps/libssh2/include/
 
 win32 {
@@ -23,6 +21,8 @@ win32 {
 }
 
 macx {
+	DEFINES += __DARWIN_64_BIT_INO_T
+
 	data.files = syntaxdefs slave
 	data.path = Contents/Resources
 
@@ -33,8 +33,9 @@ macx {
 	ICON = icons/ponyedit.icns
 	TARGET = PonyEdit
 }
-
-!macx: TARGET = ponyedit
+!macx {
+	TARGET = ponyedit
+}
 
 QT      += core gui network xml script webkit
 LIBS	+= -lssh2 -lcrypto -lssl
