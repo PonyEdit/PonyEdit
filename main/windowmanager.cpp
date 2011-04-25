@@ -306,7 +306,7 @@ void WindowManager::createSearchBar()
 
 	mSearchBarWrapper->hide();
 	mSearchBarWrapper->setTitleBarWidget(new QWidget(this));
-	connect(mSearchBar, SIGNAL(closeRequested()), mSearchBarWrapper, SLOT(hide()));
+	connect(mSearchBar, SIGNAL(closeRequested()), this, SLOT(hideSearchBar()));
 	connect(mSearchBar, SIGNAL(find(QString,bool)), this, SLOT(find(QString,bool)));
 	connect(mSearchBar, SIGNAL(replace(QString,QString,bool)), this, SLOT(replace(QString,QString,bool)));
 	mSearchBarWrapper->setObjectName("Search Bar");
@@ -316,6 +316,13 @@ void WindowManager::showSearchBar()
 {
 	mSearchBarWrapper->show();
 	mSearchBar->takeFocus();
+}
+
+void WindowManager::hideSearchBar()
+{
+	mSearchBarWrapper->hide();
+	Editor* editor = currentEditor();
+	if (editor) editor->getCodeEditor()->setFocus();
 }
 
 void WindowManager::createRegExpTester()

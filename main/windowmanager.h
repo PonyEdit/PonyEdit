@@ -52,6 +52,7 @@ public slots:
 	void globalReplace(const QString& findText, const QString& replaceText, const QString& filePattern, bool caseSensitive, bool useRegexp, bool all);
 
 	void showSearchBar();
+	void hideSearchBar();
 	void showRegExpTester();
 
 	void previousWindow();
