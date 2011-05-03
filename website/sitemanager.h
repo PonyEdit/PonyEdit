@@ -7,6 +7,7 @@
 #include <QByteArray>
 #include <QNetworkAccessManager>
 #include <QVariantMap>
+#include <QMap>
 
 #define SITE_URL "http://ponyedit.com/"
 
@@ -36,11 +37,11 @@ signals:
 	void noUpdateAvailable();
 	void licenceStatus(bool valid);
 	void gotTrial(const QString& licence);
+	void getTrialFailed(const QString& error);
 
 private:
 	QNetworkAccessManager* mManager;
-	QList<QNetworkReply*> mReplies;
-	QList<Messages> mReplyTypes;
+	QMap<QNetworkReply*, Messages> mReplies;
 	QString mOS;
 
 };

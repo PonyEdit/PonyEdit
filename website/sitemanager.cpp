@@ -31,7 +31,7 @@ SiteManager::SiteManager()
 SiteManager::~SiteManager()
 {
 	//	Clean out any leftover replies
-	foreach (QNetworkReply* reply, mReplies)
+	foreach (QNetworkReply* reply, mReplies.keys())
 		delete reply;
 
 	if(mManager)
@@ -46,11 +46,7 @@ void SiteManager::checkForUpdates(bool forceNotification)
 	QUrl url(QString(SITE_URL) + "version/?" + version + "&u=testuser&key=5555555");
 	QNetworkReply* reply = mManager->get(QNetworkRequest(url));
 
-	mReplies.append(reply);
-	if(forceNotification)
-		mReplyTypes.append(UpdateCheckForcedNotification);
-	else
-		mReplyTypes.append(UpdateCheck);
+	mReplies.insert(reply, forceNotification ? UpdateCheckForcedNotification : UpdateCheck);
 }
 
 void SiteManager::checkLicence()
@@ -59,8 +55,7 @@ void SiteManager::checkLicence()
 	QUrl url(QString(SITE_URL) + "licence/?" + version + "&u=testuser&key=5555555");
 	QNetworkReply* reply = mManager->get(QNetworkRequest(url));
 
-	mReplies.append(reply);
-	mReplyTypes.append(LicenceCheck);
+	mReplies.insert(reply, LicenceCheck);
 }
 
 void SiteManager::getTrial()
@@ -68,31 +63,28 @@ void SiteManager::getTrial()
 	QUrl url(QString(SITE_URL) + "licence/?f=trial");
 	QNetworkReply* reply = mManager->get(QNetworkRequest(url));
 
-	mReplies.append(reply);
-	mReplyTypes.append(GetTrial);
+	mReplies.insert(reply, GetTrial);
 }
 
 void SiteManager::handleReply(QNetworkReply *reply)
 {
-	int index = mReplies.indexOf(reply);
+	if (!mReplies.contains(reply)) return;
+	Messages message = mReplies.value(reply);
 
-	if(index >= 0 && reply->error() == QNetworkReply::NoError)
+	try
 	{
+		if (reply->error() != QNetworkReply::NoError)
+			throw(reply->errorString());
+
 		QByteArray result = reply->readAll();
 
 		bool ok;
 		QVariantMap data = Json::parse(result, ok).toMap();
-
-		if(!ok)
-		{
-			qDebug() << "Parsing error of website JSON";
-			return;
-		}
+		if (!ok) throw("Failed to parse reply from website");
 
 		QVariantMap version;
 		QVariantMap changes;
-
-		switch(mReplyTypes[index])
+		switch(message)
 		{
 			case UpdateCheck:
 			case UpdateCheckForcedNotification:
@@ -102,7 +94,7 @@ void SiteManager::handleReply(QNetworkReply *reply)
 						(version["major"].toInt() == MAJOR_VERSION && version["minor"].toInt() > MINOR_VERSION) ||
 						(version["major"].toInt() == MAJOR_VERSION && version["minor"].toInt() == MINOR_VERSION && version["revision"].toInt() > REVISION))
 					emit updateAvailable(version, changes);
-				else if(mReplyTypes[index] == UpdateCheckForcedNotification)
+				else if(message == UpdateCheckForcedNotification)
 					emit noUpdateAvailable();
 				break;
 
@@ -115,13 +107,26 @@ void SiteManager::handleReply(QNetworkReply *reply)
 				break;
 		}
 	}
-
-	if(index >= 0)
+	catch (QString error)
 	{
-		mReplies.removeAt(index);
-		mReplyTypes.removeAt(index);
+		switch(message)
+		{
+			case UpdateCheck:
+			case UpdateCheckForcedNotification:
+				//	Do nothing
+				break;
+
+			case LicenceCheck:
+				//	Do nothing
+				break;
+
+			case GetTrial:
+				emit getTrialFailed(error);
+				break;
+		}
 	}
 
+	mReplies.remove(reply);
 	reply->deleteLater();
 }
 
