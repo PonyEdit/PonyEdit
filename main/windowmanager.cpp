@@ -303,6 +303,7 @@ void WindowManager::createSearchBar()
 	mSearchBarWrapper->setWidget(mSearchBar);
 
 	mParent->addDockWidget(Qt::BottomDockWidgetArea, mSearchBarWrapper, Qt::Horizontal);
+	mParent->registerContextMenuItem(mSearchBarWrapper);
 
 	mSearchBarWrapper->hide();
 	mSearchBarWrapper->setTitleBarWidget(new QWidget(this));
@@ -332,6 +333,7 @@ void WindowManager::createRegExpTester()
 	mRegExpTesterWrapper->setWidget(mRegExpTester);
 
 	mParent->addDockWidget(Qt::BottomDockWidgetArea, mRegExpTesterWrapper, Qt::Horizontal);
+	mParent->registerContextMenuItem(mRegExpTesterWrapper);
 
 	mRegExpTesterWrapper->hide();
 	mRegExpTesterWrapper->setObjectName("Search Bar");

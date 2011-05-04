@@ -58,6 +58,7 @@ MainWindow::MainWindow(QWidget *parent)
 	mFileList = new FileList();
 	addDockWidget(Qt::LeftDockWidgetArea, mFileList, Qt::Vertical);
 	mFileList->setObjectName("File List");
+	registerContextMenuItem(mFileList);
 
 	mConnectionStatusPane = new ConnectionStatusPane();
 	addDockWidget(Qt::LeftDockWidgetArea, mConnectionStatusPane, Qt::Vertical);
@@ -116,22 +117,44 @@ void MainWindow::restoreState()
 
 void MainWindow::createToolbar()
 {
+	//
+	//	Main toolbar
+	//
+
 	QToolBar* toolbar = new QToolBar("File Toolbar");
 	toolbar->addAction(QIcon(":/icons/new.png"), "New", this, SLOT(newFile()));
 	toolbar->addAction(QIcon(":/icons/open.png"), "Open", this, SLOT(openFile()));
 	toolbar->addAction(QIcon(":/icons/save.png"), "Save", this, SLOT(saveFile()));
+	toolbar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
-	this->addToolBar(toolbar);
+	addToolBar(toolbar);
+	registerContextMenuItem(toolbar);
 	toolbar->setObjectName("File Toolbar");
+
+	QWidget* spacer = new QWidget();
+	spacer->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
+	toolbar->addWidget(spacer);
+
+	//
+	//	Trial time left toolbar
+	//
+
+	mTrialRemainingBar = new QToolBar("Time Remaining");
+	mTrialRemainingButton = new QToolButton(mTrialRemainingBar);
+	connect(mTrialRemainingButton, SIGNAL(clicked()), this, SLOT(showLicenceDialog()));
+	addToolBar(mTrialRemainingBar);
+	mTrialRemainingBar->addWidget(mTrialRemainingButton);
+	mTrialRemainingBar->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+
+	//
+	//	Feedback toolbar
+	//
 
 	QToolBar* feedbackToolbar = new QToolBar("Feedback Toolbar");
 	feedbackToolbar->setObjectName("Feedback Toolbar");
+	feedbackToolbar->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
-	QWidget* spacer = new QWidget();
-	spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	feedbackToolbar->addWidget(spacer);
-
-	QToolButton *feedbackButton = new QToolButton(feedbackToolbar);
+	QToolButton* feedbackButton = new QToolButton(feedbackToolbar);
 	feedbackButton->setText(tr("Feedback") + " ");
 
 	QMenu *feedbackMenu = new QMenu(toolbar);
@@ -145,7 +168,8 @@ void MainWindow::createToolbar()
 
 	feedbackToolbar->addWidget(feedbackButton);
 
-	this->addToolBar(feedbackToolbar);
+	addToolBar(feedbackToolbar);
+	registerContextMenuItem(feedbackToolbar);
 }
 
 void MainWindow::newFile()
@@ -533,16 +557,34 @@ void MainWindow::createMacDockMenu()
 #endif
 }
 
-void MainWindow::checkLicence()
+void MainWindow::showLicenceDialog()
+{
+	checkLicence(true);
+}
+
+void MainWindow::checkLicence(bool forceDialog)
 {
 	Licence l;
 
-	if (!l.isValid() || l.hasExpired())
+	if (!l.isValid() || l.hasExpired() || forceDialog)
 	{
-		LicenceCheckDialog dlg(this, l.hasExpired());
-		if (dlg.exec() == QDialog::Rejected)
+		LicenceCheckDialog dlg(this, &l);
+		dlg.exec();
+
+		//	If the licence is invalid after running the dialog, exit.
+		l = Licence();
+		if (!l.isValid() || l.hasExpired())
 			close();
 	}
+
+	//	Display a "time left on the trial" panel in the toolbar if appropriate
+	if (!l.getExpiry().isNull())
+	{
+		mTrialRemainingButton->setText(tr("Trial: %1 days left").arg(l.getDaysLeft()));
+		mTrialRemainingBar->show();
+	}
+	else
+		mTrialRemainingBar->hide();
 }
 
 void MainWindow::showErrorMessage(QString error)
@@ -841,5 +883,19 @@ void MainWindow::reloadFile()
 	}
 }
 
+//	Override for QMainWindow::createPopupMenu. Removes menu entries for things I don't want shown.
+QMenu* MainWindow::createPopupMenu()
+{
+	QMenu* menu = new QMenu(this);
 
+	foreach (QDockWidget* dockWidget, mMenuControlledDockWidgets)
+		menu->addAction(dockWidget->toggleViewAction());
+
+	menu->addSeparator();
+
+	foreach (QToolBar* toolbar, mMenuControlledToolBar)
+		menu->addAction(toolbar->toggleViewAction());
+
+	return menu;
+}
 

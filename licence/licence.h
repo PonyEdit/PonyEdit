@@ -19,6 +19,7 @@ public:
 	inline const QString& getLogin() const { return mLogin; }
 	inline int getMaximumVersion() const { return mVersion; }
 	inline int getIssueId() const { return mIssueId; }
+	inline int getDaysLeft() const { return QDate::currentDate().daysTo(mExpiry); }
 
 	void save();
 

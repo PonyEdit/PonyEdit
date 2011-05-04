@@ -7,12 +7,13 @@ namespace Ui {
     class LicenceCheckDialog;
 }
 
+class Licence;
 class LicenceCheckDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-	explicit LicenceCheckDialog(QWidget* parent, bool expired);
+	explicit LicenceCheckDialog(QWidget* parent, Licence* currentLicence);
     ~LicenceCheckDialog();
 
 public slots:

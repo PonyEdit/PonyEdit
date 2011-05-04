@@ -5,6 +5,7 @@
 #include <QStatusBar>
 #include <QTextEdit>
 #include <QStatusBar>
+#include <QToolButton>
 #include <QLabel>
 
 #include "file/location.h"
@@ -31,7 +32,8 @@ public:
     ~MainWindow();
 
 public slots:
-	void checkLicence();
+	void checkLicence(bool forceDialog = false);
+	void showLicenceDialog();
 
 	void newFile();
 	void openFile();
@@ -84,10 +86,15 @@ public slots:
 
 	Editor* getCurrentEditor();
 
+	void registerContextMenuItem(QDockWidget* widget) { mMenuControlledDockWidgets.append(widget); }
+	void registerContextMenuItem(QToolBar* toolbar) { mMenuControlledToolBar.append(toolbar); }
+
 protected:
 	void closeEvent(QCloseEvent* event);
 	void dragEnterEvent(QDragEnterEvent *);
 	void dropEvent(QDropEvent *);
+
+	QMenu *createPopupMenu();
 
 private:
 	void createToolbar();
@@ -119,8 +126,11 @@ private:
 	QAction* mCurrentSyntaxMenuItem;
 	QMenu* mSyntaxMenu;
 
+	QList<QDockWidget*> mMenuControlledDockWidgets;
+	QList<QToolBar*> mMenuControlledToolBar;
+	QToolBar* mTrialRemainingBar;
+	QToolButton* mTrialRemainingButton;
 	UnsavedChangesDialog* mUnsavedChangesDialog;
-
 	ConnectionStatusPane* mConnectionStatusPane;
 
 	bool mWasMaximized;
