@@ -539,7 +539,7 @@ void MainWindow::checkLicence()
 
 	if (!l.isValid() || l.hasExpired())
 	{
-		LicenceCheckDialog dlg(l.hasExpired());
+		LicenceCheckDialog dlg(this, l.hasExpired());
 		if (dlg.exec() == QDialog::Rejected)
 			close();
 	}

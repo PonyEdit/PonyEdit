@@ -12,7 +12,7 @@ class LicenceCheckDialog : public QDialog
     Q_OBJECT
 
 public:
-	explicit LicenceCheckDialog(bool expired);
+	explicit LicenceCheckDialog(QWidget* parent, bool expired);
     ~LicenceCheckDialog();
 
 public slots:

@@ -7,11 +7,19 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 
-LicenceCheckDialog::LicenceCheckDialog(bool /*expired*/) :
-	QDialog(0),
+LicenceCheckDialog::LicenceCheckDialog(QWidget* parent, bool expired) :
+	QDialog(parent),
     ui(new Ui::LicenceCheckDialog)
 {
     ui->setupUi(this);
+
+	if (expired)
+	{
+		//	Change the dialog to suit expired demo licences
+		ui->headline->setText(tr("Your PonyEdit trial has expired!"));
+		ui->actionline->setText(tr("We hope you have enjoyed using PonyEdit. If you would like to keep using it, please visit PonyEdit.com and buy a full licence!"));
+		ui->trialActivate->setEnabled(false);
+	}
 
 	ui->stackedWidget->setCurrentWidget(ui->mainPage);
 
