@@ -4,6 +4,7 @@
 #include "openssl/bio.h"
 #include "openssl/pem.h"
 #include <QDebug>
+#include <QSettings>
 
 char licencePublicKey[] =
 	"-----BEGIN PUBLIC KEY-----\n"
@@ -16,7 +17,18 @@ char licencePublicKey[] =
 	"UwIDAQAB\n"
 	"-----END PUBLIC KEY-----\n";
 
+Licence::Licence()
+{
+	QSettings s;
+	setKey(s.value("licence", QVariant()).toByteArray());
+}
+
 Licence::Licence(const QByteArray& key)
+{
+	setKey(key);
+}
+
+void Licence::setKey(const QByteArray &key)
 {
 	mValid = false;
 	mVersion = -1;
@@ -82,3 +94,11 @@ bool Licence::verifySignature(const QByteArray& data, const QByteArray& signatur
 
 	return result;
 }
+
+void Licence::save()
+{
+	QSettings settings;
+	settings.setValue("licence", mKey);
+}
+
+

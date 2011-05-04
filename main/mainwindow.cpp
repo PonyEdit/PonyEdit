@@ -98,7 +98,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	restoreState();
 
-	//QTimer::singleShot(0, this, SLOT(checkLicence()));
+	QTimer::singleShot(0, this, SLOT(checkLicence()));
 }
 
 MainWindow::~MainWindow()
@@ -535,8 +535,14 @@ void MainWindow::createMacDockMenu()
 
 void MainWindow::checkLicence()
 {
-	LicenceCheckDialog dlg;
-	dlg.exec();
+	Licence l;
+
+	if (!l.isValid() || l.hasExpired())
+	{
+		LicenceCheckDialog dlg(l.hasExpired());
+		if (dlg.exec() == QDialog::Rejected)
+			close();
+	}
 }
 
 void MainWindow::showErrorMessage(QString error)

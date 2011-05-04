@@ -8,7 +8,10 @@
 class Licence
 {
 public:
+	Licence();
 	Licence(const QByteArray& key);
+
+	void setKey(const QByteArray& key);
 
 	inline bool isValid() const { return mValid; }
 	inline const QDate& getExpiry() const { return mExpiry; }
@@ -16,6 +19,8 @@ public:
 	inline const QString& getLogin() const { return mLogin; }
 	inline int getMaximumVersion() const { return mVersion; }
 	inline int getIssueId() const { return mIssueId; }
+
+	void save();
 
 private:
 	bool verifySignature(const QByteArray& data, const QByteArray& signature);

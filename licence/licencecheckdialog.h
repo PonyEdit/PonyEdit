@@ -12,12 +12,13 @@ class LicenceCheckDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit LicenceCheckDialog(QWidget *parent = 0);
+	explicit LicenceCheckDialog(bool expired);
     ~LicenceCheckDialog();
 
 public slots:
 	void getTrial();
 	void saveTrial(const QString& key);
+	void getTrialFailed(const QString& error);
 
 private:
     Ui::LicenceCheckDialog *ui;
