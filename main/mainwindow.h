@@ -7,6 +7,7 @@
 #include <QStatusBar>
 #include <QToolButton>
 #include <QLabel>
+#include <QTimer>
 
 #include "file/location.h"
 #include "windowmanager.h"
@@ -34,6 +35,7 @@ public:
 public slots:
 	void checkLicence(bool forceDialog = false);
 	void showLicenceDialog();
+	void updateTrialToolbar();
 
 	void newFile();
 	void openFile();
@@ -113,6 +115,8 @@ private:
 	void addRecentFile(const Location& loc);
 
 	void nextStartupPrompt();
+
+	QTimer *mTrialTimer;
 
 	FileList* mFileList;
 	WindowManager* mWindowManager;

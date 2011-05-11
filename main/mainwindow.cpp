@@ -577,6 +577,20 @@ void MainWindow::checkLicence(bool forceDialog)
 			close();
 	}
 
+	updateTrialToolbar();
+	// If we're on a trial, add a timer to update the toolbar hourly
+	if(!l.getExpiry().isNull())
+	{
+		mTrialTimer = new QTimer(this);
+		connect(mTrialTimer, SIGNAL(timeout()), this, SLOT(updateTrialToolbar()));
+		mTrialTimer->start(60*60*1000);
+	}
+}
+
+void MainWindow::updateTrialToolbar()
+{
+	Licence l = Licence();
+
 	//	Display a "time left on the trial" panel in the toolbar if appropriate
 	if (!l.getExpiry().isNull())
 	{
