@@ -68,7 +68,6 @@ void SyntaxHighlighter::highlightBlock(const QString &fullText)
 		SyntaxDefinition::ItemData* attributeLink = NULL;
 		const SyntaxDefinition::ContextLink* contextLink = NULL;
 		bool isLookAhead = false;
-		bool forceFallthrough = false;
 		QStringList dynamicCaptures;
 		foreach (QSharedPointer<SyntaxRule> rule, context->rules)
 		{
@@ -88,15 +87,12 @@ void SyntaxHighlighter::highlightBlock(const QString &fullText)
 					contextLink = NULL;
 				}
 
-				//	Special case: If this rule is detectSpaces, we're going to pop after this match
-				if (rule->getType() == SyntaxRule::DetectSpaces)
-					forceFallthrough = true;
 				break;
 			}
 		}
 
 		//	If no match was found, check for any fallthrough rules. Force a match length of at least 1 at this point.
-		if (matchLength == 0 || forceFallthrough)
+		if (matchLength == 0)
 		{
 			if (context->fallthrough)
 				contextLink = &context->fallthroughContextLink;
