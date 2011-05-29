@@ -762,7 +762,7 @@ void MainWindow::updateRecentFilesMenu()
 	}
 }
 
-void MainWindow::addRecentFile(const Location& loc)
+void MainWindow::addRecentFile(Location loc)
 {
 	if(loc.isNull())
 		return;

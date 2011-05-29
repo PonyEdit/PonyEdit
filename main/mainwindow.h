@@ -112,7 +112,7 @@ private:
 	void restoreState();
 
 	void updateRecentFilesMenu();
-	void addRecentFile(const Location& loc);
+	void addRecentFile(Location loc);
 
 	void nextStartupPrompt();
 
