@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include "licence.h"
+#include "offlineactivationdialog.h"
 
 LicenceCheckDialog::LicenceCheckDialog(QWidget* parent, Licence* currentLicence) :
 	QDialog(parent),
@@ -41,11 +42,12 @@ LicenceCheckDialog::LicenceCheckDialog(QWidget* parent, Licence* currentLicence)
 
 	connect(ui->buyPonyEditButton, SIGNAL(clicked()), gSiteManager, SLOT(purchase()));
 	connect(ui->trialActivate, SIGNAL(clicked()), this, SLOT(getTrial()));
-	connect(gSiteManager, SIGNAL(getTrial(QString)), this, SLOT(getTrialSucceeded(QString)));
+	connect(gSiteManager, SIGNAL(getTrial(QString)), this, SLOT(getLicenceSucceeded(QString)));
 	connect(gSiteManager, SIGNAL(getLicence(QString)), this, SLOT(getLicenceSucceeded(QString)));
 	connect(gSiteManager, SIGNAL(getTrialFailed(QString)), this, SLOT(getLicenceFailed(QString)));
 	connect(gSiteManager, SIGNAL(getLicenceFailed(QString)), this, SLOT(getLicenceFailed(QString)));
 	connect(ui->onlineActivate, SIGNAL(clicked()), this, SLOT(validateOnline()));
+	connect(ui->offlineActivate, SIGNAL(clicked()), this, SLOT(validateOffline()));
 }
 
 LicenceCheckDialog::~LicenceCheckDialog()
@@ -78,7 +80,7 @@ void LicenceCheckDialog::validateOnline()
 	ui->statusWidget->setStatus(QPixmap(":/icons/loading.png"), tr("Validating Online..."));
 }
 
-bool LicenceCheckDialog::validateLicenceKey(const QString& key, bool trial)
+bool LicenceCheckDialog::validateLicenceKey(const QString& key)
 {
 	try
 	{
@@ -89,7 +91,7 @@ bool LicenceCheckDialog::validateLicenceKey(const QString& key, bool trial)
 		l.save();
 
 		QMessageBox::information(this, tr("Thanks!"),
-			trial ?
+			l.isTrial() ?
 				tr("Thanks for trying PonyEdit. We hope you like it. Please don't hesitate to contact us to let us know what you think!")
 			:
 				tr("Thanks for purchasing PonyEdit."));
@@ -107,14 +109,16 @@ bool LicenceCheckDialog::validateLicenceKey(const QString& key, bool trial)
 
 void LicenceCheckDialog::getLicenceSucceeded(const QString& key)
 {
-	if (validateLicenceKey(key, false))
+	if (validateLicenceKey(key))
 		accept();
 }
 
-void LicenceCheckDialog::getTrialSucceeded(const QString& key)
+void LicenceCheckDialog::validateOffline()
 {
-	if (validateLicenceKey(key, true))
-		accept();
+	OfflineActivationDialog dlg(this);
+	if (dlg.exec() == QDialog::Accepted)
+		if (validateLicenceKey(dlg.getLicenceKey()))
+			accept();
 }
 
 

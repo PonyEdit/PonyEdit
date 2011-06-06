@@ -18,13 +18,13 @@ public:
 
 public slots:
 	void getTrial();
-	void getTrialSucceeded(const QString& key);
 	void getLicenceSucceeded(const QString& licence);
 	void getLicenceFailed(const QString& error);
 	void validateOnline();
+	void validateOffline();
 
 protected:
-	bool validateLicenceKey(const QString& key, bool trial);
+	bool validateLicenceKey(const QString& key);
 
 private:
     Ui::LicenceCheckDialog *ui;

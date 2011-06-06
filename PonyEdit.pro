@@ -114,7 +114,8 @@ SOURCES += \
     ssh/requeststatuswidget.cpp \
     main/regexptester.cpp \
     ssh/ftpchannel.cpp \
-    file/ftpfile.cpp
+    file/ftpfile.cpp \
+    licence/offlineactivationdialog.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -190,7 +191,8 @@ HEADERS  += \
     main/regexptester.h \
     ssh/ftpchannel.h \
     ssh/ftprequest.h \
-    file/ftpfile.h
+    file/ftpfile.h \
+    licence/offlineactivationdialog.h
 
 OTHER_FILES += \
     slave/slave.pl \
@@ -554,7 +556,8 @@ FORMS += \
     main/statuswidget.ui \
     options/startupoptionswidget.ui \
     main/shutdownprompt.ui \
-    main/regexptester.ui
+    main/regexptester.ui \
+    licence/offlineactivationdialog.ui
 
 RESOURCES += \
 	resources.qrc
