@@ -57,7 +57,9 @@ void SiteManager::getLicence(const QString &username, const QString &password)
 	Licence l = Licence();
 	QString version = QString("vmaj=%1&vmin=%2&rev=%3").arg(MAJOR_VERSION).arg(MINOR_VERSION).arg(REVISION);
 
-	QUrl url(QString(SITE_URL) + "licence/?f=getlicence&" + version + "&u=" + username + "&p=" + password);
+	QUrl url(QString(SITE_URL) + "licence/?f=getlicence&" + version);
+	url.addQueryItem("u", username);
+	url.addQueryItem("p", password);
 	QNetworkReply* reply = mManager->get(QNetworkRequest(url));
 
 	mReplies.insert(reply, GetLicence);

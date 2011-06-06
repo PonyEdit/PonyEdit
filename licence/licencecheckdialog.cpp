@@ -31,6 +31,11 @@ LicenceCheckDialog::LicenceCheckDialog(QWidget* parent, Licence* currentLicence)
 		}
 	}
 
+#ifdef Q_OS_MAC
+	setMinimumHeight(500);
+#endif
+
+
 	ui->stackedWidget->setCurrentWidget(ui->mainPage);
 	ui->onlineUsername->setFocus();
 
