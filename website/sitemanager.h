@@ -16,11 +16,12 @@ class SiteManager : public QObject
 	Q_OBJECT
 
 public:
-	enum Messages {UpdateCheck, UpdateCheckForcedNotification, LicenceCheck, GetTrial};
+	enum Messages {UpdateCheck, UpdateCheckForcedNotification, LicenceCheck, GetTrial, GetLicence};
     SiteManager();
 	~SiteManager();
 
 	void checkForUpdates(bool forceNotification = false);
+	void getLicence(const QString& username, const QString& password);
 	void checkLicence();
 	void getTrial();
 
@@ -36,8 +37,10 @@ signals:
 	void updateAvailable(const QVariantMap& version, const QVariantMap& changes);
 	void noUpdateAvailable();
 	void licenceStatus(bool valid);
-	void gotTrial(const QString& licence);
+	void getTrial(const QString& licence);
 	void getTrialFailed(const QString& error);
+	void getLicence(const QString& licence);
+	void getLicenceFailed(const QString& error);
 
 private:
 	QNetworkAccessManager* mManager;

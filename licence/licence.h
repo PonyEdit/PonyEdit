@@ -17,6 +17,7 @@ public:
 	inline const QDate& getExpiry() const { return mExpiry; }
 	inline bool hasExpired() const { return (mExpiry.isValid() && mExpiry < QDate::currentDate()); }
 	inline const QString& getLogin() const { return mLogin; }
+	inline const QByteArray& getKey() const { return mKey; }
 	inline int getMaximumVersion() const { return mVersion; }
 	inline int getIssueId() const { return mIssueId; }
 	inline int getDaysLeft() const { return QDate::currentDate().daysTo(mExpiry); }

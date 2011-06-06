@@ -10,6 +10,7 @@
 
 #include "sitemanager.h"
 #include "main/json.h"
+#include "licence/licence.h"
 
 SiteManager::SiteManager()
 {
@@ -42,17 +43,32 @@ SiteManager::~SiteManager()
 
 void SiteManager::checkForUpdates(bool forceNotification)
 {
+	Licence l = Licence();
 	QString version = QString("vmaj=%1&vmin=%2&rev=%3").arg(MAJOR_VERSION).arg(MINOR_VERSION).arg(REVISION);
-	QUrl url(QString(SITE_URL) + "version/?" + version + "&u=testuser&key=5555555");
+
+	QUrl url(QString(SITE_URL) + "version/?" + version + "&u=" + l.getLogin() + "&key=" + l.getKey());
 	QNetworkReply* reply = mManager->get(QNetworkRequest(url));
 
 	mReplies.insert(reply, forceNotification ? UpdateCheckForcedNotification : UpdateCheck);
 }
 
+void SiteManager::getLicence(const QString &username, const QString &password)
+{
+	Licence l = Licence();
+	QString version = QString("vmaj=%1&vmin=%2&rev=%3").arg(MAJOR_VERSION).arg(MINOR_VERSION).arg(REVISION);
+
+	QUrl url(QString(SITE_URL) + "version/?f=getlicence" + version + "&u=" + username + "&p=" + password);
+	QNetworkReply* reply = mManager->get(QNetworkRequest(url));
+
+	mReplies.insert(reply, GetLicence);
+}
+
 void SiteManager::checkLicence()
 {
+	Licence l = Licence();
 	QString version = QString("vmaj=%1&vmin=%2&rev=%3").arg(MAJOR_VERSION).arg(MINOR_VERSION).arg(REVISION);
-	QUrl url(QString(SITE_URL) + "licence/?" + version + "&u=testuser&key=5555555");
+
+	QUrl url(QString(SITE_URL) + "version/?" + version + "&u=" + l.getLogin() + "&key=" + l.getKey());
 	QNetworkReply* reply = mManager->get(QNetworkRequest(url));
 
 	mReplies.insert(reply, LicenceCheck);
@@ -103,7 +119,14 @@ void SiteManager::handleReply(QNetworkReply *reply)
 				break;
 
 			case GetTrial:
-				emit gotTrial(data["key"].toString());
+				emit getTrial(data["key"].toString());
+				break;
+
+			case GetLicence:
+				if(data["key"].toString().isEmpty())
+					emit getLicenceFailed(data["error"].toString());
+				else
+					emit getLicence(data["key"].toString());
 				break;
 		}
 	}
@@ -122,6 +145,10 @@ void SiteManager::handleReply(QNetworkReply *reply)
 
 			case GetTrial:
 				emit getTrialFailed(error);
+				break;
+
+			case GetLicence:
+				emit getLicenceFailed(error);
 				break;
 		}
 	}
