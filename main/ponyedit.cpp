@@ -44,7 +44,11 @@ PonyEdit::PonyEdit(int argc, char** argv) : QApplication(argc, argv)
 	Tools::initialize();
 
 	// UUID used to (hopefully) ensure memory name is unique
+#ifdef QT_DEBUG
+	mKey = "PonyEdit-debug-lock-138ad7e0-2ecb-11e0-91fa-0800200c9a66";
+#else
 	mKey = "PonyEdit-lock-138ad7e0-2ecb-11e0-91fa-0800200c9a66";
+#endif
 	mMemoryLock.setKey(mKey);
 
 	// In case PonyEdit crashed last run, attach() and detach(), to force the
