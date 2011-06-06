@@ -5,7 +5,8 @@
 
 OfflineActivationDialog::OfflineActivationDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::OfflineActivationDialog)
+	ui(new Ui::OfflineActivationDialog),
+	mLicence("")
 {
     ui->setupUi(this);
 	ui->licenceKeyEntry->setFocus();

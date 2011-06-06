@@ -85,8 +85,12 @@ bool LicenceCheckDialog::validateLicenceKey(const QString& key)
 	try
 	{
 		Licence l(key.toUtf8());
-		if (!l.isValid()) throw("Invalid licence key!");
-		if (l.hasExpired()) throw("Licence key has already expired!");
+		if (!l.isValid()) throw(tr("Invalid licence key!"));
+		if (l.hasExpired()) throw(tr("Licence key has already expired!"));
+
+		Licence currentLicence;
+		if (currentLicence.isValid() && l.isTrial())
+			throw(tr("You can not use a trial licence to renew another licence!"));
 
 		l.save();
 
