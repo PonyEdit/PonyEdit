@@ -32,10 +32,15 @@ LicenceCheckDialog::LicenceCheckDialog(QWidget* parent, Licence* currentLicence)
 	}
 
 	ui->stackedWidget->setCurrentWidget(ui->mainPage);
+	ui->onlineUsername->setFocus();
 
 	connect(ui->buyPonyEditButton, SIGNAL(clicked()), gSiteManager, SLOT(purchase()));
 	connect(ui->trialActivate, SIGNAL(clicked()), this, SLOT(getTrial()));
-	connect(gSiteManager, SIGNAL(gotTrial(QString)), this, SLOT(saveTrial(QString)));
+	connect(gSiteManager, SIGNAL(getTrial(QString)), this, SLOT(getTrialSucceeded(QString)));
+	connect(gSiteManager, SIGNAL(getLicence(QString)), this, SLOT(getLicenceSucceeded(QString)));
+	connect(gSiteManager, SIGNAL(getTrialFailed(QString)), this, SLOT(getLicenceFailed(QString)));
+	connect(gSiteManager, SIGNAL(getLicenceFailed(QString)), this, SLOT(getLicenceFailed(QString)));
+	connect(ui->onlineActivate, SIGNAL(clicked()), this, SLOT(validateOnline()));
 }
 
 LicenceCheckDialog::~LicenceCheckDialog()
@@ -51,13 +56,24 @@ void LicenceCheckDialog::getTrial()
 	gSiteManager->getTrial();
 }
 
-void LicenceCheckDialog::getTrialFailed(const QString& error)
+void LicenceCheckDialog::getLicenceFailed(const QString& error)
 {
 	QMessageBox::critical(this, tr("Failed to fetch licence"), error);
 	ui->stackedWidget->setCurrentWidget(ui->mainPage);
 }
 
-void LicenceCheckDialog::saveTrial(const QString& key)
+void LicenceCheckDialog::validateOnline()
+{
+	QString username = ui->onlineUsername->text();
+	QString password = ui->onlinePassword->text();
+
+	gSiteManager->getLicence(username, password);
+
+	ui->stackedWidget->setCurrentWidget(ui->statusPage);
+	ui->statusWidget->setStatus(QPixmap(":/icons/loading.png"), tr("Validating Online..."));
+}
+
+bool LicenceCheckDialog::validateLicenceKey(const QString& key, bool trial)
 {
 	try
 	{
@@ -67,12 +83,37 @@ void LicenceCheckDialog::saveTrial(const QString& key)
 
 		l.save();
 
-		QMessageBox::information(this, tr("Thanks!"), tr("Thanks for trying PonyEdit. We hope you like it. Please don't hesitate to contact us to let us know what you think!"));
-		accept();
+		QMessageBox::information(this, tr("Thanks!"),
+			trial ?
+				tr("Thanks for trying PonyEdit. We hope you like it. Please don't hesitate to contact us to let us know what you think!")
+			:
+				tr("Thanks for purchasing PonyEdit."));
+
+		return true;
 	}
 	catch (QString error)
 	{
 		ui->stackedWidget->setCurrentWidget(ui->mainPage);
 		QMessageBox::critical(this, tr("Error"), error);
+
+		return false;
 	}
 }
+
+void LicenceCheckDialog::getLicenceSucceeded(const QString& key)
+{
+	if (validateLicenceKey(key, false))
+		accept();
+}
+
+void LicenceCheckDialog::getTrialSucceeded(const QString& key)
+{
+	if (validateLicenceKey(key, true))
+		accept();
+}
+
+
+
+
+
+

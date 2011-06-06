@@ -57,7 +57,7 @@ void SiteManager::getLicence(const QString &username, const QString &password)
 	Licence l = Licence();
 	QString version = QString("vmaj=%1&vmin=%2&rev=%3").arg(MAJOR_VERSION).arg(MINOR_VERSION).arg(REVISION);
 
-	QUrl url(QString(SITE_URL) + "version/?f=getlicence" + version + "&u=" + username + "&p=" + password);
+	QUrl url(QString(SITE_URL) + "licence/?f=getlicence&" + version + "&u=" + username + "&p=" + password);
 	QNetworkReply* reply = mManager->get(QNetworkRequest(url));
 
 	mReplies.insert(reply, GetLicence);
@@ -68,7 +68,7 @@ void SiteManager::checkLicence()
 	Licence l = Licence();
 	QString version = QString("vmaj=%1&vmin=%2&rev=%3").arg(MAJOR_VERSION).arg(MINOR_VERSION).arg(REVISION);
 
-	QUrl url(QString(SITE_URL) + "version/?" + version + "&u=" + l.getLogin() + "&key=" + l.getKey());
+	QUrl url(QString(SITE_URL) + "licence/?" + version + "&u=" + l.getLogin() + "&key=" + l.getKey());
 	QNetworkReply* reply = mManager->get(QNetworkRequest(url));
 
 	mReplies.insert(reply, LicenceCheck);
