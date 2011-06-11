@@ -167,7 +167,7 @@ bool RemoteConnection::waitUntilOpen(bool waitForChannels)
 			//	If this is NOT the main UI thread, use mutexes to passively wait
 			QMutex mutex;
 			mutex.lock();
-			while (1)
+			while (1 && !isDeliberatelyDisconnecting())
 			{
 				Status baseStatus = getBaseStatus();
 				if ((baseStatus == OpeningChannels && !waitForChannels) || baseStatus == Connected || baseStatus == Error)
