@@ -138,7 +138,7 @@
       <bool>true</bool>
      </property>
      <property name="plainText">
-      <string>This software uses makes use of various libraries, all of which are awesome.
+      <string>PonyEdit makes use of various libraries, all of which are awesome.
 
 Qt - http://qt.nokia.com/
 Licenced under the LGPL 2.1
