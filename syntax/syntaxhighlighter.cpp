@@ -71,19 +71,6 @@ void SyntaxHighlighter::highlightBlock(const QString &fullText)
 		QStringList dynamicCaptures;
 		foreach (QSharedPointer<SyntaxRule> rule, context->rules)
 		{
-			//	Special case: If this rule is a DetectSpaces rule, just skim forward
-			//	without considering it a match, or resetting the scan through the rules.
-			if (rule->getType() == SyntaxRule::DetectSpaces)
-			{
-				while (position < fullText.length() && fullText.at(position).isSpace())
-					position++;
-
-				if (position < fullText.length())
-					continue;
-				else
-					break;
-			}
-
 			//	For all other (normal) rules, look for a match.
 			matchLength = rule->match(text, position);
 			if (matchLength > 0)

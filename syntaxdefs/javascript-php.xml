@@ -9,7 +9,7 @@
 
 
 
-<language name="JavaScript/PHP" hidden="true" version="1.18" kateversion="2.4" section="Other" extensions=""
+<language name="JavaScript/PHP" hidden="true" version="1.19" kateversion="2.4" section="Other" extensions=""
           mimetype="" indenter="cstyle"
           author="Anders Lund (anders@alweb.dk), Joseph Wenninger (jowenn@kde.org), Whitehawk Stormchaser (zerokode@gmx.net)" license="">
   <highlighting>
