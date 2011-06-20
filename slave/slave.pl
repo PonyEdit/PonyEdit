@@ -4,6 +4,7 @@ use strict;
 use Cwd;
 use Fcntl ':mode';
 use MIME::Base64;
+use POSIX;
 
 use Data::Dumper;
 
@@ -11,11 +12,12 @@ our %buffers = ();
 our $nextBufferId = 1;
 
 # Open and unbuffer the log file
-open( LOGFILE, '>>log.txt' );
+open( LOGFILE, '>>.ponyedit/error.log' );
 select( ( select( LOGFILE ), $|=1 )[0] );
 
 sub errlog
 {
+	print LOGFILE POSIX::strftime("[%Y-%m-%d %H:%M:%S] - ", localtime);
 	print LOGFILE $_[0] . "\n";
 }
 
@@ -296,8 +298,6 @@ sub msg_pushcontent
 sub msg_close
 {
 	my( $buff, $params, $result ) = @_;
-
-	errlog("Closing buffer.");
 	$buff->close();
 }
 
@@ -391,10 +391,6 @@ sub handleMessage
 
 	my ($messageId, $bufferId, $params) = $message->readMessage();
 
-	errlog( "bufferId = $bufferId" );
-	errlog( "messageId = $messageId" );
-	errlog( 'Parameters = ' . Dumper( $params ) );
-
 	my $result;
 	eval
 	{
@@ -446,8 +442,6 @@ sub handleMessage
 	};
 	return $result;
 }
-
-errlog( '*************************************** Starting up *********************************************' );
 
 #	Send the current working directory, which should be the user's home dir.
 print '~=' . getcwd() . "%";
