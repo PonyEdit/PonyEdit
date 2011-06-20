@@ -10,6 +10,7 @@
 #include <QMap>
 
 #define SITE_URL "http://ponyedit.com/"
+#define CDN_URL "http://cdn.ponyedit.com/"
 
 class SiteManager : public QObject
 {

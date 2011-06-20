@@ -22,7 +22,7 @@ UpdateManager::UpdateManager(QObject *parent) :
 
 void UpdateManager::updateFound(const QVariantMap& version, const QVariantMap& changes)
 {
-	QString url = QString("%1download/").arg(SITE_URL);
+	QString url = QString("%1download/").arg(CDN_URL);
 	QString ext;
 #ifdef Q_OS_WIN
 	ext = "exe";
@@ -30,7 +30,7 @@ void UpdateManager::updateFound(const QVariantMap& version, const QVariantMap& c
 	ext = "dmg";
 #endif
 
-	QString fullURL = QString("%1files/PonyEdit-%2.%3").arg(SITE_URL, version["pretty"].toString(), ext);
+	QString fullURL = QString("%1files/PonyEdit-%2.%3").arg(CDN_URL, version["pretty"].toString(), ext);
 
 	mNotificationDlg = new UpdateNotificationDialog();
 
@@ -113,7 +113,7 @@ void UpdateManager::downloadFinished()
 		QMessageBox msg;
 		msg.setWindowTitle(tr("Update unavailable"));
 		msg.setText(tr("There was a problem downloading the update."));
-		msg.setInformativeText(tr("Please try again later. If this error persists, please let us know on the <a href='%1'>support forum.</a>").arg(QString(SITE_URL) + "forum/"));
+		msg.setInformativeText(tr("Please try again later. If this error persists, please let us know on the <a href='%1'>support forum.</a>").arg(QString(SITE_URL) + "forums/"));
 		msg.setStandardButtons(QMessageBox::Ok);
 
 		msg.exec();
