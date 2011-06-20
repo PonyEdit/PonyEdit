@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>546</width>
-    <height>420</height>
+    <height>508</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -72,7 +72,7 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="0" colspan="3">
+   <item row="8" column="0" colspan="3">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -129,6 +129,30 @@
     <widget class="QPlainTextEdit" name="licenceDetails">
      <property name="readOnly">
       <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" colspan="3">
+    <widget class="QPlainTextEdit" name="plainTextEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+     <property name="plainText">
+      <string>This software uses makes use of various libraries, all of which are awesome.
+
+Qt - http://qt.nokia.com/
+Licenced under the LGPL 2.1
+http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+
+libssh2 - http://www.libssh2.org/
+Licenced under the libssh2 licence
+http://www.libssh2.org/license.html
+
+This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.openssl.org/)
+
+KatePart - http://kate-editor.org/about-katepart/
+Licenced under the LGPL 2.0
+http://www.gnu.org/licenses/old-licenses/lgpl-2.0.html</string>
      </property>
     </widget>
    </item>
