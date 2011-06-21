@@ -151,7 +151,15 @@ void CodeEditor::applyIndent(QTextCursor& cursor, bool outdent)
 	}
 	else
 	{
-		cursor.insertText("\t");
+		//	Insert a tab or a set of spaces
+		if (Options::IndentSpaces)
+		{
+			int spacesToInsert = Options::TabStopWidth - (column % Options::TabStopWidth);
+			for (int i = 0; i < spacesToInsert; i++)
+				cursor.insertText(" ");
+		}
+		else
+			cursor.insertText("\t");
 	}
 }
 

@@ -31,6 +31,7 @@ public:
 	static bool WordWrap;
 	static int TabStopWidth;
 	static IndentModes IndentMode;
+	static bool IndentSpaces;		//	Indent with spaces instead of tabs?
 
 	static StartupActions StartupAction;
 	static QStringList StartupFiles;

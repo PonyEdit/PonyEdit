@@ -11,6 +11,7 @@ EditorOptionsWidget::EditorOptionsWidget(QWidget *parent) :
 	ui->tabStopWidth->setValue(Options::TabStopWidth);
 	ui->wordWrap->setChecked(Options::WordWrap);
 	ui->keepIndent->setChecked(Options::IndentMode == Options::KeepIndentOnNextLine);
+	ui->indentSpaces->setChecked(Options::IndentSpaces);
 }
 
 EditorOptionsWidget::~EditorOptionsWidget()
@@ -23,4 +24,5 @@ void EditorOptionsWidget::apply()
 	Options::TabStopWidth = ui->tabStopWidth->value();
 	Options::WordWrap = ui->wordWrap->isChecked();
 	Options::IndentMode = ui->keepIndent->isChecked() ? Options::KeepIndentOnNextLine : Options::NoAutoIndent;
+	Options::IndentSpaces = ui->indentSpaces->isChecked();
 }
