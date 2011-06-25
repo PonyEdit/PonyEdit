@@ -5,9 +5,9 @@
 #-------------------------------------------------
 
 DEFINES += "MAJOR_VERSION=0"
-DEFINES += "MINOR_VERSION=9"
-DEFINES += "REVISION=13"
-DEFINES += "PRETTY_VERSION=\\\"0.9-prealpha13\\\""
+DEFINES += "MINOR_VERSION=91"
+DEFINES += "REVISION=1"
+DEFINES += "PRETTY_VERSION=\\\"0.91-beta1""
 
 
 INCLUDEPATH += $$PWD/deps/libssh2/include/
