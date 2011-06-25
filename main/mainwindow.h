@@ -73,6 +73,7 @@ public slots:
 	void toggleFullScreen();
 
 	void showHTMLPreview();
+	void closeHTMLPreview(bool visible);
 	void options();
 
 	void about();

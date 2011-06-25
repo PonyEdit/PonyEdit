@@ -812,8 +812,10 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 void MainWindow::showHTMLPreview()
 {
-	HTMLPreview *htmlPreview = new HTMLPreview(this);
-	QDockWidget *htmlWrapper = new QDockWidget("HTML Preview", 0);
+	HTMLPreview* htmlPreview = new HTMLPreview(this);
+	QDockWidget* htmlWrapper = new QDockWidget("HTML Preview", 0);
+
+	connect(htmlWrapper, SIGNAL(visibilityChanged(bool)), this, SLOT(closeHTMLPreview(bool)));
 
 	htmlWrapper->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetFloatable);
 	htmlWrapper->setWidget(htmlPreview);
@@ -822,6 +824,19 @@ void MainWindow::showHTMLPreview()
 	htmlWrapper->show();
 
 	htmlWrapper->setObjectName(tr("HTML Preview"));
+}
+
+void MainWindow::closeHTMLPreview(bool visible)
+{
+	if(visible)
+		return;
+
+	QObject* eventSource = QObject::sender();
+	QDockWidget* htmlWrapper = static_cast<QDockWidget*>(eventSource);
+	//HTMLPreview* htmlPreview = (HTMLPreview*)htmlWrapper->widget();
+
+	//delete htmlPreview;
+	htmlWrapper->deleteLater();
 }
 
 void MainWindow::resetZoom()
