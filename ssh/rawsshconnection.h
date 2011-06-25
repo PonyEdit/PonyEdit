@@ -24,7 +24,7 @@ public:
 	{
 		Password = 0x01,
 		KeyboardInteractive = 0x02,
-		PublicKey = 0x03
+		PublicKey = 0x04
 	};
 
 	struct Channel
@@ -42,7 +42,7 @@ public:
 	void connect(const char* host, int port);
 	void disconnect();
 	AuthMethods getAuthenticationMethods(const char* username);
-	bool authenticatePassword(const char* username, const char* password);
+	bool authenticatePassword(const char* username, const char* password, AuthMethods authMethods);
 	bool authenticateKeyFile(const char* filename, const char* username, const char* password, bool* keyRejected);
 	bool authenticateAgent(const char* username);
 	void startRemoteSlave();
@@ -76,9 +76,13 @@ private:
 	static void saveKnownHostKeys();
 	QString tidyFtpPath(const QString& path);
 
+	static void interactiveAuthCallback(const char*, int, const char*, int, int,
+		const LIBSSH2_USERAUTH_KBDINT_PROMPT*, LIBSSH2_USERAUTH_KBDINT_RESPONSE*, void**);
+
 	int mSocket;
 	LIBSSH2_SESSION* mSession;
 	QByteArray mServerFingerprint;
+	const char* mKeyboardAuthPassword;
 
 	QMutex mAccessMutex;
 

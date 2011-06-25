@@ -100,7 +100,7 @@ void RawSshConnection::connect(const char* host, int port)
 		throw(QObject::tr("Failed to connect to host"));
 
 	//	Create an SSH2 session
-	mSession = libssh2_session_init();
+	mSession = libssh2_session_init_ex(NULL, NULL, NULL, this);
 	libssh2_session_flag(mSession, LIBSSH2_FLAG_SIGPIPE, 1);
 	if (libssh2_session_startup(mSession, mSocket))
 	{
@@ -141,12 +141,35 @@ RawSshConnection::AuthMethods RawSshConnection::getAuthenticationMethods(const c
 	if (strstr(userauthlist, "publickey") != NULL)
 		methods = (AuthMethods)(methods | PublicKey);
 
+	qDebug() << "Valid auth methods: " << userauthlist;
+
 	return methods;
 }
 
-bool RawSshConnection::authenticatePassword(const char* username, const char* password)
+void RawSshConnection::interactiveAuthCallback(const char*, int, const char*, int,
+	int num_prompts, const LIBSSH2_USERAUTH_KBDINT_PROMPT*, LIBSSH2_USERAUTH_KBDINT_RESPONSE* responses,
+	void** abstract)
 {
-	int rc = libssh2_userauth_password(mSession, username, password);
+	if (num_prompts == 1)
+	{
+		RawSshConnection* connection = (RawSshConnection*)(*abstract);
+		responses[0].text = strdup(connection->mKeyboardAuthPassword);
+		responses[0].length = strlen(connection->mKeyboardAuthPassword);
+	}
+}
+
+bool RawSshConnection::authenticatePassword(const char* username, const char* password, RawSshConnection::AuthMethods authMethods)
+{
+	int rc = 0;
+
+	if (authMethods & Password)
+		rc = libssh2_userauth_password(mSession, username, password);
+	else
+	{
+		mKeyboardAuthPassword = password;
+		rc = libssh2_userauth_keyboard_interactive_ex(mSession, username, strlen(username), interactiveAuthCallback);
+	}
+
 	if (rc == LIBSSH2_ERROR_AUTHENTICATION_FAILED)
 		return false;
 

@@ -116,7 +116,7 @@ bool SshConnection::threadConnect()
 			}
 		}
 
-		//	Fall back on password entry
+		//	Fall back on password entry / keyboard interactive
 		while (!authenticated)
 		{
 			checkForDeliberateDisconnect();
@@ -124,7 +124,7 @@ bool SshConnection::threadConnect()
 			waitForInput(SshConnection::passwordInputDialog, SshConnection::passwordInputCallback, QVariant(SshPassword));
 
 			checkForDeliberateDisconnect();
-			authenticated = mRawConnection->authenticatePassword(mHost->getUserName().toUtf8(), mHost->getPassword().toUtf8());
+			authenticated = mRawConnection->authenticatePassword(mHost->getUserName().toUtf8(), mHost->getPassword().toUtf8(), authMethods);
 
 			if(!authenticated)
 				mHost->setPassword(QString());
