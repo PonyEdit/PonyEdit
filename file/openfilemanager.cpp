@@ -43,14 +43,16 @@ const QList<BaseFile*> OpenFileManager::getOpenFiles() const
 	return mOpenFiles;
 }
 
-bool OpenFileManager::closeFiles(const QList<BaseFile*>& files, bool /* force */)
+bool OpenFileManager::closeFiles(const QList<BaseFile*>& files, bool force)
 {
-	QList<BaseFile*> unsavedFiles = getUnsavedFiles(files);
-	if (unsavedFiles.length() > 0)
-	{
-		UnsavedChangesDialog dialog(unsavedFiles);
-		if (dialog.exec() != QDialog::Accepted)
-			return false;
+	if (!force) {
+		QList<BaseFile*> unsavedFiles = getUnsavedFiles(files);
+		if (unsavedFiles.length() > 0)
+		{
+			UnsavedChangesDialog dialog(unsavedFiles);
+			if (dialog.exec() != QDialog::Accepted)
+				return false;
+		}
 	}
 
 	foreach (BaseFile* file, files)
