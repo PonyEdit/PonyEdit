@@ -7,6 +7,7 @@
 #include "ssh/serverconfigdlg.h"
 #include "file/filelistdelegate.h"
 #include "syntax/syntaxdefmanager.h"
+#include "main/mainwindow.h"
 
 #include <QDir>
 #include <QDebug>
@@ -89,7 +90,19 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	populateFolderTree();
 	restoreState();
 
-	showLocation(mLastLocation);
+	Location homeLocation(QDir::homePath());
+	Editor* editor = gMainWindow->getCurrentEditor();
+
+	if(NULL != editor) {
+		Location currentLoc = editor->getLocation();
+		if(currentLoc.isNull())
+			showLocation(homeLocation);
+		else
+			showLocation(currentLoc.getDirectory());
+	}
+	else {
+		showLocation(homeLocation);
+	}
 
 	ui->fileName->setFocus();
 }
@@ -823,21 +836,3 @@ void FileDialog::fileNameIndexChanged()
 
 	mInEditHandler = false;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -80,7 +80,7 @@ private:
 	void populateFolderTree();
 	QTreeWidgetItem* addLocationToTree(QTreeWidgetItem* parent, const Location& location);
 	void updateFavorites();
-        void populateFilterList();
+	void populateFilterList();
 
 	Ui::FileDialog *ui;
 	QFileIconProvider mIconProvider;
