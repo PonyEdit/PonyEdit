@@ -12,6 +12,8 @@ public:
 protected:
 	virtual void threadConnect();
 	virtual void threadSendMessages(QList<RemoteRequest*>& messages);
+	virtual void threadCheckForNotifications();
+	void handleNotification(const QByteArray& notification);
 
 	bool mSudo;
 };

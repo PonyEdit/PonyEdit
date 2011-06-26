@@ -54,6 +54,7 @@ public:
 	QByteArray readToPrompt(Channel* channel);
 	QByteArray readLine(Channel* channel);
 	QByteArray readUntil(Channel* channel, const char* marker);
+	bool pollData(Channel* channel);
 	void writeData(Channel* channel, const char* data, int length);
 	void sendEof(Channel* channel);
 

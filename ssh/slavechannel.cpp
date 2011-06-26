@@ -12,6 +12,20 @@ SlaveChannel::SlaveChannel(RemoteConnection* connection, bool sudo)
 	startThread();
 }
 
+void SlaveChannel::handleNotification(const QByteArray& notification)
+{
+	qDebug() << "Received notification!";
+}
+
+void SlaveChannel::threadCheckForNotifications()
+{
+	//	If there is unsolicited data ready, read the full line
+	if (mConnection->pollData(mRawHandle))
+	{
+		qDebug() << "Poll data available from the server!!";
+	}
+}
+
 void SlaveChannel::threadSendMessages(QList<RemoteRequest*>& messages)
 {
 	//	Encode the queued up messages into a blob for sending
@@ -31,6 +45,14 @@ void SlaveChannel::threadSendMessages(QList<RemoteRequest*>& messages)
 	while (messages.length())
 	{
 		QByteArray response = QByteArray::fromBase64(mConnection->readLine(mRawHandle));
+
+		//	First, make sure this is a response, and not a notification
+		if ((unsigned char)response[0] == (unsigned char)255)
+		{
+			handleNotification(response);
+			continue;
+		}
+
 		SlaveRequest* rq = static_cast<SlaveRequest*>(messages.takeFirst());
 
 		try

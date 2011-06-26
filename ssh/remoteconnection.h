@@ -62,6 +62,7 @@ public:
 	virtual RawChannelHandle* createRawFTPChannel() { throw(tr("Invalid operation")); }
 	virtual void sendLine(RawChannelHandle* /*handle*/, const QByteArray& /*data*/) { throw(tr("Invalid operation")); }
 	virtual QByteArray readLine(RawChannelHandle* /*handle*/) { throw(tr("Invalid operation")); }
+	virtual bool pollData(RawChannelHandle* /*handle*/) { throw(tr("Invalid operation")); }
 	virtual QList<Location> cthGetFTPListing(RawChannelHandle* /*handle*/, const Location& /*parent*/, bool /*includeHidden*/) { throw (tr("Invalid operation")); }
 	virtual QByteArray cthReadFTPFile(RawChannelHandle* /*handle*/, const Location& /*location*/, ISshConnectionCallback* /*callback*/) { throw (tr("Invalid operation")); }
 	virtual void cthWriteFTPFile(RawChannelHandle* /*handle*/, const Location& /*location*/, const QByteArray& /*content*/) { throw(tr("Invalid operation")); }

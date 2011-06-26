@@ -114,6 +114,8 @@ void RemoteChannel::threadRun()
 					QMutex mutex;
 					mutex.lock();
 					mRequestQueueWaiter.wait(&mutex, 1000);
+
+					threadCheckForNotifications();
 				}
 
 				//	Check the request queue for messages

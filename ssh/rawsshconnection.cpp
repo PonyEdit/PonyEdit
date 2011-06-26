@@ -337,7 +337,6 @@ QByteArray RawSshConnection::readUntil(Channel* channel, const char* marker)
 		}
 
 		LOCK_MUTEX(mAccessMutex);
-		qDebug() << "libssh2_channel_read in thread " << QThread::currentThread() << ", rawsshconnection = " << (void*)this;
 		int rc = libssh2_channel_read(channel->handle, channel->tmpBuffer, SSH_BUFFER_SIZE);
 		UNLOCK_MUTEX(mAccessMutex);
 
@@ -604,7 +603,10 @@ void RawSshConnection::writeFTPFile(Channel* channel, const Location& location, 
 	libssh2_sftp_close(handle);
 }
 
-
+bool RawSshConnection::pollData(Channel* channel)
+{
+	return libssh2_poll_channel_read(channel->handle, 0);
+}
 
 
 
