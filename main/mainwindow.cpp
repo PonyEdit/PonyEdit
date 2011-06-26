@@ -400,7 +400,6 @@ void MainWindow::createFileMenu()
 
 	fileMenu->addAction(tr("&New File"), this, SLOT(newFile()), QKeySequence::New);
 	fileMenu->addAction(tr("&Open..."), this, SLOT(openFile()), QKeySequence::Open);
-	fileMenu->addAction(tr("Reload File"), this, SLOT(reloadFile()));
 
 	mRecentFilesMenu = new QMenu(tr("&Recent Files"), fileMenu);
 	fileMenu->addMenu(mRecentFilesMenu);
@@ -895,20 +894,6 @@ void MainWindow::toggleFullScreen()
 		else
 			mWasMaximized = false;
 		showFullScreen();
-	}
-}
-
-void MainWindow::reloadFile()
-{
-	Editor* editor = this->getCurrentEditor();
-	if (editor)
-	{
-		BaseFile* file = editor->getFile();
-		Location location = file->getLocation();
-		QList<BaseFile*> files;
-		files.append(file);
-		if (gOpenFileManager.closeFiles(files))
-			openSingleFile(location);
 	}
 }
 
