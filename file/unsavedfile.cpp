@@ -24,3 +24,7 @@ void UnsavedFile::close()
 	setOpenStatus(Closing);
 	closeCompleted();
 }
+
+void UnsavedFile::refresh()
+{
+}

@@ -13,7 +13,7 @@ FileList::FileList(QWidget *parent) :
 {
 	setWindowTitle("Open Files");
 
-	mTreeView = new OpenFileTreeView(this, OpenFileTreeView::CloseButtons);
+	mTreeView = new OpenFileTreeView(this, OpenFileTreeView::CloseButtons | OpenFileTreeView::RefreshButtons);
 	mTreeView->setMinimumWidth(150);
 	setWidget(mTreeView);
 

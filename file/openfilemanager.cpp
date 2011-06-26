@@ -91,3 +91,34 @@ QList<BaseFile*> OpenFileManager::getUnsavedFiles(const QList<BaseFile*>& files)
 			result.append(file);
 	return result;
 }
+
+bool OpenFileManager::refreshFiles(const QList<BaseFile*>& files, bool force)
+{
+	if (!force) {
+		QList<BaseFile*> unsavedFiles = getUnsavedFiles(files);
+		if (unsavedFiles.length() > 0)
+		{
+			UnsavedChangesDialog dialog(unsavedFiles);
+			if (dialog.exec() != QDialog::Accepted)
+				return false;
+		}
+
+	}
+
+	foreach (BaseFile* file, files)
+	{
+		if (mOpenFiles.contains(file))
+		{
+			try
+			{
+				file->refresh();
+			}
+			catch(QString &e)
+			{
+				qDebug() << e;
+			}
+		}
+	}
+
+	return true;
+}

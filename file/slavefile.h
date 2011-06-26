@@ -15,6 +15,7 @@ public:
 	void open();
 	void save();
 	void close();
+	void refresh();
 	void fileOpened(int bufferId, const QString& content, const QString& checksum, bool readOnly);
 
 	SlaveFile(const Location& location);	//	Do not call; use File::getFile instead

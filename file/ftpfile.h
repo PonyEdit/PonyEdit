@@ -18,6 +18,7 @@ public:
 	void open();
 	void save();
 	void close();
+	void refresh();
 	bool canClose();
 
 private slots:

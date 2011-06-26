@@ -58,4 +58,7 @@ void FtpFile::close()
 	BaseFile::closeCompleted();
 }
 
-
+void FtpFile::refresh()
+{
+	open();
+}

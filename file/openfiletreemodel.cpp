@@ -196,7 +196,14 @@ int OpenFileTreeModel::rowCount(const QModelIndex& parent) const
 
 int OpenFileTreeModel::columnCount(const QModelIndex& /*parent*/) const
 {
-	return (mOptionFlags & OpenFileTreeView::CloseButtons ? 2 : 1);
+	int cols = 1;
+
+	if(mOptionFlags & OpenFileTreeView::CloseButtons)
+		cols++;
+	if(mOptionFlags & OpenFileTreeView::RefreshButtons)
+		cols++;
+
+	return cols;
 }
 
 QVariant OpenFileTreeModel::data(const QModelIndex &index, int role) const

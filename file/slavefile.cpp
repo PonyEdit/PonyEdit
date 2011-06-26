@@ -227,6 +227,26 @@ void SlaveFile::close()
 	}
 }
 
+void SlaveFile::refresh()
+{
+	fileOpenProgressed(0);
+
+	setOpenStatus(BaseFile::Loading);
+	getChannel();
+	connectionStateChanged();
+
+	try
+	{
+		mChannel->sendRequest(new SlaveRequest_closeFile(this, mBufferId, false));
+	}
+	catch(QString &e)
+	{
+		qDebug() << e;
+	}
+
+	mChannel->sendRequest(new SlaveRequest_open(this, SlaveRequest_open::Content));
+}
+
 void SlaveFile::sudo()
 {
 	//	Close the old buffer. Don't bother checking if it succeeds; the only possible

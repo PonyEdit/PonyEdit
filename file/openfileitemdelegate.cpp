@@ -25,12 +25,19 @@ void OpenFileItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 	//	Always paint the default background
 	QStyledItemDelegate::paint(painter, option, index);
 
-	if (index.column() == 1)
+	if (mParent->closeColumn() && index.column() == mParent->closeColumn())
 	{
-		//	Column 1 contains close buttons, but they're only visible on mouse-over.
+		//	Show the close icon, but it's only visible on mouse-over.
 		QStyledItemDelegate::paint(painter, option, index);
 		if (option.state & QStyle::State_MouseOver)
 			painter->drawPixmap(option.rect.left(), option.rect.top(), 16, 16, QPixmap(":/icons/cross.png"));
+	}
+	else if (mParent->refreshColumn() && index.column() == mParent->refreshColumn())
+	{
+		//	Show the refresh icon, but it's only visible on mouse-over.
+		QStyledItemDelegate::paint(painter, option, index);
+		if (option.state & QStyle::State_MouseOver)
+			painter->drawPixmap(option.rect.left(), option.rect.top(), 16, 16, QPixmap(":/icons/resync.png"));
 	}
 	else
 	{

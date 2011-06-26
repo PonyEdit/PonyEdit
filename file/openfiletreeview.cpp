@@ -8,6 +8,10 @@
 OpenFileTreeView::OpenFileTreeView(QWidget *parent, int optionFlags, const QList<BaseFile*>* files) :
     QTreeView(parent)
 {
+	mExtraColumns = 0;
+	mRefreshColumn = 0;
+	mCloseColumn = 0;
+
 	//	Create & attach the model; the model supplies the data in tree layout to display
 	mModel = new OpenFileTreeModel(this, optionFlags, files);
 	setModel(mModel);
@@ -23,16 +27,29 @@ OpenFileTreeView::OpenFileTreeView(QWidget *parent, int optionFlags, const QList
 	header()->setResizeMode(0, QHeaderView::Stretch);
 	setSelectionMode(optionFlags & MultiSelect ? QAbstractItemView::ExtendedSelection : QAbstractItemView::SingleSelection);
 
+	if (optionFlags & RefreshButtons)
+	{
+		mRefreshColumn = ++mExtraColumns;
+
+		header()->setResizeMode(mRefreshColumn, QHeaderView::Fixed);
+		header()->resizeSection(mRefreshColumn, 16);
+	}
+
 	if (optionFlags & CloseButtons)
 	{
-		header()->setStretchLastSection(false);
-		header()->setResizeMode(1, QHeaderView::Fixed);
-		header()->resizeSection(1, 16);
+		mCloseColumn = ++mExtraColumns;
 
+		header()->setResizeMode(mCloseColumn, QHeaderView::Fixed);
+		header()->resizeSection(mCloseColumn, 16);
+	}
+
+	if(mExtraColumns) {
+		header()->setStretchLastSection(false);
 		connect(this, SIGNAL(clicked(QModelIndex)), this, SLOT(itemClicked(QModelIndex)));
 	}
-	else
+	else {
 		header()->setStretchLastSection(true);
+	}
 }
 
 void OpenFileTreeView::dataChanged(const QModelIndex& /*topLeft*/, const QModelIndex& /*bottomRight*/)
@@ -60,7 +77,14 @@ void OpenFileTreeView::itemClicked(QModelIndex index)
 {
 	if (!index.isValid()) return;
 
-	if (index.column() == 1)
+	if (mRefreshColumn && index.column() == mRefreshColumn)
+	{
+		//	Refresh button clicked.
+		QList<BaseFile*> refreshingFiles = mModel->getIndexAndChildFiles(index);
+		gOpenFileManager.refreshFiles(refreshingFiles);
+	}
+
+	if (mCloseColumn && index.column() == mCloseColumn)
 	{
 		//	Close button clicked.
 		QList<BaseFile*> closingFiles = mModel->getIndexAndChildFiles(index);

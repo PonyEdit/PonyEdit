@@ -58,3 +58,8 @@ void LocalFile::close()
 	setOpenStatus(Closing);
 	BaseFile::closeCompleted();
 }
+
+void LocalFile::refresh()
+{
+	open();
+}

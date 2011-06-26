@@ -26,6 +26,8 @@ public:
 	bool closeFiles(const QList<BaseFile*>& files, bool force = false);   // Closes the list of files. If force unspecified or false, it confirms closure of unsaved files.
 	bool closeAllFiles() { return closeFiles(mOpenFiles); }
 
+	bool refreshFiles(const QList<BaseFile*>& files, bool force = false);
+
 	int newFileNumber() { return mNewFiles++; }
 
 signals:
