@@ -26,6 +26,7 @@ OpenFileTreeView::OpenFileTreeView(QWidget *parent, int optionFlags, const QList
 	viewport()->setAttribute(Qt::WA_Hover);
 	header()->setResizeMode(0, QHeaderView::Stretch);
 	setSelectionMode(optionFlags & MultiSelect ? QAbstractItemView::ExtendedSelection : QAbstractItemView::SingleSelection);
+	header()->setStretchLastSection(false);
 
 	if (optionFlags & RefreshButtons)
 	{
@@ -44,7 +45,6 @@ OpenFileTreeView::OpenFileTreeView(QWidget *parent, int optionFlags, const QList
 	}
 
 	if(mExtraColumns) {
-		header()->setStretchLastSection(false);
 		connect(this, SIGNAL(clicked(QModelIndex)), this, SLOT(itemClicked(QModelIndex)));
 	}
 	else {
