@@ -174,15 +174,15 @@ Source: C:\Users\Thingalon\Documents\Projects\PonyEdit\PonyEdit\deps\lib-win32\l
 Source: C:\Users\Thingalon\Documents\Projects\PonyEdit\PonyEdit\deps\lib-win32\libssh2-1.dll; DestDir: {app}
 Source: C:\Users\Thingalon\Documents\Projects\PonyEdit\PonyEdit\deps\lib-win32\ssleay32.dll; DestDir: {app}
 Source: C:\Users\Thingalon\Documents\Projects\PonyEdit\PonyEdit\deps\lib-win32\libz-1.dll; DestDir: {app}
-Source: C:\Qt\2010.05\qt\bin\QtCore4.dll; DestDir: {app}
-Source: C:\Qt\2010.05\qt\bin\QtGui4.dll; DestDir: {app}
-Source: C:\Qt\2010.05\qt\bin\QtNetwork4.dll; DestDir: {app}
-Source: C:\Qt\2010.05\qt\bin\QtScript4.dll; DestDir: {app}
-Source: C:\Qt\2010.05\qt\bin\QtXml4.dll; DestDir: {app}
-Source: C:\Qt\2010.05\qt\bin\QtWebKit4.dll; DestDir: {app}
-Source: C:\Qt\2010.05\qt\bin\phonon4.dll; DestDir: {app}
-Source: C:\Qt\2010.05\qt\bin\libgcc_s_dw2-1.dll; DestDir: {app}
-Source: C:\Qt\2010.05\qt\bin\mingwm10.dll; DestDir: {app}
+Source: C:\QtSDK\Desktop\Qt\4.7.3\mingw\bin\QtCore4.dll; DestDir: {app}
+Source: C:\QtSDK\Desktop\Qt\4.7.3\mingw\bin\QtGui4.dll; DestDir: {app}
+Source: C:\QtSDK\Desktop\Qt\4.7.3\mingw\bin\QtNetwork4.dll; DestDir: {app}
+Source: C:\QtSDK\Desktop\Qt\4.7.3\mingw\bin\QtScript4.dll; DestDir: {app}
+Source: C:\QtSDK\Desktop\Qt\4.7.3\mingw\bin\QtXml4.dll; DestDir: {app}
+Source: C:\QtSDK\Desktop\Qt\4.7.3\mingw\bin\QtWebKit4.dll; DestDir: {app}
+Source: C:\QtSDK\Desktop\Qt\4.7.3\mingw\bin\phonon4.dll; DestDir: {app}
+Source: C:\QtSDK\Desktop\Qt\4.7.3\mingw\bin\libgcc_s_dw2-1.dll; DestDir: {app}
+Source: C:\QtSDK\Desktop\Qt\4.7.3\mingw\bin\mingwm10.dll; DestDir: {app}
 [Setup]
 AppCopyright=Copyright (c) 2010, 2011 Pentalon
 AppName=PonyEdit
