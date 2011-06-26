@@ -10,8 +10,6 @@ use Data::Dumper;
 
 our %buffers = ();
 our $nextBufferId = 1;
-our $lastFileScan = 0;
-our $fileScanInterval = 3;
 
 # Open and unbuffer the log file
 open( LOGFILE, '>>.ponyedit/error.log' );
@@ -42,9 +40,6 @@ use constant FILE_CANWRITE => 4;
 use constant ERR_OK => 0;
 use constant ERR_UNSPECIFIED => 1;
 use constant ERR_PERMISSION => 2;
-use constant NOTIFICATION => 255;
-
-use constant NOTIF_FILECHANGED => 0;
 
 #
 #	Buffer class
@@ -88,7 +83,6 @@ use constant NOTIF_FILECHANGED => 0;
 		open( BUFFER_FILE, '>' . $self->{NAME} ) or die "Failed to open $self->{NAME} for writing!\n";
 		print BUFFER_FILE encode( 'UTF-8', $self->{DATA} );
 		close( BUFFER_FILE );
-		$self->scanForChanges;
 	}
 
 	sub checksum
@@ -109,17 +103,6 @@ use constant NOTIF_FILECHANGED => 0;
 		$self->{DATA} = undef;
 		$self->{NAME} = undef;
 		$self->{CLOSED} = 1;
-	}
-	
-	sub scanForChanges
-	{
-		my $self = shift;
-		my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,
-			$atime,$mtime,$ctime,$blksize,$blocks) = stat( $self->{NAME} );
-		
-		my $different = (defined $self->{MTIME} && $self->{MTIME} != $mtime);
-		$self->{MTIME} = $mtime;
-		return $different;
 	}
 }
 
@@ -334,7 +317,7 @@ sub msg_new
 }
 
 #	new directory
-sub msg_newdir
+sub msg_new_dir
 {
 	my( $buff, $params, $result ) = @_;
 
@@ -361,42 +344,8 @@ our %messageDefs =
 	6 => \&msg_pushcontent,
 	7 => \&msg_close,
 	8 => \&msg_new,
-	9 => \&msg_newdir
+	9 => \&msg_new_dir
 );
-
-sub checkTime
-{
-	my $now = time;
-
-	#	Scan for file changes
-	if ($now >= $lastFileScan + $fileScanInterval)
-	{
-		$lastFileScan = $now;
-		my @changes;
-		foreach my $id (keys %buffers)
-		{
-			push @changes, $id if ($buffers{$id}->scanForChanges());
-		}
-		
-		if (scalar(@changes))
-		{
-			errlog("Files changed: " . scalar(@changes));
-
-			my $notification = DataBlock->new();
-			$notification->write('CC', NOTIFICATION, NOTIF_FILECHANGED);
-			foreach my $id (@changes)
-			{
-				$notification->write('L', $id);
-			}
-
-			my $notif_base64 = encode_base64( $notification->getData() );
-			$notif_base64 =~ s/\r|\n//g;
-			print "$notif_base64\n";
-
-			errlog("Just printed: $notif_base64");
-		}
-	}
-}
 
 #
 #	Main Guts
@@ -406,20 +355,14 @@ sub mainLoop
 {
 	while(1)
 	{
-		local $SIG{ALRM} = sub { checkTime(); alarm 1; };	
-	
-		alarm 1;
 		my $line;
 		while ($line !~ /%$/)
 		{
 			$line .= <STDIN>;
-			chomp $line;
+			chomp($line);
 		}
-		chop $line;
-		alarm 0;
-		
-		checkTime();
-		
+		chop($line);
+
 		eval
 		{
 			$line = decode_base64( $line );
@@ -506,4 +449,3 @@ print '~=' . getcwd() . "%";
 mainLoop();
 
 1;
-

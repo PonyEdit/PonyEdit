@@ -50,7 +50,6 @@ protected:
 	void startThread();	//	Called in subclass constructor
 	virtual void threadConnect() = 0;
 	virtual void threadSendMessages(QList<RemoteRequest*>& messages) = 0;
-	virtual void threadCheckForNotifications() {}
 	void setStatus(Status newStatus);
 	void setErrorStatus(const QString& error);
 	bool isAcceptingRequests();

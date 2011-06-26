@@ -430,11 +430,6 @@ QByteArray SshConnection::readLine(RawChannelHandle* handle)
 	return mRawConnection->readLine(static_cast<RawSshChannelHandle*>(handle)->Channel);
 }
 
-bool SshConnection::pollData(RawChannelHandle* handle)
-{
-	return mRawConnection->pollData(static_cast<RawSshChannelHandle*>(handle)->Channel);
-}
-
 QList<Location> SshConnection::cthGetFTPListing(RawChannelHandle* handle, const Location& parent, bool includeHidden)
 {
 	return mRawConnection->getFTPListing(static_cast<RawSshChannelHandle*>(handle)->Channel, parent, includeHidden);

@@ -31,7 +31,6 @@ public:
 
 	virtual void sendLine(RawChannelHandle* handle, const QByteArray& data);
 	virtual QByteArray readLine(RawChannelHandle* handle);
-	virtual bool pollData(RawChannelHandle* handle);
 	virtual QList<Location> cthGetFTPListing(RawChannelHandle* handle, const Location& parent, bool includeHidden);
 	virtual QByteArray cthReadFTPFile(RawChannelHandle* handle, const Location& location, ISshConnectionCallback* callback);
 	virtual void cthWriteFTPFile(RawChannelHandle* handle, const Location& location, const QByteArray& content);
