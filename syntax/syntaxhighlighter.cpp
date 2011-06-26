@@ -43,11 +43,17 @@ void SyntaxHighlighter::highlightBlock(const QString &fullText)
 	if (previousBlockData)
 		contextStack = previousBlockData->mStack;
 
+	//	Track the shortest the stack has been on this line; used if stack is truncated.
+	int shortestStackWatermark = contextStack.size();
+
 	int position = 0;
 	bool firstIteration = true;
 	const SyntaxDefinition::ContextLink* lineEndOverrideContextLink = NULL;
 	while (position < text.length())
 	{
+		if (contextStack.size() < shortestStackWatermark)
+			shortestStackWatermark = contextStack.size();
+
 		//	If there is no current context, create a default one
 		if (contextStack.isEmpty())
 			contextStack.push(mSyntaxDefinition->getDefaultContext());
@@ -133,8 +139,9 @@ void SyntaxHighlighter::highlightBlock(const QString &fullText)
 
 	if (isTruncated)
 	{
-		//	If this line is truncated, drop all context information
-		contextStack.clear();
+		//	Grind back the context stack to remove all contexts added this line.
+		while (contextStack.size() > shortestStackWatermark)
+			contextStack.pop();
 	}
 	else if (contextStack.size())
 	{
