@@ -335,32 +335,36 @@ int SyntaxRule::match(const QString &string, int position)
 		break;
 
 	case HlCOct:
-		//	Octals start with 0, but have no x like hex. eg; 01562 is octal.
-		if (string.at(position) == '0')
+		if (position == 0 || mDefinition->isDeliminator(string.at(position - 1)))
 		{
-			int lookahead = 1;
-			const QChar* s = string.constData() + position + 1;
-			while (position + lookahead < string.length() && (*s >= '0') && (*s <= '7'))
-				s++,lookahead++;
+			//	Octals start with 0, but have no x like hex. eg; 01562 is octal.
+			if (string.at(position) == '0')
+			{
+				int lookahead = 1;
+				const QChar* s = string.constData() + position + 1;
+				while (position + lookahead < string.length() && (*s >= '0') && (*s <= '7'))
+					s++,lookahead++;
 
-			if (lookahead > 1)
-				match = lookahead;
+				if (lookahead > 1)
+					match = lookahead;
+			}
 		}
 		break;
 
 	case Int:
-	{
-		//	Ints are any numbers 0-9
-		const QChar* s = string.constData() + position;
+		if (position == 0 || mDefinition->isDeliminator(string.at(position - 1)))
+		{
+			//	Ints are any numbers 0-9
+			const QChar* s = string.constData() + position;
 
-		int extra = 0;
-		if (*s == '-')
-			extra++,s++;
-		while (position + match < string.length() && (s->isDigit()))
-			s++,match++;
-		if (match) match += extra;
+			int extra = 0;
+			if (*s == '-')
+				extra++,s++;
+			while (position + match < string.length() && (s->isDigit()))
+				s++,match++;
+			if (match) match += extra;
+		}
 		break;
-	}
 
 	case DetectIdentifier:
 	{
@@ -377,46 +381,48 @@ int SyntaxRule::match(const QString &string, int position)
 	}
 
 	case Float:
-	{
-		//	[-][0-9]+.[0-9]#+e[0-9]+
-		const QChar* s = string.constData() + position;
-		int extra = 0;
-		bool seenDecimal = false;
-		if (*s == '-')
-			extra++,s++;
-		if (!s->isNull() && s->isDigit())
+		if (position == 0 || mDefinition->isDeliminator(string.at(position - 1)))
 		{
-			match++,s++;
-			while (!s->isNull() && (s->isDigit() || *s == '.' || *s == 'e' || *s == 'E'))
+			//	[-][0-9]+.[0-9]#+e[0-9]+
+			const QChar* s = string.constData() + position;
+			int extra = 0;
+			bool seenDecimal = false;
+			if (*s == '-')
+				extra++,s++;
+			if (!s->isNull() && s->isDigit())
 			{
-				if (*s == '.') seenDecimal = true;
 				match++,s++;
+				while (!s->isNull() && (s->isDigit() || *s == '.' || *s == 'e' || *s == 'E'))
+				{
+					if (*s == '.') seenDecimal = true;
+					match++,s++;
+				}
+				match += extra;
 			}
-			match += extra;
+			if (!seenDecimal) match = false;
 		}
-		if (!seenDecimal) match = false;
 		break;
-	}
 
 	case HlCHex:
-	{
-		//	[-]0x[0-9]+
-		const QChar* s = string.constData() + position;
-		int extra = 0;
-		if (*s == '-')
-			extra++,s++;
-		if (*(s++) == '0')
+		if (position == 0 || mDefinition->isDeliminator(string.at(position - 1)))
 		{
-			if (*(s++) == 'x')
+			//	[-]0x[0-9]+
+			const QChar* s = string.constData() + position;
+			int extra = 0;
+			if (*s == '-')
+				extra++,s++;
+			if (*(s++) == '0')
 			{
-				while (!s->isNull() && (s->isDigit() || (*s >= 'A' && *s <= 'F') || (*s >= 'a' && *s <= 'f')))
-					match++,s++;
-				if (match > 0)
-					match += 2 + extra;
+				if (*(s++) == 'x')
+				{
+					while (!s->isNull() && (s->isDigit() || (*s >= 'A' && *s <= 'F') || (*s >= 'a' && *s <= 'f')))
+						match++,s++;
+					if (match > 0)
+						match += 2 + extra;
+				}
 			}
 		}
 		break;
-	}
 
 	case HlCStringChar:
 		match = detectStringChar(string, position);
