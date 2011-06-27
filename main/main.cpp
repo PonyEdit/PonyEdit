@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QMetaType>
 #include <QFont>
+#include <QNetworkProxyFactory>
 
 #include "website/updatemanager.h"
 #include "website/sitemanager.h"
@@ -52,6 +53,8 @@ int main(int argc, char *argv[])
 				gMainWindow->openSingleFile(Location(name));
 			}
 		}
+
+		QNetworkProxyFactory::setUseSystemConfiguration(true);
 
 		updateManager = new UpdateManager();
 
