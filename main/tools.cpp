@@ -305,22 +305,3 @@ QStringList Tools::splitQuotedList(const QString& quotedList, QChar separator)
 
 	return result;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -14,6 +14,7 @@
 
 class Editor;
 class FileList;
+class TabbedFileList;
 class BaseFile;
 class SearchBar;
 class UnsavedChangesDialog;
@@ -83,6 +84,9 @@ public slots:
 
 	void syntaxMenuOptionClicked();
 
+	void switchToQuickList();
+	void switchtoTabbedList();
+
 	void currentEditorChanged();
 	void updateSyntaxSelection();
 
@@ -119,12 +123,16 @@ private:
 	QTimer *mTrialTimer;
 
 	FileList* mFileList;
+	TabbedFileList* mTabbedFileList;
 	WindowManager* mWindowManager;
 	QStatusBar* mStatusBar;
 	QLabel* mStatusLine;
 
 	QList<Location> mRecentFiles;
 	QMenu* mRecentFilesMenu;
+
+	QAction* mQuickListMenuItem;
+	QAction* mTabbedListMenuItem;
 
 	QMap<QString, QAction*> mSyntaxMenuEntries;
 	QAction* mCurrentSyntaxMenuItem;

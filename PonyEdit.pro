@@ -115,7 +115,8 @@ SOURCES += \
     main/regexptester.cpp \
     ssh/ftpchannel.cpp \
     file/ftpfile.cpp \
-    licence/offlineactivationdialog.cpp
+    licence/offlineactivationdialog.cpp \
+    file/tabbedfilelist.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -192,7 +193,8 @@ HEADERS  += \
     ssh/ftpchannel.h \
     ssh/ftprequest.h \
     file/ftpfile.h \
-    licence/offlineactivationdialog.h
+    licence/offlineactivationdialog.h \
+    file/tabbedfilelist.h
 
 OTHER_FILES += \
     slave/slave.pl \

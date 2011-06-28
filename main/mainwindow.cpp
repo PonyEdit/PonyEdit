@@ -22,6 +22,7 @@
 
 #include "file/filedialog.h"
 #include "file/filelist.h"
+#include "file/tabbedfilelist.h"
 #include "editor/editor.h"
 #include "options/options.h"
 #include "options/optionsdialog.h"
@@ -58,7 +59,21 @@ MainWindow::MainWindow(QWidget *parent)
 	mFileList = new FileList();
 	addDockWidget(Qt::LeftDockWidgetArea, mFileList, Qt::Vertical);
 	mFileList->setObjectName("File List");
-	registerContextMenuItem(mFileList);
+
+	mTabbedFileList = new TabbedFileList();
+	addDockWidget(Qt::TopDockWidgetArea, mTabbedFileList, Qt::Horizontal);
+	mTabbedFileList->setObjectName("Tabbed File List");
+
+	if(Options::FileListType == Options::QuickList)
+	{
+		mFileList->setVisible(true);
+		mTabbedFileList->setVisible(false);
+	}
+	else
+	{
+		mFileList->setVisible(false);
+		mTabbedFileList->setVisible(true);
+	}
 
 	mConnectionStatusPane = new ConnectionStatusPane();
 	addDockWidget(Qt::LeftDockWidgetArea, mConnectionStatusPane, Qt::Vertical);
@@ -469,6 +484,19 @@ void MainWindow::createViewMenu()
 	viewMenu->addAction(tr("&Actual Size"), this, SLOT(resetZoom()), QKeySequence(Qt::CTRL + Qt::Key_0));
 	viewMenu->addAction(tr("Zoom &In"), this, SLOT(zoomIn()), QKeySequence::ZoomIn);
 	viewMenu->addAction(tr("Zoom &Out"), this, SLOT(zoomOut()), QKeySequence::ZoomOut);
+
+	viewMenu->addSeparator();
+
+	mQuickListMenuItem = viewMenu->addAction(tr("Quick File List"), this, SLOT(switchToQuickList()));
+	mQuickListMenuItem->setCheckable(true);
+
+	mTabbedListMenuItem = viewMenu->addAction(tr("Tabbed File List"), this, SLOT(switchtoTabbedList()));
+	mTabbedListMenuItem->setCheckable(true);
+
+	if(Options::FileListType == Options::QuickList)
+		mQuickListMenuItem->setChecked(true);
+	else
+		mTabbedListMenuItem->setChecked(true);
 
 	viewMenu->addSeparator();
 
@@ -913,3 +941,24 @@ QMenu* MainWindow::createPopupMenu()
 	return menu;
 }
 
+void MainWindow::switchToQuickList()
+{
+	mFileList->setVisible(true);
+	mQuickListMenuItem->setChecked(true);
+
+	mTabbedFileList->setVisible(false);
+	mTabbedListMenuItem->setChecked(false);
+
+	Options::FileListType = Options::QuickList;
+}
+
+void MainWindow::switchtoTabbedList()
+{
+	mTabbedFileList->setVisible(true);
+	mTabbedListMenuItem->setChecked(true);
+
+	mFileList->setVisible(false);
+	mQuickListMenuItem->setChecked(false);
+
+	Options::FileListType = Options::TabbedList;
+}

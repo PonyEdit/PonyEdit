@@ -12,6 +12,8 @@ FileList::FileList(QWidget *parent) :
     QDockWidget(parent)
 {
 	setWindowTitle("Open Files");
+	QWidget* titleWidget = new QWidget(this);
+	setTitleBarWidget( titleWidget );
 
 	mTreeView = new OpenFileTreeView(this, OpenFileTreeView::CloseButtons | OpenFileTreeView::RefreshButtons);
 	mTreeView->setMinimumWidth(150);

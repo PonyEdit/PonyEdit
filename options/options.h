@@ -23,6 +23,12 @@ public:
 		SetFiles = 3
 	};
 
+	enum FileListTypes
+	{
+		QuickList = 0,
+		TabbedList = 1
+	};
+
 	static void save();
 	static void load();
 
@@ -38,6 +44,8 @@ public:
 	static QList<int> StartupFilesLineNo;
 
 	static bool ShutdownPrompt;
+
+	static FileListTypes FileListType;
 };
 
 #endif // OPTIONS_H

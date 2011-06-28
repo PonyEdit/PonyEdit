@@ -14,6 +14,8 @@ QStringList Options::StartupFiles;
 QList<int> Options::StartupFilesLineNo;
 bool Options::ShutdownPrompt;
 
+Options::FileListTypes Options::FileListType;
+
 void Options::save()
 {
 	QSettings settings;
@@ -27,6 +29,8 @@ void Options::save()
 
 	settings.setValue(ntr("StartupAction"), QVariant(static_cast<int>(StartupAction)));
 	settings.setValue(ntr("ShutdownPrompt"), QVariant(ShutdownPrompt));
+
+	settings.setValue(ntr("FileListType"), QVariant(static_cast<int>(FileListType)));
 
 	settings.beginWriteArray("StartupFiles");
 	int skipped = 0;
@@ -64,6 +68,8 @@ void Options::load()
 
 	StartupAction = static_cast<StartupActions>(settings.value(ntr("StartupAction"), QVariant(static_cast<int>(NoFiles))).toInt());
 	ShutdownPrompt = settings.value(ntr("ShutdownPrompt"), QVariant(true)).toBool();
+
+	FileListType = static_cast<FileListTypes>(settings.value(ntr("FileListType"), QVariant(static_cast<int>(QuickList))).toInt());
 
 	int count = settings.beginReadArray("StartupFiles");
 	for (int ii = 0; ii < count; ii++)
