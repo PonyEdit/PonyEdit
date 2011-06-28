@@ -482,8 +482,18 @@ void MainWindow::createViewMenu()
 	menuBar()->addMenu(viewMenu);
 
 	viewMenu->addAction(tr("&Actual Size"), this, SLOT(resetZoom()), QKeySequence(Qt::CTRL + Qt::Key_0));
-	viewMenu->addAction(tr("Zoom &In"), this, SLOT(zoomIn()), QKeySequence::ZoomIn);
-	viewMenu->addAction(tr("Zoom &Out"), this, SLOT(zoomOut()), QKeySequence::ZoomOut);
+
+	QAction* zoomIn = viewMenu->addAction(tr("Zoom &In"), this, SLOT(zoomIn()));
+	QList<QKeySequence> zoomInShortcuts;
+	zoomInShortcuts.append(QKeySequence::ZoomIn);
+	zoomInShortcuts.append(QKeySequence(Qt::CTRL + Qt::Key_Equal));
+	zoomIn->setShortcuts(zoomInShortcuts);
+
+	QAction* zoomOut = viewMenu->addAction(tr("Zoom &Out"), this, SLOT(zoomOut()));
+	QList<QKeySequence> zoomOutShortcuts;
+	zoomOutShortcuts.append(QKeySequence::ZoomOut);
+	zoomOutShortcuts.append(QKeySequence(Qt::CTRL + Qt::Key_Underscore));
+	zoomOut->setShortcuts(zoomOutShortcuts);
 
 	viewMenu->addSeparator();
 
