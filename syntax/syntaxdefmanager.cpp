@@ -36,7 +36,7 @@ bool SyntaxDefManager::FilePattern::matches(const QString& filename)
 	if (isSimpleExtension)
 		return filename.endsWith(extension);
 	else
-		return filename.contains(regExp);
+		return regExp.exactMatch(filename);
 }
 
 SyntaxDefManager::SyntaxDefManager()
