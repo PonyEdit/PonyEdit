@@ -33,6 +33,7 @@ public:
 
 signals:
 	void currentChanged();
+	void splitChanged();
 
 public slots:
 	void fileClosed(BaseFile* file);
@@ -59,6 +60,7 @@ public slots:
 
 	void splitVertically();
 	void splitHorizontally();
+	inline bool isSplit() { return mRootEditorStack->isSplit(); }
 
 private:
 	int find(Editor* editor, const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true);

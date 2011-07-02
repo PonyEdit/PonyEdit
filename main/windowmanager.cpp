@@ -318,6 +318,7 @@ void WindowManager::splitVertically()
 	EditorStack* stack = mCurrentEditorStack;
 	stack->split(Qt::Horizontal);
 	setCurrentEditorStack(stack->getFirstChild());
+	emit splitChanged();
 }
 
 void WindowManager::splitHorizontally()
@@ -325,6 +326,7 @@ void WindowManager::splitHorizontally()
 	EditorStack* stack = mCurrentEditorStack;
 	mCurrentEditorStack->split(Qt::Vertical);
 	setCurrentEditorStack(stack->getFirstChild());
+	emit splitChanged();
 }
 
 

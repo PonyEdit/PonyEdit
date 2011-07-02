@@ -23,6 +23,7 @@
 #include "file/filedialog.h"
 #include "file/filelist.h"
 #include "file/tabbedfilelist.h"
+#include "file/openfilemanager.h"
 #include "editor/editor.h"
 #include "options/options.h"
 #include "options/optionsdialog.h"
@@ -99,6 +100,9 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(gDispatcher, SIGNAL(selectFile(BaseFile*)), this, SLOT(fileSelected(BaseFile*)));
 	connect(mWindowManager, SIGNAL(currentChanged()), this, SLOT(currentEditorChanged()), Qt::QueuedConnection);
 	connect(gDispatcher, SIGNAL(syntaxChanged(BaseFile*)), this, SLOT(updateSyntaxSelection()));
+	connect(&gOpenFileManager, SIGNAL(fileOpened(BaseFile*)), this, SLOT(openFileListChanged()));
+	connect(&gOpenFileManager, SIGNAL(fileClosed(BaseFile*)), this, SLOT(openFileListChanged()));
+	connect(mWindowManager, SIGNAL(splitChanged()), this, SLOT(viewSplittingChanged()));
 
 	mRecentFiles = Tools::loadRecentFiles();
 	updateRecentFilesMenu();
@@ -115,6 +119,9 @@ MainWindow::MainWindow(QWidget *parent)
 	restoreState();
 
 	QTimer::singleShot(0, this, SLOT(checkLicence()));
+
+	openFileListChanged();
+	viewSplittingChanged();
 }
 
 MainWindow::~MainWindow()
@@ -139,7 +146,7 @@ void MainWindow::createToolbar()
 	QToolBar* toolbar = new QToolBar("File Toolbar");
 	toolbar->addAction(QIcon(":/icons/new.png"), "New", this, SLOT(newFile()));
 	toolbar->addAction(QIcon(":/icons/open.png"), "Open", this, SLOT(openFile()));
-	toolbar->addAction(QIcon(":/icons/save.png"), "Save", this, SLOT(saveFile()));
+	mActionsRequiringFiles.append(toolbar->addAction(QIcon(":/icons/save.png"), "Save", this, SLOT(saveFile())));
 	toolbar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
 	addToolBar(toolbar);
@@ -155,9 +162,9 @@ void MainWindow::createToolbar()
 	//
 
 	toolbar = new QToolBar("View Toolbar");
-	toolbar->addAction(QIcon(":/icons/verticalsplit.png"), "Split View Vertically", mWindowManager, SLOT(splitVertically()));
-	toolbar->addAction(QIcon(":/icons/horizontalsplit.png"), "Split View Horizontally", mWindowManager, SLOT(splitHorizontally()));
-	toolbar->addAction(QIcon(":/icons/removesplit.png"), "Remove Split", mWindowManager, SLOT(removeSplit()));
+	mActionsRequiringFiles.append(toolbar->addAction(QIcon(":/icons/verticalsplit.png"), "Split View Vertically", mWindowManager, SLOT(splitVertically())));
+	mActionsRequiringFiles.append(toolbar->addAction(QIcon(":/icons/horizontalsplit.png"), "Split View Horizontally", mWindowManager, SLOT(splitHorizontally())));
+	mActionsRequiringSplitViews.append(toolbar->addAction(QIcon(":/icons/removesplit.png"), "Remove Split", mWindowManager, SLOT(removeSplit())));
 
 	addToolBar(toolbar);
 	registerContextMenuItem(toolbar);
@@ -434,24 +441,24 @@ void MainWindow::createFileMenu()
 
 	fileMenu->addSeparator();
 
-	fileMenu->addAction(tr("&Save"), this, SLOT(saveFile()), QKeySequence::Save);
+	mActionsRequiringFiles.append(fileMenu->addAction(tr("&Save"), this, SLOT(saveFile()), QKeySequence::Save));
 #ifdef Q_OS_WIN
-	fileMenu->addAction(tr("Save &As..."), this, SLOT(saveFileAs()));
-	fileMenu->addAction(tr("Save A&ll"), this, SLOT(saveAllFiles()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_S));
+	mActionsRequiringFiles.append(fileMenu->addAction(tr("Save &As..."), this, SLOT(saveFileAs())));
+	mActionsRequiringFiles.append(fileMenu->addAction(tr("Save A&ll"), this, SLOT(saveAllFiles()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_S)));
 #else
-	fileMenu->addAction(tr("Save &As..."), this, SLOT(saveFileAs()), QKeySequence::SaveAs);
-	fileMenu->addAction(tr("Save A&ll"), this, SLOT(saveAllFiles()));
+	mActionsRequiringFiles.append(fileMenu->addAction(tr("Save &As..."), this, SLOT(saveFileAs()), QKeySequence::SaveAs));
+	mActionsRequiringFiles.append(fileMenu->addAction(tr("Save A&ll"), this, SLOT(saveAllFiles())));
 #endif
 
 	fileMenu->addSeparator();
 
-	fileMenu->addAction(tr("&Print..."), this, SLOT(print()), QKeySequence::Print);
+	mActionsRequiringFiles.append(fileMenu->addAction(tr("&Print..."), this, SLOT(print()), QKeySequence::Print));
 
 	fileMenu->addSeparator();
 
-	fileMenu->addAction(tr("&Close"), this, SLOT(closeFile()), QKeySequence(Qt::CTRL + Qt::Key_W));
-	fileMenu->addAction(tr("Close All"), this, SLOT(closeAllFiles()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_W));
-	fileMenu->addAction(tr("Close All Except Current"), this, SLOT(closeAllExceptCurrentFile()));
+	mActionsRequiringFiles.append(fileMenu->addAction(tr("&Close"), this, SLOT(closeFile()), QKeySequence(Qt::CTRL + Qt::Key_W)));
+	mActionsRequiringFiles.append(fileMenu->addAction(tr("Close All"), this, SLOT(closeAllFiles()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_W)));
+	mActionsRequiringFiles.append(fileMenu->addAction(tr("Close All Except Current"), this, SLOT(closeAllExceptCurrentFile())));
 
 	fileMenu->addSeparator();
 
@@ -463,29 +470,29 @@ void MainWindow::createEditMenu()
 	QMenu *editMenu = new QMenu(tr("&Edit"), this);
 	menuBar()->addMenu(editMenu);
 
-	editMenu->addAction(tr("&Undo"), this, SLOT(undo()), QKeySequence::Undo);
-	editMenu->addAction(tr("&Redo"), this, SLOT(redo()), QKeySequence::Redo);
+	mActionsRequiringFiles.append(editMenu->addAction(tr("&Undo"), this, SLOT(undo()), QKeySequence::Undo));
+	mActionsRequiringFiles.append(editMenu->addAction(tr("&Redo"), this, SLOT(redo()), QKeySequence::Redo));
 
 	editMenu->addSeparator();
 
-	editMenu->addAction(tr("&Cut"), this, SLOT(cut()), QKeySequence::Cut);
-	editMenu->addAction(tr("C&opy"), this, SLOT(copy()), QKeySequence::Copy);
-	editMenu->addAction(tr("&Paste"), this, SLOT(paste()), QKeySequence::Paste);
+	mActionsRequiringFiles.append(editMenu->addAction(tr("&Cut"), this, SLOT(cut()), QKeySequence::Cut));
+	mActionsRequiringFiles.append(editMenu->addAction(tr("C&opy"), this, SLOT(copy()), QKeySequence::Copy));
+	mActionsRequiringFiles.append(editMenu->addAction(tr("&Paste"), this, SLOT(paste()), QKeySequence::Paste));
 
 	editMenu->addSeparator();
 
-	editMenu->addAction(tr("Select &All"), this, SLOT(selectAll()), QKeySequence::SelectAll);
+	mActionsRequiringFiles.append(editMenu->addAction(tr("Select &All"), this, SLOT(selectAll()), QKeySequence::SelectAll));
 
 	editMenu->addSeparator();
 
-	editMenu->addAction(tr("&Find/Replace"), mWindowManager, SLOT(showSearchBar()), QKeySequence::Find);
-	editMenu->addAction("Find &Next", mWindowManager, SLOT(findNext()), QKeySequence::FindNext);
-	editMenu->addAction("Find P&revious", mWindowManager, SLOT(findPrevious()), QKeySequence::FindPrevious);
+	mActionsRequiringFiles.append(editMenu->addAction(tr("&Find/Replace"), mWindowManager, SLOT(showSearchBar()), QKeySequence::Find));
+	mActionsRequiringFiles.append(editMenu->addAction("Find &Next", mWindowManager, SLOT(findNext()), QKeySequence::FindNext));
+	mActionsRequiringFiles.append(editMenu->addAction("Find P&revious", mWindowManager, SLOT(findPrevious()), QKeySequence::FindPrevious));
 	editMenu->addAction(tr("Advanced F&ind/Replace..."), this, SLOT(showAdvancedSearch()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_F));
 #ifdef Q_OS_MAC
-	editMenu->addAction(tr("&Go To Line..."), this, SLOT(showGotoLine()), QKeySequence(Qt::CTRL + Qt::Key_L));
+	mActionsRequiringFiles.append(editMenu->addAction(tr("&Go To Line..."), this, SLOT(showGotoLine()), QKeySequence(Qt::CTRL + Qt::Key_L)));
 #else
-	editMenu->addAction(tr("&Go To Line..."), this, SLOT(showGotoLine()), QKeySequence(Qt::CTRL + Qt::Key_G));
+	mActionsRequiringFiles.append(editMenu->addAction(tr("&Go To Line..."), this, SLOT(showGotoLine()), QKeySequence(Qt::CTRL + Qt::Key_G)));
 #endif
 }
 
@@ -494,15 +501,17 @@ void MainWindow::createViewMenu()
 	QMenu* viewMenu = new QMenu(tr("&View"), this);
 	menuBar()->addMenu(viewMenu);
 
-	viewMenu->addAction(tr("&Actual Size"), this, SLOT(resetZoom()), QKeySequence(Qt::CTRL + Qt::Key_0));
+	mActionsRequiringFiles.append(viewMenu->addAction(tr("&Actual Size"), this, SLOT(resetZoom()), QKeySequence(Qt::CTRL + Qt::Key_0)));
 
 	QAction* zoomIn = viewMenu->addAction(tr("Zoom &In"), this, SLOT(zoomIn()));
+	mActionsRequiringFiles.append(zoomIn);
 	QList<QKeySequence> zoomInShortcuts;
 	zoomInShortcuts.append(QKeySequence::ZoomIn);
 	zoomInShortcuts.append(QKeySequence(Qt::CTRL + Qt::Key_Equal));
 	zoomIn->setShortcuts(zoomInShortcuts);
 
 	QAction* zoomOut = viewMenu->addAction(tr("Zoom &Out"), this, SLOT(zoomOut()));
+	mActionsRequiringFiles.append(zoomOut);
 	QList<QKeySequence> zoomOutShortcuts;
 	zoomOutShortcuts.append(QKeySequence::ZoomOut);
 	zoomOutShortcuts.append(QKeySequence(Qt::CTRL + Qt::Key_Underscore));
@@ -573,11 +582,11 @@ void MainWindow::createWindowMenu()
 	menuBar()->addMenu(windowMenu);
 
 #ifdef Q_OS_MAC
-	windowMenu->addAction(tr("&Previous Window"), mWindowManager, SLOT(previousWindow()), QKeySequence::PreviousChild);
+	mActionsRequiringFiles.append(windowMenu->addAction(tr("&Previous Window"), mWindowManager, SLOT(previousWindow()), QKeySequence::PreviousChild));
 #else
-	windowMenu->addAction(tr("&Previous Window"), mWindowManager, SLOT(previousWindow()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Tab));
+	mActionsRequiringFiles.append(windowMenu->addAction(tr("&Previous Window"), mWindowManager, SLOT(previousWindow()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Tab)));
 #endif
-	windowMenu->addAction(tr("&Next Window"), mWindowManager, SLOT(nextWindow()), QKeySequence::NextChild);
+	mActionsRequiringFiles.append(windowMenu->addAction(tr("&Next Window"), mWindowManager, SLOT(nextWindow()), QKeySequence::NextChild));
 }
 
 void MainWindow::createHelpMenu()
@@ -985,3 +994,25 @@ void MainWindow::switchtoTabbedList()
 
 	Options::FileListType = Options::TabbedList;
 }
+
+void MainWindow::openFileListChanged()
+{
+	//	Enable / disable all actions that are dependant on open files
+	bool filesOpen = (gOpenFileManager.getFileCount() > 0);
+	foreach (QAction* action, mActionsRequiringFiles)
+		action->setEnabled(filesOpen);
+}
+
+void MainWindow::viewSplittingChanged()
+{
+	//	Enable / disable all actions that are dependant on split views
+	bool viewSplit = mWindowManager->isSplit();
+	foreach (QAction* action, mActionsRequiringSplitViews)
+		action->setEnabled(viewSplit);
+}
+
+
+
+
+
+

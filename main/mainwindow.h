@@ -92,6 +92,9 @@ public slots:
 
 	Editor* getCurrentEditor();
 
+	void openFileListChanged();
+	void viewSplittingChanged();
+
 	void registerContextMenuItem(QDockWidget* widget) { mMenuControlledDockWidgets.append(widget); }
 	void registerContextMenuItem(QToolBar* toolbar) { mMenuControlledToolBar.append(toolbar); }
 
@@ -134,7 +137,8 @@ private:
 	QAction* mQuickListMenuItem;
 	QAction* mTabbedListMenuItem;
 
-	QList<QAction*> mFileDependantActions;
+	QList<QAction*> mActionsRequiringFiles;
+	QList<QAction*> mActionsRequiringSplitViews;
 
 	QMap<QString, QAction*> mSyntaxMenuEntries;
 	QAction* mCurrentSyntaxMenuItem;

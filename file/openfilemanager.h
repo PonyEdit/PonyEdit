@@ -30,6 +30,8 @@ public:
 
 	int newFileNumber() { return mNewFiles++; }
 
+	inline int getFileCount() const { return mOpenFiles.count(); }
+
 signals:
 	void fileOpened(BaseFile* file);   // Emitted every time a file is opened
 	void fileClosed(BaseFile* file);   // Emitted as each file is closed; immediately before object deletion
