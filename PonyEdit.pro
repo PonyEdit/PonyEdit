@@ -116,7 +116,8 @@ SOURCES += \
     ssh/ftpchannel.cpp \
     file/ftpfile.cpp \
     licence/offlineactivationdialog.cpp \
-    file/tabbedfilelist.cpp
+    file/tabbedfilelist.cpp \
+    main/editorstack.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -194,7 +195,8 @@ HEADERS  += \
     ssh/ftprequest.h \
     file/ftpfile.h \
     licence/offlineactivationdialog.h \
-    file/tabbedfilelist.h
+    file/tabbedfilelist.h \
+    main/editorstack.h
 
 OTHER_FILES += \
     slave/slave.pl \

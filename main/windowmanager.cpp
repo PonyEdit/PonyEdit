@@ -1,9 +1,11 @@
 #include <QDockWidget>
 #include <QtAlgorithms>
+#include <QDebug>
 
 #include "windowmanager.h"
 #include "file/openfilemanager.h"
 #include "globaldispatcher.h"
+#include "editorstack.h"
 
 bool editorSortLessThan(const Editor* e1, const Editor* e2)
 {
@@ -20,12 +22,14 @@ WindowManager::WindowManager(QWidget *parent) :
     QWidget(parent)
 {
 	mParent = (MainWindow*)parent;
+	mCurrentEditorStack = NULL;
 
-	mCurrentEditor = NULL;
-
+	//	Create a root editor stack
 	mLayout = new QVBoxLayout(this);
-	mLayout->setSpacing(0);
 	mLayout->setMargin(0);
+	mRootEditorStack = new EditorStack(this, this);
+	mLayout->addWidget(mRootEditorStack);
+	setCurrentEditorStack(mRootEditorStack);
 
 	createSearchBar();
 	createRegExpTester();
@@ -44,80 +48,29 @@ WindowManager::~WindowManager()
 void WindowManager::displayFile(BaseFile *file)
 {
 	Location loc = file->getLocation();
-
-	Location existingLoc;
-
-	if(mCurrentEditor)
-	{
-		existingLoc = mCurrentEditor->getLocation();
-
-		if(loc == existingLoc)
-			return;
-	}
-
-	for(int ii = 0; ii < mEditors.length(); ii++)
-	{
-		existingLoc = mEditors[ii]->getLocation();
-		if(loc == existingLoc)
-		{
-			mEditors[ii]->show();
-			mEditors[ii]->setFocus();
-
-			if(mCurrentEditor)
-				mCurrentEditor->hide();
-
-			mCurrentEditor = mEditors[ii];
-
-			gDispatcher->emitSelectFile(file);
-			emit currentChanged();
-
-			return;
-		}
-	}
-
-	Editor *newEditor = new Editor(file);
-	mEditors.append(newEditor);
-
-	qSort(mEditors.begin(), mEditors.end(), editorSortLessThan);
-
-	mLayout->addWidget(newEditor);
-
-	newEditor->show();
-	newEditor->setFocus();
-
-	if(mCurrentEditor)
-		mCurrentEditor->hide();
-
-	mCurrentEditor = newEditor;
-
-	gDispatcher->emitSelectFile(file);
-	emit currentChanged();
+	mCurrentEditorStack->displayFile(file);
 }
 
 void WindowManager::fileClosed(BaseFile *file)
 {
-	for (int i = 0; i < mEditors.length(); i++)
-	{
-		Editor* e = mEditors[i];
-		if (e->getFile() == file)
-		{
-			mEditors.removeAt(i);
-			i--;
+	//	Tell all editor stacks that the file's gone.
+	mRootEditorStack->fileClosed(file);
+}
 
-			if(e == mCurrentEditor)
-				mCurrentEditor = NULL;
+void WindowManager::setCurrentEditorStack(EditorStack* stack)
+{
+	if (mCurrentEditorStack == stack) return;
 
-			delete e;
-		}
-	}
+	if (mCurrentEditorStack != NULL)
+		mCurrentEditorStack->setActive(false);
 
-	if(!mCurrentEditor && mEditors.length() > 0)
-		displayFile(mEditors[mEditors.length()-1]->getFile());
+	mCurrentEditorStack = stack;
+	mCurrentEditorStack->setActive(true);
 }
 
 void WindowManager::nextWindow()
 {
-	Editor* next;
+	/*Editor* next;
 
 	if(mEditors.isEmpty())
 		return;
@@ -131,12 +84,12 @@ void WindowManager::nextWindow()
 
 
 	gDispatcher->emitSelectFile(next->getFile());
-	displayFile(next->getFile());
+	displayFile(next->getFile());*/
 }
 
 void WindowManager::previousWindow()
 {
-	Editor *prev;
+	/*Editor *prev;
 
 	if(mEditors.isEmpty())
 		return;
@@ -150,26 +103,26 @@ void WindowManager::previousWindow()
 		prev = mEditors[currIdx - 1];
 
 	gDispatcher->emitSelectFile(prev->getFile());
-	displayFile(prev->getFile());
+	displayFile(prev->getFile());*/
 }
 
 void WindowManager::find(const QString &text, bool backwards)
 {
-	int found;
+	/*int found;
 	if (mCurrentEditor)
-		found = find(mCurrentEditor, text, backwards, false, false);
+		found = find(mCurrentEditor, text, backwards, false, false);*/
 }
 
 void WindowManager::find(const QString &text, bool backwards, bool caseSensitive, bool useRegexp)
 {
-	int found;
+	/*int found;
 	if (mCurrentEditor)
-		found = find(mCurrentEditor, text, backwards, caseSensitive, useRegexp);
+		found = find(mCurrentEditor, text, backwards, caseSensitive, useRegexp);*/
 }
 
 void WindowManager::globalFind(const QString &text, const QString &filePattern, bool backwards, bool caseSensitive, bool useRegexp)
 {
-	int found = 0;
+	/*int found = 0;
 
 	Editor* current;
 	BaseFile* file;
@@ -214,7 +167,7 @@ void WindowManager::globalFind(const QString &text, const QString &filePattern, 
 			ii = mEditors.length();
 		else if(ii == mEditors.length() - 1 && !backwards)
 			ii = -1;
-	}
+	}*/
 }
 
 int WindowManager::find(Editor *editor, const QString &text, bool backwards, bool caseSensitive, bool useRegexp, bool loop)
@@ -224,21 +177,21 @@ int WindowManager::find(Editor *editor, const QString &text, bool backwards, boo
 
 void WindowManager::replace(const QString &findText, const QString &replaceText, bool all)
 {
-	int replaced;
+	/*int replaced;
 	if (mCurrentEditor)
-		replaced = replace(mCurrentEditor, findText, replaceText, false, false, all);
+		replaced = replace(mCurrentEditor, findText, replaceText, false, false, all);*/
 }
 
 void WindowManager::replace(const QString &findText, const QString &replaceText, bool caseSensitive, bool useRegexp, bool all)
 {
-	int replaced;
+	/*int replaced;
 	if (mCurrentEditor)
-		replaced = replace(mCurrentEditor, findText, replaceText, caseSensitive, useRegexp, all);
+		replaced = replace(mCurrentEditor, findText, replaceText, caseSensitive, useRegexp, all);*/
 }
 
 void WindowManager::globalReplace(const QString &findText, const QString &replaceText, const QString &filePattern, bool caseSensitive, bool useRegexp, bool all)
 {
-	int replaced = 0;
+	/*int replaced = 0;
 
 	Editor* current;
 	BaseFile* file;
@@ -277,7 +230,7 @@ void WindowManager::globalReplace(const QString &findText, const QString &replac
 					break;
 			}
 		}
-	}
+	}*/
 }
 
 int WindowManager::replace(Editor *editor, const QString &findText, const QString &replaceText, bool caseSensitive, bool useRegexp, bool all)
@@ -353,4 +306,37 @@ void WindowManager::showRegExpTester()
 
 	mRegExpTester->takeFocus(selectedText);
 }
+
+void WindowManager::notifyEditorChanged(EditorStack* stack)
+{
+	if (stack == mCurrentEditorStack)
+		emit currentChanged();
+}
+
+void WindowManager::splitVertically()
+{
+	EditorStack* stack = mCurrentEditorStack;
+	stack->split(Qt::Horizontal);
+	setCurrentEditorStack(stack->getFirstChild());
+}
+
+void WindowManager::splitHorizontally()
+{
+	EditorStack* stack = mCurrentEditorStack;
+	mCurrentEditorStack->split(Qt::Vertical);
+	setCurrentEditorStack(stack->getFirstChild());
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 

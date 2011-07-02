@@ -10,7 +10,6 @@
 
 #include "file/location.h"
 #include "file/basefile.h"
-#include "main/mainwindow.h"
 #include "editor/codeeditor.h"
 
 class EditorWarningBar;

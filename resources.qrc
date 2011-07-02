@@ -22,5 +22,8 @@
         <file>icons/ponyedit.ico</file>
         <file>icons/pony-banner.png</file>
         <file>icons/tick.png</file>
+        <file>icons/horizontalsplit.png</file>
+        <file>icons/removesplit.png</file>
+        <file>icons/verticalsplit.png</file>
     </qresource>
 </RCC>

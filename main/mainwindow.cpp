@@ -151,6 +151,19 @@ void MainWindow::createToolbar()
 	toolbar->addWidget(spacer);
 
 	//
+	//	View toolbar
+	//
+
+	toolbar = new QToolBar("View Toolbar");
+	toolbar->addAction(QIcon(":/icons/verticalsplit.png"), "Split View Vertically", mWindowManager, SLOT(splitVertically()));
+	toolbar->addAction(QIcon(":/icons/horizontalsplit.png"), "Split View Horizontally", mWindowManager, SLOT(splitHorizontally()));
+	toolbar->addAction(QIcon(":/icons/removesplit.png"), "Remove Split", mWindowManager, SLOT(removeSplit()));
+
+	addToolBar(toolbar);
+	registerContextMenuItem(toolbar);
+	toolbar->setObjectName("View Toolbar");
+
+	//
 	//	Trial time left toolbar
 	//
 

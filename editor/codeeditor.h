@@ -8,6 +8,7 @@
 class LineNumberWidget;
 class SyntaxHighlighter;
 class BaseFile;
+class WindowManager;
 
 class CodeEditor : public QPlainTextEdit
 {
@@ -30,6 +31,7 @@ protected:
 	void keyPressEvent(QKeyEvent* event);
 	void wheelEvent(QWheelEvent *e);
 	void applyIndent(QTextCursor& cursor, bool outdent);
+	void focusInEvent(QFocusEvent *e);
 
 private slots:
 	void updateLineNumberAreaWidth(int newBlockCount);

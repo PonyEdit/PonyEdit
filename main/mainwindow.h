@@ -134,6 +134,8 @@ private:
 	QAction* mQuickListMenuItem;
 	QAction* mTabbedListMenuItem;
 
+	QList<QAction*> mFileDependantActions;
+
 	QMap<QString, QAction*> mSyntaxMenuEntries;
 	QAction* mCurrentSyntaxMenuItem;
 	QMenu* mSyntaxMenu;
