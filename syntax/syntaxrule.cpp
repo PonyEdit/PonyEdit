@@ -1,3 +1,5 @@
+#include <QDebug>
+
 #include "syntax/syntaxrule.h"
 #include "main/tools.h"
 #include "syntaxdefmanager.h"
@@ -239,6 +241,14 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 
 void SyntaxRule::prepareRegExp()
 {
+	if(mString.at(0) != '^') {
+		mString = '^' + mString;
+		mRegExpLineStart = false;
+	}
+	else {
+		mRegExpLineStart = true;
+	}
+
 	mRegExp = QRegExp(mString, getCaseSensitivity());
 	if (mMinimal)
 		mRegExp.setMinimal(true);
@@ -294,7 +304,10 @@ int SyntaxRule::match(const QString &string, int position)
 
 	case RegExpr:
 	{
-		int index = mRegExp.indexIn(string, position, QRegExp::CaretAtZero);
+		if(mRegExpLineStart && position > 0)
+			break;
+
+		int index = mRegExp.indexIn(string, position, QRegExp::CaretAtOffset);
 		if (index == position) match = mRegExp.matchedLength();
 		break;
 	}

@@ -99,6 +99,7 @@ private:
 	//	Duplicate information prepared for faster lookups and the like
 	SyntaxDefinition::ItemData* mAttributeLink;
 	QRegExp mRegExp;
+	bool mRegExpLineStart;
 	SyntaxDefinition::KeywordList* mKeywordLink;
 	SyntaxDefinition::ContextLink mContextLink;
 	int mDynamicCharIndex;
