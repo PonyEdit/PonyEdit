@@ -5,7 +5,7 @@
 #include "windowmanager.h"
 #include "file/openfilemanager.h"
 #include "globaldispatcher.h"
-#include "editorstack.h"
+#include "editorpanel.h"
 
 bool editorSortLessThan(const Editor* e1, const Editor* e2)
 {

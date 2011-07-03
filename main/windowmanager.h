@@ -12,7 +12,7 @@
 #include "searchbar.h"
 #include "mainwindow.h"
 #include "regexptester.h"
-#include "editorstack.h"
+#include "editorpanel.h"
 
 class MainWindow;
 

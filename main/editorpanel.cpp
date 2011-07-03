@@ -1,4 +1,4 @@
-#include "editorstack.h"
+#include "editorpanel.h"
 #include "windowmanager.h"
 #include <QDebug>
 
