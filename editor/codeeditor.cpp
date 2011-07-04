@@ -8,7 +8,7 @@
 #include "main/globaldispatcher.h"
 #include "main/windowmanager.h"
 #include "file/basefile.h"
-#include "main/editorstack.h"
+#include "main/editorpanel.h"
 #include <QChar>
 
 CodeEditor::CodeEditor(BaseFile* file, QWidget *parent) : QPlainTextEdit(parent)
