@@ -31,6 +31,7 @@ public:
 	{
 		QString name;
 		QString styleName;
+		QString styleNameLower;
 		QString color;
 		QString selColor;
 		bool italic;

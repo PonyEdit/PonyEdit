@@ -125,7 +125,7 @@ void SyntaxHighlighter::highlightBlock(const QString &fullText)
 		//	If an attribute link was found, apply it to the text
 		if (attributeLink && matchLength)
 		{
-			attributeColor = mDefaultColors.value(attributeLink->styleName.toLower());
+			attributeColor = mDefaultColors.value(attributeLink->styleNameLower);
 			if (attributeColor.isValid())
 				setFormat(position, matchLength, attributeColor);
 			else

@@ -115,6 +115,7 @@ bool SyntaxDefXmlHandler::startElement(const QString &/* namespaceURI */, const 
 				SyntaxDefinition::ItemData* itemData = new SyntaxDefinition::ItemData();
 				itemData->name = Tools::getStringXmlAttribute(atts, "name");
 				itemData->styleName = Tools::getStringXmlAttribute(atts, "defStyleNum");
+				itemData->styleNameLower = itemData->styleName.toLower();
 				itemData->color = Tools::getStringXmlAttribute(atts, "color");
 				itemData->selColor = Tools::getStringXmlAttribute(atts, "selColor");
 				itemData->italic = Tools::getIntXmlAttribute(atts, "italic", 0);
