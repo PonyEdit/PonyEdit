@@ -51,6 +51,7 @@ void SyntaxHighlighter::highlightBlock(const QString &fullText)
 	int position = 0;
 	bool firstIteration = true;
 	const SyntaxDefinition::ContextLink* lineEndOverrideContextLink = NULL;
+	QSharedPointer<SyntaxRule>* rule;
 	while (position < text.length())
 	{
 		if (contextStack.size() < shortestStackWatermark)
@@ -77,20 +78,22 @@ void SyntaxHighlighter::highlightBlock(const QString &fullText)
 		const SyntaxDefinition::ContextLink* contextLink = NULL;
 		bool isLookAhead = false;
 		QStringList dynamicCaptures;
-		foreach (QSharedPointer<SyntaxRule> rule, context->rules)
+		for (int idx = 0; idx < context->rules.length(); idx++)
 		{
+			//	NOTE: I apologise for this abuse of pointers.
+			rule = &context->rules[idx];
 			//	For all other (normal) rules, look for a match.
-			matchLength = rule->match(text, position);
+			matchLength = (*rule)->match(text, position);
 			if (matchLength > 0)
 			{
 				//	Match! Take note of the attribute and context links
-				attributeLink = rule->getAttributeLink();
-				contextLink = &rule->getContextLink();
-				isLookAhead = rule->isLookAhead();
-				dynamicCaptures = rule->getDynamicCaptures();
+				attributeLink = (*rule)->getAttributeLink();
+				contextLink = &(*rule)->getContextLink();
+				isLookAhead = (*rule)->isLookAhead();
+				dynamicCaptures = (*rule)->getDynamicCaptures();
 
 				//	Special case: If this rule is a lineContinue, override lineEnd of the current context
-				if (rule->getType() == SyntaxRule::LineContinue)
+				if ((*rule)->getType() == SyntaxRule::LineContinue)
 				{
 					lineEndOverrideContextLink = contextLink;
 					contextLink = NULL;
