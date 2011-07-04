@@ -326,7 +326,6 @@ void Editor::showReadOnlyWarning()
 void Editor::sudo()
 {
 	mFile->sudo();
-	gOpenFileManager.deregisterFile(mFile);
-	gOpenFileManager.registerFile(mFile);
+	gOpenFileManager.reregisterFile(mFile);
 	setReadOnly(false);
 }

@@ -35,7 +35,7 @@ void OpenFileManager::deregisterFile(BaseFile* file)
 void OpenFileManager::reregisterFile(BaseFile* file)
 {
 	deregisterFile(file);
-	reregisterFile(file);
+	registerFile(file);
 }
 
 const QList<BaseFile*> OpenFileManager::getOpenFiles() const
