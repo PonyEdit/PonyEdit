@@ -10,6 +10,7 @@ OpenFileTreeModel::OpenFileTreeModel(QObject* parent, int flags, const QList<Bas
 {
 	mOptionFlags = flags;
 	mTopLevelNode = new Node(Root);
+	mParent = (OpenFileTreeView*)parent;
 
 	mExplicitFiles = (files != NULL);
 	if (mExplicitFiles)
@@ -145,6 +146,8 @@ void OpenFileTreeModel::fileOpened(BaseFile* file)
 	newNode->location = file->getLocation();
 	addNodeToTree(directoryNode, newNode);
 	mFileLookup.insert(file, newNode);
+
+	mParent->expandAll();
 
 	connect(file, SIGNAL(openStatusChanged(int)), this, SLOT(fileChanged()));
 	connect(file, SIGNAL(fileOpenProgress(int)), this, SLOT(fileChanged()));

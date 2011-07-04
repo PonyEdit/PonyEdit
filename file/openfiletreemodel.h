@@ -4,6 +4,7 @@
 #include <QAbstractItemModel>
 #include <QList>
 #include "location.h"
+#include "openfiletreeview.h"
 
 class BaseFile;
 
@@ -62,6 +63,8 @@ private:
 	QList<BaseFile*> mFiles;   // Used if a list of files explicitly supplied
 	Node* mTopLevelNode;
 	QMap<BaseFile*, Node*> mFileLookup;
+
+	OpenFileTreeView* mParent;
 
 	int mOptionFlags;
 	bool mExplicitFiles;

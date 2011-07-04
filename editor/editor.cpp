@@ -11,6 +11,7 @@
 #include "options/options.h"
 #include "main/globaldispatcher.h"
 #include "editorwarningbar.h"
+#include "file/openfilemanager.h"
 
 Editor::Editor(BaseFile* file) : QStackedWidget()
 {
@@ -325,5 +326,7 @@ void Editor::showReadOnlyWarning()
 void Editor::sudo()
 {
 	mFile->sudo();
+	gOpenFileManager.deregisterFile(mFile);
+	gOpenFileManager.registerFile(mFile);
 	setReadOnly(false);
 }
