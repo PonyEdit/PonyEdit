@@ -37,6 +37,8 @@ void SyntaxHighlighter::highlightBlock(const QString &fullText)
 		truncated = fullText.mid(0, MAX_HIGHLIGHT_LENGTH);
 	const QString& text = (isTruncated ? truncated : fullText);
 
+	QColor attributeColor;
+
 	//	Get a copy of the context stack leftover from the last block
 	QTextBlock previousBlock = currentBlock().previous();
 	SyntaxBlockData* previousBlockData = (previousBlock.isValid() ? static_cast<SyntaxBlockData*>(previousBlock.userData()) : NULL);
@@ -123,8 +125,9 @@ void SyntaxHighlighter::highlightBlock(const QString &fullText)
 		//	If an attribute link was found, apply it to the text
 		if (attributeLink && matchLength)
 		{
-			if (mDefaultColors.contains(attributeLink->styleName.toLower()))
-				setFormat(position, matchLength, mDefaultColors.value(attributeLink->styleName.toLower()));
+			attributeColor = mDefaultColors.value(attributeLink->styleName.toLower());
+			if (attributeColor.isValid())
+				setFormat(position, matchLength, attributeColor);
 			else
 				qDebug() << "No style name: " << attributeLink->styleName;
 		}
