@@ -12,9 +12,9 @@
 #include "searchbar.h"
 #include "mainwindow.h"
 #include "regexptester.h"
-#include "editorpanel.h"
 
 class MainWindow;
+class EditorPanel;
 
 class WindowManager : public QWidget
 {
@@ -25,10 +25,10 @@ public:
 
 	void displayFile(BaseFile *file);
 
-	inline Editor* currentEditor() { return mCurrentEditorStack->getCurrentEditor(); }
-	inline QList<Editor*>* getEditors() { return &mEditors; }
+	Editor* currentEditor();
+	QList<Editor*>* getEditors();
 
-	void setCurrentEditorStack(EditorStack* stack);
+	void setCurrentEditorStack(EditorPanel* stack);
 	void editorFocusSet(CodeEditor* newFocus);
 
 signals:
@@ -56,11 +56,11 @@ public slots:
 	void previousWindow();
 	void nextWindow();
 
-	void notifyEditorChanged(EditorStack* stack);	//	Called by EditorStacks, to notify the WindowManager when their current editor changes.
+	void notifyEditorChanged(EditorPanel* stack);	//	Called by EditorStacks, to notify the WindowManager when their current editor changes.
 
 	void splitVertically();
 	void splitHorizontally();
-	inline bool isSplit() { return mRootEditorStack->isSplit(); }
+	bool isSplit();
 
 private:
 	int find(Editor* editor, const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true);
@@ -72,9 +72,9 @@ private:
 	MainWindow *mParent;
 
 	QList<Editor*> mEditors;
-	EditorStack* mCurrentEditorStack;
+	EditorPanel* mCurrentEditorStack;
 
-	EditorStack* mRootEditorStack;
+	EditorPanel* mRootEditorStack;
 	QLayout* mLayout;
 
 	QDockWidget* mSearchBarWrapper;
@@ -83,6 +83,9 @@ private:
 	QDockWidget* mRegExpTesterWrapper;
 	RegExpTester* mRegExpTester;
 };
+
+//	One and only WindowManager object, created by MainWindow.
+extern WindowManager* gWindowManager;
 
 #endif // WINDOWMANAGER_H
 

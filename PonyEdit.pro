@@ -117,7 +117,8 @@ SOURCES += \
     file/ftpfile.cpp \
     licence/offlineactivationdialog.cpp \
     file/tabbedfilelist.cpp \
-    main/editorpanel.cpp
+    main/editorpanel.cpp \
+    main/editorstack.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -196,7 +197,8 @@ HEADERS  += \
     file/ftpfile.h \
     licence/offlineactivationdialog.h \
     file/tabbedfilelist.h \
-    main/editorpanel.h
+    main/editorpanel.h \
+    main/editorstack.h
 
 OTHER_FILES += \
     slave/slave.pl \

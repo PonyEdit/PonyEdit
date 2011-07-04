@@ -307,12 +307,12 @@ void CodeEditor::focusInEvent(QFocusEvent *e)
 	//	Find the EditorStack that owns me...
 	QObject* object;
 	for (object = this; object != NULL; object = object->parent())
-		if (strcmp("EditorStack", object->metaObject()->className()) == 0)
+		if (strcmp("EditorPanel", object->metaObject()->className()) == 0)
 			break;
 
 	//	Tell the EditorStack that it should take focus
 	if (object)
-		((EditorStack*)object)->takeFocus();
+		((EditorPanel*)object)->takeFocus();
 
 	//	Tell other things that this file has just been selected
 	gDispatcher->emitSelectFile(mFile);

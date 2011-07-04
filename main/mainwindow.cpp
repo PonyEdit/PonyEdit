@@ -53,9 +53,9 @@ MainWindow::MainWindow(QWidget *parent)
 
 	setAcceptDrops(true);
 
-	mWindowManager = new WindowManager(this);
-	mWindowManager->setMinimumWidth(200);
-	setCentralWidget(mWindowManager);
+	gWindowManager = new WindowManager(this);
+	gWindowManager->setMinimumWidth(200);
+	setCentralWidget(gWindowManager);
 
 	mFileList = new FileList();
 	addDockWidget(Qt::LeftDockWidgetArea, mFileList, Qt::Vertical);
@@ -98,11 +98,11 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(gDispatcher, SIGNAL(generalErrorMessage(QString)), this, SLOT(showErrorMessage(QString)), Qt::QueuedConnection);
 	connect(gDispatcher, SIGNAL(generalStatusMessage(QString)), this, SLOT(showStatusMessage(QString)), Qt::QueuedConnection);
 	connect(gDispatcher, SIGNAL(selectFile(BaseFile*)), this, SLOT(fileSelected(BaseFile*)));
-	connect(mWindowManager, SIGNAL(currentChanged()), this, SLOT(currentEditorChanged()), Qt::QueuedConnection);
+	connect(gWindowManager, SIGNAL(currentChanged()), this, SLOT(currentEditorChanged()), Qt::QueuedConnection);
 	connect(gDispatcher, SIGNAL(syntaxChanged(BaseFile*)), this, SLOT(updateSyntaxSelection()));
 	connect(&gOpenFileManager, SIGNAL(fileOpened(BaseFile*)), this, SLOT(openFileListChanged()));
 	connect(&gOpenFileManager, SIGNAL(fileClosed(BaseFile*)), this, SLOT(openFileListChanged()));
-	connect(mWindowManager, SIGNAL(splitChanged()), this, SLOT(viewSplittingChanged()));
+	connect(gWindowManager, SIGNAL(splitChanged()), this, SLOT(viewSplittingChanged()));
 
 	mRecentFiles = Tools::loadRecentFiles();
 	updateRecentFilesMenu();
@@ -126,7 +126,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-	delete mWindowManager;
+	delete gWindowManager;
 }
 
 void MainWindow::restoreState()
@@ -162,9 +162,9 @@ void MainWindow::createToolbar()
 	//
 
 	toolbar = new QToolBar("View Toolbar");
-	mActionsRequiringFiles.append(toolbar->addAction(QIcon(":/icons/verticalsplit.png"), "Split View Vertically", mWindowManager, SLOT(splitVertically())));
-	mActionsRequiringFiles.append(toolbar->addAction(QIcon(":/icons/horizontalsplit.png"), "Split View Horizontally", mWindowManager, SLOT(splitHorizontally())));
-	mActionsRequiringSplitViews.append(toolbar->addAction(QIcon(":/icons/removesplit.png"), "Remove Split", mWindowManager, SLOT(removeSplit())));
+	mActionsRequiringFiles.append(toolbar->addAction(QIcon(":/icons/verticalsplit.png"), "Split View Vertically", gWindowManager, SLOT(splitVertically())));
+	mActionsRequiringFiles.append(toolbar->addAction(QIcon(":/icons/horizontalsplit.png"), "Split View Horizontally", gWindowManager, SLOT(splitHorizontally())));
+	mActionsRequiringSplitViews.append(toolbar->addAction(QIcon(":/icons/removesplit.png"), "Remove Split", gWindowManager, SLOT(removeSplit())));
 
 	addToolBar(toolbar);
 	registerContextMenuItem(toolbar);
@@ -213,7 +213,7 @@ void MainWindow::newFile()
 	Location location(path);
 	BaseFile* file = location.getFile();
 
-	mWindowManager->displayFile(file);
+	gWindowManager->displayFile(file);
 
 	gDispatcher->emitSelectFile(file);
 }
@@ -266,7 +266,7 @@ void MainWindow::openSingleFile(const Location& loc)
 		if (file->isClosed())
 			file->open();
 
-		mWindowManager->displayFile(file);
+		gWindowManager->displayFile(file);
 
 		gDispatcher->emitSelectFile(file);
 
@@ -279,7 +279,7 @@ void MainWindow::openSingleFile(const Location& loc)
 
 void MainWindow::saveFile()
 {
-	Editor* current = mWindowManager->currentEditor();
+	Editor* current = gWindowManager->currentEditor();
 	if (current)
 	{
 		if(current->getFile()->getLocation().getProtocol() == Location::Unsaved)
@@ -300,7 +300,7 @@ void MainWindow::saveFile()
 
 void MainWindow::saveFileAs()
 {
-	Editor* current = mWindowManager->currentEditor();
+	Editor* current = gWindowManager->currentEditor();
 	if (current == NULL)
 		return;
 
@@ -337,7 +337,7 @@ void MainWindow::saveAllFiles()
 
 void MainWindow::closeFile()
 {
-	Editor* current = mWindowManager->currentEditor();
+	Editor* current = gWindowManager->currentEditor();
 	if (current)
 	{
 		QList<BaseFile *> files;
@@ -356,7 +356,7 @@ void MainWindow::closeAllExceptCurrentFile()
 {
 	QList<BaseFile*> openFiles = gOpenFileManager.getOpenFiles();
 
-	BaseFile* current = mWindowManager->currentEditor()->getFile();
+	BaseFile* current = gWindowManager->currentEditor()->getFile();
 
 	foreach(BaseFile* file, openFiles)
 		if(file != current)
@@ -369,7 +369,7 @@ void MainWindow::fileSelected(BaseFile* file)
 
 	updateTitle(file);
 
-	mWindowManager->displayFile(file);
+	gWindowManager->displayFile(file);
 }
 
 void MainWindow::updateTitle()
@@ -385,7 +385,7 @@ void MainWindow::updateTitle()
 	bool current = false;
 	foreach(Editor* editor, editors)
 	{
-		if(editor == mWindowManager->currentEditor())
+		if(editor == gWindowManager->currentEditor())
 			current = true;
 	}
 
@@ -485,9 +485,9 @@ void MainWindow::createEditMenu()
 
 	editMenu->addSeparator();
 
-	mActionsRequiringFiles.append(editMenu->addAction(tr("&Find/Replace"), mWindowManager, SLOT(showSearchBar()), QKeySequence::Find));
-	mActionsRequiringFiles.append(editMenu->addAction("Find &Next", mWindowManager, SLOT(findNext()), QKeySequence::FindNext));
-	mActionsRequiringFiles.append(editMenu->addAction("Find P&revious", mWindowManager, SLOT(findPrevious()), QKeySequence::FindPrevious));
+	mActionsRequiringFiles.append(editMenu->addAction(tr("&Find/Replace"), gWindowManager, SLOT(showSearchBar()), QKeySequence::Find));
+	mActionsRequiringFiles.append(editMenu->addAction("Find &Next", gWindowManager, SLOT(findNext()), QKeySequence::FindNext));
+	mActionsRequiringFiles.append(editMenu->addAction("Find P&revious", gWindowManager, SLOT(findPrevious()), QKeySequence::FindPrevious));
 	editMenu->addAction(tr("Advanced F&ind/Replace..."), this, SLOT(showAdvancedSearch()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_F));
 #ifdef Q_OS_MAC
 	mActionsRequiringFiles.append(editMenu->addAction(tr("&Go To Line..."), this, SLOT(showGotoLine()), QKeySequence(Qt::CTRL + Qt::Key_L)));
@@ -571,7 +571,7 @@ void MainWindow::createToolsMenu()
 	QMenu *toolsMenu = new QMenu(tr("&Tools"), this);
 	menuBar()->addMenu(toolsMenu);
 
-	toolsMenu->addAction(tr("&Regular Expression Tester..."), mWindowManager, SLOT(showRegExpTester()));
+	toolsMenu->addAction(tr("&Regular Expression Tester..."), gWindowManager, SLOT(showRegExpTester()));
 	toolsMenu->addAction(tr("&HTML Preview..."), this, SLOT(showHTMLPreview()));
 	toolsMenu->addAction(tr("&Options..."), this, SLOT(options()), QKeySequence::Preferences);
 }
@@ -582,11 +582,11 @@ void MainWindow::createWindowMenu()
 	menuBar()->addMenu(windowMenu);
 
 #ifdef Q_OS_MAC
-	mActionsRequiringFiles.append(windowMenu->addAction(tr("&Previous Window"), mWindowManager, SLOT(previousWindow()), QKeySequence::PreviousChild));
+	mActionsRequiringFiles.append(windowMenu->addAction(tr("&Previous Window"), gWindowManager, SLOT(previousWindow()), QKeySequence::PreviousChild));
 #else
-	mActionsRequiringFiles.append(windowMenu->addAction(tr("&Previous Window"), mWindowManager, SLOT(previousWindow()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Tab)));
+	mActionsRequiringFiles.append(windowMenu->addAction(tr("&Previous Window"), gWindowManager, SLOT(previousWindow()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Tab)));
 #endif
-	mActionsRequiringFiles.append(windowMenu->addAction(tr("&Next Window"), mWindowManager, SLOT(nextWindow()), QKeySequence::NextChild));
+	mActionsRequiringFiles.append(windowMenu->addAction(tr("&Next Window"), gWindowManager, SLOT(nextWindow()), QKeySequence::NextChild));
 }
 
 void MainWindow::createHelpMenu()
@@ -672,42 +672,42 @@ void MainWindow::showStatusMessage(QString message)
 
 void MainWindow::undo()
 {
-	Editor* current = mWindowManager->currentEditor();
+	Editor* current = gWindowManager->currentEditor();
 	if(current)
 		current->undo();
 }
 
 void MainWindow::redo()
 {
-	Editor* current = mWindowManager->currentEditor();
+	Editor* current = gWindowManager->currentEditor();
 	if(current)
 		current->redo();
 }
 
 void MainWindow::cut()
 {
-	Editor* current = mWindowManager->currentEditor();
+	Editor* current = gWindowManager->currentEditor();
 	if(current)
 		current->cut();
 }
 
 void MainWindow::copy()
 {
-	Editor* current = mWindowManager->currentEditor();
+	Editor* current = gWindowManager->currentEditor();
 	if(current)
 		current->copy();
 }
 
 void MainWindow::paste()
 {
-	Editor* current = mWindowManager->currentEditor();
+	Editor* current = gWindowManager->currentEditor();
 	if(current)
 		current->paste();
 }
 
 void MainWindow::selectAll()
 {
-	Editor* current = mWindowManager->currentEditor();
+	Editor* current = gWindowManager->currentEditor();
 	if(current)
 		current->selectAll();
 }
@@ -717,7 +717,7 @@ void MainWindow::showGotoLine()
 	GotoLineDialog dlg(this);
 	if(dlg.exec())
 	{
-		Editor* current = mWindowManager->currentEditor();
+		Editor* current = gWindowManager->currentEditor();
 		if(current)
 			current->gotoLine(dlg.lineNumber());
 	}
@@ -727,11 +727,11 @@ void MainWindow::showAdvancedSearch()
 {
 	AdvancedSearchDialog dlg(this);
 
-	connect(&dlg, SIGNAL(find(QString,bool,bool,bool)), mWindowManager, SLOT(find(QString,bool,bool,bool)));
-	connect(&dlg, SIGNAL(globalFind(QString,QString,bool,bool,bool)), mWindowManager, SLOT(globalFind(QString,QString,bool,bool,bool)));
+	connect(&dlg, SIGNAL(find(QString,bool,bool,bool)), gWindowManager, SLOT(find(QString,bool,bool,bool)));
+	connect(&dlg, SIGNAL(globalFind(QString,QString,bool,bool,bool)), gWindowManager, SLOT(globalFind(QString,QString,bool,bool,bool)));
 
-	connect(&dlg, SIGNAL(replace(QString,QString,bool,bool,bool)), mWindowManager, SLOT(replace(QString,QString,bool,bool,bool)));
-	connect(&dlg, SIGNAL(globalReplace(QString,QString,QString,bool,bool,bool)), mWindowManager, SLOT(globalReplace(QString,QString,QString,bool,bool,bool)));
+	connect(&dlg, SIGNAL(replace(QString,QString,bool,bool,bool)), gWindowManager, SLOT(replace(QString,QString,bool,bool,bool)));
+	connect(&dlg, SIGNAL(globalReplace(QString,QString,QString,bool,bool,bool)), gWindowManager, SLOT(globalReplace(QString,QString,QString,bool,bool,bool)));
 
 	dlg.exec();
 }
@@ -760,7 +760,7 @@ void MainWindow::nextStartupPrompt()
 	if(!Options::ShutdownPrompt)
 		return;
 
-	if(mWindowManager->getEditors()->length() == 0)
+	if(gWindowManager->getEditors()->length() == 0)
 		return;
 
 	ShutdownPrompt dlg(this);
@@ -780,7 +780,7 @@ void MainWindow::syntaxMenuOptionClicked()
 
 Editor* MainWindow::getCurrentEditor()
 {
-	return mWindowManager->currentEditor();
+	return gWindowManager->currentEditor();
 }
 
 void MainWindow::currentEditorChanged()
@@ -1006,7 +1006,7 @@ void MainWindow::openFileListChanged()
 void MainWindow::viewSplittingChanged()
 {
 	//	Enable / disable all actions that are dependant on split views
-	bool viewSplit = mWindowManager->isSplit();
+	bool viewSplit = gWindowManager->isSplit();
 	foreach (QAction* action, mActionsRequiringSplitViews)
 		action->setEnabled(viewSplit);
 }

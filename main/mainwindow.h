@@ -127,7 +127,6 @@ private:
 
 	FileList* mFileList;
 	TabbedFileList* mTabbedFileList;
-	WindowManager* mWindowManager;
 	QStatusBar* mStatusBar;
 	QLabel* mStatusLine;
 

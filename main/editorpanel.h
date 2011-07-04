@@ -1,50 +1,51 @@
-#ifndef EDITORSTACK_H
-#define EDITORSTACK_H
+#ifndef EDITORPANEL_H
+#define EDITORPANEL_H
 
 #include <QWidget>
-#include <QStackedWidget>
 #include <QSplitter>
 #include <QVBoxLayout>
 #include <editor/editor.h>
+#include "editorstack.h"
 
 class WindowManager;
-class EditorStack : public QFrame
+extern WindowManager* gWindowManager;
+
+class EditorPanel : public QFrame
 {
     Q_OBJECT
 public:
-	explicit EditorStack(QWidget* parent, WindowManager* windowManager, EditorStack* copyParent = NULL);
+	explicit EditorPanel(QWidget* parent, EditorStack* inheritedStack = NULL);
 
 	void fileClosed(BaseFile* file);
 	inline bool isSplit() const { return mSplitWidget != NULL; }
-	EditorStack* findStack(Editor* editor);
+	inline bool isRootPanel() const { return parent() == (QObject*)gWindowManager; }
+	EditorPanel* findStack(Editor* editor);
 
-	//	Public methods for split stacks
-	inline EditorStack* getFirstChild() const { return mStacks[0]; }
-	inline EditorStack* getSecondChild() const { return mStacks[1]; }
+	//	Public methods for split panels
+	inline EditorPanel* getFirstChild() const { return mChildPanels[0]; }
+	inline EditorPanel* getSecondChild() const { return mChildPanels[1]; }
 
-	//	Public methods for unsplit stacks
+	//	Public methods for unsplit panels
 	void displayFile(BaseFile* file);
 	void displayEditor(Editor* editor);
-	inline Editor* getCurrentEditor() const { return (Editor*)mStackedWidget->currentWidget(); }
+	Editor* getCurrentEditor() const;
 	void split(Qt::Orientation orientation);
 	void setActive(bool active);
 	void takeFocus();
 
 protected:
-	//	Protected methods for unsplit stacks
+	//	Protected methods for unsplit panels
 	void createEditor(BaseFile* file);
 
 private:
-	WindowManager* mWindowManager;
 	QVBoxLayout* mLayout;
 
-	//	Members for split stacks
+	//	Members for split panels
 	QSplitter* mSplitWidget;
-	QList<EditorStack*> mStacks;
+	QList<EditorPanel*> mChildPanels;
 
-	//	Members for unsplit stacks
-	QStackedWidget* mStackedWidget;
-	QList<Editor*> mEditors;
+	//	Members for unsplit panels
+	EditorStack* mEditorStack;
 };
 
-#endif // EDITORSTACK_H
+#endif // EDITORPANEL_H

@@ -7,6 +7,8 @@
 #include "globaldispatcher.h"
 #include "editorpanel.h"
 
+WindowManager* gWindowManager = NULL;
+
 bool editorSortLessThan(const Editor* e1, const Editor* e2)
 {
 	Location loc1 = e1->getLocation();
@@ -27,7 +29,7 @@ WindowManager::WindowManager(QWidget *parent) :
 	//	Create a root editor stack
 	mLayout = new QVBoxLayout(this);
 	mLayout->setMargin(0);
-	mRootEditorStack = new EditorStack(this, this);
+	mRootEditorStack = new EditorPanel(this);
 	mLayout->addWidget(mRootEditorStack);
 	setCurrentEditorStack(mRootEditorStack);
 
@@ -57,7 +59,7 @@ void WindowManager::fileClosed(BaseFile *file)
 	mRootEditorStack->fileClosed(file);
 }
 
-void WindowManager::setCurrentEditorStack(EditorStack* stack)
+void WindowManager::setCurrentEditorStack(EditorPanel* stack)
 {
 	if (mCurrentEditorStack == stack) return;
 
@@ -307,7 +309,7 @@ void WindowManager::showRegExpTester()
 	mRegExpTester->takeFocus(selectedText);
 }
 
-void WindowManager::notifyEditorChanged(EditorStack* stack)
+void WindowManager::notifyEditorChanged(EditorPanel* stack)
 {
 	if (stack == mCurrentEditorStack)
 		emit currentChanged();
@@ -315,7 +317,7 @@ void WindowManager::notifyEditorChanged(EditorStack* stack)
 
 void WindowManager::splitVertically()
 {
-	EditorStack* stack = mCurrentEditorStack;
+	EditorPanel* stack = mCurrentEditorStack;
 	stack->split(Qt::Horizontal);
 	setCurrentEditorStack(stack->getFirstChild());
 	emit splitChanged();
@@ -323,14 +325,26 @@ void WindowManager::splitVertically()
 
 void WindowManager::splitHorizontally()
 {
-	EditorStack* stack = mCurrentEditorStack;
+	EditorPanel* stack = mCurrentEditorStack;
 	mCurrentEditorStack->split(Qt::Vertical);
 	setCurrentEditorStack(stack->getFirstChild());
 	emit splitChanged();
 }
 
+Editor* WindowManager::currentEditor()
+{
+	return mCurrentEditorStack->getCurrentEditor();
+}
 
+QList<Editor*>* WindowManager::getEditors()
+{
+	return &mEditors;
+}
 
+bool WindowManager::isSplit()
+{
+	return mRootEditorStack->isSplit();
+}
 
 
 
