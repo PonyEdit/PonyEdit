@@ -60,7 +60,13 @@ public slots:
 
 	void splitVertically();
 	void splitHorizontally();
+	void removeSplit();
+	void removeAllSplits();
 	bool isSplit();
+
+	inline EditorPanel* getCurrentPanel() const { return mCurrentEditorPanel; }
+	inline void lockEditorSelection() { mEditorSelectionLocked = true; }
+	inline void unlockEditorSelection() { mEditorSelectionLocked = false; }
 
 private:
 	int find(Editor* editor, const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true);
@@ -72,9 +78,10 @@ private:
 	MainWindow *mParent;
 
 	QList<Editor*> mEditors;
-	EditorPanel* mCurrentEditorStack;
+	EditorPanel* mCurrentEditorPanel;
+	bool mEditorSelectionLocked;	//	While rearranging editors, it is a good idea to lock editor seleciton.
 
-	EditorPanel* mRootEditorStack;
+	EditorPanel* mRootEditorPanel;
 	QLayout* mLayout;
 
 	QDockWidget* mSearchBarWrapper;

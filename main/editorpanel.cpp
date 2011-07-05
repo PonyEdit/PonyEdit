@@ -2,21 +2,15 @@
 #include "windowmanager.h"
 #include <QDebug>
 
-EditorPanel::EditorPanel(QWidget* parent, EditorStack* inheritedStack) :
+EditorPanel::EditorPanel(QWidget* parent, EditorPanel* parentPanel, EditorStack* inheritedStack) :
 	QFrame(parent)
 {
+	mParentPanel = parentPanel;
 	mLayout = new QVBoxLayout(this);
 	mLayout->setMargin(0);
+	mSplitWidget = NULL;
 
-	//	Don't show a border if this is the root view
-	if (isRootPanel())
-		setFrameStyle(QFrame::NoFrame);
-	else
-	{
-		setFrameStyle(QFrame::Panel | QFrame::Plain);
-		setLineWidth(2);
-		setActive(false);
-	}
+	setupBorder();
 
 	if (inheritedStack)
 	{
@@ -28,8 +22,20 @@ EditorPanel::EditorPanel(QWidget* parent, EditorStack* inheritedStack) :
 		mEditorStack = new EditorStack(this);
 
 	mLayout->addWidget(mEditorStack);
-	mSplitWidget = NULL;
 
+}
+
+void EditorPanel::setupBorder()
+{
+	//	Don't show a border if this is the root view
+	if (isSplit() || isRootPanel())
+		setFrameStyle(QFrame::NoFrame);
+	else
+	{
+		setFrameStyle(QFrame::Panel | QFrame::Plain);
+		setLineWidth(2);
+		setActive(false);
+	}
 }
 
 void EditorPanel::displayEditor(Editor* editor)
@@ -68,14 +74,60 @@ void EditorPanel::setActive(bool active)
 	setPalette(p);
 }
 
+void EditorPanel::unsplit()
+{
+	//	If this is not a split panel, pass the request up to my parent.
+	if (!isSplit())
+	{
+		if (mParentPanel) mParentPanel->unsplit();
+		return;
+	}
+
+	EditorPanel* currentEditor = gWindowManager->getCurrentPanel();
+	gWindowManager->setCurrentEditorStack(this);
+	gWindowManager->lockEditorSelection();
+
+	//	Pick which descendant to keep during the unsplit. Attempt 1: See if
+	//	the current panel is a child of this split panel.
+	EditorPanel* keeper = NULL;
+	EditorPanel* scanCurrent = currentEditor;
+	while (scanCurrent != NULL && scanCurrent != this)
+		scanCurrent = scanCurrent->getParentPanel();
+	if (scanCurrent != NULL)
+		keeper = currentEditor;
+
+	//	Attempt 2: If the current panel was not found, just use the first one
+	if (keeper == NULL)
+	{
+		keeper = this;
+		while (keeper->isSplit())
+			keeper = keeper->getFirstChild();
+	}
+
+	//	Remove the keeper's editor stack
+	EditorStack* keepStack = keeper->mEditorStack;
+	keeper->layout()->removeWidget(keepStack);
+	keepStack->setParent(NULL);
+
+	//	Nuke all children of me
+	mChildPanels.clear();
+	delete mSplitWidget;
+	mSplitWidget = NULL;
+
+	mEditorStack = keepStack;
+	mEditorStack->setParent(this);
+	mLayout->addWidget(mEditorStack);
+
+	setupBorder();
+
+	gWindowManager->unlockEditorSelection();
+}
+
 void EditorPanel::split(Qt::Orientation orientation)
 {
 	//	Remove the current EditorStack...
 	mLayout->removeWidget(mEditorStack);
 	mEditorStack->setParent(NULL);
-
-	//	Remove the frame (if any); split panels do not have frames; their children might
-	setFrameStyle(QFrame::NoFrame);
 
 	//	Create a splitter
 	mSplitWidget = new QSplitter(this);
@@ -83,13 +135,15 @@ void EditorPanel::split(Qt::Orientation orientation)
 	mLayout->addWidget(mSplitWidget);
 	mSplitWidget->show();
 
+	setupBorder();
+
 	//	Left/Top editor stack
-	EditorPanel* stackA = new EditorPanel(mSplitWidget, mEditorStack);
+	EditorPanel* stackA = new EditorPanel(mSplitWidget, this, mEditorStack);
 	mChildPanels.append(stackA);
 	mSplitWidget->addWidget(stackA);
 
 	//	Right/Bottom editor stack
-	EditorPanel* stackB = new EditorPanel(mSplitWidget);
+	EditorPanel* stackB = new EditorPanel(mSplitWidget, this);
 	mChildPanels.append(stackB);
 	mSplitWidget->addWidget(stackB);
 

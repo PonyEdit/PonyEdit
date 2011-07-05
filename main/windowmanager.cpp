@@ -23,15 +23,17 @@ bool editorSortLessThan(const Editor* e1, const Editor* e2)
 WindowManager::WindowManager(QWidget *parent) :
     QWidget(parent)
 {
+	mEditorSelectionLocked = false;
 	mParent = (MainWindow*)parent;
-	mCurrentEditorStack = NULL;
+	mCurrentEditorPanel = NULL;
+	gWindowManager = this;
 
 	//	Create a root editor stack
 	mLayout = new QVBoxLayout(this);
 	mLayout->setMargin(0);
-	mRootEditorStack = new EditorPanel(this);
-	mLayout->addWidget(mRootEditorStack);
-	setCurrentEditorStack(mRootEditorStack);
+	mRootEditorPanel = new EditorPanel(this);
+	mLayout->addWidget(mRootEditorPanel);
+	setCurrentEditorStack(mRootEditorPanel);
 
 	createSearchBar();
 	createRegExpTester();
@@ -50,24 +52,28 @@ WindowManager::~WindowManager()
 void WindowManager::displayFile(BaseFile *file)
 {
 	Location loc = file->getLocation();
-	mCurrentEditorStack->displayFile(file);
+	mCurrentEditorPanel->displayFile(file);
 }
 
 void WindowManager::fileClosed(BaseFile *file)
 {
 	//	Tell all editor stacks that the file's gone.
-	mRootEditorStack->fileClosed(file);
+	mRootEditorPanel->fileClosed(file);
 }
 
 void WindowManager::setCurrentEditorStack(EditorPanel* stack)
 {
-	if (mCurrentEditorStack == stack) return;
+	if (mEditorSelectionLocked) return;
 
-	if (mCurrentEditorStack != NULL)
-		mCurrentEditorStack->setActive(false);
+	if (mCurrentEditorPanel == stack) return;
 
-	mCurrentEditorStack = stack;
-	mCurrentEditorStack->setActive(true);
+	if (mCurrentEditorPanel != NULL)
+		mCurrentEditorPanel->setActive(false);
+
+	mCurrentEditorPanel = stack;
+
+	if (mCurrentEditorPanel != NULL)
+		mCurrentEditorPanel->setActive(true);
 }
 
 void WindowManager::nextWindow()
@@ -311,13 +317,13 @@ void WindowManager::showRegExpTester()
 
 void WindowManager::notifyEditorChanged(EditorPanel* stack)
 {
-	if (stack == mCurrentEditorStack)
+	if (stack == mCurrentEditorPanel)
 		emit currentChanged();
 }
 
 void WindowManager::splitVertically()
 {
-	EditorPanel* stack = mCurrentEditorStack;
+	EditorPanel* stack = mCurrentEditorPanel;
 	stack->split(Qt::Horizontal);
 	setCurrentEditorStack(stack->getFirstChild());
 	emit splitChanged();
@@ -325,15 +331,15 @@ void WindowManager::splitVertically()
 
 void WindowManager::splitHorizontally()
 {
-	EditorPanel* stack = mCurrentEditorStack;
-	mCurrentEditorStack->split(Qt::Vertical);
+	EditorPanel* stack = mCurrentEditorPanel;
+	mCurrentEditorPanel->split(Qt::Vertical);
 	setCurrentEditorStack(stack->getFirstChild());
 	emit splitChanged();
 }
 
 Editor* WindowManager::currentEditor()
 {
-	return mCurrentEditorStack->getCurrentEditor();
+	return mCurrentEditorPanel->getCurrentEditor();
 }
 
 QList<Editor*>* WindowManager::getEditors()
@@ -343,9 +349,18 @@ QList<Editor*>* WindowManager::getEditors()
 
 bool WindowManager::isSplit()
 {
-	return mRootEditorStack->isSplit();
+	return mRootEditorPanel->isSplit();
 }
 
+void WindowManager::removeSplit()
+{
+	mCurrentEditorPanel->unsplit();
+}
+
+void WindowManager::removeAllSplits()
+{
+	mRootEditorPanel->unsplit();
+}
 
 
 
