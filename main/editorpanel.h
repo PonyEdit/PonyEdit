@@ -36,6 +36,9 @@ public:
 	void setActive(bool active);
 	void takeFocus();
 
+	EditorPanel* findNextPanel();
+	EditorPanel* findPreviousPanel();
+
 protected:
 	void createEditor(BaseFile* file);
 	void setupBorder();

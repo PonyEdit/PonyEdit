@@ -587,6 +587,18 @@ void MainWindow::createWindowMenu()
 	mActionsRequiringFiles.append(windowMenu->addAction(tr("&Previous Window"), gWindowManager, SLOT(previousWindow()), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Tab)));
 #endif
 	mActionsRequiringFiles.append(windowMenu->addAction(tr("&Next Window"), gWindowManager, SLOT(nextWindow()), QKeySequence::NextChild));
+
+	windowMenu->addSeparator();
+
+	mActionsRequiringFiles.append(windowMenu->addAction(tr("Split View &Vertically"), gWindowManager, SLOT(splitVertically()), QKeySequence(Qt::CTRL + Qt::Key_E, Qt::Key_3)));
+	mActionsRequiringFiles.append(windowMenu->addAction(tr("Split View &Horizontally"), gWindowManager, SLOT(splitHorizontally()), QKeySequence(Qt::CTRL + Qt::Key_E, Qt::Key_2)));
+	mActionsRequiringSplitViews.append(windowMenu->addAction(tr("&Remove Current Split"), gWindowManager, SLOT(removeSplit()), QKeySequence(Qt::CTRL + Qt::Key_E, Qt::Key_1)));
+	mActionsRequiringSplitViews.append(windowMenu->addAction(tr("Remove &All Splits"), gWindowManager, SLOT(removeAllSplits()), QKeySequence(Qt::CTRL + Qt::Key_E, Qt::Key_0)));
+
+	windowMenu->addSeparator();
+
+	mActionsRequiringSplitViews.append(windowMenu->addAction(tr("Ne&xt Split Panel"), gWindowManager, SLOT(nextSplit()), QKeySequence(Qt::ALT + Qt::Key_Right)));
+	mActionsRequiringSplitViews.append(windowMenu->addAction(tr("Pre&vious Split Panel"), gWindowManager, SLOT(previousSplit()), QKeySequence(Qt::ALT + Qt::Key_Left)));
 }
 
 void MainWindow::createHelpMenu()

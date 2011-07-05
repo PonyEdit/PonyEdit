@@ -355,16 +355,46 @@ bool WindowManager::isSplit()
 void WindowManager::removeSplit()
 {
 	mCurrentEditorPanel->unsplit();
+	emit splitChanged();
 }
 
 void WindowManager::removeAllSplits()
 {
 	mRootEditorPanel->unsplit();
+	emit splitChanged();
 }
 
+void WindowManager::nextSplit()
+{
+	if (mCurrentEditorPanel == NULL) return;
+	EditorPanel* nextPanel = mCurrentEditorPanel->findNextPanel();
+	if (nextPanel)
+		setCurrentEditorStack(nextPanel);
+}
 
+void WindowManager::previousSplit()
+{
+	if (mCurrentEditorPanel == NULL) return;
+	EditorPanel* nextPanel = mCurrentEditorPanel->findPreviousPanel();
+	if (nextPanel)
+		setCurrentEditorStack(nextPanel);
+}
 
+EditorPanel* WindowManager::getFirstPanel()
+{
+	EditorPanel* panel = mRootEditorPanel;
+	while (panel->isSplit())
+		panel = panel->getFirstChild();
+	return panel;
+}
 
+EditorPanel* WindowManager::getLastPanel()
+{
+	EditorPanel* panel = mRootEditorPanel;
+	while (panel->isSplit())
+		panel = panel->getSecondChild();
+	return panel;
+}
 
 
 

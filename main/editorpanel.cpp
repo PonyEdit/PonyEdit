@@ -72,6 +72,9 @@ void EditorPanel::setActive(bool active)
 		p.setColor(QPalette::WindowText, p.color(QPalette::Window));
 
 	setPalette(p);
+
+	if (active && !getCurrentEditor()->hasFocus())
+		getCurrentEditor()->setFocus();
 }
 
 void EditorPanel::unsplit()
@@ -192,7 +195,45 @@ Editor* EditorPanel::getCurrentEditor() const
 	 return mEditorStack->getCurrentEditor();
 }
 
+EditorPanel* EditorPanel::findNextPanel()
+{
+	//	Walk up the tree until we run out of tree, or find a first child.
+	EditorPanel* scan = this;
+	while (scan->mParentPanel != NULL && scan->mParentPanel->getSecondChild() == scan)
+		scan = scan->mParentPanel;
+	scan = scan->mParentPanel;
 
+	//	Fell off the edge of the world? Just return the first panel.
+	if (scan == NULL)
+		return gWindowManager->getFirstPanel();
+
+	//	Work our way down the tree...
+	scan = scan->getSecondChild();
+	while (scan->isSplit())
+		scan = scan->getFirstChild();
+
+	return scan;
+}
+
+EditorPanel* EditorPanel::findPreviousPanel()
+{
+	//	Walk up the tree until we run out of tree, or find a second child.
+	EditorPanel* scan = this;
+	while (scan->mParentPanel != NULL && scan->mParentPanel->getFirstChild() == scan)
+		scan = scan->mParentPanel;
+	scan = scan->mParentPanel;
+
+	//	Fell off the edge of the world? Just return the last panel.
+	if (scan == NULL)
+		return gWindowManager->getLastPanel();
+
+	//	Work our way down the tree...
+	scan = scan->getFirstChild();
+	while (scan->isSplit())
+		scan = scan->getSecondChild();
+
+	return scan;
+}
 
 
 

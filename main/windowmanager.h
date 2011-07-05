@@ -31,6 +31,12 @@ public:
 	void setCurrentEditorStack(EditorPanel* stack);
 	void editorFocusSet(CodeEditor* newFocus);
 
+	inline EditorPanel* getCurrentPanel() const { return mCurrentEditorPanel; }
+	inline void lockEditorSelection() { mEditorSelectionLocked = true; }
+	inline void unlockEditorSelection() { mEditorSelectionLocked = false; }
+	EditorPanel* getFirstPanel();
+	EditorPanel* getLastPanel();
+
 signals:
 	void currentChanged();
 	void splitChanged();
@@ -64,9 +70,8 @@ public slots:
 	void removeAllSplits();
 	bool isSplit();
 
-	inline EditorPanel* getCurrentPanel() const { return mCurrentEditorPanel; }
-	inline void lockEditorSelection() { mEditorSelectionLocked = true; }
-	inline void unlockEditorSelection() { mEditorSelectionLocked = false; }
+	void nextSplit();
+	void previousSplit();
 
 private:
 	int find(Editor* editor, const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true);
