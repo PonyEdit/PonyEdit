@@ -772,7 +772,7 @@ void MainWindow::nextStartupPrompt()
 	if(!Options::ShutdownPrompt)
 		return;
 
-	if(gWindowManager->getEditors()->length() == 0)
+	if(gOpenFileManager.getFileCount() == 0)
 		return;
 
 	ShutdownPrompt dlg(this);

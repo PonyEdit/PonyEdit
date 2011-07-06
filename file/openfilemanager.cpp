@@ -22,7 +22,13 @@ BaseFile* OpenFileManager::getFile(const Location& location) const
 
 void OpenFileManager::registerFile(BaseFile* file)
 {
-	mOpenFiles.append(file);
+	//	Keep the mOpenFiles list alphabetically sorted by Location.
+	int scan;
+	for (scan = 0; scan < mOpenFiles.length(); scan++)
+		if (mOpenFiles[scan]->getLocation().getPath() > file->getLocation().getPath())
+			break;
+	mOpenFiles.insert(scan, file);
+
 	emit fileOpened(file);
 }
 
@@ -122,3 +128,18 @@ bool OpenFileManager::refreshFiles(const QList<BaseFile*>& files, bool force)
 
 	return true;
 }
+
+BaseFile* OpenFileManager::getNextFile(BaseFile* file)
+{
+	int index = mOpenFiles.indexOf(file);
+	return (index < 0 || index == mOpenFiles.length() - 1) ? mOpenFiles.at(0) : mOpenFiles.at(index + 1);
+}
+
+BaseFile* OpenFileManager::getPreviousFile(BaseFile* file)
+{
+	int index = mOpenFiles.indexOf(file);
+	return index < 1 ? mOpenFiles.at(0) : mOpenFiles.at(index + 1);
+}
+
+
+

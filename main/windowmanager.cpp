@@ -76,42 +76,29 @@ void WindowManager::setCurrentEditorStack(EditorPanel* stack)
 		mCurrentEditorPanel->setActive(true);
 }
 
+BaseFile* WindowManager::getCurrentFile()
+{
+	EditorPanel* currentPanel = getCurrentPanel();
+	if (!currentPanel) return NULL;
+
+	Editor* currentEditor = currentPanel->getCurrentEditor();
+	if (!currentEditor) return NULL;
+
+	return currentEditor->getFile();
+}
+
 void WindowManager::nextWindow()
 {
-	/*Editor* next;
-
-	if(mEditors.isEmpty())
-		return;
-
-	int currIdx = mEditors.indexOf(mCurrentEditor);
-
-	if(currIdx + 1 == mEditors.length())
-		next = mEditors[0];
-	else
-		next = mEditors[currIdx + 1];
-
-
-	gDispatcher->emitSelectFile(next->getFile());
-	displayFile(next->getFile());*/
+	BaseFile* file = gOpenFileManager.getNextFile(getCurrentFile());
+	if (file)
+		gDispatcher->emitSelectFile(file);
 }
 
 void WindowManager::previousWindow()
 {
-	/*Editor *prev;
-
-	if(mEditors.isEmpty())
-		return;
-
-	int currIdx = mEditors.indexOf(mCurrentEditor);
-
-
-	if(currIdx == 0)
-		prev = mEditors[mEditors.length() - 1];
-	else
-		prev = mEditors[currIdx - 1];
-
-	gDispatcher->emitSelectFile(prev->getFile());
-	displayFile(prev->getFile());*/
+	BaseFile* file = gOpenFileManager.getPreviousFile(getCurrentFile());
+	if (file)
+		gDispatcher->emitSelectFile(file);
 }
 
 void WindowManager::find(const QString &text, bool backwards)
@@ -340,11 +327,6 @@ void WindowManager::splitHorizontally()
 Editor* WindowManager::currentEditor()
 {
 	return mCurrentEditorPanel->getCurrentEditor();
-}
-
-QList<Editor*>* WindowManager::getEditors()
-{
-	return &mEditors;
 }
 
 bool WindowManager::isSplit()

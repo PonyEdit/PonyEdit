@@ -25,8 +25,8 @@ public:
 
 	void displayFile(BaseFile *file);
 
+	BaseFile* getCurrentFile();
 	Editor* currentEditor();
-	QList<Editor*>* getEditors();
 
 	void setCurrentEditorStack(EditorPanel* stack);
 	void editorFocusSet(CodeEditor* newFocus);
@@ -82,7 +82,6 @@ private:
 
 	MainWindow *mParent;
 
-	QList<Editor*> mEditors;
 	EditorPanel* mCurrentEditorPanel;
 	bool mEditorSelectionLocked;	//	While rearranging editors, it is a good idea to lock editor seleciton.
 
