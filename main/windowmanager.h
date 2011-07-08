@@ -12,6 +12,7 @@
 #include "searchbar.h"
 #include "mainwindow.h"
 #include "regexptester.h"
+#include "searchresults.h"
 
 class MainWindow;
 class EditorPanel;
@@ -47,12 +48,9 @@ public slots:
 	void findNext();
 	void findPrevious();
 
-	void find(const QString& text, bool backwards);
-	void find(const QString& text, bool backwards, bool caseSensitive, bool useRegexp);
-	void globalFind(const QString& text, const QString& filePattern, bool backwards, bool caseSensitive, bool useRegexp);
+	void findInCurrentEditor(const QString& text, bool backwards, bool caseSensitive = false, bool useRegExp = false);
+	void replaceInCurrentEditor(const QString& text, QString& replaceText, bool all);
 
-	void replace(const QString& findText, const QString& replaceText, bool all);
-	void replace(const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegexp, bool all);
 	void globalReplace(const QString& findText, const QString& replaceText, const QString& filePattern, bool caseSensitive, bool useRegexp, bool all);
 
 	void showSearchBar();
@@ -79,6 +77,7 @@ private:
 
 	void createSearchBar();
 	void createRegExpTester();
+	void createSearchResults();
 
 	MainWindow *mParent;
 
@@ -93,6 +92,9 @@ private:
 
 	QDockWidget* mRegExpTesterWrapper;
 	RegExpTester* mRegExpTester;
+
+	QDockWidget* mSearchResultsWrapper;
+	SearchResults* mSearchResults;
 };
 
 //	One and only WindowManager object, created by MainWindow.

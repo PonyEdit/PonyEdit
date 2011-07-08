@@ -9,17 +9,6 @@
 
 WindowManager* gWindowManager = NULL;
 
-bool editorSortLessThan(const Editor* e1, const Editor* e2)
-{
-	Location loc1 = e1->getLocation();
-	Location loc2 = e2->getLocation();
-
-	if(loc1.getParentPath() == loc2.getParentPath())
-		return loc1.getPath() < loc2.getPath();
-
-	return loc1.getParentPath() < loc2.getParentPath();
-}
-
 WindowManager::WindowManager(QWidget *parent) :
     QWidget(parent)
 {
@@ -37,6 +26,7 @@ WindowManager::WindowManager(QWidget *parent) :
 
 	createSearchBar();
 	createRegExpTester();
+	createSearchResults();
 
 	connect(&gOpenFileManager, SIGNAL(fileClosed(BaseFile*)), this, SLOT(fileClosed(BaseFile*)), Qt::DirectConnection);
 }
@@ -101,23 +91,16 @@ void WindowManager::previousWindow()
 		gDispatcher->emitSelectFile(file);
 }
 
-void WindowManager::find(const QString &text, bool backwards)
+void WindowManager::findInCurrentEditor(const QString &text, bool backwards, bool caseSensitive, bool useRegexp)
 {
-	/*int found;
-	if (mCurrentEditor)
-		found = find(mCurrentEditor, text, backwards, false, false);*/
+	Editor* current = currentEditor();
+	if (current)
+		current->find(text, backwards, caseSensitive, useRegexp);
 }
 
-void WindowManager::find(const QString &text, bool backwards, bool caseSensitive, bool useRegexp)
+/*void WindowManager::globalFind(const QString &text, const QString &filePattern, bool backwards, bool caseSensitive, bool useRegexp)
 {
-	/*int found;
-	if (mCurrentEditor)
-		found = find(mCurrentEditor, text, backwards, caseSensitive, useRegexp);*/
-}
-
-void WindowManager::globalFind(const QString &text, const QString &filePattern, bool backwards, bool caseSensitive, bool useRegexp)
-{
-	/*int found = 0;
+	int found = 0;
 
 	Editor* current;
 	BaseFile* file;
@@ -162,26 +145,19 @@ void WindowManager::globalFind(const QString &text, const QString &filePattern, 
 			ii = mEditors.length();
 		else if(ii == mEditors.length() - 1 && !backwards)
 			ii = -1;
-	}*/
-}
+	}
+}*/
 
 int WindowManager::find(Editor *editor, const QString &text, bool backwards, bool caseSensitive, bool useRegexp, bool loop)
 {
 	return editor->find(text, backwards, caseSensitive, useRegexp, loop);
 }
 
-void WindowManager::replace(const QString &findText, const QString &replaceText, bool all)
+void WindowManager::replaceInCurrentEditor(const QString &text, QString &replaceText, bool all)
 {
-	/*int replaced;
-	if (mCurrentEditor)
-		replaced = replace(mCurrentEditor, findText, replaceText, false, false, all);*/
-}
-
-void WindowManager::replace(const QString &findText, const QString &replaceText, bool caseSensitive, bool useRegexp, bool all)
-{
-	/*int replaced;
-	if (mCurrentEditor)
-		replaced = replace(mCurrentEditor, findText, replaceText, caseSensitive, useRegexp, all);*/
+	/*Editor* current = currentEditor();
+	if (current)
+		current->replace(text, replaceText, all);*/
 }
 
 void WindowManager::globalReplace(const QString &findText, const QString &replaceText, const QString &filePattern, bool caseSensitive, bool useRegexp, bool all)
@@ -228,11 +204,6 @@ void WindowManager::globalReplace(const QString &findText, const QString &replac
 	}*/
 }
 
-int WindowManager::replace(Editor *editor, const QString &findText, const QString &replaceText, bool caseSensitive, bool useRegexp, bool all)
-{
-	return editor->replace(findText, replaceText, caseSensitive, useRegexp, all);
-}
-
 void WindowManager::findNext()
 {
 	mSearchBar->findNext();
@@ -256,9 +227,21 @@ void WindowManager::createSearchBar()
 	mSearchBarWrapper->hide();
 	mSearchBarWrapper->setTitleBarWidget(new QWidget(this));
 	connect(mSearchBar, SIGNAL(closeRequested()), this, SLOT(hideSearchBar()));
-	connect(mSearchBar, SIGNAL(find(QString,bool)), this, SLOT(find(QString,bool)));
-	connect(mSearchBar, SIGNAL(replace(QString,QString,bool)), this, SLOT(replace(QString,QString,bool)));
+	connect(mSearchBar, SIGNAL(find(QString,bool)), this, SLOT(findInCurrentEditor(QString,bool)));
+	connect(mSearchBar, SIGNAL(replace(QString,QString,bool)), this, SLOT(replaceInCurrentEditor(QString,QString,bool)));
 	mSearchBarWrapper->setObjectName("Search Bar");
+}
+
+void WindowManager::createSearchResults()
+{
+	mSearchResults = new SearchResults();
+	mSearchResultsWrapper = new QDockWidget("Search Results");
+	mSearchResultsWrapper->setWidget(mSearchResults);
+
+	mParent->addDockWidget(Qt::BottomDockWidgetArea, mSearchResultsWrapper, Qt::Horizontal);
+
+	mSearchResults->hide();
+	mSearchResults->setObjectName("Search Results");
 }
 
 void WindowManager::showSearchBar()

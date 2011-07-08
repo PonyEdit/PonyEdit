@@ -135,14 +135,43 @@ void Editor::close()
 		mFile->close();
 }
 
-int Editor::find(const QString &text, bool backwards, bool caseSensitive, bool useRegexp, bool loop)
+bool Editor::find(const QString &text, bool backwards, bool caseSensitive, bool useRegexp, bool loop)
 {
-	QTextCursor found = internalFind(text, backwards, caseSensitive, useRegexp, loop);
+	QTextDocument* doc = mEditor->document();
+	QTextCursor result = Editor::internalFind(doc, mEditor->textCursor(), text, backwards, caseSensitive, useRegexp, loop);
+	if (!result.isNull())
+	{
+		mEditor->setTextCursor(result);
+		return true;
+	}
+	return false;
+}
 
-	if(found.isNull())
-		return 0;
+QTextCursor Editor::internalFind(QTextDocument* doc, const QTextCursor& start, const QString& text, bool backwards, bool caseSensitive, bool useRegExp, bool loop)
+{
+	QTextDocument::FindFlags flags = 0;
+	if (caseSensitive) flags |= QTextDocument::FindCaseSensitively;
+	if (backwards) flags |= QTextDocument::FindBackward;
+
+	QTextCursor loopCursor(doc);
+	loopCursor.setPosition(backwards ? doc->characterCount() - 1 : 0);
+
+	QTextCursor result;
+	if (useRegExp)
+	{
+		QRegExp regexp(text);
+		result = doc->find(regexp, start, flags);
+		if (result.isNull() && loop)
+			result = doc->find(regexp, loopCursor, flags);
+	}
 	else
-		return 1;
+	{
+		result = doc->find(text, start, flags);
+		if (result.isNull() && loop)
+			result = doc->find(text, loopCursor, flags);
+	}
+
+	return result;
 }
 
 QTextCursor Editor::internalFind(const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop)

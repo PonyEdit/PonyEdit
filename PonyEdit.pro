@@ -118,7 +118,8 @@ SOURCES += \
     licence/offlineactivationdialog.cpp \
     file/tabbedfilelist.cpp \
     main/editorpanel.cpp \
-    main/editorstack.cpp
+    main/editorstack.cpp \
+    main/searchresults.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -198,7 +199,8 @@ HEADERS  += \
     licence/offlineactivationdialog.h \
     file/tabbedfilelist.h \
     main/editorpanel.h \
-    main/editorstack.h
+    main/editorstack.h \
+    main/searchresults.h
 
 OTHER_FILES += \
     slave/slave.pl \
