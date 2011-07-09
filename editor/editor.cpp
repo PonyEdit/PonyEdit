@@ -138,7 +138,7 @@ void Editor::close()
 bool Editor::find(const QString &text, bool backwards, bool caseSensitive, bool useRegexp, bool loop)
 {
 	QTextDocument* doc = mEditor->document();
-	QTextCursor result = Editor::internalFind(doc, mEditor->textCursor(), text, backwards, caseSensitive, useRegexp, loop);
+	QTextCursor result = Editor::find(doc, mEditor->textCursor(), text, backwards, caseSensitive, useRegexp, loop);
 	if (!result.isNull())
 	{
 		mEditor->setTextCursor(result);
@@ -147,7 +147,7 @@ bool Editor::find(const QString &text, bool backwards, bool caseSensitive, bool 
 	return false;
 }
 
-QTextCursor Editor::internalFind(QTextDocument* doc, const QTextCursor& start, const QString& text, bool backwards, bool caseSensitive, bool useRegExp, bool loop)
+QTextCursor Editor::find(QTextDocument* doc, const QTextCursor& start, const QString& text, bool backwards, bool caseSensitive, bool useRegExp, bool loop)
 {
 	QTextDocument::FindFlags flags = 0;
 	if (caseSensitive) flags |= QTextDocument::FindCaseSensitively;
@@ -232,50 +232,51 @@ QTextCursor Editor::internalFind(const QString& text, bool backwards, bool caseS
 
 int Editor::replace(const QString &findText, const QString &replaceText, bool caseSensitive, bool useRegex, bool all)
 {
-	if(findText.length() <= 0)
+	if (findText.length() <= 0)
 		return 0;
 
-	QString content = mEditor->toPlainText();
-
-	QRegExp regexp(findText, (Qt::CaseSensitivity)(caseSensitive)?(Qt::CaseSensitive):(Qt::CaseInsensitive));
-
-	if(useRegex)
+	if (all)
 	{
-		if(!content.contains(regexp))
-			return 0;
-	}
-	else
-	{
-		if(!content.contains(findText, (Qt::CaseSensitivity)(caseSensitive)?(Qt::CaseSensitive):(Qt::CaseInsensitive)))
-			return 0;
-	}
+		//	Scan through the document replacing all
+		QTextDocument* doc = mEditor->document();
+		QTextCursor searcher(doc);
+		searcher.setPosition(0);
 
-	QTextCursor found = internalFind(findText, false, caseSensitive, useRegex);
+		QTextCursor editor(doc);
+		editor.beginEditBlock();
 
-	if(all)
-	{
-		QTextCursor editBlock = found;
-
-		editBlock.movePosition(QTextCursor::Start);
-		editBlock.beginEditBlock();
-		mEditor->setTextCursor(editBlock);
-
-		while(!found.isNull())
+		int replacements = 0;
+		while (!(searcher = Editor::find(doc, searcher, findText, false, caseSensitive, useRegex, false)).isNull())
 		{
-			found.insertText(replaceText);
-
-			found = internalFind(findText, false, caseSensitive, useRegex, false);
+			editor.setPosition(searcher.anchor());
+			editor.setPosition(searcher.position(), QTextCursor::KeepAnchor);
+			editor.insertText(replaceText);
+			replacements++;
 		}
 
-		editBlock.endEditBlock();
+		editor.endEditBlock();
+		return replacements;
 	}
 	else
 	{
-		found.insertText(replaceText);
-		mEditor->setTextCursor(found);
-	}
+		//	Verify the selected text matches the search text, and replace
+		bool match = false;
+		QString selectedText = mEditor->textCursor().selectedText();
+		if (useRegex)
+		{
+			QRegExp re(findText, caseSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive);
+			match = re.exactMatch(selectedText);
+		}
+		else if (QString::compare(findText, selectedText, caseSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive) == 0)
+			match = true;
 
-	return 1;
+		if (match)
+		{
+			mEditor->textCursor().insertText(replaceText);
+			return 1;
+		}
+	}
+	return 0;
 }
 
 void Editor::gotoLine(int lineNumber)

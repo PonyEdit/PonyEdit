@@ -49,8 +49,7 @@ public slots:
 	void findPrevious();
 
 	void findInCurrentEditor(const QString& text, bool backwards, bool caseSensitive = false, bool useRegExp = false);
-	void replaceInCurrentEditor(const QString& text, QString& replaceText, bool all);
-
+	void replaceInCurrentEditor(const QString& text, const QString& replaceText, bool all);
 	void globalReplace(const QString& findText, const QString& replaceText, const QString& filePattern, bool caseSensitive, bool useRegexp, bool all);
 
 	void showSearchBar();

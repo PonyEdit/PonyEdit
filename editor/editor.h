@@ -37,6 +37,8 @@ public:
 
 	CodeEditor* getCodeEditor() { return mEditor; }
 
+	static QTextCursor find(QTextDocument* doc, const QTextCursor& start, const QString& text, bool backwards, bool caseSensitive, bool useRegExp, bool loop);
+
 public slots:
 	void openStatusChanged(int openStatus);
 	void fileOpenProgress(int percent);
@@ -57,7 +59,6 @@ public slots:
 private:
 	void showLoading();
 	void showError(const QString& error);
-	static QTextCursor internalFind(QTextDocument* doc, const QTextCursor& start, const QString& text, bool backwards, bool caseSensitive, bool useRegExp, bool loop);
 	QTextCursor internalFind(const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true);
 
 	bool mFirstOpen;

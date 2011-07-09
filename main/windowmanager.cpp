@@ -153,11 +153,11 @@ int WindowManager::find(Editor *editor, const QString &text, bool backwards, boo
 	return editor->find(text, backwards, caseSensitive, useRegexp, loop);
 }
 
-void WindowManager::replaceInCurrentEditor(const QString &text, QString &replaceText, bool all)
+void WindowManager::replaceInCurrentEditor(const QString &text, const QString &replaceText, bool all)
 {
-	/*Editor* current = currentEditor();
+	Editor* current = currentEditor();
 	if (current)
-		current->replace(text, replaceText, all);*/
+		current->replace(text, replaceText, false, false, all);
 }
 
 void WindowManager::globalReplace(const QString &findText, const QString &replaceText, const QString &filePattern, bool caseSensitive, bool useRegexp, bool all)
