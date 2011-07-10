@@ -160,7 +160,7 @@ void WindowManager::replaceInCurrentEditor(const QString &text, const QString &r
 		current->replace(text, replaceText, false, false, all);
 }
 
-void WindowManager::globalReplace(const QString &findText, const QString &replaceText, const QString &filePattern, bool caseSensitive, bool useRegexp, bool all)
+void WindowManager::globalReplace(const QString &/*findText*/, const QString &/*replaceText*/, const QString &/*filePattern*/, bool /*caseSensitive*/, bool /*useRegexp*/, bool /*all*/)
 {
 	/*int replaced = 0;
 
@@ -381,7 +381,7 @@ void WindowManager::searchInFiles(const QList<BaseFile*> files, const QString& t
 	showSearchResults(results, showReplaceOptions);
 }
 
-void WindowManager::showSearchResults(const QList<SearchResultModel::Result>& results, bool showReplaceOptions)
+void WindowManager::showSearchResults(const QList<SearchResultModel::Result>& results, bool /*showReplaceOptions*/)
 {
 	mSearchResults->showResults(results);
 	mSearchResultsWrapper->show();

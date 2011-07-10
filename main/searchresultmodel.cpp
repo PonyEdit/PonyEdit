@@ -113,7 +113,7 @@ int SearchResultModel::rowCount(const QModelIndex& parent) const
 	return parentNode->children.count();
 }
 
-int SearchResultModel::columnCount(const QModelIndex& parent) const
+int SearchResultModel::columnCount(const QModelIndex& /*parent*/) const
 {
 	return 1;
 }

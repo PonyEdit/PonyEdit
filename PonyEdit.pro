@@ -41,8 +41,8 @@ QT      += core gui network xml script webkit
 LIBS	+= -lssh2 -lcrypto -lssl
 TEMPLATE = app
 
-QMAKE_CFLAGS	+= -Werror
-QMAKE_CXXFLAGS	+= -Werror
+QMAKE_CFLAGS	+= -Werror -Wunused-parameter
+QMAKE_CXXFLAGS	+= -Werror -Wunused-parameter
 
 SOURCES += \
     editor/linenumberwidget.cpp \
