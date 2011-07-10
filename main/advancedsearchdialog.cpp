@@ -2,6 +2,9 @@
 
 #include "advancedsearchdialog.h"
 #include "ui_advancedsearchdialog.h"
+#include "windowmanager.h"
+#include "file/basefile.h"
+#include "file/openfilemanager.h"
 
 AdvancedSearchDialog::AdvancedSearchDialog(QWidget *parent) :
     QDialog(parent),
@@ -9,20 +12,16 @@ AdvancedSearchDialog::AdvancedSearchDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-	ui->context->addItem(tr("All Files"));
-	ui->context->addItem(tr("Current File"));
+	ui->context->addItem(tr("All Files"), QVariant(OpenFiles));
+	ui->context->addItem(tr("Current File"), QVariant(CurrentFile));
 
 	ui->caseSensitive->setChecked(true);
-
 	ui->filePattern->setText("*");
 
 	ui->find->setFocus();
 
-	connect(ui->nextButton, SIGNAL(clicked()), this, SLOT(findNext()));
-	connect(ui->previousButton, SIGNAL(clicked()), this, SLOT(findPrevious()));
-	connect(ui->replaceButton, SIGNAL(clicked()), this, SLOT(replaceCurrent()));
-	connect(ui->replaceFindButton, SIGNAL(clicked()), this, SLOT(replaceCurrentAndFind()));
-	connect(ui->replaceAllButton, SIGNAL(clicked()), this, SLOT(replaceAll()));
+	connect(ui->searchButton, SIGNAL(clicked()), this, SLOT(search()));
+	connect(ui->searchReplaceButton, SIGNAL(clicked()), this, SLOT(searchAndReplace()));
 	connect(ui->closeButton, SIGNAL(clicked()), this, SLOT(close()));
 }
 
@@ -31,51 +30,46 @@ AdvancedSearchDialog::~AdvancedSearchDialog()
     delete ui;
 }
 
-void AdvancedSearchDialog::findNext()
+void AdvancedSearchDialog::search()
 {
-	if(ui->context->currentIndex() == 0)
-		emit globalFind(ui->find->text(), ui->filePattern->text(), false, ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked());
-	else
-		emit find(ui->find->text(), false, ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked());
+	gWindowManager->searchInFiles(getLocalHaystackFiles(), ui->find->text(), ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked(), false);
+	close();
 }
 
-void AdvancedSearchDialog::findPrevious()
+void AdvancedSearchDialog::searchAndReplace()
 {
-	if(ui->context->currentIndex() == 0)
-		emit globalFind(ui->find->text(), ui->filePattern->text(), true, ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked());
-	else
-		emit find(ui->find->text(), true, ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked());
-
+	gWindowManager->searchInFiles(getLocalHaystackFiles(), ui->find->text(), ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked(), true);
+	close();
 }
 
-void AdvancedSearchDialog::replaceCurrent()
+QList<BaseFile*> AdvancedSearchDialog::getLocalHaystackFiles()
 {
-	if(ui->context->currentIndex() == 0)
-		emit globalReplace(ui->find->text(), ui->replace->text(), ui->filePattern->text(), ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked(), false);
-	else
-		emit replace(ui->find->text(), ui->filePattern->text(), ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked(), false);
+	QList<BaseFile*> result;
+	Scope scope = static_cast<Scope>(ui->context->itemData(ui->context->currentIndex()).toInt());
+
+	if (scope == CurrentFile)
+	{
+		if (gWindowManager->getCurrentFile() != NULL)
+			result.append(gWindowManager->getCurrentFile());
+	}
+	else if (scope == OpenFiles)
+	{
+		QRegExp namePattern(ui->filePattern->text(), Qt::CaseInsensitive, QRegExp::WildcardUnix);
+		QList<BaseFile*> files = gOpenFileManager.getOpenFiles();
+		foreach (BaseFile* file, files)
+			if (namePattern.exactMatch(file->getLocation().getPath()))
+				result.append(file);
+	}
+
+	return result;
 }
 
-void AdvancedSearchDialog::replaceCurrentAndFind()
-{
-	replaceCurrent();
-	findNext();
-}
 
-void AdvancedSearchDialog::replaceAll()
-{
-	if(ui->context->currentIndex() == 0)
-		emit globalReplace(ui->find->text(), ui->replace->text(), ui->filePattern->text(), ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked(), true);
-	else
-		emit replace(ui->find->text(), ui->filePattern->text(), ui->caseSensitive->isChecked(), ui->regularExpressions->isChecked(), true);
-}
 
-void AdvancedSearchDialog::keyPressEvent(QKeyEvent *event)
-{
-	if(event->matches(QKeySequence::FindNext))
-		findNext();
-	else if(event->matches(QKeySequence::FindPrevious))
-		findPrevious();
-	else if(event->key() == Qt::Key_Escape)
-		close();
-}
+
+
+
+
+
+
+

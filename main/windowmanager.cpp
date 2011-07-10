@@ -240,8 +240,8 @@ void WindowManager::createSearchResults()
 
 	mParent->addDockWidget(Qt::BottomDockWidgetArea, mSearchResultsWrapper, Qt::Horizontal);
 
-	mSearchResults->hide();
-	mSearchResults->setObjectName("Search Results");
+	mSearchResultsWrapper->hide();
+	mSearchResultsWrapper->setObjectName("Search Results");
 }
 
 void WindowManager::showSearchBar()
@@ -361,6 +361,31 @@ EditorPanel* WindowManager::getLastPanel()
 	return panel;
 }
 
+void WindowManager::searchInFiles(const QList<BaseFile*> files, const QString& text, bool caseSensitive, bool useRegExp, bool showReplaceOptions)
+{
+	QList<SearchResultModel::Result> results;
+
+	foreach (BaseFile* file, files)
+	{
+		QTextDocument* doc = file->getTextDocument();
+		QTextCursor cursor(doc);
+		while (!(cursor = Editor::find(doc, cursor, text, false, caseSensitive, useRegExp, false)).isNull())
+		{
+			qDebug() << cursor.blockNumber();
+			results.append(SearchResultModel::Result(cursor.block().text(),
+				file->getLocation(), cursor.blockNumber(), cursor.positionInBlock(),
+				cursor.selectionEnd() - cursor.selectionStart()));
+		}
+	}
+
+	showSearchResults(results, showReplaceOptions);
+}
+
+void WindowManager::showSearchResults(const QList<SearchResultModel::Result>& results, bool showReplaceOptions)
+{
+	mSearchResults->showResults(results);
+	mSearchResultsWrapper->show();
+}
 
 
 

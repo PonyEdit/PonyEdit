@@ -119,7 +119,9 @@ SOURCES += \
     file/tabbedfilelist.cpp \
     main/editorpanel.cpp \
     main/editorstack.cpp \
-    main/searchresults.cpp
+    main/searchresults.cpp \
+    main/searchresultmodel.cpp \
+    main/searchresultdelegate.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -200,7 +202,9 @@ HEADERS  += \
     file/tabbedfilelist.h \
     main/editorpanel.h \
     main/editorstack.h \
-    main/searchresults.h
+    main/searchresults.h \
+    main/searchresultmodel.h \
+    main/searchresultdelegate.h
 
 OTHER_FILES += \
     slave/slave.pl \

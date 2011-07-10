@@ -13,6 +13,7 @@
 #include "mainwindow.h"
 #include "regexptester.h"
 #include "searchresults.h"
+#include "searchresultmodel.h"
 
 class MainWindow;
 class EditorPanel;
@@ -38,6 +39,8 @@ public:
 	EditorPanel* getFirstPanel();
 	EditorPanel* getLastPanel();
 
+	void showSearchResults(const QList<SearchResultModel::Result>& results, bool showReplaceOptions);
+
 signals:
 	void currentChanged();
 	void splitChanged();
@@ -50,6 +53,7 @@ public slots:
 
 	void findInCurrentEditor(const QString& text, bool backwards, bool caseSensitive = false, bool useRegExp = false);
 	void replaceInCurrentEditor(const QString& text, const QString& replaceText, bool all);
+	void searchInFiles(const QList<BaseFile*> files, const QString& text, bool caseSensitive, bool useRegExp, bool showReplaceOptions);
 	void globalReplace(const QString& findText, const QString& replaceText, const QString& filePattern, bool caseSensitive, bool useRegexp, bool all);
 
 	void showSearchBar();
