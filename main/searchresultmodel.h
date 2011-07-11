@@ -31,6 +31,8 @@ public:
 	void addResults(const QList<Result>& results);
 	void clear();
 
+	Result* getResultForIndex(const QModelIndex& index);
+
 	virtual QModelIndex index(int row, int column, const QModelIndex& parent) const;
 	virtual QModelIndex parent(const QModelIndex& child) const;
 	virtual int rowCount(const QModelIndex& parent) const;

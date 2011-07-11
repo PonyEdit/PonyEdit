@@ -1,6 +1,7 @@
 #include "searchresultmodel.h"
 #include <QStandardItemModel>
 #include "file/basefile.h"
+#include "options/options.h"
 #include <QDebug>
 
 SearchResultModel::SearchResultModel(QObject *parent) :
@@ -82,6 +83,15 @@ SearchResultModel::InternalTreeNode* SearchResultModel::getNodeForIndex(const QM
 	return node;
 }
 
+SearchResultModel::Result* SearchResultModel::getResultForIndex(const QModelIndex& index)
+{
+	InternalTreeNode* node = getNodeForIndex(index);
+	if (node->result.lineNumber > -1)
+		return &(node->result);
+	else
+		return NULL;
+}
+
 QModelIndex SearchResultModel::index(int row, int column, const QModelIndex& parent) const
 {
 	InternalTreeNode* parentNode = getNodeForIndex(parent);
@@ -129,8 +139,12 @@ QVariant SearchResultModel::data(const QModelIndex& index, int role) const
 	{
 		if (node->parent == mRootNode)
 			return QVariant(node->result.location.getPath() + " (" + QString::number(node->children.count()) + ")");
-		else if (node->parent != NULL)
-			return QVariant(QString::number(node->result.lineNumber) + ": " + node->result.matchedLine);
+	}
+	else if (role == Qt::FontRole)
+	{
+		//	Search results should display in the same font as the text editor
+		if (node->parent != NULL && node->parent != mRootNode)
+			return QVariant(Options::EditorFont);
 	}
 
 	return QVariant();
