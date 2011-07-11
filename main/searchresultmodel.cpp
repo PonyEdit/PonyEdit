@@ -23,6 +23,7 @@ void SearchResultModel::clear()
 	beginResetModel();
 	delete mRootNode;
 	mRootNode = new InternalTreeNode();
+	mFileNodeMap.clear();
 	endResetModel();
 }
 
@@ -38,7 +39,7 @@ SearchResultModel::InternalTreeNode* SearchResultModel::createFileNode(const Loc
 		if (mRootNode->children[i]->result.location.getPath() < location.getPath())
 			break;
 
-	beginInsertRows(createIndex(0, 0, NULL), i, i + 1);
+	beginInsertRows(QModelIndex(), i, i);
 	mRootNode->children.insert(i, newNode);
 	endInsertRows();
 
@@ -61,7 +62,8 @@ void SearchResultModel::addResult(const Result& result)
 
 	int newRow = fileNode->children.length();
 
-	beginInsertRows(createIndex(0, 0, NULL), newRow, newRow + 1);
+	beginInsertRows(parent(createIndex(0, 0, newNode)), newRow, newRow);
+	qDebug() << "Calling beginInsertRow " << newRow << newRow;
 	fileNode->children.append(newNode);
 	endInsertRows();
 }

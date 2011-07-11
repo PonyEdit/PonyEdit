@@ -5,6 +5,7 @@
 #include <QDebug>
 #include "searchresultmodel.h"
 #include "searchresultdelegate.h"
+#include "windowmanager.h"
 
 SearchResults::SearchResults(QWidget *parent) :
 	QWidget(parent)
@@ -21,6 +22,8 @@ SearchResults::SearchResults(QWidget *parent) :
 	mTreeView->setHeaderHidden(true);
 
 	mLayout->addWidget(mTreeView);
+
+	connect(mTreeView, SIGNAL(clicked(QModelIndex)), this, SLOT(itemClicked(QModelIndex)));
 }
 
 void SearchResults::clearResults()
@@ -30,7 +33,15 @@ void SearchResults::clearResults()
 
 void SearchResults::showResults(const QList<SearchResultModel::Result>& results)
 {
+	mModel->clear();
 	mModel->addResults(results);
+}
+
+void SearchResults::itemClicked(QModelIndex index)
+{
+	SearchResultModel::Result* result = mModel->getResultForIndex(index);
+	if (result != NULL)
+		gWindowManager->showAndSelect(result->location, result->lineNumber, result->start, result->length);
 }
 
 

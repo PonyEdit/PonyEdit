@@ -371,9 +371,8 @@ void WindowManager::searchInFiles(const QList<BaseFile*> files, const QString& t
 		QTextCursor cursor(doc);
 		while (!(cursor = Editor::find(doc, cursor, text, false, caseSensitive, useRegExp, false)).isNull())
 		{
-			qDebug() << cursor.blockNumber();
 			results.append(SearchResultModel::Result(cursor.block().text(),
-				file->getLocation(), cursor.blockNumber(), cursor.positionInBlock(),
+				file->getLocation(), cursor.blockNumber(), cursor.selectionStart() - cursor.block().position(),
 				cursor.selectionEnd() - cursor.selectionStart()));
 		}
 	}
@@ -387,7 +386,18 @@ void WindowManager::showSearchResults(const QList<SearchResultModel::Result>& re
 	mSearchResultsWrapper->show();
 }
 
+void WindowManager::showAndSelect(const Location& location, int lineNumber, int start, int length)
+{
+	displayLocation(location);
+	Editor* editor = currentEditor();
+	if (editor != NULL)
+		editor->selectText(lineNumber, start, length);
+}
 
-
-
+void WindowManager::displayLocation(const Location& location)
+{
+	BaseFile* file = gOpenFileManager.getFile(location);
+	if (file != NULL)
+		displayFile(file);
+}
 

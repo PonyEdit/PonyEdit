@@ -38,6 +38,7 @@ public:
 	CodeEditor* getCodeEditor() { return mEditor; }
 
 	static QTextCursor find(QTextDocument* doc, const QTextCursor& start, const QString& text, bool backwards, bool caseSensitive, bool useRegExp, bool loop);
+	void selectText(int lineNumber, int start, int length);
 
 public slots:
 	void openStatusChanged(int openStatus);

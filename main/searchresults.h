@@ -13,6 +13,9 @@ public:
 	void clearResults();
 	void showResults(const QList<SearchResultModel::Result>& results);
 
+private slots:
+	void itemClicked(QModelIndex index);
+
 private:
 	QLayout* mLayout;
 	QTreeView* mTreeView;

@@ -21,32 +21,25 @@ void SearchResultDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 
 		QPen originalPen = painter->pen();
 		QRect drawRect = option.rect;
-		QFontMetrics metrics = painter->fontMetrics();
 
 		//	Draw the line number on the left, in gray.
 		QString lineNumber = QString::number(result->lineNumber);
 		painter->setPen(QPen(QColor(172, 172, 172)));
 		painter->drawText(drawRect, lineNumber);
-		drawRect.setLeft(drawRect.left() + metrics.width(lineNumber) + 10);
+		drawRect.setLeft(drawRect.left() + painter->boundingRect(drawRect, lineNumber).width() + 10);
 
-		QString left = result->matchedLine.mid(0, result->start - 1);
-		QString match = result->matchedLine.mid(result->start - 1, result->length);
-		QString right = result->matchedLine.mid(result->start - 1 + result->length);
+		QString left = result->matchedLine.mid(0, result->start);
+		QString match = result->matchedLine.mid(result->start, result->length);
 
-		qDebug() << result->start << result->length << match << metrics.width(match);
+		int leftWidth = painter->boundingRect(drawRect, left).width();
+		int matchWidth = painter->boundingRect(drawRect, match).width();
 
-		painter->setPen(originalPen);
-		painter->drawText(drawRect, left);
-		drawRect.setLeft(drawRect.left() + metrics.width(left));
+		qDebug() << left << leftWidth;
 
-		int matchWidth = metrics.width(match);
-		painter->fillRect(QRect(drawRect.left(), drawRect.top(), matchWidth, drawRect.height()), QColor(255, 255, 0));
-		painter->setPen(QPen(QColor(0, 0, 0)));
-		painter->drawText(drawRect, match);
-		drawRect.setLeft(drawRect.left() + matchWidth);
+		//	Draw a highlight rectangle
+		painter->fillRect(QRect(drawRect.left() + leftWidth, drawRect.top() + 1, matchWidth, drawRect.height() - 2), QColor(255, 255, 0));
 
 		painter->setPen(originalPen);
-		painter->drawText(drawRect, right);
-		drawRect.setLeft(drawRect.left() + metrics.width(right));
+		painter->drawText(drawRect, result->matchedLine);
 	}
 }

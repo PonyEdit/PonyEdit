@@ -359,3 +359,21 @@ void Editor::sudo()
 	gOpenFileManager.reregisterFile(mFile);
 	setReadOnly(false);
 }
+
+void Editor::selectText(int lineNumber, int start, int length)
+{
+	QTextDocument* doc = mEditor->document();
+
+	QTextBlock block = doc->findBlockByLineNumber(lineNumber);
+	if (!block.isValid())
+		return;
+
+	QTextCursor cursor(doc);
+	cursor.setPosition(block.position() + start);
+	cursor.setPosition(block.position() + start + length, QTextCursor::KeepAnchor);
+
+	mEditor->setTextCursor(cursor);
+}
+
+
+
