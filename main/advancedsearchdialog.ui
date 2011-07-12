@@ -108,6 +108,16 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>context</tabstop>
+  <tabstop>find</tabstop>
+  <tabstop>caseSensitive</tabstop>
+  <tabstop>regularExpressions</tabstop>
+  <tabstop>filePattern</tabstop>
+  <tabstop>searchButton</tabstop>
+  <tabstop>searchReplaceButton</tabstop>
+  <tabstop>closeButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
