@@ -98,56 +98,6 @@ void WindowManager::findInCurrentEditor(const QString &text, bool backwards, boo
 		current->find(text, backwards, caseSensitive, useRegexp);
 }
 
-/*void WindowManager::globalFind(const QString &text, const QString &filePattern, bool backwards, bool caseSensitive, bool useRegexp)
-{
-	int found = 0;
-
-	Editor* current;
-	BaseFile* file;
-	Location loc;
-
-#ifdef Q_OS_WIN
-	QRegExp regexp(filePattern, Qt::CaseInsensitive, QRegExp::Wildcard);
-#else
-	QRegExp regexp(filePattern, Qt::CaseInsensitive, QRegExp::WildcardUnix);
-#endif
-
-	int filesSearched = 0;
-
-	for(int ii = mEditors.indexOf(mCurrentEditor); filesSearched < mEditors.length(); (backwards)?(ii--):(ii++))
-	{
-		current = mEditors[ii];
-		if(current)
-		{
-			file = current->getFile();
-			loc = file->getLocation();
-
-			if(regexp.exactMatch(loc.getDisplayPath()) || regexp.exactMatch(loc.getLabel()))
-			{
-				gDispatcher->emitSelectFile(file);
-				current->setFocus();
-				if(filesSearched > 0)
-				{
-					if(!backwards)
-						current->gotoLine(1);
-					else
-						current->gotoEnd();
-				}
-
-				found += find(current, text, backwards, caseSensitive, useRegexp, false);
-				if(found)
-					break;
-			}
-		}
-		filesSearched++;
-
-		if(ii == 0 && backwards)
-			ii = mEditors.length();
-		else if(ii == mEditors.length() - 1 && !backwards)
-			ii = -1;
-	}
-}*/
-
 int WindowManager::find(Editor *editor, const QString &text, bool backwards, bool caseSensitive, bool useRegexp, bool loop)
 {
 	return editor->find(text, backwards, caseSensitive, useRegexp, loop);
@@ -158,50 +108,6 @@ void WindowManager::replaceInCurrentEditor(const QString &text, const QString &r
 	Editor* current = currentEditor();
 	if (current)
 		current->replace(text, replaceText, false, false, all);
-}
-
-void WindowManager::globalReplace(const QString &/*findText*/, const QString &/*replaceText*/, const QString &/*filePattern*/, bool /*caseSensitive*/, bool /*useRegexp*/, bool /*all*/)
-{
-	/*int replaced = 0;
-
-	Editor* current;
-	BaseFile* file;
-	Location loc;
-
-#ifdef Q_OS_WIN
-	QRegExp regexp(filePattern, Qt::CaseInsensitive, QRegExp::Wildcard);
-#else
-	QRegExp regexp(filePattern, Qt::CaseInsensitive, QRegExp::WildcardUnix);
-#endif
-
-	int ii;
-	if(all)
-		ii = 0;
-	else
-		ii = mEditors.indexOf(mCurrentEditor);
-
-	for(; ii < mEditors.length(); ii++)
-	{
-		current = mEditors[ii];
-		if(current)
-		{
-			file = current->getFile();
-			loc = file->getLocation();
-
-			if(regexp.exactMatch(loc.getDisplayPath()) || regexp.exactMatch(loc.getLabel()))
-			{
-				if(!all)
-				{
-					gDispatcher->emitSelectFile(file);
-					current->setFocus();
-				}
-
-				replaced += replace(current, findText, replaceText, caseSensitive, useRegexp, all);
-				if(replaced && !all)
-					break;
-			}
-		}
-	}*/
 }
 
 void WindowManager::findNext()
