@@ -42,6 +42,7 @@ public:
 
 	void showSearchResults(const QList<SearchResultModel::Result>& results, bool showReplaceOptions);
 	void showAndSelect(const Location& location, int lineNumber, int start, int length);
+	void hideSearchResults();
 
 signals:
 	void currentChanged();

@@ -30,6 +30,9 @@ public:
 	void addResult(const Result& result);
 	void addResults(const QList<Result>& results);
 	void clear();
+	void setShowCheckboxes(bool checkboxes);
+
+	void replaceSelectedResults(const QString& replacement);
 
 	Result* getResultForIndex(const QModelIndex& index);
 
@@ -38,15 +41,18 @@ public:
 	virtual int rowCount(const QModelIndex& parent) const;
 	virtual int columnCount(const QModelIndex& parent) const;
 	virtual QVariant data(const QModelIndex& index, int role) const;
+	virtual bool setData(const QModelIndex &index, const QVariant &value, int role);
+	virtual Qt::ItemFlags flags(const QModelIndex &index) const;
 
 private:
 	struct InternalTreeNode
 	{
-		InternalTreeNode() : parent(NULL) {}
+		InternalTreeNode() : parent(NULL), checked(Qt::Checked) {}
 		~InternalTreeNode() { foreach (InternalTreeNode* n, children) delete n; }
 		Result result;
 		InternalTreeNode* parent;
 		QList<InternalTreeNode*> children;
+		Qt::CheckState checked;
 	};
 
 	InternalTreeNode* getNodeForIndex(const QModelIndex& index) const;
@@ -54,6 +60,8 @@ private:
 
 	InternalTreeNode* mRootNode;
 	QMap<QString, InternalTreeNode*> mFileNodeMap;
+
+	bool mCheckboxes;
 };
 
 #endif // SEARCHRESULTMODEL_H

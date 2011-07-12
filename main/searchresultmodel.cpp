@@ -3,6 +3,8 @@
 #include "file/basefile.h"
 #include "options/options.h"
 #include <QDebug>
+#include "file/openfilemanager.h"
+#include <QTextBlock>
 
 SearchResultModel::SearchResultModel(QObject *parent) :
 	QAbstractItemModel(parent)
@@ -63,7 +65,6 @@ void SearchResultModel::addResult(const Result& result)
 	int newRow = fileNode->children.length();
 
 	beginInsertRows(parent(createIndex(0, 0, newNode)), newRow, newRow);
-	qDebug() << "Calling beginInsertRow " << newRow << newRow;
 	fileNode->children.append(newNode);
 	endInsertRows();
 }
@@ -148,11 +149,122 @@ QVariant SearchResultModel::data(const QModelIndex& index, int role) const
 		if (node->parent != NULL && node->parent != mRootNode)
 			return QVariant(Options::EditorFont);
 	}
+	else if (role == Qt::CheckStateRole && mCheckboxes)
+	{
+		return QVariant(node->checked);
+	}
 
 	return QVariant();
 }
 
+Qt::ItemFlags SearchResultModel::flags(const QModelIndex &index) const
+{
+	Qt::ItemFlags flags = QAbstractItemModel::flags(index);
+	if (mCheckboxes)
+	{
+		flags |= Qt::ItemIsUserCheckable;
+		InternalTreeNode* node = getNodeForIndex(index);
+		if (node->children.length())
+			flags |= Qt::ItemIsTristate;
+	}
 
+	return flags;
+}
 
+void SearchResultModel::setShowCheckboxes(bool checkboxes)
+{
+	if (mCheckboxes != checkboxes)
+	{
+		beginResetModel();
+		mCheckboxes = checkboxes;
+		endResetModel();
+	}
+}
+
+bool SearchResultModel::setData(const QModelIndex &index, const QVariant &value, int /*role*/)
+{
+	Qt::CheckState checked = value.toBool() ? Qt::Checked : Qt::Unchecked;
+	InternalTreeNode* node = getNodeForIndex(index);
+	if (node->parent == NULL)
+		return false;
+
+	if (node->children.length())
+	{
+		//	Apply change to self & all children
+		node->checked = checked;
+		foreach (InternalTreeNode* child, node->children)
+			child->checked = checked;
+
+		emit dataChanged(index, index);
+		emit dataChanged(this->index(0, 0, index), this->index(0, node->children.length() - 1, index));
+	}
+	else
+	{
+		//	Apply change to just self and parent
+		node->checked = checked;
+
+		//	Update the parent state to reflect the children.
+		bool childrenUnchecked = false;
+		bool childrenChecked = false;
+		foreach (InternalTreeNode* child, node->parent->children)
+		{
+			if (child->checked == Qt::Checked)
+				childrenChecked = true;
+			else if (child->checked == Qt::Unchecked)
+				childrenUnchecked = true;
+			if (childrenChecked && childrenUnchecked)
+				break;
+		}
+		if (childrenChecked && childrenUnchecked)
+			node->parent->checked = Qt::PartiallyChecked;
+		else if (childrenChecked)
+			node->parent->checked = Qt::Checked;
+		else
+			node->parent->checked = Qt::Unchecked;
+
+		QModelIndex parentIndex = parent(index);
+		emit dataChanged(parentIndex, parentIndex);
+	}
+
+	return true;
+}
+
+void SearchResultModel::replaceSelectedResults(const QString& replacement)
+{
+	//	go through each file
+	foreach (InternalTreeNode* locationNode, mRootNode->children)
+	{
+		if (locationNode->checked == Qt::Unchecked) continue;
+
+		BaseFile* file = gOpenFileManager.getFile(locationNode->result.location);
+		if (file == NULL)
+			continue;
+
+		QTextDocument* doc = file->getTextDocument();
+		QTextCursor cursor(doc);
+		cursor.beginEditBlock();
+
+		//	go through each result in each file -- backwards, to avoid changes to each entry mucking up other result locations
+		QList<InternalTreeNode*>::Iterator it = locationNode->children.end();
+		while (it != locationNode->children.begin())
+		{
+			--it;
+			InternalTreeNode* resultNode = *it;
+			if (resultNode->checked == Qt::Unchecked)
+				continue;
+
+			QTextBlock block = doc->findBlockByLineNumber(resultNode->result.lineNumber);
+			if (!block.isValid())
+				continue;
+
+			cursor.setPosition(block.position() + resultNode->result.start);
+			cursor.setPosition(block.position() + resultNode->result.start + resultNode->result.length, QTextCursor::KeepAnchor);
+
+			cursor.insertText(replacement);
+		}
+
+		cursor.endEditBlock();
+	}
+}
 
 

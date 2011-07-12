@@ -2,6 +2,9 @@
 #define SEARCHRESULTS_H
 
 #include <QTreeView>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QLabel>
 #include "searchresultmodel.h"
 class SearchResultDelegate;
 
@@ -13,12 +16,19 @@ public:
 	void clearResults();
 	void showResults(const QList<SearchResultModel::Result>& results);
 
+	void showReplaceOptions(bool replaceOptions);
+
 private slots:
 	void itemClicked(QModelIndex index);
+	void replaceClicked();
 
 private:
-	QLayout* mLayout;
 	QTreeView* mTreeView;
+
+	QLabel* mReplaceLabel;
+	QLineEdit* mReplaceWithText;
+	QPushButton* mReplaceButton;
+
 	SearchResultModel* mModel;
 	SearchResultDelegate* mDelegate;
 };

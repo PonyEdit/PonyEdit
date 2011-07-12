@@ -135,6 +135,7 @@ void MainWindow::restoreState()
 	restoreGeometry(settings.value("mainwindow/geometry").toByteArray());
 	QMainWindow::restoreState(settings.value("mainwindow/state").toByteArray());
 	mConnectionStatusPane->hide();
+	gWindowManager->hideSearchResults();
 }
 
 void MainWindow::createToolbar()

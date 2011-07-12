@@ -380,9 +380,10 @@ void WindowManager::searchInFiles(const QList<BaseFile*> files, const QString& t
 	showSearchResults(results, showReplaceOptions);
 }
 
-void WindowManager::showSearchResults(const QList<SearchResultModel::Result>& results, bool /*showReplaceOptions*/)
+void WindowManager::showSearchResults(const QList<SearchResultModel::Result>& results, bool showReplaceOptions)
 {
 	mSearchResults->showResults(results);
+	mSearchResults->showReplaceOptions(showReplaceOptions);
 	mSearchResultsWrapper->show();
 }
 
@@ -400,4 +401,26 @@ void WindowManager::displayLocation(const Location& location)
 	if (file != NULL)
 		displayFile(file);
 }
+
+void WindowManager::hideSearchResults()
+{
+	mSearchResultsWrapper->hide();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
