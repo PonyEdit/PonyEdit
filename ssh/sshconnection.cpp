@@ -62,7 +62,7 @@ bool SshConnection::threadConnect()
 		//	Basic connection
 		//
 
-		qDebug() << "Connecting...";
+		log("Connecting...");
 
 		if(NULL == mRawConnection)
 		{
@@ -73,7 +73,7 @@ bool SshConnection::threadConnect()
 		mRawConnection->connect(mHost->getHostName().toUtf8(), mHost->getPort());
 		checkForDeliberateDisconnect();
 
-		qDebug() << "Checking server fingerprint...";
+		log("Checking server fingerprint...");
 
 		//	Check the server's fingerprint
 		QByteArray fingerprint = mRawConnection->getServerFingerprint();
@@ -86,7 +86,7 @@ bool SshConnection::threadConnect()
 		//	Handle authentication
 		//
 
-		qDebug() << "Handling authentication...";
+		log("Beginning Authentication... ");
 
 		setStatus(Authenticating);
 		RawSshConnection::AuthMethods authMethods = mRawConnection->getAuthenticationMethods(mHost->getUserName().toUtf8());
@@ -96,7 +96,7 @@ bool SshConnection::threadConnect()
 		if (authMethods & RawSshConnection::PublicKey)
 		{
 			//	Try to see if there is an agent available first...
-			authenticated = mRawConnection->authenticateAgent(mHost->getUserName().toUtf8());
+			authenticated = mRawConnection->authenticateAgent(this, mHost->getUserName().toUtf8());
 
 			//	If no agent is available, but a keyfile was specified, try that...
 			if (!authenticated && !mHost->getKeyFile().isEmpty())
@@ -104,7 +104,7 @@ bool SshConnection::threadConnect()
 				bool passkeyRejected = true;
 				while (passkeyRejected)
 				{
-					authenticated = mRawConnection->authenticateKeyFile(mHost->getKeyFile().toUtf8(), mHost->getUserName().toUtf8(), mHost->getKeyPassphrase().toUtf8(), &passkeyRejected);
+					authenticated = mRawConnection->authenticateKeyFile(this, mHost->getKeyFile().toUtf8(), mHost->getUserName().toUtf8(), mHost->getKeyPassphrase().toUtf8(), &passkeyRejected);
 
 					checkForDeliberateDisconnect();
 
@@ -124,12 +124,14 @@ bool SshConnection::threadConnect()
 			waitForInput(SshConnection::passwordInputDialog, SshConnection::passwordInputCallback, QVariant(SshPassword));
 
 			checkForDeliberateDisconnect();
-			authenticated = mRawConnection->authenticatePassword(mHost->getUserName().toUtf8(), mHost->getPassword().toUtf8(), authMethods);
+			authenticated = mRawConnection->authenticatePassword(this, mHost->getUserName().toUtf8(), mHost->getPassword().toUtf8(), authMethods);
 
 			if(!authenticated)
 				mHost->setPassword(QString());
 		}
 		checkForDeliberateDisconnect();
+
+		log("Successfully authenticated");
 
 		return true;
 	}
@@ -216,18 +218,19 @@ RawChannelHandle* SshConnection::createRawFTPChannel()
 
 RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 {
-	qDebug() << "Opening raw channel...";
+	log("Opening a shell channel...");
+
 	RawSshConnection::Channel* rawChannel = mRawConnection->createShellChannel();
 	checkForDeliberateDisconnect();
 
 	//	Switch to the remote home directory
-	qDebug() << "Switching to home dir...";
+	log("cd ~");
 	mRawConnection->execute(rawChannel, ntr(" cd ~\n"));
 	checkForDeliberateDisconnect();
 
 	//	Check that Perl is installed and a recent version
 	bool validPerl = false;
-	qDebug() << "Checking Perl version...";
+	log("Checking available Perl version...");
 	QByteArray perlVersion = mRawConnection->execute(rawChannel, " perl -v\n");
 	if (perlVersion.length() > 0)
 	{
@@ -245,7 +248,7 @@ RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 
 	//	Make sure the remote slave script is present, and the MD5 hashes match. If not, upload again.
 	loadSlaveScript();
-	qDebug() << "Running remote md5sum...";
+	log("Checksumming slave script...");
 	QByteArray remoteMd5 = mRawConnection->execute(rawChannel, REMOTE_GETSLAVEMD5).toLower();
 	remoteMd5.truncate(32);
 	if (remoteMd5 != sSlaveMd5)
@@ -256,9 +259,10 @@ RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 	QByteArray firstLine;
 	if (sudo)
 	{
+		log("Running sudo...");
+
 		//	Run the remote slave script inside sudo
 		const char* slaveStarter = " sudo -k -p -sudo-prompt%% perl .ponyedit/slave.pl\n";
-		qDebug() << "Sending sudo command...";
 		mRawConnection->writeData(rawChannel, slaveStarter, strlen(slaveStarter));
 
 		//	Try passwords
@@ -266,7 +270,6 @@ RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 		while (1)
 		{
 			//	Check that we haven't run out of tries
-			qDebug() << "Looking for sudo prompt...";
 			QByteArray reply = mRawConnection->readUntil(rawChannel, "%").trimmed();
 			if (reply.startsWith("~="))
 			{
@@ -289,7 +292,6 @@ RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 
 			//	Try the password
 			QString pass = mHost->getSudoPassword() + "\n";
-			qDebug() << "Sending sudo password...";
 			mRawConnection->writeData(rawChannel, pass.toUtf8(), pass.length());
 
 			firstTry = false;
@@ -319,7 +321,7 @@ RawChannelHandle* SshConnection::createRawSlaveChannel(bool sudo)
 	else
 		throw(tr("Failed to start slave script!"));
 
-	qDebug() << "Channel opened!";
+	log("Channel opened!");
 
 	return new RawSshChannelHandle(rawChannel);
 }

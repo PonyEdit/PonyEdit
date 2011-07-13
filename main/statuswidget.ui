@@ -59,6 +59,13 @@
     </layout>
    </item>
    <item>
+    <layout class="QHBoxLayout" name="logArea">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+    </layout>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="childArea"/>
    </item>
    <item>

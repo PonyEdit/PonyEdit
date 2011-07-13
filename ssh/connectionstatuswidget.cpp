@@ -10,11 +10,17 @@
 ConnectionStatusWidget::ConnectionStatusWidget(RemoteConnection* connection, bool modal, QWidget* parent) :
 	StatusWidget(modal, parent)
 {
+	mLog = new QPlainTextEdit(this);
+	mLog->setReadOnly(true);
+	getLogArea()->addWidget(mLog);
+	getLogArea()->setMargin(0);
+
 	mConnection = connection;
 
 	setButtons(Cancel);
 
 	connect(connection, SIGNAL(statusChanged()), this, SLOT(connectionStatusChanged()), Qt::QueuedConnection);
+	connect(connection, SIGNAL(logUpdated(QString)), this, SLOT(logUpdated(QString)), Qt::QueuedConnection);
 	connect(this, SIGNAL(buttonClicked(StatusWidget::Button)), this, SLOT(onButtonClicked(StatusWidget::Button)));
 }
 
@@ -89,6 +95,11 @@ void ConnectionStatusWidget::onButtonClicked(StatusWidget::Button button)
 		setStatus(mConnection->getStatusIcon(), mConnection->getName() + ": " + mConnection->getStatusString());
 		mConnection->inputDialogCompleted();
 	}
+}
+
+void ConnectionStatusWidget::logUpdated(QString newLine)
+{
+	mLog->appendPlainText(newLine);
 }
 
 

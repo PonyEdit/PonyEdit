@@ -40,6 +40,8 @@ public:
 	inline bool isShowingInput() const { return mCurrentInputWidget != NULL; }
 	inline Button getResult() const { return mResult; }
 
+	QLayout* getLogArea();
+
 signals:
 	void signalUpdateLayouts();
 	void completed();

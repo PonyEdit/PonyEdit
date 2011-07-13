@@ -274,5 +274,14 @@ bool RemoteConnection::hasReasonToLive()
 	return mHost->needsConnection();
 }
 
+void RemoteConnection::log(const QString& message)
+{
+	mLog += message + "\n";
+	emit logUpdated(message);
+}
 
+const QString& RemoteConnection::getLog() const
+{
+	return mLog;
+}
 

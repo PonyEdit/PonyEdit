@@ -18,6 +18,7 @@
 #include <QMessageBox>
 #include <QThread>
 #include "main/global.h"
+#include "sshconnection.h"
 
 #define DEFAULT_PERMISSIONS LIBSSH2_SFTP_S_IRUSR | LIBSSH2_SFTP_S_IWUSR | LIBSSH2_SFTP_S_IRGRP | LIBSSH2_SFTP_S_IROTH
 
@@ -158,49 +159,68 @@ void RawSshConnection::interactiveAuthCallback(const char*, int, const char*, in
 	}
 }
 
-bool RawSshConnection::authenticatePassword(const char* username, const char* password, RawSshConnection::AuthMethods authMethods)
+bool RawSshConnection::authenticatePassword(SshConnection* connection, const char* username, const char* password, RawSshConnection::AuthMethods authMethods)
 {
 	int rc = 0;
 
 	if (authMethods & Password)
+	{
+		connection->log("Attempting authentication by password...");
 		rc = libssh2_userauth_password(mSession, username, password);
+	}
 	else
 	{
+		connection->log("Attempting kb-interactive authentication...");
 		mKeyboardAuthPassword = password;
 		rc = libssh2_userauth_keyboard_interactive_ex(mSession, username, strlen(username), interactiveAuthCallback);
 	}
 
+	connection->log("rc = " + QString::number(rc));
+
 	if (rc == LIBSSH2_ERROR_AUTHENTICATION_FAILED)
+	{
+		connection->log("Authentication failed");
 		return false;
+	}
 
 	if (rc)
 		throw(QObject::tr("Connection dropped!"));
 
+	connection->log("Authentication accepted.");
 	return true;
 }
 
-bool RawSshConnection::authenticateKeyFile(const char* filename, const char* username, const char* password, bool* keyRejected)
+bool RawSshConnection::authenticateKeyFile(SshConnection* connection, const char* filename, const char* username, const char* password, bool* keyRejected)
 {
-	qDebug() << filename;
+	connection->log("Attempting authentication by keyfile...");
+	connection->log("KeyFile name = " + QString(filename));
+	connection->log(QString("Key passphrase supplied = ") + (strlen(password) ? "yes" : "no"));
+
 	int rc = libssh2_userauth_publickey_fromfile_ex(mSession, username, strlen(username),
 												 NULL, filename, password);
 
+	connection->log("rc = " + QString::number(rc));
+
 	if (rc == 0)
 	{
+		connection->log("Accepted");
 		*keyRejected = false;
 		return true;
 	}
 
 	*keyRejected = (rc == LIBSSH2_ERROR_PUBLICKEY_UNVERIFIED || rc == LIBSSH2_ERROR_FILE);
+	connection->log(*keyRejected ? "Key passphrase rejected" : "Authentication failed");
 	return false;
 }
 
-bool RawSshConnection::authenticateAgent(const char* username)
+bool RawSshConnection::authenticateAgent(SshConnection* connection, const char* username)
 {
 	struct libssh2_agent_publickey *identity, *prevIdentity = NULL;
 	LIBSSH2_AGENT* agent = NULL;
 	int rc;
 	bool success = false;
+
+	connection->log("Attempting authentication by SSH agent...");
 
 	try
 	{
@@ -210,7 +230,7 @@ bool RawSshConnection::authenticateAgent(const char* username)
 
 		//	Connect to the SSH agent
 		rc = libssh2_agent_connect(agent);
-		if (rc) throw(QObject::tr("Failed to connect to SSH agent!"));
+		if (rc) throw(QObject::tr("No SSH agent found."));
 
 		//	Prepare a list of identities managed by the SSH agent
 		rc = libssh2_agent_list_identities(agent);
@@ -220,16 +240,16 @@ bool RawSshConnection::authenticateAgent(const char* username)
 		{
 			//	Get an identity
 			rc = libssh2_agent_get_identity(agent, &identity, prevIdentity);
-			if (rc) throw(rc == 1 ? QObject::tr("No identities stored in SSH agent accepted!") : QObject::tr("Failed to receive identity from SSH agent!"));
+			if (rc) throw(rc == 1 ? QObject::tr("No identities stored in SSH agent were accepted!") : QObject::tr("Failed to receive identity from SSH agent!"));
 
 			//	Try an identity
-			qDebug() << "Trying key: " << identity->comment;
+			connection->log(QString("Trying key: ") + identity->comment + QString("... "));
 			rc = libssh2_agent_userauth(agent, username, identity);
 			if (rc)
-				qDebug() << "Authentication with key " << identity->comment << " rejected.";
+				connection->log("... rejected.");
 			else
 			{
-				qDebug() << "Authentication with key " << identity->comment << " accepted!";
+				connection->log("... accepted.");
 				success = true;
 				break;
 			}
@@ -239,6 +259,7 @@ bool RawSshConnection::authenticateAgent(const char* username)
 	}
 	catch (const QString& error)
 	{
+		connection->log("Failed to authenticate via agent:\n  " + error);
 		qDebug() << "Failed to authenticate via SSH agent: " << error;
 	}
 

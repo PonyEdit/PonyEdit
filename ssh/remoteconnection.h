@@ -101,8 +101,12 @@ public:
 
 	bool hasReasonToLive();		//	Returns true if something (eg; a file) is dependant on this connection. Used when deciding whether to reconnect or just die.
 
+	void log(const QString& message);
+	const QString& getLog() const;
+
 signals:
 	void statusChanged();
+	void logUpdated(QString newLine);
 
 protected:
 	void startConnectionThread();		//	Always called once during the sub-class constructor
@@ -131,6 +135,8 @@ protected:
 	DialogFunction mInputDialog;
 	DialogCallback mDialogCallback;
 	QWaitCondition mInputDialogWait;
+
+	QString mLog;
 };
 
 #endif // REMOTECONNECTION_H

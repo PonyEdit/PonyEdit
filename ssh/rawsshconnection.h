@@ -17,6 +17,7 @@ public:
         virtual void fileOpenProgress(int /*percent*/) {}
 };
 
+class SshConnection;
 class RawSshConnection
 {
 public:
@@ -42,9 +43,9 @@ public:
 	void connect(const char* host, int port);
 	void disconnect();
 	AuthMethods getAuthenticationMethods(const char* username);
-	bool authenticatePassword(const char* username, const char* password, AuthMethods authMethods);
-	bool authenticateKeyFile(const char* filename, const char* username, const char* password, bool* keyRejected);
-	bool authenticateAgent(const char* username);
+	bool authenticatePassword(SshConnection* connection, const char* username, const char* password, AuthMethods authMethods);
+	bool authenticateKeyFile(SshConnection* connection, const char* filename, const char* username, const char* password, bool* keyRejected);
+	bool authenticateAgent(SshConnection* connection, const char* username);
 	void startRemoteSlave();
 
 	void writeFile(const char* remoteFilename, const char* data, int length);

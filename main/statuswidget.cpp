@@ -114,6 +114,9 @@ void StatusWidget::setButtonsEnabled(bool enabled)
 	ui->buttonBox->setEnabled(enabled);
 }
 
-
+QLayout* StatusWidget::getLogArea()
+{
+	return ui->logArea;
+}
 
 
