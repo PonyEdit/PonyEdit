@@ -31,7 +31,7 @@ public:
 	BaseFile* getCurrentFile();
 	Editor* currentEditor();
 
-	void setCurrentEditorStack(EditorPanel* stack);
+	void setCurrentEditorPanel(EditorPanel* stack);
 	void editorFocusSet(CodeEditor* newFocus);
 
 	inline EditorPanel* getCurrentPanel() const { return mCurrentEditorPanel; }

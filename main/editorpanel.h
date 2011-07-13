@@ -16,6 +16,7 @@ class EditorPanel : public QFrame
     Q_OBJECT
 public:
 	explicit EditorPanel(QWidget* parent, EditorPanel* parentPanel = NULL, EditorStack* inheritedStack = NULL);
+	~EditorPanel();
 
 	void fileClosed(BaseFile* file);
 	inline bool isSplit() const { return mSplitWidget != NULL; }

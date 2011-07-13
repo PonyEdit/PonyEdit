@@ -22,7 +22,7 @@ WindowManager::WindowManager(QWidget *parent) :
 	mLayout->setMargin(0);
 	mRootEditorPanel = new EditorPanel(this);
 	mLayout->addWidget(mRootEditorPanel);
-	setCurrentEditorStack(mRootEditorPanel);
+	setCurrentEditorPanel(mRootEditorPanel);
 
 	createSearchBar();
 	createRegExpTester();
@@ -42,7 +42,8 @@ WindowManager::~WindowManager()
 void WindowManager::displayFile(BaseFile *file)
 {
 	Location loc = file->getLocation();
-	mCurrentEditorPanel->displayFile(file);
+	if (mCurrentEditorPanel != NULL)
+		mCurrentEditorPanel->displayFile(file);
 }
 
 void WindowManager::fileClosed(BaseFile *file)
@@ -51,7 +52,7 @@ void WindowManager::fileClosed(BaseFile *file)
 	mRootEditorPanel->fileClosed(file);
 }
 
-void WindowManager::setCurrentEditorStack(EditorPanel* stack)
+void WindowManager::setCurrentEditorPanel(EditorPanel* stack)
 {
 	if (mEditorSelectionLocked) return;
 
@@ -199,22 +200,29 @@ void WindowManager::notifyEditorChanged(EditorPanel* stack)
 
 void WindowManager::splitVertically()
 {
-	EditorPanel* stack = mCurrentEditorPanel;
-	stack->split(Qt::Horizontal);
-	setCurrentEditorStack(stack->getFirstChild());
+	EditorPanel* panel = mCurrentEditorPanel;
+	if (!panel) return;
+
+	panel->split(Qt::Horizontal);
+	setCurrentEditorPanel(panel->getFirstChild());
 	emit splitChanged();
 }
 
 void WindowManager::splitHorizontally()
 {
-	EditorPanel* stack = mCurrentEditorPanel;
+	EditorPanel* panel = mCurrentEditorPanel;
+	if (!panel) return;
+
 	mCurrentEditorPanel->split(Qt::Vertical);
-	setCurrentEditorStack(stack->getFirstChild());
+	setCurrentEditorPanel(panel->getFirstChild());
 	emit splitChanged();
 }
 
 Editor* WindowManager::currentEditor()
 {
+	if (mCurrentEditorPanel == NULL)
+		return NULL;
+
 	return mCurrentEditorPanel->getCurrentEditor();
 }
 
@@ -225,6 +233,8 @@ bool WindowManager::isSplit()
 
 void WindowManager::removeSplit()
 {
+	if (mCurrentEditorPanel == NULL) return;
+
 	mCurrentEditorPanel->unsplit();
 	emit splitChanged();
 }
@@ -240,7 +250,7 @@ void WindowManager::nextSplit()
 	if (mCurrentEditorPanel == NULL) return;
 	EditorPanel* nextPanel = mCurrentEditorPanel->findNextPanel();
 	if (nextPanel)
-		setCurrentEditorStack(nextPanel);
+		setCurrentEditorPanel(nextPanel);
 }
 
 void WindowManager::previousSplit()
@@ -248,7 +258,7 @@ void WindowManager::previousSplit()
 	if (mCurrentEditorPanel == NULL) return;
 	EditorPanel* nextPanel = mCurrentEditorPanel->findPreviousPanel();
 	if (nextPanel)
-		setCurrentEditorStack(nextPanel);
+		setCurrentEditorPanel(nextPanel);
 }
 
 EditorPanel* WindowManager::getFirstPanel()

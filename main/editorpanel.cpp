@@ -25,6 +25,12 @@ EditorPanel::EditorPanel(QWidget* parent, EditorPanel* parentPanel, EditorStack*
 
 }
 
+EditorPanel::~EditorPanel()
+{
+	if (gWindowManager->getCurrentPanel() == this)
+		gWindowManager->setCurrentEditorPanel(NULL);
+}
+
 void EditorPanel::setupBorder()
 {
 	//	Don't show a border if this is the root view
@@ -87,8 +93,6 @@ void EditorPanel::unsplit()
 	}
 
 	EditorPanel* currentEditor = gWindowManager->getCurrentPanel();
-	gWindowManager->setCurrentEditorStack(this);
-	gWindowManager->lockEditorSelection();
 
 	//	Pick which descendant to keep during the unsplit. Attempt 1: See if
 	//	the current panel is a child of this split panel.
@@ -123,7 +127,7 @@ void EditorPanel::unsplit()
 
 	setupBorder();
 
-	gWindowManager->unlockEditorSelection();
+	gWindowManager->setCurrentEditorPanel(this);
 }
 
 void EditorPanel::split(Qt::Orientation orientation)
@@ -187,7 +191,7 @@ EditorPanel* EditorPanel::findStack(Editor* editor)
 
 void EditorPanel::takeFocus()
 {
-	gWindowManager->setCurrentEditorStack(this);
+	gWindowManager->setCurrentEditorPanel(this);
 }
 
 Editor* EditorPanel::getCurrentEditor() const
