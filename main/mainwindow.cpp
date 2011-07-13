@@ -107,15 +107,8 @@ MainWindow::MainWindow(QWidget *parent)
 	mRecentFiles = Tools::loadRecentFiles();
 	updateRecentFilesMenu();
 
-	/*const char* key = "dGhpbmdhbG9uOjE6MjAxMS0wNi0wMToxLwCZAmzUPfc1ZgGCzxFju78l4b7KAiXHdWsvjIyJ3hh+VeI0ftUXBaXMe21c0Z6YygAbO7qBDRik1cjFBQiTiR8a1jogP1Uw5nsK5lLAvcTRxF3QYnmb9DakiF11Bi6NO0wuYxIPsyF52m3K9TFfdX1UF28ayzhWXiiJBDI9ykOtPzNLbA3UANpO0ibT3kfJzhGOHsU5Nyj+43aHizid3rTyduTtMKUsTjX8WkQ3l9xDltLVxiNYiU6blSemNmP+xUmC2G7VQ7XmyJ7KQUlGNLW+rYT5Vpt7SYD7/QReFGB7xRH2PrZTbHktH9irO78tHWAUNeAFNhaUTD0GWo9ZVz8=";
-	Licence l(key);
-	qDebug() << "Licence is valid: " << l.isValid();
-	qDebug() << "Licence has expired: " << l.hasExpired();
-	qDebug() << "Licence expiry date: " << l.getExpiry();
-	qDebug() << "Licence login name: " << l.getLogin();
-	qDebug() << "Licence max version: " << l.getMaximumVersion();
-	qDebug() << "Licence issue id: " << l.getIssueId();*/
-
+	// Set the default size to something relatively sane
+	resize(QSize(800, 600));
 	restoreState();
 
 	QTimer::singleShot(0, this, SLOT(checkLicence()));
