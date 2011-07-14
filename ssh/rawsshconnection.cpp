@@ -208,8 +208,14 @@ bool RawSshConnection::authenticateKeyFile(SshConnection* connection, const char
 		return true;
 	}
 
-	*keyRejected = (rc == LIBSSH2_ERROR_PUBLICKEY_UNVERIFIED || rc == LIBSSH2_ERROR_FILE);
+	*keyRejected = (rc == LIBSSH2_ERROR_PUBLICKEY_UNVERIFIED);
 	connection->log(*keyRejected ? "Key passphrase rejected" : "Authentication failed");
+
+	char* errmsg;
+	int errlen;
+	libssh2_session_last_error(mSession, &errmsg, &errlen, false);
+	connection->log("Specific error: " + QString(QByteArray(errmsg, errlen)));
+
 	return false;
 }
 
