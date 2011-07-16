@@ -13,8 +13,11 @@ OpenFileManager::OpenFileManager() : QObject(0)
 
 BaseFile* OpenFileManager::getFile(const Location& location) const
 {
+	if (location.getProtocol() == Location::Unsaved)
+		return NULL;
+
 	foreach (BaseFile* file, mOpenFiles)
-		if (location.getProtocol() != Location::Unsaved && file->getLocation() == location)
+		if (file->getLocation() == location)
 			return file;
 
 	return NULL;

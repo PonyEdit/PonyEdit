@@ -41,7 +41,6 @@ WindowManager::~WindowManager()
 
 void WindowManager::displayFile(BaseFile *file)
 {
-	Location loc = file->getLocation();
 	if (mCurrentEditorPanel != NULL)
 	{
 		mCurrentEditorPanel->displayFile(file);
