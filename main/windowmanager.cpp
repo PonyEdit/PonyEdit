@@ -43,7 +43,13 @@ void WindowManager::displayFile(BaseFile *file)
 {
 	Location loc = file->getLocation();
 	if (mCurrentEditorPanel != NULL)
+	{
 		mCurrentEditorPanel->displayFile(file);
+
+		Editor* e = currentEditor();
+		if (e != NULL)
+			e->setFocus();
+	}
 }
 
 void WindowManager::fileClosed(BaseFile *file)
