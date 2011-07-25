@@ -21,6 +21,8 @@ win32 {
 }
 
 macx {
+	DEFINES += __DARWIN_64_BIT_INO_T
+
 	data.files = syntaxdefs slave
 	data.path = Contents/Resources
 
