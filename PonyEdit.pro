@@ -21,14 +21,10 @@ win32 {
 }
 
 macx {
-	DEFINES += __DARWIN_64_BIT_INO_T
-
 	data.files = syntaxdefs slave
 	data.path = Contents/Resources
 
 	QMAKE_BUNDLE_DATA += data
-
-	CONFIG += x86
 
 	ICON = icons/ponyedit.icns
 	TARGET = PonyEdit
@@ -37,7 +33,7 @@ macx {
 	TARGET = ponyedit
 }
 
-QT      += core gui network xml script webkit
+QT	+= core gui network xml script webkit
 LIBS	+= -lssh2 -lcrypto -lssl
 TEMPLATE = app
 
