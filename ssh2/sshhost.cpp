@@ -97,7 +97,7 @@ void SshHost::appendToHostLog(const QString& line)
 void SshHost::showLog()
 {
 	if (mLogWindow.isNull())
-		mLogWindow = QWeakPointer<HostLog>(new HostLog(this));
+        mLogWindow = QPointer<HostLog>(new HostLog(this));
 	mLogWindow.data()->show();
 	mLogWindow.data()->setFocus();
 }

@@ -84,16 +84,16 @@ void ServerConfigWidget::acceptedHandler()
 {
 	updateName();
 
-	mEditHost->setHostname(ui->hostName->text().toAscii());
-	mEditHost->setUsername(ui->userName->text().toAscii());
+    mEditHost->setHostname(ui->hostName->text().toLatin1());
+    mEditHost->setUsername(ui->userName->text().toLatin1());
 	mEditHost->setPort(ui->hostPort->text().toInt());
-	mEditHost->setPassword(ui->password->text().toAscii());
+    mEditHost->setPassword(ui->password->text().toLatin1());
 	mEditHost->setSaveHost(ui->saveServer->checkState() == Qt::Checked);
 	mEditHost->setName(ui->serverName->text());
-	mEditHost->setDefaultDirectory(ui->defaultDirectory->text().toAscii());
+    mEditHost->setDefaultDirectory(ui->defaultDirectory->text().toLatin1());
 	mEditHost->setSavePassword(ui->savePassword->checkState() == Qt::Checked);
 	mEditHost->setKeyFile(ui->keyFile->text().toUtf8());
-	mEditHost->setKeyPassphrase(ui->keyPassphrase->text().toAscii());
+    mEditHost->setKeyPassphrase(ui->keyPassphrase->text().toLatin1());
 	mEditHost->setSaveKeyPassphrase(ui->saveKeyPassphrase->isChecked());
 	mEditHost->setConnectionType(static_cast<SshHost::ConnectionType>(ui->connectionType->itemData(ui->connectionType->currentIndex()).toInt()));
 	gDispatcher->emitSshServersUpdated();

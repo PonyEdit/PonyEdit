@@ -24,7 +24,7 @@ void OfflineActivationDialog::validate()
 {
 	QString key = ui->licenceKeyEntry->document()->toPlainText();
 
-	mLicence.setKey(key.toAscii());
+    mLicence.setKey(key.toLatin1());
 	ui->validLicenceIcon->setVisible(mLicence.isValid());
 	ui->validLicenceLabel->setVisible(mLicence.isValid());
 	ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(mLicence.isValid());

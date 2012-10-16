@@ -13,7 +13,7 @@
 #include <QStringList>
 #include "QsLog.h"
 #include "hostlog.h"
-#include <QWeakPointer>
+#include <QPointer>
 
 //	Configuration
 #define CHANNEL_LIMIT_GUESS 10		/* Guess at the max number of channels per connection */
@@ -222,7 +222,7 @@ private:
 	QMutex mNewSessionMutex;		//	In the interests of UI sanity, only allow 1 new SSH session to connect at any given time.
 
 	QStringList mHostLog;
-	QWeakPointer<HostLog> mLogWindow;
+    QPointer<HostLog> mLogWindow;
 	QMutex mModifyingLogMutex;
 
 	QList<SshSession*> mSessions;

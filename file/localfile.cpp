@@ -13,7 +13,7 @@ BaseFile* LocalFile::newFile(const QString& content)
 
 	save();
 
-	emit localFileOpened(content, getChecksum().toAscii(), false);
+    emit localFileOpened(content, getChecksum().toLatin1(), false);
 
 	return this;
 }
@@ -35,7 +35,7 @@ void LocalFile::open()
 
 	mContent = content;
 
-	emit localFileOpened(content, getChecksum().toAscii(), readOnly);
+    emit localFileOpened(content, getChecksum().toLatin1(), readOnly);
 }
 
 void LocalFile::save()
@@ -56,7 +56,7 @@ void LocalFile::save()
 
 	fileHandle.close();
 
-	savedRevision(mRevision, mDocument->availableUndoSteps(), QByteArray(getChecksum().toAscii()));
+    savedRevision(mRevision, mDocument->availableUndoSteps(), QByteArray(getChecksum().toLatin1()));
 }
 
 void LocalFile::close()

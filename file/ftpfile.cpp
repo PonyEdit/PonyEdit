@@ -11,7 +11,7 @@ FtpFile::FtpFile(const Location& location) : BaseFile(location)
 
 BaseFile* FtpFile::newFile(const QString& content)
 {
-	openSuccess(content, getChecksum(content.toUtf8()).toAscii(), false);
+    openSuccess(content, getChecksum(content.toUtf8()).toLatin1(), false);
 	save();
 	return this;
 }
@@ -28,7 +28,7 @@ void FtpFile::open()
 void FtpFile::sftpReadSuccess(QVariantMap results)
 {
 	QByteArray content = results.value("content", QByteArray()).toByteArray();
-	QByteArray checksum = BaseFile::getChecksum(content).toAscii();
+    QByteArray checksum = BaseFile::getChecksum(content).toLatin1();
 
 	openSuccess(QString::fromUtf8(content, content.size()), checksum, false);
 }

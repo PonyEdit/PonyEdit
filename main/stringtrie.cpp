@@ -18,7 +18,7 @@ void StringTrie::addWord(const QString& word)
 	Node* scan = mRoot;
 	for (int i = 0; i < word.length(); i++)
 	{
-		int c = word.at(i).toAscii();
+        int c = word.at(i).toLatin1();
 		if (scan->children[c] == NULL)
 			scan->children[c] = allocateNode();
 		scan = scan->children[c];
@@ -31,7 +31,7 @@ bool StringTrie::containsWord(const QString& word)
 	Node* scan = mRoot;
 	for (int i = 0; i < word.length(); i++)
 	{
-		int c = word.at(i).toAscii();
+        int c = word.at(i).toLatin1();
 		if (scan->children[c] == NULL)
 			return false;
 		scan = scan->children[c];

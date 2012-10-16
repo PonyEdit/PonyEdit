@@ -33,7 +33,7 @@ BaseFile* SlaveFile::newFile(const QString& content)
 	clearTempOpenData();
 
 	//	Retrieve the file content on a separate SSH channel...
-	mHost->setFileContent(mLocation.isSudo(), mLocation.getRemotePath().toAscii(), content.toUtf8(), Callback(this, SLOT(createSuccess(QVariantMap)), SLOT(openFailure(QString,int)), SLOT(downloadProgress(int))));
+    mHost->setFileContent(mLocation.isSudo(), mLocation.getRemotePath().toLatin1(), content.toUtf8(), Callback(this, SLOT(createSuccess(QVariantMap)), SLOT(openFailure(QString,int)), SLOT(downloadProgress(int))));
 
 	return this;
 }
@@ -57,7 +57,7 @@ void SlaveFile::open()
 	mHost->sendSlaveRequest(mLocation.isSudo(), this, "open", QVariant(params), Callback(this, SLOT(slaveOpenSuccess(QVariantMap)), SLOT(openFailure(QString,int))));
 
 	//	Retrieve the file content on a separate SSH channel...
-	mHost->getFileContent(mLocation.isSudo(), mLocation.getRemotePath().toAscii(), Callback(this, SLOT(downloadSuccess(QVariantMap)), SLOT(openFailure(QString,int)), SLOT(downloadProgress(int))));
+    mHost->getFileContent(mLocation.isSudo(), mLocation.getRemotePath().toLatin1(), Callback(this, SLOT(downloadSuccess(QVariantMap)), SLOT(openFailure(QString,int)), SLOT(downloadProgress(int))));
 }
 
 void SlaveFile::downloadProgress(int percent)

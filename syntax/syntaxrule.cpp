@@ -216,7 +216,7 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 	{
 		mDynamicCharIndex = 0;
 		if (mType == DetectChar || mType == Detect2Chars)
-			mDynamicCharIndex = (mCharacterA >= '0' && mCharacterA <= '9' ? mCharacterA.toAscii() - '0' : 0);
+            mDynamicCharIndex = (mCharacterA >= '0' && mCharacterA <= '9' ? mCharacterA.toLatin1() - '0' : 0);
 		else
 		{
 			int index = 0;

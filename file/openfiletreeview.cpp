@@ -24,7 +24,7 @@ OpenFileTreeView::OpenFileTreeView(QWidget *parent, int optionFlags, const QList
 	header()->hide();
 	setAttribute(Qt::WA_MacShowFocusRect, false);
 	viewport()->setAttribute(Qt::WA_Hover);
-	header()->setResizeMode(0, QHeaderView::Stretch);
+    header()->setSectionResizeMode(0, QHeaderView::Stretch);
 	setSelectionMode(optionFlags & MultiSelect ? QAbstractItemView::ExtendedSelection : QAbstractItemView::SingleSelection);
 	header()->setStretchLastSection(false);
 
@@ -32,7 +32,7 @@ OpenFileTreeView::OpenFileTreeView(QWidget *parent, int optionFlags, const QList
 	{
 		mRefreshColumn = ++mExtraColumns;
 
-		header()->setResizeMode(mRefreshColumn, QHeaderView::Fixed);
+        header()->setSectionResizeMode(mRefreshColumn, QHeaderView::Fixed);
 		header()->resizeSection(mRefreshColumn, 16);
 	}
 
@@ -40,7 +40,7 @@ OpenFileTreeView::OpenFileTreeView(QWidget *parent, int optionFlags, const QList
 	{
 		mCloseColumn = ++mExtraColumns;
 
-		header()->setResizeMode(mCloseColumn, QHeaderView::Fixed);
+        header()->setSectionResizeMode(mCloseColumn, QHeaderView::Fixed);
 		header()->resizeSection(mCloseColumn, 16);
 	}
 

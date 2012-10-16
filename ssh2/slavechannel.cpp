@@ -86,6 +86,7 @@ void SlaveChannel::initialize()
 {
 	//	TODO: Use Tools::getResourcePath
 	QFile f(Tools::getResourcePath("slave/slave.pl"));
+    QLOG_INFO() << f.fileName();
 	if (!f.open(QFile::ReadOnly))
 		throw(tr("Unable to find slave script!"));
 	sSlaveScript = f.readAll();

@@ -3,7 +3,7 @@
 
 #include <QVariantMap>
 #include <QObject>
-#include <QWeakPointer>
+#include <QPointer>
 
 class QObject;
 class Callback
@@ -21,7 +21,7 @@ public:
 	void triggerProgress(int progress) const;
 
 private:
-	QWeakPointer<QObject> mTarget;
+    QPointer<QObject> mTarget;
 	const char* mSuccessSlot;
 	const char* mFailureSlot;
 	const char* mProgressSlot;

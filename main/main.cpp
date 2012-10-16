@@ -6,7 +6,7 @@
 #include <QMetaType>
 #include <QFont>
 #include <QNetworkProxyFactory>
-#include <QDesktopServices>
+#include <QStandardPaths>
 #include <QDir>
 
 #include "global.h"
@@ -32,11 +32,11 @@ int main(int argc, char *argv[])
 		QCoreApplication::setApplicationVersion(PRETTY_VERSION);
 
 		// Create our data directory if it doesn't already exist
-		QDir datadir(QDesktopServices::storageLocation( QDesktopServices::DataLocation ) );
+        QDir datadir(QStandardPaths::writableLocation( QStandardPaths::DataLocation ) );
 		if( !datadir.exists() )
-			datadir.mkpath( QDesktopServices::storageLocation( QDesktopServices::DataLocation ) );
+            datadir.mkpath( QStandardPaths::writableLocation( QStandardPaths::DataLocation ) );
 
-		fileDestination = QsLogging::DestinationPtr( QsLogging::DestinationFactory::MakeFileDestination( QDesktopServices::storageLocation( QDesktopServices::DataLocation ) + "/ponyedit.log" ) );
+        fileDestination = QsLogging::DestinationPtr( QsLogging::DestinationFactory::MakeFileDestination( QStandardPaths::writableLocation( QStandardPaths::DataLocation ) + "/ponyedit.log" ) );
 		debugDestination = QsLogging::DestinationPtr( QsLogging::DestinationFactory::MakeDebugOutputDestination() );
 		logger.addDestination( debugDestination.get() );
 		logger.addDestination( fileDestination.get() );

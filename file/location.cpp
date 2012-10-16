@@ -481,7 +481,7 @@ void LocationShared::sftpLsFailure(QString error, int /*flags*/)
 SshHost* LocationShared::getHost()
 {
 	if (mHost == NULL)
-		mHost = SshHost::getHost(mRemoteHostName.toAscii(), mRemoteUserName.toAscii());
+        mHost = SshHost::getHost(mRemoteHostName.toLatin1(), mRemoteUserName.toLatin1());
 
 	return mHost;
 }

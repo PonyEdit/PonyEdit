@@ -1,5 +1,6 @@
 #include <QCoreApplication>
 #include <QUrl>
+#include <QUrlQuery>
 #include <QNetworkReply>
 #include <QDebug>
 #include <QVariantMap>
@@ -54,18 +55,17 @@ void SiteManager::checkForUpdates(bool forceNotification)
 
 void SiteManager::getLicence(const QString &username, const QString &password)
 {
-	Licence l = Licence();
 	QString version = QString("vmaj=%1&vmin=%2&rev=%3").arg(MAJOR_VERSION).arg(MINOR_VERSION).arg(REVISION);
 
 	QUrl url(QString(SITE_URL) + "licence/?f=getlicence&" + version);
 
-	QUrl postData;
+    QUrlQuery postData;
 	postData.addQueryItem("u", username);
 	postData.addQueryItem("p", password);
 
 	QNetworkRequest request(url);
 	request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-	QNetworkReply* reply = mManager->post(request, postData.encodedQuery());
+    QNetworkReply* reply = mManager->post(request, postData.toString(QUrl::FullyEncoded).toLatin1());
 
 	mReplies.insert(reply, GetLicence);
 }

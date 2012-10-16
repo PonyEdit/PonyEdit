@@ -254,8 +254,8 @@ bool Tools::compareSubstring(const QString& superstring, const QString& substrin
 
 QString Tools::getResourcePath(const QString& subpath)
 {
-#ifdef Q_OS_MAC
-	return QCoreApplication::applicationDirPath() + QString("/../Resources/") + subpath;
+#ifdef Q_OS_MAC && !defined QT_DEBUG
+    return QCoreApplication::applicationDirPath() + QString("/../Resources/") + subpath;
 #elif defined Q_OS_WIN && !defined QT_DEBUG
 	return QCoreApplication::applicationDirPath() + QString("/") + subpath;
 #elif defined Q_OS_LINUX && !defined QT_DEBUG
