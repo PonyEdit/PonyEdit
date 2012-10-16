@@ -1,59 +1,235 @@
 # (C) 2010-2011 Mark George & Gary Pendergast. PonyEdit slave script.
 use strict;
-
-use Cwd;
-use Fcntl ':mode';
-use MIME::Base64;
 use POSIX;
+use Scalar::Util;
+use IO::Select;
+use Fcntl qw(:mode);
+use Digest::MD5;
+use List::Util qw(min);
+use File::Path;
+use Encode;
+use utf8;
 
-use Data::Dumper;
+`stty -isig -icanon -onlcr`;
 
 our %buffers = ();
 our $nextBufferId = 1;
-
-# Open and unbuffer the log file
-open( LOGFILE, '>>.ponyedit/error.log' );
-select( ( select( LOGFILE ), $|=1 )[0] );
-
-sub errlog
-{
-	print LOGFILE POSIX::strftime("[%Y-%m-%d %H:%M:%S] - ", localtime);
-	print LOGFILE $_[0] . "\n";
-}
-
-#
-#	Config & Definitions
-#
-
-our %dataTypes =
+our %calls =
 (
-	#1 => 's',
-	#2 => 'l',
-	129 => 'v',
-	130 => 'V',
+	'ls' => \&msg_ls,
+	'open' => \&msg_open,
+	'change' => \&msg_change,
+	'save' => \&msg_save,
+	'close' => \&msg_close,
+	'mkdir' => \&msg_mkdir,
 );
 
-use constant FILE_ISDIR =>    1;
-use constant FILE_CANREAD =>  2;
-use constant FILE_CANWRITE => 4;
+#	Open and unbuffer a logfile
+open LOGFILE, '>>.ponyedit/error.log';
+select((select(LOGFILE), $|=1)[0]);
+sub errlog { print LOGFILE POSIX::strftime("[%Y-%m-%d %H:%M:%S] - ", localtime) . $_[0] . "\n"; }
+$| = 1;
 
-use constant ERR_OK => 0;
-use constant ERR_UNSPECIFIED => 1;
-use constant ERR_PERMISSION => 2;
+#	Startup information
+print "Slave OK\n";
+print json::encode({'~' => getcwd()}) . "\n";
+print "\%-ponyedit-\%";
 
-#
+if ($ARGV[0] eq 'xfer')
+{
+	xferLoop();
+}
+else
+{
+	slaveLoop();
+}
+
+sub slaveLoop
+{
+	my $inBuffer = '';
+	our $inputs = IO::Select->new();
+	$inputs->add(\*STDIN);
+	while (1)
+	{
+		my @ready = $inputs->can_read;
+		foreach my $in (@ready)
+		{
+			my $retry = 1;
+			while ($retry)
+			{
+				my $data;
+				$retry = (sysread($in, $data, 2048) == 2048);
+				$inBuffer .= $data;
+
+				my @pieces = split("\n", $inBuffer, 2048);
+				if (@pieces > 1)
+				{
+					$inBuffer = substr($inBuffer, rindex($inBuffer, "\n") + 1);
+					for (my $i = 0; $i < (@pieces - 1); $i++)
+					{
+						eval
+						{
+							my $leftover = 0;
+							my $command = unbin($pieces[$i], \$leftover);
+							Encode::_utf8_on($command);
+							slaveCommand($command); 1;
+						}
+						or do
+						{
+							errlog("Error handling slave command: $@\nCause: $pieces[$i]");
+						};
+					}
+				}
+			}
+		}
+	}
+}
+
+sub slaveCommand
+{
+	my ($line) = @_;
+	my $message = json::decode($line);
+	my $call = $calls{$message->{'c'}};
+	my $reply;
+
+	errlog("Handling: $line");
+
+	if (defined $call)
+	{
+		$@ = undef;
+		eval
+		{
+			my $buff;
+			if (defined($message->{'b'}))
+			{
+				$buff = $buffers{$message->{'b'}};
+				die "Invalid buffer id" if (!defined($buff));
+			}
+
+			$reply = $call->($message->{'p'}, $buff); 1;
+		};
+		if ($@)
+		{
+			$reply = {'error' => $@};
+		};
+	}
+	else
+	{
+		$reply = {'error' => "Invalid method: $message->{'c'}"};
+	}
+
+	$reply->{'i'} = $message->{'i'};
+	errlog("Replying: " . json::encode($reply));
+
+	print json::encode($reply) . "\n";
+}
+
+sub expandPath
+{
+	$_[0] =~ s{ ^ ~ ( [^/]* ) } { $1 ? (getpwnam($1))[7] : ( $ENV{HOME} || $ENV{LOGDIR} || (getpwuid($>))[7] ) }ex;
+	return $_[0];
+}
+
+sub msg_ls
+{
+	my ($p) = @_;
+	my $hidden = $p->{'hidden'};
+	my $dir = expandPath($p->{'dir'});
+	my $entries = {};
+
+	opendir DIR, $dir;
+	while (my $filename = readdir DIR)
+	{
+		next if (!$hidden && $filename =~ /^\./);
+		next if ($filename eq '.' || $filename eq '..');
+
+		my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,
+			$atime,$mtime,$ctime,$blksize,$blocks) = stat("$dir/$filename");
+
+		my $flags =
+			(S_ISDIR($mode) ? 'd' : '') .
+			((-r "$dir/$filename") ? 'r' : '') .
+			((-w "$dir/$filename") ? 'w' : '');
+
+		$entries->{$filename} = {'f'=>$flags, 's'=>$size, 'm'=>$mtime};
+	}
+	close DIR;
+
+	return {'error' => 'Permission denied', 'code' => 'perm'} if (scalar(keys %$entries) == 0 && !(-r $dir));
+	return {'entries' => $entries};
+}
+
+
+sub msg_open
+{
+	my ($p) = @_;
+
+	my $name = expandPath($p->{'file'});
+	my $buff = Buffer->new();
+	$buff->openFile($name);
+
+	my $bufferId = $nextBufferId;
+	$nextBufferId += 1;
+	$buffers{$bufferId} = $buff;
+
+	return {'writable' => (-w $name ?1:0), 'bufferId' => $bufferId, 'checksum' => $buff->checksum()};
+}
+
+#	change
+sub msg_change
+{
+	my ($p, $buff) = @_;
+	$buff->change($p->{'p'}, $p->{'d'} || 0, defined($p->{'a'}) ? $p->{'a'} : '');
+	return {};
+}
+
+#	save
+sub msg_save
+{
+	my ($p, $buff) = @_;
+
+	my $s = $buff->checksum();
+	my $c = $p->{'checksum'};
+	die "Checksums do not match: $s vs $c\n" if (defined($c) && $c ne $s);
+
+	$buff->save();
+	return $p;
+}
+
+#	close
+sub msg_close
+{
+	my ($p, $buff) = @_;
+	delete $buffers{$buff->id};
+	return {};
+}
+
+#	mkdir
+sub msg_mkdir
+{
+	my ($p, $buff) = @_;
+	my $dir = expandPath($p->{'dir'});
+
+	eval { File::Path::make_path($dir) };
+	return {'error' => 'Permission denied', 'code' => 'perm'} if ($@);
+
+	return {};
+}
+
 #	Buffer class
-#
-
 { package Buffer;
-  use Digest::MD5 qw(md5_hex);
-  use Encode qw(encode decode);
+	use Encode qw(encode decode);
+	use Digest::MD5 qw(md5_hex);
+
 	sub new
 	{
-		my $self = {};
-		bless( $self );
+		my $id = shift;
+		my $self = {'id' => $id};
+		bless $self;
 		return $self;
 	}
+
+	sub id { $_[0]->{'id'} }
 
 	sub openFile
 	{
@@ -61,34 +237,34 @@ use constant ERR_PERMISSION => 2;
 		$self->{NAME} = $name;
 		$self->{CLOSED} = 0;
 
-		open( BUFFER_FILE, "<$name" );
+		open BUFFER_FILE, "<$name";
 		my @data = <BUFFER_FILE>;
-		close( BUFFER_FILE );
+		close BUFFER_FILE;
 
 		$self->{DATA} = join( '', @data );
 		$self->{DATA} =~ s/\r\n/\n/g;
-		$self->{DATA} = decode( 'UTF-8', $self->{DATA} );
+		$self->{DATA} = decode('UTF-8', $self->{DATA});
 	}
 
 	sub change
 	{
-		my($self, $pos, $rem, $add) = @_;
-		my $data = substr( $self->{DATA}, 0, $pos ) . $add . substr( $self->{DATA}, $pos + $rem, length( $self->{DATA} ) );
+		my ($self, $pos, $rem, $add) = @_;
+		my $data = substr($self->{DATA}, 0, $pos) . $add . substr($self->{DATA}, $pos + $rem, length($self->{DATA}));
 		$self->{DATA} = $data;
 	}
 
 	sub save
 	{
 		my $self = shift;
-		open( BUFFER_FILE, '>' . $self->{NAME} ) or die "Failed to open $self->{NAME} for writing!\n";
-		print BUFFER_FILE encode( 'UTF-8', $self->{DATA} );
-		close( BUFFER_FILE );
+		open(BUFFER_FILE, '>' . $self->{NAME}) or die "Failed to open $self->{NAME} for writing!\n";
+		print BUFFER_FILE encode('UTF-8', $self->{DATA});
+		close BUFFER_FILE;
 	}
 
 	sub checksum
 	{
 		my $self = shift;
-		return md5_hex( encode( 'UTF-8', $self->{DATA} ) );
+		return md5_hex(encode('UTF-8', $self->{DATA}));
 	}
 
 	sub setData
@@ -106,346 +282,318 @@ use constant ERR_PERMISSION => 2;
 	}
 }
 
-#
-#	DataBlock class
-#
-
-{ package DataBlock;
-	sub new
+#	json class
+{ package json;
+	sub encode
 	{
-		my $self = {};
-		bless( $self );
-		return $self;
+		my ($obj) = @_;
+		return 'null' if (!defined($obj));
+
+		my $ref = ref $obj;
+		return '{' . join(',', map { _escape($_) . ':' . encode($obj->{$_}) } keys %$obj) . '}' if ($ref eq 'HASH');
+		return '[' . join(',', map { encode($ref->{$_}) } @$obj) . ']' if ($ref eq 'ARRAY');
+		return $obj if Scalar::Util::looks_like_number($obj);
+		return _escape($obj);
 	}
 
-	sub setData
+	sub decode
 	{
-		my ($self, $data) = @_;
-		$self->{DATA} = $data;
-		$self->{CURSOR} = 0;
+		my ($str) = @_;
+		my $index = 0;
+		return _decode($str, \$index);
 	}
 
-	sub read
+	sub _escape
 	{
-		my ($self, $fmt) = @_;
-		my @v = unpack( $fmt, substr( $self->{DATA}, $self->{CURSOR} ) );
-		$self->{CURSOR} += length( pack( $fmt, @v ) );
-		return @v;
+		$_[0] =~ s/(["\\])/\\$1/g;
+		$_[0] =~ s/\r/\\r/g;
+		$_[0] =~ s/\n/\\n/g;
+		$_[0] =~ s/\t/\\n/g;
+		return "\"$_[0]\"";
 	}
 
-	sub readString
+	sub _nextchr
 	{
-		my $self = shift;
-		my ($length) = $self->read( 'V' );
-		my $v = substr( $self->{DATA}, $self->{CURSOR}, $length );
-		$self->{CURSOR} += $length;
-		return $v;
+		my ($str, $idx) = @_;
+		return substr($_[0], ${$_[1]}++, 1);
 	}
 
-	sub write
+	sub _nextnonwhite
 	{
-		my ($self, $fmt, @args) = @_;
-		$self->{DATA} .= pack( "$fmt", @args );
+		my $c;
+		do { $c = &_nextchr; } while ($c eq ' ' or $c eq "\t" or $c eq "\n");
+		return $c;
 	}
 
-	sub writeString
+	sub _decode
 	{
-		my ($self, $s) = @_;
-		$self->{DATA} .= pack( 'V', length( $s ) ) . $s;
-	}
-
-	sub getData
-	{
-		my $self = shift;
-		return $self->{DATA};
-	}
-
-	sub atEnd
-	{
-		my $self = shift;
-		return $self->{CURSOR} >= length( $self->{DATA} );
-	}
-
-	sub readMessage
-	{
-		my $self = shift;
-		my ($messageId, $bufferId, $length) = $self->read( 'vVV' );
-		if( $length > length( $self->{DATA} ) - $self->{CURSOR} )
+		my $c = &_nextnonwhite;
+		if    ($c eq '{') { return &_object; }
+		elsif ($c eq '[') { return &_array; }
+		elsif ($c eq '"') { return &_string; }
+		elsif ($c =~ /[0-9\-]/)
 		{
-			die("Faulty Message Header: length = $length, dataLength = " . length($self->{DATA}) . ", cursor = " . $self->{CURSOR});
-		}
-		my %params = ();
-		my $target = $self->{CURSOR} + $length;
-		while( $self->{CURSOR} < $target )
-		{
-			my ($f, $t) = $self->read( 'CC' );
-			my $d;
-			if( exists( $dataTypes{$t} ) )
-			{
-				($d) = $self->read( $dataTypes{$t} );
-			}
-			elsif( $t == 3 )
-			{
-				$d = $self->readString();
-			}
-			$params{chr($f)} = $d;
-		}
-		if( $self->{CURSOR} != $target )
-		{
-			main::errlog( 'Warning: TLD message contents didn\'t match length in header!' );
-			$self->{CURSOR} = $target;
-		}
-		return ($messageId, $bufferId, \%params);
-	}
-}
-
-#
-#	Message Handlers
-#
-
-#	ls
-sub msg_ls
-{
-	my( $buff, $params, $result ) = @_;
-	my $d = $params->{'d'};
-	opendir( DIR, $d );
-
-	my $hits = 0;
-	while( my $filename = readdir( DIR ) )
-	{
-		next if (!$params->{'h'} && $filename =~ /^\./);
-		next if ($filename eq '.' || $filename eq '..');	#' This comment here to un-break Qt Creators highlighting.
-
-		my ($dev,$ino,$mode,$nlink,$uid,$gid,$rdev,$size,
-		$atime,$mtime,$ctime,$blksize,$blocks) = stat( "$d/$filename" );
-
-		my $flags =
-			(S_ISDIR($mode) ? FILE_ISDIR : 0) +
-			(-r "$d/$filename" ? FILE_CANREAD : 0) +
-			(-w "$d/$filename" ? FILE_CANWRITE : 0);
-
-		$result->writeString( $filename );
-		$result->write( 'CLL', $flags, $size, $mtime );
-		$hits++;
-	}
-	close(DIR);
-
-	die({msg => "Permission denied!\n", code => ERR_PERMISSION}) if ($hits == 0 && !(-r $d));
-}
-
-#	open
-sub msg_open
-{
-	my ( $buff, $params, $result ) = @_;
-
-	my $name = $params->{'f'};
-	$buff = Buffer->new();
-	$buff->openFile( $name );
-
-	my $bufferId = $nextBufferId;
-	$nextBufferId += 1;
-	$buffers{$bufferId} = $buff;
-
-	$result->write( 'C', (-w $name ? FILE_CANWRITE : 0) );
-	$result->write( 'V', $bufferId );
-	$result->writeString( $buff->checksum() );
-}
-
-#	change
-sub msg_change
-{
-	my( $buff, $params, $result ) = @_;
-
-	$buff->change( $params->{'p'}, $params->{'r'}, $params->{'a'} );
-}
-
-#	save
-sub msg_save
-{
-	my( $buff, $params, $result ) = @_;
-
-	my $s = $buff->checksum();
-	if( $params->{'c'} ne $s )
-	{
-		die( "Checksums do not match: $s vs " . $params->{'c'} . "\n" );
-	}
-	$buff->save();
-}
-
-#	keepalive
-sub msg_keepalive {}
-
-#	pushcontent
-sub msg_pushcontent
-{
-	my( $buff, $params, $result ) = @_;
-
-	$buff->setData($params->{'d'});
-
-	my $s = $buff->checksum();
-	if ($params->{'c'} != $s)
-	{
-		die( "Checksums do not match: $s vs " . $params->{'c'} . "\n" );
-	}
-
-	if ($params->{'s'})
-	{
-		$buff->save();
-	}
-}
-
-#	close
-sub msg_close
-{
-	my( $buff, $params, $result ) = @_;
-	$buff->close();
-}
-
-#	new
-sub msg_new
-{
-	my( $buff, $params, $result ) = @_;
-
-	my $opened = open( NEW_FILE, '>' . $params->{'f'} );
-	if( !$opened )
-	{
-		die( "Could not save the file to that location.\n" );
-	}
-
-	print NEW_FILE $params->{'c'};
-	close( NEW_FILE );
-}
-
-#	new directory
-sub msg_new_dir
-{
-	my( $buff, $params, $result ) = @_;
-
-	my $name = $params->{'l'} . '/' . $params->{'n'};
-
-	my $created = mkdir( $name );
-	if( !$created )
-	{
-		die( "Could not create directory.\n" );
-	}
-}
-
-#
-#	Message Definitions
-#
-
-our %messageDefs =
-(
-	1 => \&msg_ls,
-	2 => \&msg_open,
-	3 => \&msg_change,
-	4 => \&msg_save,
-	5 => \&msg_keepalive,
-	6 => \&msg_pushcontent,
-	7 => \&msg_close,
-	8 => \&msg_new,
-	9 => \&msg_new_dir
-);
-
-#
-#	Main Guts
-#
-
-sub mainLoop
-{
-	while(1)
-	{
-		my $line;
-		while ($line !~ /%$/)
-		{
-			$line .= <STDIN>;
-			chomp($line);
-		}
-		chop($line);
-
-		eval
-		{
-			$line = decode_base64( $line );
-			1;
-		}
-		or do
-		{
-			errlog( 'Received some bogus input: ' . $line );
-			next;
-		};
-		my $block = DataBlock->new();
-		$block->setData( $line );
-		while( ! $block->atEnd() )
-		{
-			my $reply = handleMessage( $block );
-			my $reply_base64 = encode_base64( $reply->getData() );
-			$reply_base64 =~ s/\r|\n//g;
-			print "$reply_base64\n";
-		}
-	}
-}
-
-sub handleMessage
-{
-	my $message = shift;
-
-	my ($messageId, $bufferId, $params) = $message->readMessage();
-
-	my $result;
-	eval
-	{
-		my $buff;
-		if( $bufferId > 0 )
-		{
-			if( ! exists( $buffers{$bufferId} ) )
-			{
-				die( "Invalid BufferId: $bufferId" );
-			}
-			$buff = $buffers{$bufferId};
+			${$_[1]}--;
+			return &_number;
 		}
 		else
 		{
-			$buff = "";
+			${$_[1]}--;
+			return &_word;
 		}
-
-		if( ! exists( $messageDefs{$messageId} ) )
-		{
-			die( "Invalid messageId: $messageId" );
-		}
-		$result = DataBlock->new();
-		$result->write('C', ERR_OK);
-		&{$messageDefs{$messageId}}($buff, $params, $result);
-
-		if ($buff && $buff->{CLOSED})
-		{
-			delete $buffers{$buff};
-		}
-
-		1;
 	}
-	or do
-	{
-		my $msg = $@;
-		my $code = ERR_UNSPECIFIED;
-		if (ref($msg) eq 'HASH')
-		{
-			$code = $msg->{'code'};
-			$msg = $msg->{'msg'};
-		}
 
-		$msg =~ s/\s+$//;
-		errlog( "Error occurred: $msg" );
-		my $err = DataBlock->new();
-		$err->write('C', $code);
-		$err->writeString($msg);
-		return $err;
-	};
-	return $result;
+	sub _object
+	{
+		my $r = {};
+		my $c;
+		while (1)
+		{
+			$c = &_nextnonwhite;
+			return $r if ($c eq '}');
+			die "Expected: \" at ${$_[1]}\n" if ($c ne '"');
+
+			my $key = &_string;
+			die "Expected: : at ${$_[1]}\n" if (&_nextnonwhite ne ':');
+			$r->{$key} = &_decode;
+
+			$c = &_nextnonwhite;
+			return $r if ($c eq '}');
+			die "Expected: } or , at ${$_[1]}\n" if ($c ne ',');
+		}
+	}
+
+	sub _array
+	{
+		my $r = [];
+		while (1)
+		{
+			return $r if (&_nextnonwhite eq ']');
+			${$_[1]}--;
+
+			push @$r, &_decode;
+
+			my $c = &_nextnonwhite;
+			return $r if ($c eq ']');
+			die "Expected: ] or , at ${$_[1]}\n" if ($c ne ',');
+		}
+	}
+
+	sub _string
+	{
+		my $r = '';
+		my $c;
+		my $l = ${$_[1]};
+		while (($c = &_nextchr) ne '"')
+		{
+			if ($c eq '\\')
+			{
+				$r .= substr($_[0], $l, ${$_[1]} - $l - 1);
+				$c = &_nextchr;
+				if    ($c eq 'b') { $r .= "\b"; }
+				elsif ($c eq 'f') { $r .= "\f"; }
+				elsif ($c eq 'n') { $r .= "\n"; }
+				elsif ($c eq 'r') { $r .= "\r"; }
+				elsif ($c eq 't') { $r .= "\t"; }
+				elsif ($c eq 'u')
+				{
+					$r .= chr hex substr($_[0], ${$_[1]}, 4);
+					${$_[1]} += 4;
+				}
+				else
+				{
+					$r .= $c;
+				}
+				$l = ${$_[1]};
+			}
+		}
+		return $r . substr($_[0], $l, ${$_[1]} - $l - 1);
+	}
+
+	sub _number
+	{
+		pos($_[0]) = ${$_[1]};
+		$_[0] =~ /\G([0-9\-.eE]+)/;
+		${$_[1]} += length($1);
+
+		return $1;
+	}
+
+	sub _word
+	{
+		pos($_[0]) = ${$_[1]};
+		$_[0] =~ /\G([a-zA-Z]+)/;
+		${$_[1]} += length($1);
+
+		my $r = lc($1);
+		return 1 if ($r eq 'true');
+		return 0 if ($r eq 'false');
+		return undef if ($r eq 'null');
+
+		die "Invalid bareword: $r at ${$_[1]}\n";
+	}
 }
 
-#	Send the current working directory, which should be the user's home dir.
-print '~=' . getcwd() . "%";
+sub bin
+{
+	my ($data) = @_;
 
-mainLoop();
+	my $reply = '';
+	my $lastPos = 0;
+	while ($data =~ m/[\x{03}\x{04}\x{08}\x{0A}\x{0D}\x{11}\x{13}\x{1D}\x{1E}\x{18}\x{1A}\x{1C}\x{7F}\x{FD}\x{FE}\x{FF}]/g)
+	{
+		$reply .= substr($data, $lastPos, pos($data) - $lastPos - 1) if ($lastPos + 1 < pos($data));
+		$lastPos = pos($data);
 
-1;
+		my $c = ord substr($data, $lastPos - 1, 1);
+
+		if ($c == 10) { $reply .= chr(253); }
+		elsif ($c == 13) { $reply .= chr(254); }
+		elsif ($c == 253) { $reply .= chr(255) . 'A'; }
+		elsif ($c == 254) { $reply .= chr(255) . 'B'; }
+		elsif ($c == 255) { $reply .= chr(255) . 'C'; }
+		else { $reply .= chr(255) . chr($c + 128); }
+	}
+
+	$reply .= substr($data, $lastPos);
+	return $reply;
+}
+
+sub unbin_escape
+{
+	my ($c) = @_;
+
+	if ($c < 128) { return chr($c + 188);  }
+	else { return chr($c - 128); }
+}
+
+sub unbin
+{
+	my ($data, $remainingEscape) = @_;
+
+	my $length = length $data;
+	my $reply = '';
+	my $lastPos = 0;
+
+	if ($$remainingEscape)
+	{
+		$reply .= unbin_escape(ord substr($data, 0, 1));
+
+		$lastPos++;
+		pos($data) = $lastPos;
+
+		$$remainingEscape = undef;
+	}
+
+	while ($data =~ m/[\x{FD}\x{FE}\x{FF}]/g)
+	{
+		$reply .=  substr($data, $lastPos, pos($data) - $lastPos - 1) if ($lastPos + 1 < pos($data));
+		$lastPos = pos($data);
+
+		my $c = ord substr($data, $lastPos - 1, 1);
+
+		if ($c == 253) { $reply .= chr(10); }
+		elsif ($c == 254) { $reply .= chr(13); }
+		else
+		{
+			if ($lastPos >= $length)
+			{
+				$$remainingEscape = 1;
+				return $reply;
+			}
+
+			$reply .= unbin_escape(ord substr($data, $lastPos, 1));
+
+			$lastPos++;
+			pos($data) = $lastPos;
+		}
+	}
+
+	$reply .= substr($data, $lastPos);
+	return $reply;
+}
+
+sub stream
+{
+	my ($size, $in, $out, $encode) = @_;
+	my $remainingEscape;
+
+	my $data;
+	while ($size > 0)
+	{
+		my $want = min(2048, $size);
+
+		my $read = read($in, $data, $want);
+
+		die "Failed to read\n" if ($read < $want);
+		$size -= $read;
+
+		print $out ($encode ? bin($data) : unbin($data, \$remainingEscape));
+	}
+}
+
+sub md5File
+{
+	my ($file) = @_;
+
+	my $md5 = Digest::MD5->new;
+	$md5->addfile($file);
+	return $md5->hexdigest;
+}
+
+sub xferLoop
+{
+	my ($in, $size, $read);
+	binmode(*STDOUT);
+	while ($in = <STDIN>)
+	{
+		chomp $in;
+		eval
+		{
+			my $c = chop $in;
+			$in = expandPath($in);
+
+			if ($c eq 'u')
+			{
+				#	Upload
+				$size = <STDIN>;
+				my $checksum = <STDIN>;
+				chomp $size;
+				chomp $checksum;
+
+				open F, ">$in" or die "Denied\n";
+				print "Ready\n";
+				stream($size, *STDIN, *F, 0);
+				close F;
+
+				open F, $in or die "Denied\n";
+				my $e = md5File(*F);
+				die "Checksum error: '$e' vs '$checksum'\n" if ($e ne $checksum);
+				close F;
+			}
+			else
+			{
+				#	Download
+				die ($in . (-e $in ? " - Denied\n" : " - File not found\n")) if (!-r $in);
+				$size = -s $in;
+				open F, $in or die "Denied\n";
+				print "$size," . md5File(*F) . "\n";
+				seek F,0,0;
+				stream($size, *F, *STDOUT, 1);
+				close F;
+			}
+		};
+
+		if ($@)
+		{
+			chomp $@;
+			print "Error: $@\n" if $@;
+		}
+		else
+		{
+			print "OK\n";
+		}
+	}
+}
+
+# Do not delete the new line at the end of this file

@@ -3,6 +3,7 @@
 #include "openfilemanager.h"
 #include "unsavedchangesdialog.h"
 #include "basefile.h"
+#include "QsLog.h"
 
 OpenFileManager gOpenFileManager;
 
@@ -74,7 +75,7 @@ bool OpenFileManager::closeFiles(const QList<BaseFile*>& files, bool force)
 			}
 			catch(QString &e)
 			{
-				qDebug() << e;
+				QLOG_TRACE() << "Unexpected throw while closing" << file->getLocation().getLabel() << ": " << e;
 			}
 
 			deregisterFile(file);
@@ -124,7 +125,7 @@ bool OpenFileManager::refreshFiles(const QList<BaseFile*>& files, bool force)
 			}
 			catch(QString &e)
 			{
-				qDebug() << e;
+				QLOG_TRACE() << "Unexpected throw while refreshing" << file->getLocation().getLabel() << ": " << e;
 			}
 		}
 	}

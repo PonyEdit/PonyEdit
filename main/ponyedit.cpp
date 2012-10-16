@@ -4,10 +4,10 @@
 #include <QLocalSocket>
 #include <QMessageBox>
 
+#include "global.h"
 #include "ponyedit.h"
 #include "file/location.h"
 #include "mainwindow.h"
-#include "ssh/rawsshconnection.h"
 #include "main/globaldispatcher.h"
 #include "file/location.h"
 #include "main/tools.h"
@@ -17,12 +17,16 @@
 #include "syntax/syntaxdefmanager.h"
 #include "main/stringtrie.h"
 #include "options/options.h"
-#include "ssh/sshhost.h"
+#include "ssh2/slavechannel.h"
+#include "ssh2/xferrequest.h"
+#include "ssh2/sshhost.h"
+#include "QsLog.h"
 
 GlobalDispatcher* gDispatcher = NULL;
 SiteManager* gSiteManager = NULL;
 SyntaxDefManager* gSyntaxDefManager = NULL;
 MainWindow* gMainWindow = NULL;
+bool PonyEdit::sApplicationExiting = false;
 
 PonyEdit::PonyEdit(int argc, char** argv) : QApplication(argc, argv)
 {
@@ -37,7 +41,8 @@ PonyEdit::PonyEdit(int argc, char** argv) : QApplication(argc, argv)
 	qRegisterMetaType<Location>("Location");
 	qRegisterMetaType< QList<Location> >("QList<Location>");
 
-	RawSshConnection::initializeLib();
+	SlaveChannel::initialize();
+	qRegisterMetaType<XferRequest*>("XferRequest*");
 
 	Tools::loadServers();
 	Location::loadFavorites();
@@ -64,7 +69,7 @@ PonyEdit::PonyEdit(int argc, char** argv) : QApplication(argc, argv)
 		// create shared memory.
 		if (!mMemoryLock.create(1))
 		{
-			qDebug() << "Unable to create single instance.";
+			QLOG_ERROR() << "Failed to create shared memory lock";
 			return;
 		}
 
@@ -78,6 +83,7 @@ PonyEdit::PonyEdit(int argc, char** argv) : QApplication(argc, argv)
 		gSyntaxDefManager = new SyntaxDefManager();
 		gSiteManager = new SiteManager();
 		gDispatcher = new GlobalDispatcher();
+		mDialogRethreader = new DialogRethreader();
 
 		gMainWindow = new MainWindow();
 		gMainWindow->show();
@@ -88,17 +94,20 @@ PonyEdit::PonyEdit(int argc, char** argv) : QApplication(argc, argv)
 
 PonyEdit::~PonyEdit()
 {
+	sApplicationExiting = true;
+
+	SshHost::cleanup();
+
 	delete gDispatcher;
 	delete gSiteManager;
 	delete gSyntaxDefManager;
 	delete gMainWindow;
+	delete mDialogRethreader;
 
 	Options::save();
 	LocationShared::cleanupIconProvider();
 	StringTrie::cleanup();
 	SyntaxRule::cleanup();
-	RawSshConnection::cleanup();
-	SshHost::cleanupHosts();
 }
 
 bool PonyEdit::event(QEvent *e)
@@ -129,7 +138,7 @@ void PonyEdit::receiveMessage()
 
 	if (!localSocket->waitForReadyRead(mTimeout))
 	{
-		qDebug() << localSocket->errorString().toLatin1();
+		QLOG_ERROR() << "Failed to read local socket: " << localSocket->errorString();
 		return;
 	}
 	QByteArray byteArray = localSocket->readAll();
@@ -138,6 +147,25 @@ void PonyEdit::receiveMessage()
 	gMainWindow->openSingleFile(Location(message));
 
 	localSocket->disconnectFromServer();
+}
+
+bool PonyEdit::notify(QObject *o, QEvent *e)
+{
+	bool ret = false;
+	try
+	{
+		ret = QApplication::notify(o, e);
+	}
+	catch(QString err)
+	{
+		QLOG_ERROR() << "UNCAUGHT EXCEPTION:" << err;
+	}
+	catch(...)
+	{
+		QLOG_ERROR() << "UNKNOWN UNCAUGHT EXCEPTION";
+	}
+
+	return ret;
 }
 
 bool PonyEdit::isRunning()
@@ -157,7 +185,7 @@ bool PonyEdit::sendMessage(const QString &message)
 
 	if (!localSocket.waitForConnected(mTimeout))
 	{
-		qDebug() << localSocket.errorString().toLatin1();
+		QLOG_ERROR() << "Failed to connect on local socket: " << localSocket.errorString();
 		return false;
 	}
 
@@ -165,7 +193,7 @@ bool PonyEdit::sendMessage(const QString &message)
 
 	if (!localSocket.waitForBytesWritten(mTimeout))
 	{
-		qDebug() << localSocket.errorString().toLatin1();
+		QLOG_ERROR() << "Failed to write to local socket: " << localSocket.errorString();
 		return false;
 	}
 

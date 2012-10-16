@@ -9,7 +9,7 @@
 #include <QDesktopServices>
 
 #include "sitemanager.h"
-#include "main/json.h"
+#include "tools/json.h"
 #include "licence/licence.h"
 
 SiteManager::SiteManager()
@@ -58,9 +58,14 @@ void SiteManager::getLicence(const QString &username, const QString &password)
 	QString version = QString("vmaj=%1&vmin=%2&rev=%3").arg(MAJOR_VERSION).arg(MINOR_VERSION).arg(REVISION);
 
 	QUrl url(QString(SITE_URL) + "licence/?f=getlicence&" + version);
-	QByteArray postData;
-	postData.append("u=" + username + "&p=" + password);
-	QNetworkReply* reply = mManager->post(QNetworkRequest(url), postData);
+
+	QUrl postData;
+	postData.addQueryItem("u", username);
+	postData.addQueryItem("p", password);
+
+	QNetworkRequest request(url);
+	request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+	QNetworkReply* reply = mManager->post(request, postData.encodedQuery());
 
 	mReplies.insert(reply, GetLicence);
 }
@@ -98,7 +103,7 @@ void SiteManager::handleReply(QNetworkReply *reply)
 
 		bool ok;
 		QVariantMap data = Json::parse(result, ok).toMap();
-		if (!ok) throw("Failed to parse reply from website");
+		if (!ok) throw(tr("Failed to parse reply from website"));
 
 		QVariantMap version;
 		QVariantMap changes;

@@ -18,7 +18,7 @@ void SearchResultDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 	SearchResultModel::Result* result = mModel->getResultForIndex(index);
 	if (result)
 	{
-		painter->setFont(Options::EditorFont);
+		painter->setFont(*Options::EditorFont);
 
 		QPen originalPen = painter->pen();
 		QRect drawRect = option.rect;

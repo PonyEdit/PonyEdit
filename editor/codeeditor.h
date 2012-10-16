@@ -26,6 +26,8 @@ public:
 	void zoomOut();
 	void zoomIn();
 
+	void deleteLine();
+
 protected:
 	void resizeEvent(QResizeEvent *event);
 	void keyPressEvent(QKeyEvent* event);

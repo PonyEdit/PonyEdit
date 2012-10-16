@@ -4,9 +4,7 @@
 #include "basefile.h"
 #include "location.h"
 
-class RemoteConnection;
-class FTPChannel;
-
+class SshHost;
 class FtpFile : public BaseFile
 {
 	Q_OBJECT
@@ -22,13 +20,15 @@ public:
 	bool canClose();
 
 private slots:
-	void connectionStateChanged() {}
+	void sftpReadSuccess(QVariantMap results);
+	void sftpReadFailure(QString error, int flags);
+	void sftpReadProgress(int progress);
+
+	void sftpWriteSuccess(QVariantMap results);
+	void sftpWriteFailure(QString error, int flags);
+	void sftpWriteProgress(int progress);
 
 private:
-	void getChannel();
-
-	RemoteConnection* mConnection;
-	FTPChannel* mChannel;
 	SshHost* mHost;
 };
 

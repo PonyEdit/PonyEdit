@@ -11,9 +11,6 @@ StringTrie::StringTrie()
 {
 	sNodeHeapCursor = NODE_HEAP_SIZE;
 	mRoot = allocateNode();
-
-	qDebug() << (void*)mRoot;
-	qDebug() << mRoot->terminator;
 }
 
 void StringTrie::addWord(const QString& word)

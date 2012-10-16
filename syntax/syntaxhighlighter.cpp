@@ -1,9 +1,10 @@
-#include <QtGui>
+#include <QtWidgets>
 
 #include "syntaxhighlighter.h"
 #include "syntaxdefinition.h"
 #include "syntaxrule.h"
 #include "syntaxblockdata.h"
+#include "QsLog.h"
 
 SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent, SyntaxDefinition* syntaxDef)
 	: QSyntaxHighlighter(parent)
@@ -132,7 +133,7 @@ void SyntaxHighlighter::highlightBlock(const QString &fullText)
 			if (attributeColor.isValid())
 				setFormat(position, matchLength, attributeColor);
 			else
-				qDebug() << "No style name: " << attributeLink->styleName;
+				QLOG_WARN() << "No style name: " << attributeLink->styleName;
 		}
 
 		if (contextLink)

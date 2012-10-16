@@ -44,8 +44,8 @@ RegExpTester::~RegExpTester()
 
 void RegExpTester::applySettings()
 {
-	ui->regexp->setFont(Options::EditorFont);
-	ui->testData->setFont(Options::EditorFont);
+	ui->regexp->setFont(*Options::EditorFont);
+	ui->testData->setFont(*Options::EditorFont);
 }
 
 void RegExpTester::takeFocus(QString regExp)

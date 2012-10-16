@@ -9,6 +9,7 @@
 #include "openfiletreeview.h"
 #include "openfilemanager.h"
 #include "filedialog.h"
+#include "QsLog.h"
 
 UnsavedChangesDialog::UnsavedChangesDialog(const QList<BaseFile*>& files) :
 	QDialog(0)
@@ -70,18 +71,8 @@ void UnsavedChangesDialog::buttonClicked(QAbstractButton* button)
 				}
 				catch(QString &e)
 				{
-					qDebug() << e;
+					QLOG_ERROR() << "Unexpected throw while saving file" << file->getLocation().getLabel();
 				}
-			}
-
-			try
-			{
-				if (file->canClose())
-					file->close();
-			}
-			catch(QString &e)
-			{
-				qDebug() << e;
 			}
 		}
 	}
@@ -96,7 +87,7 @@ void UnsavedChangesDialog::buttonClicked(QAbstractButton* button)
 			}
 			catch(QString &e)
 			{
-				qDebug() << e;
+				QLOG_ERROR() << "Unexpected throw while discarding file" << file->getLocation().getLabel();
 			}
 		}
 	}
@@ -116,8 +107,6 @@ void UnsavedChangesDialog::fileStateChanged()
 	{
 		BaseFile::OpenStatus status = file->getOpenStatus();
 
-		qDebug() << "Status = " << status << " closed = " << BaseFile::Closed;
-
 		if (status != BaseFile::Closed && status != BaseFile::Closing)
 		{
 			try
@@ -126,7 +115,7 @@ void UnsavedChangesDialog::fileStateChanged()
 			}
 			catch(QString &e)
 			{
-				qDebug() << e;
+				QLOG_ERROR() << "Unexpected throw while closing saved file" << file->getLocation().getLabel();
 			}
 		}
 	}

@@ -6,7 +6,7 @@
 #include <QStackedWidget>
 #include <QProgressBar>
 #include <QVBoxLayout>
-#include <QPrinter>
+#include <QtPrintSupport/QPrinter>
 
 #include "file/location.h"
 #include "file/basefile.h"
@@ -55,6 +55,7 @@ public slots:
 	void cut() { mEditor->cut(); }
 	void paste() { mEditor->paste(); }
 	void selectAll() { mEditor->selectAll(); }
+	void deleteLine() { mEditor->deleteLine(); }
 	void sudo();
 
 private:

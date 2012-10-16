@@ -29,7 +29,11 @@ on run (volumeName)
 			
 			-- Positioning
 			POSITION_CLAUSE
-			
+
+			-- Save the icon positions
+			close
+			open
+
 			update without registering applications
 			-- Force saving of the size
 			delay 1

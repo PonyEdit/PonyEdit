@@ -22,8 +22,8 @@ public:
 	void emitGeneralErrorMessage(QString error) { emit generalErrorMessage(error); }
 	void emitGeneralStatusMessage(QString message) { emit generalStatusMessage(message); }
 
-	void emitLocationListSuccessful(const QList<Location>& children, QString locationPath) { emit locationListSuccessful(children, locationPath); }
-	void emitLocationListFailed(const QString& error, QString locationPath, bool permissionError) { emit locationListFailed(error, locationPath, permissionError); }
+	void emitLocationListSuccess(const QList<Location>& children, QString locationPath) { emit locationListSuccess(children, locationPath); }
+	void emitLocationListFailure(const QString& error, QString locationPath, bool permissionError) { emit locationListFailure(error, locationPath, permissionError); }
 
 	void emitSelectFile(BaseFile* file) { emit selectFile(file); }
 	void emitSyntaxChanged(BaseFile* file) { emit syntaxChanged(file); }
@@ -36,8 +36,8 @@ signals:
 	void generalErrorMessage(QString error);
 	void generalStatusMessage(QString message);
 
-	void locationListSuccessful(const QList<Location>& children, QString locationPath);
-	void locationListFailed(const QString& error, QString locationPath, bool permissionError);
+	void locationListSuccess(const QList<Location>& children, QString locationPath);
+	void locationListFailure(const QString& error, QString locationPath, bool permissionError);
 
 	void selectFile(BaseFile* file);
 	void syntaxChanged(BaseFile* file);

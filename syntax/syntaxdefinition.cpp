@@ -4,6 +4,7 @@
 #include "syntaxrule.h"
 #include "syntaxdefinition.h"
 #include "syntaxdefxmlhandler.h"
+#include "QsLog.h"
 
 SyntaxDefinition::ContextDef::ContextDef() : fallthrough(false), dynamic(false), listIndex(0), attributeLink(NULL) {}
 SyntaxDefinition::ContextDef::~ContextDef() {}
@@ -18,16 +19,19 @@ SyntaxDefinition::SyntaxDefinition(const QString& filename)
 	{
 		SyntaxDefXmlHandler handler(this);
 		QXmlSimpleReader reader;
+		QXmlInputSource source(&file);
 		reader.setContentHandler(&handler);
 		reader.setErrorHandler(&handler);
 
-		if (reader.parse(&file))
+		if (reader.parse(&source))
 			if (link())
 				mValid = true;
 	}
 
-	if (!mValid)
-		qDebug() << "Failed to read syntax definition";
+    if (!mValid)
+    {
+		QLOG_ERROR() << "Failed to read syntax definition";
+    }
 }
 
 void SyntaxDefinition::unlink()
@@ -90,7 +94,7 @@ bool SyntaxDefinition::link()
 					sourceContext = getContext(source);
 
 				if (sourceContext.isNull())
-					qDebug() << "Warning: IncludeRule names non-existent context: " << source;
+					QLOG_WARN() << "Warning: IncludeRule names non-existent context: " << source;
 				else
 				{
 					if (rule->getIncludeAttrib())
@@ -125,7 +129,7 @@ bool SyntaxDefinition::linkContext(const QString& context, ContextLink* link)
 				link->contextDef = includedDefinition->getDefaultContext();
 			else
 			{
-				qDebug() << "Link to non-existant external syntax def: " << context;
+				QLOG_WARN() << "Link to non-existant external syntax def: " << context;
 				return false;
 			}
 		}
@@ -137,7 +141,7 @@ bool SyntaxDefinition::linkContext(const QString& context, ContextLink* link)
 		link->contextDef = getContext(context);
 		if (!link->contextDef)
 		{
-			qDebug() << "Failed to link context: " << context;
+			QLOG_WARN() << "Failed to link syntax context: " << context;
 			return false;
 		}
 	}

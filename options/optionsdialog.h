@@ -5,6 +5,8 @@
 #include <QAbstractButton>
 #include <QList>
 #include "optionsdialogpage.h"
+#include <QToolButton>
+#include <QMap>
 
 class FontOptionsWidget;
 
@@ -17,22 +19,23 @@ class OptionsDialog : public QDialog
     Q_OBJECT
 
 public:
-	enum Options { Editor, SshServers, FontsAndColors, Startup, NumOptions };
-	static QString sOptionsStrings[];
+	enum Options { Editor, SshServers, FontsAndColors, Startup, Logging, NumOptions };
 
 	explicit OptionsDialog(QWidget *parent = 0);
     ~OptionsDialog();
 
 private slots:
-	void updateSelectedOption(int newOption);
 	void buttonClicked(QAbstractButton *button);
 	void saveOptions();
+	void pageClicked();
+	void pageClicked(QToolButton* page);
 
 private:
-	void addPage(OptionsDialogPage* page);
+	void addPage(QToolButton* button, OptionsDialogPage* page);
 
 	Ui::OptionsDialog* ui;
 	QList<OptionsDialogPage*> mPages;
+	QMap<QToolButton*, OptionsDialogPage*> mPageMap;
 };
 
 #endif // OPTIONSDIALOG_H

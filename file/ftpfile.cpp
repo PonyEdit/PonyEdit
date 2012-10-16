@@ -1,30 +1,17 @@
 #include "ftpfile.h"
-#include "ssh/sshhost.h"
-#include "ssh/remoteconnection.h"
-#include "ssh/ftpchannel.h"
-#include "ssh/ftprequest.h"
+#include "ssh2/sshhost.h"
+#include "ssh2/sftprequest.h"
+#include "tools/callback.h"
+#include <QCryptographicHash>
 
 FtpFile::FtpFile(const Location& location) : BaseFile(location)
 {
 	mHost = location.getRemoteHost();
 }
 
-void FtpFile::getChannel()
-{
-	mConnection = mHost->getConnection();
-	if (!mConnection)
-		throw("Failed to open file: failed to connect to remote host");
-
-	mChannel = mConnection->getFtpChannel();
-	if (!mChannel)
-		throw("Failed to open file: failed to open an ftp channel on remote host");
-
-	connect(mConnection, SIGNAL(statusChanged()), this, SLOT(connectionStateChanged()), Qt::QueuedConnection);
-}
-
 BaseFile* FtpFile::newFile(const QString& content)
 {
-	mContent = content;
+	openSuccess(content, getChecksum(content.toUtf8()).toAscii(), false);
 	save();
 	return this;
 }
@@ -32,24 +19,67 @@ BaseFile* FtpFile::newFile(const QString& content)
 void FtpFile::open()
 {
 	setOpenStatus(BaseFile::Loading);
-	getChannel();
-	connectionStateChanged();
 
-	mChannel->sendRequest(new FTPRequest(FTPRequest::ReadFile, mLocation, this));
+	SFTPRequest* request = new SFTPRequest(SFTPRequest::ReadFile, Callback(this, SLOT(sftpReadSuccess(QVariantMap)), SLOT(sftpReadFailure(QString,int)), SLOT(sftpReadProgress(int))));
+	request->setPath(mLocation.getRemotePath());
+	mHost->sendSftpRequest(request);
+}
+
+void FtpFile::sftpReadSuccess(QVariantMap results)
+{
+	QByteArray content = results.value("content", QByteArray()).toByteArray();
+	QByteArray checksum = BaseFile::getChecksum(content).toAscii();
+
+	openSuccess(QString::fromUtf8(content, content.size()), checksum, false);
+}
+
+void FtpFile::sftpReadFailure(QString error, int flags)
+{
+	openFailure(error, flags);
+}
+
+void FtpFile::sftpReadProgress(int progress)
+{
+	setProgress(progress);
 }
 
 void FtpFile::save()
 {
-	FTPRequest* request = new FTPRequest(FTPRequest::WriteFile, mLocation, this);
-	request->setData(mContent.toUtf8());
-	request->setUndoLength(mDocument->availableUndoSteps());
+	setProgress(0);
+
+	SFTPRequest* request = new SFTPRequest(SFTPRequest::WriteFile, Callback(this, SLOT(sftpWriteSuccess(QVariantMap)), SLOT(sftpWriteFailure(QString,int)), SLOT(sftpWriteProgress(int))));
+	request->setPath(mLocation.getRemotePath());
+	request->setContent(mContent.toUtf8());
 	request->setRevision(mRevision);
-	mChannel->sendRequest(request);
+	request->setUndoLength(mDocument->availableUndoSteps());
+	mHost->sendSftpRequest(request);
+}
+
+void FtpFile::sftpWriteSuccess(QVariantMap results)
+{
+	setProgress(-1);
+
+	int revision = results.value("revision").toInt();
+	int undoLength = results.value("undoLength").toInt();
+	QByteArray checksum = results.value("checksum").toByteArray();
+
+	savedRevision(revision, undoLength, checksum);
+}
+
+void FtpFile::sftpWriteFailure(QString error, int /*lags*/)
+{
+	setProgress(-1);
+	saveFailure(error, 0);
+}
+
+void FtpFile::sftpWriteProgress(int progress)
+{
+	setProgress(progress);
 }
 
 bool FtpFile::canClose()
 {
-	return mChannel->hasPendingRequestsFor(this);
+	return true;
 }
 
 void FtpFile::close()

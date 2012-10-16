@@ -2,6 +2,7 @@
 #include "syntaxdefxmlhandler.h"
 #include "main/tools.h"
 #include <QDir>
+#include "QsLog.h"
 
 void SyntaxDefManager::Record::pack(const QXmlAttributes& atts)
 {
@@ -74,9 +75,10 @@ void SyntaxDefManager::indexFile(const QFileInfo& fileinfo)
 		{
 			SyntaxDefXmlHandler handler(record);
 			QXmlSimpleReader reader;
+			QXmlInputSource source(&file);
 			reader.setContentHandler(&handler);
 			reader.setErrorHandler(&handler);
-			reader.parse(&file);
+			reader.parse(&source);
 		}
 
 		if (record->valid)
@@ -149,7 +151,7 @@ SyntaxDefinition* SyntaxDefManager::getDefinition(const Record* record)
 	if (!newDefinition->isValid())
 	{
 		delete newDefinition;
-		qDebug() << "WARNING: Attempted to use an invalid syntax definition: " << record->filename;
+		QLOG_WARN() << "Attempted to use an invalid syntax definition: " << record->filename;
 		return NULL;
 	}
 

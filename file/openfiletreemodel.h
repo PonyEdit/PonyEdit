@@ -57,13 +57,13 @@ private:
 	void addNodeToTree(Node* parentNode, Node* node);
 	Node* getHostNode(const Location& location);
 	Node* getDirectoryNode(const Location& location);
-	void removeNode(Node* Node);
+	void removeNode(const QModelIndex& index);
 	QList<BaseFile*> getIndexAndChildFiles(Node* node);
 
 	QList<BaseFile*> mFiles;   // Used if a list of files explicitly supplied
 	Node* mTopLevelNode;
 	QMap<BaseFile*, Node*> mFileLookup;
-
+	void dumpNodes(Node* node);
 	OpenFileTreeView* mParent;
 
 	int mOptionFlags;

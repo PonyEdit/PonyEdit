@@ -147,7 +147,7 @@ QVariant SearchResultModel::data(const QModelIndex& index, int role) const
 	{
 		//	Search results should display in the same font as the text editor
 		if (node->parent != NULL && node->parent != mRootNode)
-			return QVariant(Options::EditorFont);
+			return QVariant(*Options::EditorFont);
 	}
 	else if (role == Qt::CheckStateRole && mCheckboxes)
 	{

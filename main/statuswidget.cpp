@@ -85,11 +85,12 @@ void StatusWidget::setButtons(Buttons buttons)
 	ui->buttonBox->clear();
 	mButtons.clear();
 
-	if (buttons & Connect)   mButtons.insert(ui->buttonBox->addButton(tr("Connect"), QDialogButtonBox::ActionRole), Connect);
-	if (buttons & Done)      mButtons.insert(ui->buttonBox->addButton(tr("Done"),    QDialogButtonBox::ActionRole), Done);
-	if (buttons & Retry)     mButtons.insert(ui->buttonBox->addButton(tr("Retry"),   QDialogButtonBox::ActionRole), Retry);
-	if (buttons & SudoRetry) mButtons.insert(ui->buttonBox->addButton(tr("Sudo"),    QDialogButtonBox::ActionRole), SudoRetry);
-	if (buttons & Cancel)    mButtons.insert(ui->buttonBox->addButton(tr("Cancel"),  QDialogButtonBox::ActionRole), Cancel);
+	if (buttons & ShowLog)   mButtons.insert(ui->buttonBox->addButton(tr("Show Log"), QDialogButtonBox::ActionRole), ShowLog);
+	if (buttons & Connect)   mButtons.insert(ui->buttonBox->addButton(tr("Connect"),  QDialogButtonBox::ActionRole), Connect);
+	if (buttons & Done)      mButtons.insert(ui->buttonBox->addButton(tr("Done"),     QDialogButtonBox::ActionRole), Done);
+	if (buttons & Retry)     mButtons.insert(ui->buttonBox->addButton(tr("Retry"),    QDialogButtonBox::ActionRole), Retry);
+	if (buttons & SudoRetry) mButtons.insert(ui->buttonBox->addButton(tr("Sudo"),     QDialogButtonBox::ActionRole), SudoRetry);
+	if (buttons & Cancel)    mButtons.insert(ui->buttonBox->addButton(tr("Cancel"),   QDialogButtonBox::ActionRole), Cancel);
 
 	//	Pick a default button
 	QAbstractButton* firstButton = NULL;

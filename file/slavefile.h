@@ -2,9 +2,8 @@
 #define SSHFILE_H
 
 #include "basefile.h"
-#include "ssh/remoterequest.h"
 
-class SlaveChannel;
+class OldSlaveChannel;
 class RemoteConnection;
 class SlaveFile : public BaseFile
 {
@@ -16,43 +15,51 @@ public:
 	void save();
 	void close();
 	void refresh();
-	void fileOpened(int bufferId, const QString& content, const QString& checksum, bool readOnly);
 
 	SlaveFile(const Location& location);	//	Do not call; use File::getFile instead
-
-	void resyncError(const QString& error);
 
 	virtual void sudo();
 
 public slots:
-	void connectionStateChanged();
-	void resyncSuccess(int revision);
+	void createSuccess(QVariantMap result);
+
+	void slaveOpenSuccess(QVariantMap results);
+	void downloadProgress(int percent);
+	void downloadSuccess(QVariantMap result);
+	void slaveChannelFailure();
+
+	void changePushFailure(QString error, int flags);
+
+	void slaveSaveSuccess(QVariantMap results);
+	void slaveSaveFailure(QString error, int flags);
+
+	void slaveReconnectSuccess(QVariantMap results);
+	void slaveReconnectFailure(QString error, int flags);
 
 signals:
 	void resyncSuccessRethreadSignal(int);
 
 protected:
 	virtual ~SlaveFile();
+
+	void finalizeFileOpen();
 	virtual void handleDocumentChange(int position, int removeChars, const QString& insert);
 	virtual void setLastSavedRevision(int lastSavedRevision);
 	void pumpChangeQueue();
-	void resync();
 	void movePumpCursor(int revision);
-	void getChannel();
-
 	void reconnect();
 
+private:
 	SshHost* mHost;
-	RemoteConnection* mConnection;
-	SlaveChannel* mChannel;		//	Not available before opening the file.
-	int mBufferId;
 
 	QList<Change*> mChangesSinceLastSave;
-	quint64 mChangeBufferSize;
 	int mChangePumpCursor;
 
-private:
-	bool mCreatingNewFile;
+	//	Temporary stuff used during opening
+	inline void clearTempOpenData() { mSlaveOpenResults.clear(); mDownloadedData = QByteArray(); mDownloadedChecksum = QByteArray(); }
+	QVariantMap mSlaveOpenResults;
+	QByteArray mDownloadedData;
+	QByteArray mDownloadedChecksum;
 };
 
 #endif // SSHFILE_H

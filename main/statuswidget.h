@@ -16,10 +16,11 @@ public:
 	{
 		None      = 0x0000,
 		Cancel    = 0x0001,
-		Done      = 0x0002,
-		Connect   = 0x0004,
-		SudoRetry = 0x0008,
-		Retry     = 0x0010,
+		ShowLog   = 0x0002,
+		Done      = 0x0004,
+		Connect   = 0x0008,
+		SudoRetry = 0x0010,
+		Retry     = 0x0011,
 	};
 	Q_DECLARE_FLAGS(Buttons, Button);
 	enum Result { SuccessResult = 1, FailureResult = 0, SudoRequestedResult = -1 };

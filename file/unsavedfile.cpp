@@ -7,11 +7,13 @@ UnsavedFile::UnsavedFile(const Location& location) :
 
 BaseFile* UnsavedFile::newFile(const QString& /* content */)
 {
+	setOpenStatus(Ready);
 	return this;
 }
 
 void UnsavedFile::open()
 {
+	setOpenStatus(Ready);
 }
 
 void UnsavedFile::save()

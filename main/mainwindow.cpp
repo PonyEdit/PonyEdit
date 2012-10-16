@@ -17,8 +17,8 @@
 #include <QApplication>
 #include <QSettings>
 #include <QErrorMessage>
-#include <QPrintDialog>
-#include <QPrinter>
+#include <QtPrintSupport/QPrintDialog>
+#include <QtPrintSupport/QPrinter>
 
 #include "file/filedialog.h"
 #include "file/filelist.h"
@@ -34,13 +34,13 @@
 #include "file/unsavedchangesdialog.h"
 #include "file/openfilemanager.h"
 #include "syntax/syntaxdefmanager.h"
-#include "ssh/connectionstatuspane.h"
 #include "website/sitemanager.h"
 #include "aboutdialog.h"
 #include "tools/htmlpreview.h"
 #include "licence/licence.h"
 #include "licence/licencecheckdialog.h"
 #include "shutdownprompt.h"
+#include "QsLog.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -50,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
 	mCurrentSyntaxMenuItem = NULL;
 
 	setWindowTitle(tr("PonyEdit"));
+	setUnifiedTitleAndToolBarOnMac(true);
 
 	setAcceptDrops(true);
 
@@ -76,10 +77,6 @@ MainWindow::MainWindow(QWidget *parent)
 		mTabbedFileList->setVisible(true);
 	}
 
-	mConnectionStatusPane = new ConnectionStatusPane();
-	addDockWidget(Qt::LeftDockWidgetArea, mConnectionStatusPane, Qt::Vertical);
-	mConnectionStatusPane->setObjectName("Dropped Connections");
-
 	mStatusLine = new QLabel();
 	mStatusBar = new QStatusBar();
 	mStatusBar->addPermanentWidget(mStatusLine);
@@ -94,6 +91,8 @@ MainWindow::MainWindow(QWidget *parent)
 	createWindowMenu();
 	createHelpMenu();
 	createMacDockMenu();
+
+	createShortcuts();
 
 	connect(gDispatcher, SIGNAL(generalErrorMessage(QString)), this, SLOT(showErrorMessage(QString)), Qt::QueuedConnection);
 	connect(gDispatcher, SIGNAL(generalStatusMessage(QString)), this, SLOT(showStatusMessage(QString)), Qt::QueuedConnection);
@@ -127,7 +126,6 @@ void MainWindow::restoreState()
 	QSettings settings;
 	restoreGeometry(settings.value("mainwindow/geometry").toByteArray());
 	QMainWindow::restoreState(settings.value("mainwindow/state").toByteArray());
-	mConnectionStatusPane->hide();
 	gWindowManager->hideSearchResults();
 }
 
@@ -151,6 +149,9 @@ void MainWindow::createToolbar()
 	spacer->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
 	toolbar->addWidget(spacer);
 
+	toolbar->setStyleSheet("QToolBar { margin: 0px; padding: 0px; spacing: 3px; }");
+	toolbar->setStyleSheet("QToolButton { margin: 0px; padding: 0px; width:22px; height:22px }");
+
 	//
 	//	View toolbar
 	//
@@ -164,6 +165,9 @@ void MainWindow::createToolbar()
 	registerContextMenuItem(toolbar);
 	toolbar->setObjectName("View Toolbar");
 
+	toolbar->setStyleSheet("QToolBar { margin: 0px; padding: 0px; spacing: 3px; }");
+	toolbar->setStyleSheet("QToolButton { margin: 0px; padding: 0px; width:22px; height:22px }");
+
 	//
 	//	Trial time left toolbar
 	//
@@ -174,6 +178,9 @@ void MainWindow::createToolbar()
 	addToolBar(mTrialRemainingBar);
 	mTrialRemainingBar->addWidget(mTrialRemainingButton);
 	mTrialRemainingBar->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+
+	mTrialRemainingBar->setStyleSheet("QToolBar { margin: 0px; padding: 0px; spacing: 3px; }");
+	mTrialRemainingBar->setStyleSheet("QToolButton { margin: 0px; padding: 0px; width:22px; height:22px }");
 
 	//
 	//	Feedback toolbar
@@ -199,6 +206,9 @@ void MainWindow::createToolbar()
 
 	addToolBar(feedbackToolbar);
 	registerContextMenuItem(feedbackToolbar);
+
+	feedbackToolbar->setStyleSheet("QToolBar { margin: 0px; padding: 0px; spacing: 3px; }");
+	feedbackToolbar->setStyleSheet("QToolButton { margin: 0px; padding: 0px; height:22px }");
 }
 
 void MainWindow::newFile()
@@ -210,6 +220,9 @@ void MainWindow::newFile()
 	gWindowManager->displayFile(file);
 
 	gDispatcher->emitSelectFile(file);
+
+	connect(file, SIGNAL(openStatusChanged(int)), this, SLOT(updateTitle()));
+	connect(file, SIGNAL(unsavedStatusChanged()), this, SLOT(updateTitle()));
 }
 
 void MainWindow::openFile()
@@ -253,7 +266,7 @@ void MainWindow::openSingleFile(const Location& loc)
 		}
 		catch(QString &e)
 		{
-			qDebug() << e;
+			QLOG_ERROR() << "Error opening a single file" << loc.getPath() << ": " << e;
 			return;
 		}
 
@@ -286,7 +299,7 @@ void MainWindow::saveFile()
 			}
 			catch(QString &e)
 			{
-				qDebug() << e;
+				QLOG_ERROR() << "Error saving the curent file: " << e;
 			}
 		}
 	}
@@ -304,17 +317,16 @@ void MainWindow::saveFileAs()
 		Location loc = dlg.getNewLocation();
 		try
 		{
-			loc.getFile()->newFile(current->getFile()->getContent());
+			if (!loc.isNull())
+				loc.getFile()->newFile(current->getFile()->getContent());
 		}
 		catch(QString &e)
 		{
-			qDebug() << e;
+			QLOG_ERROR() << "Error saving file as: " << e;
 			return;
 		}
 
-		loc.getFile()->open();
-
-		openSingleFile(loc);
+		addRecentFile(loc);
 
 		if(current->getFile()->getLocation().getProtocol() == Location::Unsaved)
 			current->close();
@@ -614,11 +626,24 @@ void MainWindow::createMacDockMenu()
 #ifndef Q_OS_MAC
 	return;
 #else
-	QMenu *dockMenu = new QMenu(this);
+	//	TODO: Fix me for Qt5.
+	/*QMenu *dockMenu = new QMenu(this);
 
 	dockMenu->addAction(tr("New File"), this, SLOT(newFile()));
 
-	qt_mac_set_dock_menu(dockMenu);
+	qt_mac_set_dock_menu(dockMenu);*/
+#endif
+}
+
+void MainWindow::createShortcuts()
+{
+#ifdef Q_OS_MAC
+	QAction *deleteLine = new QAction(this);
+
+	deleteLine->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Backspace));
+	connect(deleteLine, SIGNAL(triggered()), this, SLOT(deleteLine()));
+
+	addAction(deleteLine);
 #endif
 }
 
@@ -716,6 +741,13 @@ void MainWindow::selectAll()
 	Editor* current = gWindowManager->currentEditor();
 	if(current)
 		current->selectAll();
+}
+
+void MainWindow::deleteLine()
+{
+	Editor* current = gWindowManager->currentEditor();
+	if(current)
+		current->deleteLine();
 }
 
 void MainWindow::showGotoLine()

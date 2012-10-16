@@ -150,7 +150,7 @@ void OpenFileTreeModel::fileOpened(BaseFile* file)
 	mParent->expandAll();
 
 	connect(file, SIGNAL(openStatusChanged(int)), this, SLOT(fileChanged()));
-	connect(file, SIGNAL(fileOpenProgress(int)), this, SLOT(fileChanged()));
+	connect(file, SIGNAL(fileProgress(int)), this, SLOT(fileChanged()));
 	connect(file, SIGNAL(unsavedStatusChanged()), this, SLOT(fileChanged()));
 }
 
@@ -174,7 +174,7 @@ void OpenFileTreeModel::fileChanged()
 QModelIndex OpenFileTreeModel::index(int row, int column, const QModelIndex &parent) const
 {
 	Node* parentNode = (parent.isValid() ? static_cast<Node*>(parent.internalPointer()) : mTopLevelNode);
-	if (parentNode->children.length() <= row)
+	if (parentNode->children.length() <= row || 0 > row)
 		return QModelIndex();
 	Node* Node = parentNode->children[row];
 
@@ -265,21 +265,29 @@ QModelIndex OpenFileTreeModel::findFile(BaseFile* file) const
 	return QModelIndex();
 }
 
-void OpenFileTreeModel::removeNode(Node* node)
+void OpenFileTreeModel::removeNode(const QModelIndex &index)
 {
-	Node* parentNode = node->parent;
-	int row = parentNode->children.indexOf(node);
+	if (!index.isValid()) return;
 
-	QModelIndex index = createIndex(row, 0, node);
+	Node* node = (Node*)index.internalPointer();
+	if (!node) return;
+
+	Node* parentNode = node->parent;
+	if (!parentNode) return;
+
+	int row = parentNode->children.indexOf(node);
 	QModelIndex parentIndex = parent(index);
 
 	beginRemoveRows(parentIndex, row, row);
 	parentNode->children.removeAt(row);
 	endRemoveRows();
 
-	//	If the parent is not the top level, remove it if it's empty.
+	mFileLookup.remove(node->file);
+	delete node;
+
+	//	If the parent is not the top level, remove if empty
 	if (parentNode->level != Root && parentNode->children.length() == 0)
-		removeNode(parentNode);
+		removeNode(parentIndex);
 }
 
 BaseFile* OpenFileTreeModel::getFileAtIndex(const QModelIndex& index)
@@ -319,8 +327,8 @@ void OpenFileTreeModel::removeFile(BaseFile* file)
 	QModelIndex index = findFile(file);
 	if (index.isValid())
 	{
-		Node* node = static_cast<Node*>(index.internalPointer());
-		removeNode(node);
+		//	We need to remove a node from the tree.
+		removeNode(index);
 	}
 
 	mFiles.removeAll(file);

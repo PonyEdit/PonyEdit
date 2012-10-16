@@ -19,7 +19,7 @@ class BaseFile : public QObject
 
 public:
 	struct Change { int revision; int position; int remove; QString insert; };
-	enum OpenStatus { Closed, Loading, LoadError, Ready, Disconnected, Reconnecting, Repairing, SyncError, Closing };
+	enum OpenStatus { Loading, LoadError, Ready, /**/Disconnected, Reconnecting, Repairing, SyncError, /**/Closing, Closed };
 	static const char* sStatusLabels[];
 
 	static BaseFile* getFile(const Location& location);
@@ -32,7 +32,7 @@ public:
 	inline const QString& getError() const { return mError; }
 	inline bool isClosed() const { return mOpenStatus == Closed; }
 	inline OpenStatus getOpenStatus() const { return mOpenStatus; }
-	inline int getLoadingPercent() const { return mLoadingPercent; }
+	inline int getProgress() const { return mProgress; }
 	inline bool hasUnsavedChanges() const { return mChanged; }
 	inline bool isReadOnly() const { return mReadOnly; }
 
@@ -42,15 +42,14 @@ public:
 	virtual void close() = 0;	// Warning: This call is asynchronous in some kinds of file; eg SlaveFile.
 	virtual void refresh() = 0;	// Warning: This call is asynchronous in some kinds of file; eg SlaveFile.
 	virtual bool canClose() { return true; }
-	void openError(const QString& error);
 	void savedRevision(int revision, int undoLength, const QByteArray& checksum);
-	void fileOpenProgressed(int percent);
 
 	inline const QList<Editor*>& getAttachedEditors() { return mAttachedEditors; }
 	void editorAttached(Editor* editor);	//	Call only from Editor constructor.
 	void editorDetached(Editor* editor);	//	Call only from Editor destructor.
 
 	QString getChecksum() const;
+	static QString getChecksum(const QByteArray& content);
 	const Location& getDirectory() const;
 
 	void ignoreChanges() { mIgnoreChanges++; }
@@ -68,22 +67,25 @@ public:
 	virtual void sudo();
 
 public slots:
-	void fileOpened(const QString& content, bool readOnly);
+	void openSuccess(const QString& content, const QByteArray& checksum, bool readOnly);
+	void openFailure(const QString& error, int errorFlags);
+
 	void documentChanged(int position, int removeChars, int added);
 	void closeCompleted();
-	void saveFailed(const QString& errorMessage, bool permissionError);
+	void saveFailure(const QString& errorMessage, bool permissionError);
 
 signals:
-	void fileOpenedRethreadSignal(const QString& content, bool readOnly);
+	void fileOpenedRethreadSignal(const QString& content, const QByteArray& checksum, bool readOnly);
 	void closeCompletedRethreadSignal();
 	void saveFailedRethreadSignal(const QString& errorMessage, bool permissionError);
-	void fileOpenProgress(int percent);
+	void fileProgress(int percent);
 	void openStatusChanged(int newStatus);
 	void unsavedStatusChanged();
 
 protected:
 	BaseFile(const Location& location);
 	void setOpenStatus(OpenStatus newStatus);
+	void setProgress(int percent);
 
 	virtual void handleDocumentChange(int position, int removeChars, const QString& insert);
 	virtual void setLastSavedRevision(int lastSavedRevision);
@@ -112,7 +114,7 @@ protected:
 	int mLastSavedUndoLength;	//	Undo length is used only for detecting unsaved changes; it helps work out if the user has undone all unsaved changes
 	QByteArray mLastSaveChecksum;
 
-	int mLoadingPercent;
+	int mProgress;
 	OpenStatus mOpenStatus;
 	QList<Editor*> mAttachedEditors;
 

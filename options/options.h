@@ -32,12 +32,13 @@ public:
 	static void save();
 	static void load();
 
-	static QFont EditorFont;
+	static QFont* EditorFont;
 	static int EditorFontZoom;
 	static bool WordWrap;
 	static int TabStopWidth;
 	static IndentModes IndentMode;
 	static bool IndentSpaces;		//	Indent with spaces instead of tabs?
+	static bool StripSpaces;
 
 	static StartupActions StartupAction;
 	static QStringList StartupFiles;
@@ -46,6 +47,8 @@ public:
 	static bool ShutdownPrompt;
 
 	static FileListTypes FileListType;
+
+	static int LoggingLevel;
 };
 
 #endif // OPTIONS_H

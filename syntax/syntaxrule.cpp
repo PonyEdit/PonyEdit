@@ -3,6 +3,7 @@
 #include "syntax/syntaxrule.h"
 #include "main/tools.h"
 #include "syntaxdefmanager.h"
+#include "QsLog.h"
 
 QMap<QString, SyntaxRule::Type>* SyntaxRule::sTypeMap;
 bool SyntaxRule::sTypeMapInitialized = false;
@@ -45,7 +46,7 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttrib
 
 		if (mType == IncludeRules && mParent != NULL)
 		{
-			qDebug() << "Warning: Include inside parent rule; disregarding!";
+			QLOG_WARN() << "Syntax include inside parent rule; disregarding!";;
 			return;
 		}
 
@@ -71,7 +72,7 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttrib
 	}
 	else
 	{
-		qDebug() << "Unrecognized rule type: " << name;
+		QLOG_WARN() << "Unrecognizard rule type: " << name;
 	}
 }
 
@@ -171,8 +172,10 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 	{
 		mAttributeLink = def->getItemData(mAttribute);
 		if (!mAttributeLink)
-			qDebug() << "Warning: Failed to link attribute: " << mAttribute;
-	}
+        {
+			QLOG_WARN() << "Failed to link attribute:" << mAttribute;
+        }
+    }
 
 	if (!def->linkContext(mContext, &mContextLink))
 		return false;
@@ -193,7 +196,7 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 		mKeywordLink = def->getKeywordList(mString);
 		if (!mKeywordLink)
 		{
-			qDebug() << "Failed to link keyword list: " << mString;
+			QLOG_WARN() << "Failed to link syntax keyword list: " << mString;
 			return false;
 		}
 		break;
@@ -241,7 +244,7 @@ bool SyntaxRule::link(SyntaxDefinition* def)
 
 void SyntaxRule::prepareRegExp()
 {
-	if(mString.at(0) != '^') {
+	if(!mString.isEmpty() && mString.at(0) != '^') {
 		mString = '^' + mString;
 		mRegExpLineStart = false;
 	}
@@ -313,7 +316,7 @@ int SyntaxRule::match(const QString &string, int position)
 	}
 
 	case IncludeRules:
-		qDebug() << "Warning: IncludeRules left in the SyntaxDefinition after linking! :(";
+		QLOG_WARN() << "IncludeRules left in the SyntaxDefinition after linking!";
 		break;
 
 	case Keyword:

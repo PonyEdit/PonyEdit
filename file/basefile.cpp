@@ -15,8 +15,9 @@
 #include "syntax/syntaxdefmanager.h"
 #include "main/dialogwrapper.h"
 #include "main/statuswidget.h"
+#include "QsLog.h"
 
-const char* BaseFile::sStatusLabels[] =  { "Closed", "Loading...", "Error while loading", "Ready", "Disconnected", "Reconnecting...", "Lost Synchronization; Repairing", "Syncronization Error", "Closing" };
+const char* BaseFile::sStatusLabels[] =  { "Loading...", "Error while loading", "Ready", "Disconnected", "Reconnecting...", "Lost Synchronization; Repairing", "Syncronization Error", "Closing", "Closed" };
 
 BaseFile* BaseFile::getFile(const Location& location)
 {
@@ -67,7 +68,7 @@ BaseFile::BaseFile(const Location& location = NULL)
 	mInUndoBlock = 0;
 	mReadOnly = false;
 	mHighlighter = NULL;
-	mLoadingPercent = 0;
+	mProgress = -1;
 	mOpenStatus = BaseFile::Closed;
 	mLocation = location;
 
@@ -83,9 +84,9 @@ BaseFile::BaseFile(const Location& location = NULL)
 	mDocument->setDocumentLayout(mDocumentLayout);
 
 	connect(mDocument, SIGNAL(contentsChange(int,int,int)), this, SLOT(documentChanged(int,int,int)));
-	connect(this, SIGNAL(fileOpenedRethreadSignal(QString,bool)), this, SLOT(fileOpened(QString,bool)), Qt::QueuedConnection);
+	connect(this, SIGNAL(fileOpenedRethreadSignal(QString,QByteArray,bool)), this, SLOT(openSuccess(QString,QByteArray,bool)), Qt::QueuedConnection);
 	connect(this, SIGNAL(closeCompletedRethreadSignal()), this, SLOT(closeCompleted()), Qt::QueuedConnection);
-	connect(this, SIGNAL(saveFailedRethreadSignal(QString,bool)), this, SLOT(saveFailed(QString,bool)), Qt::QueuedConnection);
+	connect(this, SIGNAL(saveFailedRethreadSignal(QString,bool)), this, SLOT(saveFailure(QString,bool)), Qt::QueuedConnection);
 }
 
 void BaseFile::documentChanged(int position, int removeChars, int charsAdded)
@@ -126,44 +127,37 @@ void BaseFile::handleDocumentChange(int position, int removeChars, const QString
 	}
 }
 
-void BaseFile::fileOpened(const QString& content, bool readOnly)
+void BaseFile::openSuccess(const QString& content, const QByteArray& checksum, bool readOnly)
 {
 	//	If this is not the main thread, move to the main thread.
 	if (!Tools::isMainThread())
 	{
-		emit fileOpenedRethreadSignal(content, readOnly);
+		emit fileOpenedRethreadSignal(content, checksum, readOnly);
 		return;
 	}
 
+	mLastSaveChecksum = checksum;
 	mContent = content;
 	mReadOnly = readOnly;
-
-	QTime t;
-	t.start();
 
 	//  Detect line ending mode, then convert it to unix-style. Use unix-style line endings everywhere, only convert to DOS at save time.
 	mDosLineEndings = mContent.contains("\r\n");
 	if (mDosLineEndings)
 		mContent.replace("\r\n", "\n");
 
-	qDebug() << "Time taken scanning document: " << t.elapsed();
-	t.restart();
-
 	ignoreChanges();
 	autodetectSyntax();
 	mDocument->setPlainText(content);
 	unignoreChanges();
-
-	qDebug() << "Time taken calling setPlainText: " << t.elapsed();
-	t.restart();
 
 	mLastSavedUndoLength = mDocument->availableUndoSteps();
 
 	setOpenStatus(Ready);
 }
 
-void BaseFile::openError(const QString& error)
+void BaseFile::openFailure(const QString& error, int /*errorFlags*/)
 {
+	//	TODO: Check the errorFlags for a permission error, to offer a SUDO option.
 	mError = error;
 	setOpenStatus(LoadError);
 }
@@ -171,6 +165,7 @@ void BaseFile::openError(const QString& error)
 void BaseFile::setOpenStatus(OpenStatus newStatus)
 {
 	mOpenStatus = newStatus;
+	mProgress = -1;
 	emit openStatusChanged(newStatus);
 }
 
@@ -184,11 +179,16 @@ void BaseFile::editorDetached(Editor* editor)	//	Call only from Editor destructo
 	mAttachedEditors.removeOne(editor);
 }
 
-QString BaseFile::getChecksum() const
+QString BaseFile::getChecksum(const QByteArray& content)
 {
 	QCryptographicHash hash(QCryptographicHash::Md5);
-	hash.addData(mContent.toUtf8());
+	hash.addData(content);
 	return QString(hash.result().toHex().toLower());
+}
+
+QString BaseFile::getChecksum() const
+{
+	return getChecksum(mContent.toUtf8());
 }
 
 void BaseFile::savedRevision(int revision, int undoLength, const QByteArray& checksum)
@@ -199,8 +199,8 @@ void BaseFile::savedRevision(int revision, int undoLength, const QByteArray& che
 	mLastSavedUndoLength = undoLength;
 	mChanged = (undoLength != mDocument->availableUndoSteps());
 
-	gDispatcher->emitGeneralStatusMessage(QString("Finished saving ") + mLocation.getLabel() + " at revision " + QString::number(revision));
-	qDebug() << "Saved revision " << revision;
+	gDispatcher->emitGeneralStatusMessage(QString("Finished saving ") + mLocation.getLabel());
+	QLOG_TRACE() << "Saved file" << mLocation.getLabel() << "at revision" << revision;
 	emit unsavedStatusChanged();
 }
 
@@ -209,10 +209,10 @@ void BaseFile::setLastSavedRevision(int lastSavedRevision)
 	mLastSavedRevision = lastSavedRevision;
 }
 
-void BaseFile::fileOpenProgressed(int percent)
+void BaseFile::setProgress(int percent)
 {
-	mLoadingPercent = percent;
-	emit fileOpenProgress(percent);
+	mProgress = percent;
+	emit fileProgress(percent);
 }
 
 const Location& BaseFile::getDirectory() const
@@ -275,7 +275,7 @@ void BaseFile::setSyntax(SyntaxDefinition* syntaxDef)
 	gDispatcher->emitSyntaxChanged(this);
 }
 
-void BaseFile::saveFailed(const QString& errorMessage, bool permissionError)
+void BaseFile::saveFailure(const QString& errorMessage, bool permissionError)
 {
 	//	Make sure this is always run in the UI thread
 	if (!Tools::isMainThread())

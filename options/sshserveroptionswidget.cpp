@@ -1,7 +1,7 @@
 #include <QListWidgetItem>
 
-#include "ssh/serverconfigwidget.h"
-#include "ssh/sshhost.h"
+#include "ssh2/serverconfigwidget.h"
+#include "ssh2/sshhost.h"
 #include "main/tools.h"
 
 #include "sshserveroptionswidget.h"
@@ -171,7 +171,7 @@ void SshServerOptionsWidget::deleteServer()
 
 	SshHost *host = (SshHost*)item->data(Qt::UserRole).value<void*>();
 
-	host->setSave(false);
+	host->setSaveHost(false);
 	item->setHidden(true);
 }
 

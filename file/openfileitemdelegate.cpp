@@ -53,7 +53,25 @@ void OpenFileItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 			if (level == OpenFileTreeModel::File)
 			{
 				BaseFile::OpenStatus fileStatus = file->getOpenStatus();
-				if (fileStatus == BaseFile::Loading)
+
+				if (file->hasUnsavedChanges())
+				{
+					sp.drawPixmap(labelRect.right() - 16, labelRect.top(), 16, 16, QPixmap(":/icons/filechanged.png"));
+					labelRect.adjust(0, 0, -18, 0);
+				}
+
+				if (fileStatus == BaseFile::Disconnected || fileStatus == BaseFile::Reconnecting)
+				{
+					sp.drawPixmap(labelRect.right() - 16, labelRect.top(), 16, 16, QPixmap(":/icons/disconnected.png"));
+					labelRect.adjust(0, 0, -18, 0);
+				}
+				else if (fileStatus == BaseFile::Repairing)
+				{
+					sp.drawPixmap(labelRect.right() - 16, labelRect.top(), 16, 16, QPixmap(":/icons/resync.png"));
+					labelRect.adjust(0, 0, -18, 0);
+				}
+
+				if (file->getProgress() > -1)
 				{
 					//	Show a progress bar while loading the file...
 					QStyleOptionProgressBar so;
@@ -66,30 +84,11 @@ void OpenFileItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 					so.direction = Qt::LeftToRight;
 					so.minimum = 0;
 					so.maximum = 100;
-					so.progress = file->getLoadingPercent();
+					so.progress = file->getProgress();
 
 					sp.drawControl(QStyle::CE_ProgressBar, so);
 
 					labelRect.adjust(0, 0, -34, 0);
-				}
-				else
-				{
-					if (file->hasUnsavedChanges())
-					{
-						sp.drawPixmap(labelRect.right() - 16, labelRect.top(), 16, 16, QPixmap(":/icons/filechanged.png"));
-						labelRect.adjust(0, 0, -18, 0);
-					}
-
-					if (fileStatus == BaseFile::Disconnected || fileStatus == BaseFile::Reconnecting)
-					{
-						sp.drawPixmap(labelRect.right() - 16, labelRect.top(), 16, 16, QPixmap(":/icons/disconnected.png"));
-						labelRect.adjust(0, 0, -18, 0);
-					}
-					else if (fileStatus == BaseFile::Repairing)
-					{
-						sp.drawPixmap(labelRect.right() - 16, labelRect.top(), 16, 16, QPixmap(":/icons/resync.png"));
-						labelRect.adjust(0, 0, -18, 0);
-					}
 				}
 
 				//	Draw the icon

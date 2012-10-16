@@ -20,7 +20,7 @@ public:
 	void refresh();
 
 signals:
-	void localFileOpened(const QString& content, bool readOnly);
+	void localFileOpened(const QString& content, const QByteArray& checksum, bool readOnly);
 };
 
 #endif // LOCALFILE_H

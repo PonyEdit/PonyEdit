@@ -15,6 +15,7 @@ class Tools
 public:
 	static QString humanReadableBytes(quint64 bytes);
 	static void saveServers();
+	static void saveHostFingerprints();
 	static void loadServers();
 	static bool isMainThread();
 
@@ -36,6 +37,12 @@ public:
 	static QStringList splitQuotedList(const QString& list, QChar separator);
 
 	static QString getResourcePath(const QString& subpath);
+
+	static QString stringifyIpAddress(unsigned long ipAddress);
+
+	static int unbin(QByteArray& target, const char* source, int maxTarget, int maxSource, bool* leftoverEscape = NULL);
+	static QByteArray bin(const QByteArray& source);
+	static unsigned char unbinEscape(unsigned char c);
 };
 
 #endif // TOOLS_H

@@ -21,12 +21,12 @@ public:
     SiteManager();
 	~SiteManager();
 
-	void checkForUpdates(bool forceNotification = false);
 	void getLicence(const QString& username, const QString& password);
 	void checkLicence();
 	void getTrial();
 
 public slots:
+	void checkForUpdates(bool forceNotification = false);
 	void handleReply(QNetworkReply* reply);
 
 	void feedbackHappy();

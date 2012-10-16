@@ -25,5 +25,17 @@
         <file>icons/horizontalsplit.png</file>
         <file>icons/removesplit.png</file>
         <file>icons/verticalsplit.png</file>
+        <file>icons/status-blue-1.png</file>
+        <file>icons/status-blue-2.png</file>
+        <file>icons/status-blue-3.png</file>
+        <file>icons/status-blue-4.png</file>
+        <file>icons/status-green.png</file>
+        <file>icons/status-red.png</file>
+        <file>icons/log.png</file>
+        <file>icons/editor.png</file>
+        <file>icons/servers.png</file>
+        <file>icons/appearance.png</file>
+        <file>icons/startup.png</file>
+        <file>icons/logging.png</file>
     </qresource>
 </RCC>

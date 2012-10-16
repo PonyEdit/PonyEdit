@@ -32,6 +32,7 @@ public:
 	}
 };
 
+class CustomTreeEntry;
 class FileDialog : public QDialog
 {
     Q_OBJECT
@@ -51,24 +52,27 @@ protected:
 	void dropEvent(QDropEvent *);
 
 private slots:
-	void folderTreeItemExpanded(QTreeWidgetItem* item);
 	void folderChildrenLoaded(const QList<Location>& children, const QString& locationPath);
 	void folderChildrenFailed(const QString& error, const QString& locationPath, bool permissionError);
-	void directoryTreeSelected(QTreeWidgetItem*);
 	void upLevel();
 	void fileDoubleClicked(QModelIndex index);
 	void populateRemoteServers();
 	void fileListSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 	void closing();
 	void addToFavorites();
-	void directoryTreeContextMenu(QPoint point);
 	void createNewFolder();
-	void retryButtonClicked(StatusWidget::Button button);	//	Called when "try again" or "sudo" is clicked on an error
+	void statusButtonClicked(StatusWidget::Button button);	//	Called when "try again" or "sudo" is clicked on an error
 	void refresh();
 	void fileNameIndexChanged();
 	void columnHeaderClicked(int column);
+	void addNewServer();
+	void serverClicked(CustomTreeEntry* entry);
+	void locationClicked(CustomTreeEntry* entry);
+	void locationExpanded(CustomTreeEntry* entry);
+	void favoriteClicked(CustomTreeEntry* entry);
+	void favoriteMenu(CustomTreeEntry* entry, QPoint pos);
 #ifdef Q_OS_WIN
-	void populateWindowsShares(QTreeWidgetItem* localNetworkItem, LPNETRESOURCE lpnr);
+	void populateWindowsShares(CustomTreeEntry* entry);
 #endif
 
 private:
@@ -78,7 +82,7 @@ private:
 	void applySort();
 
 	void populateFolderTree();
-	QTreeWidgetItem* addLocationToTree(QTreeWidgetItem* parent, const Location& location);
+	CustomTreeEntry* addLocationToTree(CustomTreeEntry* parent, const Location& location);
 	void updateFavorites();
 	void populateFilterList();
 
@@ -86,13 +90,13 @@ private:
 	QFileIconProvider mIconProvider;
 	Location mCurrentLocation;
 	QStandardItemModel* mFileListModel;
-	QTreeWidgetItem* mRemoteServersBranch;
-	QTreeWidgetItem* mFavoriteLocationsBranch;
+	CustomTreeEntry* mRemoteServersBranch;
+	CustomTreeEntry* mFavoriteLocationsBranch;
 #ifdef Q_OS_WIN
-	QTreeWidgetItem* mLocalNetworkBranch;
+	CustomTreeEntry* mLocalNetworkBranch;
 #endif
 
-	QMap<QString, QTreeWidgetItem*> mLoadingLocations;
+	QMap<QString, CustomTreeEntry*> mLoadingLocations;
 
 	static Location mLastLocation;
 

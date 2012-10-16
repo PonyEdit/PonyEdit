@@ -4,13 +4,15 @@
 #include <QString>
 #include <QVariant>
 #include <QDateTime>
+#include <tools/callback.h>
 
-class SshHost;
+class OldSshHost;
 class BaseFile;
 class LocationShared;
 class SshConnection;
-class SlaveChannel;
+class OldSlaveChannel;
 class FTPChannel;
+class SshHost;
 
 class Location
 {
@@ -57,7 +59,7 @@ public:
 
 	BaseFile* getFile();
 
-	void asyncGetChildren(bool includeHidden);
+	void asyncGetChildren(bool includeHidden);	//	Results are returned via the global dispatcher (locationListSuccess, locationListFailure)
 
 	bool operator==(const Location& other) const;
 
@@ -69,7 +71,7 @@ public:
 	static void loadFavorites();
 	static inline QList<Favorite>& getFavorites() { return sFavorites; }
 
-	bool createNewDirectory(QString name);
+	void createNewDirectory(const QString& name, const Callback& callback);
 
 	void sshChildLoadResponse(const QList<Location>& children);
 	void childLoadError(const QString& error, bool permissionError);
@@ -80,36 +82,37 @@ private:
 	void sshFileOpenResponse(SshConnection* controller, quint32 bufferId, const QByteArray& data);
 	void fileOpenError(const QString& error);
 
-	bool sshCreateDirectory(QString name);
-
 	LocationShared* mData;
 
 	static void addSortedFavorite(const Favorite& favorite);
 	static QList<Favorite> sFavorites;
 };
 
-class LocationShared
+class LocationShared : public QObject
 {
+	Q_OBJECT
 	friend class Location;
 
 public:
 	static void cleanupIconProvider();
+
+private slots:
+	void sshLsSuccess(QVariantMap results);
+	void sshLsFailure(QString error, int flags);
+	void sftpLsFailure(QString error, int flags);
 
 private:
 	LocationShared();
 	static void initIconProvider();
 
 	void setPath(const QString& path);
-	bool ensureConnected();
 
-	void childLoadError(const QString& error, bool permissionError);
-
-	void emitListLoadedSignal();
-	void emitListLoadError(const QString& error, bool permissionError);
 	void localLoadSelf();
 	void localLoadListing(bool includeHidden);
 	void sshLoadListing(bool includeHidden);
 	void sftpLoadListing(bool includeHidden);
+
+	SshHost* getHost();
 
 	int mReferences;
 	QString mPath;
@@ -118,20 +121,21 @@ private:
 	Location::Type mType;
 	Location::Protocol mProtocol;
 	QDateTime mLastModified;
-	QList<Location> mChildren;
 	Location mParent;
 	bool mSelfLoaded;
-	bool mLoading;
 	int mSize;
 	bool mCanRead;
 	bool mCanWrite;
 	bool mSudo;
 
+	SshHost* mHost;
+
+	//	Todo: Remote hostname and login should be QByteArrays
 	QString mRemoteHostName;
 	QString mRemoteUserName;
 	QString mRemotePath;
-	SshHost* mRemoteHost;
-	SlaveChannel* mSlaveChannel;
+	OldSshHost* mRemoteHost;
+	OldSlaveChannel* mSlaveChannel;
 	FTPChannel* mFtpChannel;
 };
 

@@ -79,7 +79,7 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 	while (block.isValid() && top <= event->rect().bottom()) {
 		if (block.isVisible() && bottom <= frameRect().height()) {
 			QString number = QString::number(blockNumber + 1);
-			painter.setPen(Qt::black);
+			painter.setPen(Qt::darkGray);
 			painter.drawText(0, (int)(top + offset), mLineNumberWidget->width(), fontMetrics().height(),
 								Qt::AlignRight, number);
 		}
@@ -276,14 +276,14 @@ void CodeEditor::wheelEvent(QWheelEvent *e)
 
 void CodeEditor::updateFont()
 {
-	QFont font = Options::EditorFont;
-	font.setWeight(QFont::Normal);
+	QFont* font = Options::EditorFont;
+	font->setWeight(QFont::Normal);
 
-	int pointSize = font.pointSize();
+	int pointSize = font->pointSize();
 	pointSize = (pointSize * Options::EditorFontZoom) / 100;
-	font.setPointSize(pointSize);
+	font->setPointSize(pointSize);
 
-	setFont(font);
+	setFont(*font);
 }
 
 void CodeEditor::zoomIn()
@@ -300,6 +300,22 @@ void CodeEditor::zoomOut()
 		Options::EditorFontZoom = 10;
 
 	gDispatcher->emitOptionsChanged();
+}
+
+void CodeEditor::deleteLine()
+{
+	QTextCursor cursor(document());
+
+	cursor.setPosition(textCursor().position());
+
+	cursor.beginEditBlock();
+
+	if(cursor.positionInBlock() != 0)
+		cursor.movePosition(QTextCursor::StartOfLine, QTextCursor::KeepAnchor);
+
+	cursor.deletePreviousChar();
+
+	cursor.endEditBlock();
 }
 
 void CodeEditor::focusInEvent(QFocusEvent *e)

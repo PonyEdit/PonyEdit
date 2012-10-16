@@ -5,6 +5,7 @@
 #include "openssl/pem.h"
 #include <QDebug>
 #include <QSettings>
+#include "QsLog.h"
 
 char licencePublicKey[] =
 	"-----BEGIN PUBLIC KEY-----\n"
@@ -77,9 +78,9 @@ bool Licence::verifySignature(const QByteArray& data, const QByteArray& signatur
 	//	Calculate the SHA1 hash of data
 	SHA_CTX sha_ctx = { 0, 0, 0, 0, 0, 0, 0, { 0 }, 0 };
 	unsigned char digest[SHA_DIGEST_LENGTH];
-	if (SHA1_Init(&sha_ctx) != 1) { qDebug() << "Failed to init SHA1 libs"; return false; }
-	if (SHA1_Update(&sha_ctx, data.constData(), data.length()) != 1) { qDebug() << "Failed to add data to SHA1 hash"; return false; }
-	if (SHA1_Final(digest, &sha_ctx) != 1) { qDebug() << "Failed to finalize SHA1 hash"; return false; }
+	if (SHA1_Init(&sha_ctx) != 1) { QLOG_ERROR() << "Failed to init SHA1 libs"; return false; }
+	if (SHA1_Update(&sha_ctx, data.constData(), data.length()) != 1) { QLOG_ERROR() << "Failed to add data to SHA1 hash"; return false; }
+	if (SHA1_Final(digest, &sha_ctx) != 1) { QLOG_ERROR() << "Failed to finalize SHA1 hash"; return false; }
 
 	//	Prepare the Licence Public Key
 	BIO* b = BIO_new_mem_buf(licencePublicKey, strlen(licencePublicKey));

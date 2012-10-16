@@ -14,14 +14,14 @@ To create a new build:
 MAC OS X
 --------
 
-The Windows installer requires the `macdeployqt` tool, which should be included in the Qt SDK.
+The OSX installer requires the `macdeployqt` tool, which should be included in the Qt SDK.
 
 To create a new distributable dmg file, build the Release version of PonyEdit, then run the following commands in the build directory:
 
 shell> macdeployqt PonyEdit.app
-shell> mkdir PonyEdit && cp -R PonyEdit.app PonyEdit && cp ../trunk/installer/OSX/Applications PonyEdit && cp ../trunk/installer/OSX/Info.plist PonyEdit/PonyEdit.app/Contents
+shell> mkdir PonyEdit && cp -R PonyEdit.app PonyEdit && cp ../PonyEdit/installer/OSX/Applications PonyEdit && cp ../PonyEdit/installer/OSX/Info.plist PonyEdit/PonyEdit.app/Contents
 
 Make sure all PonyEdit dmg files are unmounted before running this command:
 
-shell> ../trunk/installer/osx/create-dmg --volname PonyEdit --background ../trunk/installer/osx/background.png --window-size 400 300 --icon "Applications" 320 180 --icon "PonyEdit" 50 180 --icon-size 128 PonyEdit.dmg PonyEdit
+shell> ../PonyEdit/installer/OSX/create-dmg --volname PonyEdit --background ../PonyEdit/installer/OSX/background.png --window-size 400 300 --icon "Applications" 320 180 --icon "PonyEdit" 50 180 --icon-size 128 PonyEdit.dmg PonyEdit
 

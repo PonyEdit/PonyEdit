@@ -4,13 +4,17 @@
 
 LocalFile::LocalFile(const Location& location) : BaseFile(location)
 {
-	connect(this, SIGNAL(localFileOpened(QString,bool)), this, SLOT(fileOpened(QString,bool)), Qt::QueuedConnection);
+	connect(this, SIGNAL(localFileOpened(QString,QByteArray,bool)), this, SLOT(openSuccess(QString,QByteArray,bool)), Qt::QueuedConnection);
 }
 
 BaseFile* LocalFile::newFile(const QString& content)
 {
 	mContent = content;
+
 	save();
+
+	emit localFileOpened(content, getChecksum().toAscii(), false);
+
 	return this;
 }
 
@@ -29,7 +33,9 @@ void LocalFile::open()
 
 	fileHandle.close();
 
-	emit localFileOpened(content, readOnly);
+	mContent = content;
+
+	emit localFileOpened(content, getChecksum().toAscii(), readOnly);
 }
 
 void LocalFile::save()
@@ -39,7 +45,7 @@ void LocalFile::save()
 
 	if(!(fileHandle.permissions() & QFile::WriteUser))
 	{
-		saveFailed(tr("Permission denied!"), true);
+		saveFailure(tr("Permission denied!"), true);
 		return;
 	}
 

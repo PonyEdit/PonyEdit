@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QtGui/QMainWindow>
+#include <QtWidgets/QMainWindow>
 #include <QStatusBar>
 #include <QTextEdit>
 #include <QStatusBar>
@@ -18,7 +18,6 @@ class TabbedFileList;
 class BaseFile;
 class SearchBar;
 class UnsavedChangesDialog;
-class ConnectionStatusPane;
 class WindowManager;
 
 #ifdef Q_OS_MAC
@@ -61,6 +60,8 @@ public slots:
 	void copy();
 	void paste();
 	void selectAll();
+
+	void deleteLine();
 
 	void showGotoLine();
 
@@ -114,6 +115,8 @@ private:
 	void createWindowMenu();
 	void createHelpMenu();
 
+	void createShortcuts();
+
 	void createMacDockMenu();
 
 	void restoreState();
@@ -148,7 +151,6 @@ private:
 	QToolBar* mTrialRemainingBar;
 	QToolButton* mTrialRemainingButton;
 	UnsavedChangesDialog* mUnsavedChangesDialog;
-	ConnectionStatusPane* mConnectionStatusPane;
 
 	bool mWasMaximized;
 };

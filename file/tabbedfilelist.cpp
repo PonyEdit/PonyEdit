@@ -49,7 +49,7 @@ void TabbedFileList::fileOpened(BaseFile* file)
 	mTabs->setTabData(idx, QVariant::fromValue<Location>(file->getLocation()));
 
 	connect(file, SIGNAL(openStatusChanged(int)), this, SLOT(fileChanged()));
-	connect(file, SIGNAL(fileOpenProgress(int)), this, SLOT(fileChanged()));
+	connect(file, SIGNAL(fileProgress(int)), this, SLOT(fileChanged()));
 	connect(file, SIGNAL(unsavedStatusChanged()), this, SLOT(fileChanged()));
 }
 

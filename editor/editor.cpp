@@ -48,7 +48,7 @@ Editor::Editor(BaseFile* file) : QStackedWidget()
 	mFile = file;
 	mFile->editorAttached(this);
 	connect(mFile, SIGNAL(openStatusChanged(int)), this, SLOT(openStatusChanged(int)));
-	connect(mFile, SIGNAL(fileOpenProgress(int)), this, SLOT(fileOpenProgress(int)));
+	connect(mFile, SIGNAL(fileProgress(int)), this, SLOT(fileOpenProgress(int)));
 	openStatusChanged(mFile->getOpenStatus());
 
 	mEditor->setDocument(mFile->getTextDocument());
@@ -126,6 +126,9 @@ void Editor::showError(const QString& error)
 
 void Editor::save()
 {
+	if (Options::StripSpaces)
+		replace("\\s+$", "", false, true, true);
+
 	mFile->save();
 }
 
@@ -318,9 +321,9 @@ bool Editor::hasFocus()
 
 void Editor::applyOptions()
 {
-	QFont font = Options::EditorFont;
+	QFont* font = Options::EditorFont;
 
-	QFontMetrics fontMetrics(font);
+	QFontMetrics fontMetrics(*font);
 	int characterWidth = fontMetrics.width("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM") / 40;
 
 	mEditor->updateFont();
@@ -374,6 +377,3 @@ void Editor::selectText(int lineNumber, int start, int length)
 
 	mEditor->setTextCursor(cursor);
 }
-
-
-

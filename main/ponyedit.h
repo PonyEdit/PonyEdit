@@ -6,6 +6,7 @@
 #include <QLocalServer>
 
 #include "mainwindow.h"
+#include "ssh2/dialogrethreader.h"
 
 class PonyEdit : public QApplication
 {
@@ -18,9 +19,12 @@ public:
 	bool isRunning();
 	bool sendMessage(const QString &message);
 
+	static inline bool isApplicationExiting() { return sApplicationExiting; }
+
 public slots:
 	bool event(QEvent *e);
 	void receiveMessage();
+	bool notify(QObject *, QEvent *);
 
 signals:
 	void messageAvailable(QString message);
@@ -30,8 +34,10 @@ private:
 	QString mKey;
 	QSharedMemory mMemoryLock;
 	QLocalServer* mLocalServer;
+	DialogRethreader* mDialogRethreader;
 
 	static const int mTimeout = 1000;
+	static bool sApplicationExiting;
 };
 
 #endif // PONYEDIT_H

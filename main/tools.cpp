@@ -1,10 +1,10 @@
 #include "main/tools.h"
-#include "ssh/sshhost.h"
 #include "options/options.h"
 #include "mainwindow.h"
 #include "windowmanager.h"
 #include "editor/editor.h"
 #include "file/openfilemanager.h"
+#include "ssh2/sshhost.h"
 
 #include <QSettings>
 #include <QDebug>
@@ -42,15 +42,17 @@ void Tools::saveServers()
 	settings.beginWriteArray("servers");
 	foreach (SshHost* host, knownHosts)
 	{
-		if (host->getSave())
+		if (host->getSaveHost())
 		{
 			settings.setArrayIndex(index++);
-			settings.setValue("hostname", host->getHostName());
+			settings.setValue("hostname", host->getHostname());
 			settings.setValue("port", host->getPort());
-			settings.setValue("username", host->getUserName());
-			settings.setValue("password", host->getSavePassword() ? host->getPassword().toUtf8().toBase64() : "");
+			settings.setValue("username", host->getUsername());
+			settings.setValue("savePassword", host->getSavePassword());
+			settings.setValue("password", host->getSavePassword() ? host->getPassword().toBase64() : "");
 			settings.setValue("keyFile", host->getKeyFile());
-			settings.setValue("keyPassphrase", host->getSaveKeyPassphrase() ? host->getKeyPassphrase().toUtf8().toBase64() : "");
+			settings.setValue("saveKeyPassphrase", host->getSaveKeyPassphrase());
+			settings.setValue("keyPassphrase", host->getSaveKeyPassphrase() ? host->getKeyPassphrase().toBase64() : "");
 			settings.setValue("name", host->getName());
 			settings.setValue("defaultDirectory", host->getDefaultDirectory());
 			settings.setValue("connectionType", host->getConnectionType());
@@ -69,23 +71,61 @@ void Tools::loadServers()
 		settings.setArrayIndex(i);
 		SshHost* host = new SshHost();
 
-		host->setHostName(settings.value("hostname").toString());
+		host->setHostname(settings.value("hostname").toByteArray());
 		host->setPort(settings.value("port", 22).toInt());
-		host->setUserName(settings.value("username").toString());
-		host->setKeyFile(settings.value("keyFile").toString());
+		host->setUsername(settings.value("username").toByteArray());
+		host->setKeyFile(settings.value("keyFile").toByteArray());
 
 		QByteArray password = QByteArray::fromBase64(settings.value("password").toByteArray());
-		if (password.length()) host->setPassword(password);
+		bool savePassword = settings.value("savePassword", password.length() > 0).toBool();
+		if (savePassword)
+		{
+			host->setPassword(password);
+			host->setSavePassword(savePassword);
+		}
 
 		QByteArray keyPassphrase = QByteArray::fromBase64(settings.value("keyPassphrase").toByteArray());
-		if (keyPassphrase.length()) host->setKeyPassphrase(keyPassphrase);
+		bool saveKeyPassphrase = settings.value("saveKeyPassphrase", keyPassphrase.length() > 0).toBool();
+		if (saveKeyPassphrase)
+		{
+			host->setKeyPassphrase(keyPassphrase);
+			host->setSaveKeyPassphrase(saveKeyPassphrase);
+		}
 
 		host->setName(settings.value("name").toString());
-		host->setDefaultDirectory(settings.value("defaultDirectory", QVariant("~")).toString());
+		host->setDefaultDirectory(settings.value("defaultDirectory", QVariant("~")).toByteArray());
+		host->setConnectionType((SshHost::ConnectionType)settings.value("connectionType", QVariant(SshHost::SSH)).toInt());
 
-		host->setConnectionType(static_cast<SshHost::ConnectionType>(settings.value("connectionType", QVariant(SshHost::SSH)).toInt()));
+//		host->setConnectionType(static_cast<OldSshHost::ConnectionType>(settings.value("connectionType", QVariant(OldSshHost::SSH)).toInt()));
 
 		SshHost::recordKnownHost(host);
+	}
+	settings.endArray();
+
+
+	count = settings.beginReadArray("hostkeys");
+	for (int i = 0; i < count; i++)
+	{
+		settings.setArrayIndex(i);
+		QString hostname = settings.value("hostname").toString();
+		QByteArray key = settings.value("hostkey").toByteArray();
+		SshHost::registerKnownFingerprint(hostname, key);
+	}
+}
+
+void Tools::saveHostFingerprints()
+{
+	QSettings settings;
+
+	const QMap<QString, QByteArray>& fingerprints = SshHost::getKnownFingerprints();
+
+	int index = 0;
+	settings.beginWriteArray("hostkeys");
+	for (QMap<QString, QByteArray>::const_iterator i = fingerprints.begin(); i != fingerprints.end(); ++i)
+	{
+		settings.setArrayIndex(index++);
+		settings.setValue("hostname", i.key());
+		settings.setValue("hostkey", i.value());
 	}
 	settings.endArray();
 }
@@ -230,7 +270,7 @@ void Tools::loadStartupFiles()
 	switch(Options::StartupAction)
 	{
 		case Options::BlankFile:
-			gMainWindow->openSingleFile(Location());
+			gMainWindow->openSingleFile(Location(""));
 			break;
 		case Options::SetFiles:
 		case Options::ReopenFiles:
@@ -305,3 +345,90 @@ QStringList Tools::splitQuotedList(const QString& quotedList, QChar separator)
 
 	return result;
 }
+
+QString Tools::stringifyIpAddress(unsigned long ipAddress)
+{
+	return QString("%1.%2.%3.%4").arg(ipAddress & 0xFF)
+			.arg((ipAddress >> 8) & 0xFF)
+			.arg((ipAddress >> 16) & 0xFF)
+			.arg((ipAddress >> 24) & 0xFF);
+}
+
+QByteArray Tools::bin(const QByteArray& source)
+{
+	const unsigned char* c = (const unsigned char*)source.constData();
+	const unsigned char* end = c + source.length();
+	QByteArray result;
+
+	while (c < end)
+	{
+		if (*c == 0x3 || *c == 0x4 || *c == 0x8 || *c == 0x11 || *c == 0x13 || *c == 0x1D || *c == 0x1E || *c == 0x18 || *c == 0x1A || *c == 0x1C || *c == 0x7F)
+			result.append(255).append(*c + 128);
+		else if (*c == 10)
+			result.append(253);
+		else if (*c == 13)
+			result.append(254);
+		else if (*c == 253)
+			result.append(255).append('A');
+		else if (*c == 254)
+			result.append(255).append('B');
+		else if (*c == 255)
+			result.append(255).append('C');
+		else
+			result.append(*c);
+
+		c++;
+	}
+
+	return result;
+}
+
+unsigned char Tools::unbinEscape(unsigned char c)
+{
+	return (c < 128 ? c + 188 : c - 128);
+}
+
+int Tools::unbin(QByteArray& target, const char* source, int maxTarget, int maxSource, bool* leftoverEscape)
+{
+	const unsigned char* unsignedSource = (const unsigned char*)source;
+	const unsigned char* sourceEnd = unsignedSource + maxSource;
+	const unsigned char* c = unsignedSource;
+
+	if (leftoverEscape && *leftoverEscape && c < sourceEnd)
+	{
+		target.append(unbinEscape(*c));
+		*leftoverEscape = false;
+		c++;
+	}
+
+	for (; c < sourceEnd; c++)
+	{
+		if (target.length() >= maxTarget) return (c - unsignedSource);
+
+		if (*c < 253)
+			target.append(*c);
+		else if (*c == 253)
+			target.append((unsigned char)10);
+		else if (*c == 254)
+			target.append((unsigned char)13);
+		else
+		{
+			c++;
+			if (c >= sourceEnd)
+			{
+				if (leftoverEscape) *leftoverEscape = true;
+				break;
+			}
+
+			target.append(unbinEscape(*c));
+		}
+	}
+
+	return c - unsignedSource;
+}
+
+
+
+
+
+

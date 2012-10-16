@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QListWidgetItem>
 
-#include "ssh/serverconfigwidget.h"
+#include "ssh2/serverconfigwidget.h"
 #include "options/optionsdialog.h"
 #include "options/optionsdialogpage.h"
 

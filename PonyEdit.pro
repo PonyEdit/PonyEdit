@@ -6,8 +6,8 @@
 
 DEFINES += "MAJOR_VERSION=0"
 DEFINES += "MINOR_VERSION=91"
-DEFINES += "REVISION=4"
-DEFINES += "PRETTY_VERSION=\\\"0.91-beta4\\\""
+DEFINES += "REVISION=6"
+DEFINES += "PRETTY_VERSION=\\\"0.91-beta6\\\""
 
 
 INCLUDEPATH += $$PWD/deps/libssh2/include/
@@ -21,7 +21,12 @@ win32 {
 }
 
 macx {
-	DEFINES += __DARWIN_64_BIT_INO_T
+        DEFINES += __DARWIN_64_BIT_INO_T
+        CONFIG += x86_64
+        CONFIG -= i386
+
+		LIBS += -L$$PWD/deps/lib-osx -L/usr/local/ssl/lib
+		INCLUDEPATH += -L$$PWD/deps/include-osx /usr/local/ssl/include
 
 	data.files = syntaxdefs slave
 	data.path = Contents/Resources
@@ -30,17 +35,18 @@ macx {
 
 	ICON = icons/ponyedit.icns
 	TARGET = PonyEdit
+        LIBS += -lz
 }
 !macx {
 	TARGET = ponyedit
 }
 
-QT	+= core gui network xml script webkit
+QT	+= core widgets gui network xml script webkit printsupport
 LIBS	+= -lssh2 -lcrypto -lssl
 TEMPLATE = app
 
-QMAKE_CFLAGS	+= -Werror -Wunused-parameter
-QMAKE_CXXFLAGS	+= -Werror -Wunused-parameter
+#QMAKE_CFLAGS	+= -Werror -Wunused-parameter
+#QMAKE_CXXFLAGS	+= -Werror -Wunused-parameter
 
 SOURCES += \
     editor/linenumberwidget.cpp \
@@ -58,12 +64,8 @@ SOURCES += \
     main/tools.cpp \
     main/searchbar.cpp \
     main/mainwindow.cpp \
-    main/json.cpp \
 	main/main.cpp \
     options/optionsdialog.cpp \
-    ssh/sshconnection.cpp \
-    ssh/sshhost.cpp \
-    ssh/serverconfigdlg.cpp \
     syntax/syntaxdefinition.cpp \
     syntax/syntaxrule.cpp \
     syntax/syntaxhighlighter.cpp \
@@ -79,12 +81,7 @@ SOURCES += \
     file/newfolderdialog.cpp \
     main/advancedsearchdialog.cpp \
     main/gotolinedialog.cpp \
-    ssh/remoteconnection.cpp \
-    ssh/connectionstatuswidget.cpp \
-    ssh/passwordinput.cpp \
-    ssh/connectionstatuspane.cpp \
     website/updatenotificationdialog.cpp \
-    ssh/serverconfigwidget.cpp \
     options/sshserveroptionswidget.cpp \
     options/fontoptionswidget.cpp \
     options/options.cpp \
@@ -95,13 +92,7 @@ SOURCES += \
     options/editoroptionswidget.cpp \
     tools/htmlpreview.cpp \
     licence/licence.cpp \
-    ssh/remotechannel.cpp \
-    ssh/slavechannel.cpp \
-    ssh/remoteconnectionthread.cpp \
     file/slavefile.cpp \
-    ssh/slaverequest.cpp \
-    ssh/remoterequest.cpp \
-    ssh/rawsshconnection.cpp \
     main/ponyedit.cpp \
     main/windowmanager.cpp \
     licence/licencecheckdialog.cpp \
@@ -109,9 +100,7 @@ SOURCES += \
     options/startupoptionswidget.cpp \
     main/shutdownprompt.cpp \
     file/filestatuswidget.cpp \
-    ssh/requeststatuswidget.cpp \
     main/regexptester.cpp \
-    ssh/ftpchannel.cpp \
     file/ftpfile.cpp \
     licence/offlineactivationdialog.cpp \
     file/tabbedfilelist.cpp \
@@ -119,7 +108,32 @@ SOURCES += \
     main/editorstack.cpp \
     main/searchresults.cpp \
     main/searchresultmodel.cpp \
-    main/searchresultdelegate.cpp
+    main/searchresultdelegate.cpp \
+    ssh2/xferrequest.cpp \
+    ssh2/xferchannel.cpp \
+    ssh2/sshsession.cpp \
+    ssh2/sshhost.cpp \
+    ssh2/sshchannel.cpp \
+    ssh2/slaverequest.cpp \
+    ssh2/slavechannel.cpp \
+    ssh2/shellchannel.cpp \
+    tools/json.cpp \
+    ssh2/serverconfigwidget.cpp \
+    ssh2/serverconfigdlg.cpp \
+    ssh2/dialogrethreader.cpp \
+    ssh2/passworddlg.cpp \
+    ssh2/threadcrossingdialog.cpp \
+    main/customtreewidget.cpp \
+    main/customtreeentry.cpp \
+    main/customtreemodel.cpp \
+    main/customtreedelegate.cpp \
+    ssh2/sshhosttreeentry.cpp \
+    ssh2/hostkeydlg.cpp \
+    tools/callback.cpp \
+    ssh2/sftprequest.cpp \
+    ssh2/sftpchannel.cpp \
+    options/advancedoptionswidget.cpp \
+    ssh2/hostlog.cpp
 
 HEADERS  += \
     editor/linenumberwidget.h \
@@ -138,10 +152,7 @@ HEADERS  += \
     main/searchbar.h \
     main/mainwindow.h \
     main/globaldispatcher.h \
-    main/json.h \
     options/optionsdialog.h \
-    ssh/sshhost.h \
-    ssh/serverconfigdlg.h \
     syntax/syntaxrule.h \
     syntax/syntaxhighlighter.h \
     syntax/syntaxdefinition.h \
@@ -159,13 +170,8 @@ HEADERS  += \
     file/newfolderdialog.h \
     main/advancedsearchdialog.h \
     main/gotolinedialog.h \
-    ssh/remoteconnection.h \
-    ssh/connectionstatuswidget.h \
     main/dialogwrapper.h \
-    ssh/passwordinput.h \
-    ssh/connectionstatuspane.h \
     website/updatenotificationdialog.h \
-    ssh/serverconfigwidget.h \
     options/sshserveroptionswidget.h \
     options/fontoptionswidget.h \
     options/options.h \
@@ -176,14 +182,7 @@ HEADERS  += \
     options/editoroptionswidget.h \
     tools/htmlpreview.h \
     licence/licence.h \
-    ssh/remotechannel.h \
-    ssh/slavechannel.h \
-    ssh/remoteconnectionthread.h \
-    ssh/rawsshconnection.h \
-    ssh/sshconnection.h \
     file/slavefile.h \
-    ssh/slaverequest.h \
-    ssh/remoterequest.h \
     main/ponyedit.h \
     main/windowmanager.h \
     licence/licencecheckdialog.h \
@@ -191,10 +190,7 @@ HEADERS  += \
     options/startupoptionswidget.h \
     main/shutdownprompt.h \
     file/filestatuswidget.h \
-    ssh/requeststatuswidget.h \
     main/regexptester.h \
-    ssh/ftpchannel.h \
-    ssh/ftprequest.h \
     file/ftpfile.h \
     licence/offlineactivationdialog.h \
     file/tabbedfilelist.h \
@@ -202,7 +198,32 @@ HEADERS  += \
     main/editorstack.h \
     main/searchresults.h \
     main/searchresultmodel.h \
-    main/searchresultdelegate.h
+    main/searchresultdelegate.h \
+    ssh2/xferrequest.h \
+    ssh2/xferchannel.h \
+    ssh2/sshsession.h \
+    ssh2/sshhost.h \
+    ssh2/sshchannel.h \
+    ssh2/slaverequest.h \
+    ssh2/slavechannel.h \
+    ssh2/shellchannel.h \
+    tools/json.h \
+    ssh2/serverconfigwidget.h \
+    ssh2/serverconfigdlg.h \
+    ssh2/dialogrethreader.h \
+    ssh2/passworddlg.h \
+    ssh2/threadcrossingdialog.h \
+    main/customtreewidget.h \
+    main/customtreeentry.h \
+    main/customtreemodel.h \
+    main/customtreedelegate.h \
+    ssh2/sshhosttreeentry.h \
+    ssh2/hostkeydlg.h \
+    tools/callback.h \
+    ssh2/sftprequest.h \
+    ssh2/sftpchannel.h \
+    options/advancedoptionswidget.h \
+    ssh2/hostlog.h
 
 OTHER_FILES += \
     slave/slave.pl \
@@ -543,20 +564,18 @@ OTHER_FILES += \
     syntaxdefs/abc.xml \
     syntaxdefs/abap.xml \
     syntaxdefs/markdown.xml \
-    ponyedit.rc
+    ponyedit.rc \
+    tools/QsLog/QsLog.pri
 
 FORMS += \
     file/filedialog.ui \
     main/searchbar.ui \
     options/optionsdialog.ui \
-    ssh/serverconfigdlg.ui \
     file/favoritelocationdialog.ui \
     file/newfolderdialog.ui \
     main/advancedsearchdialog.ui \
     main/gotolinedialog.ui \
-    ssh/passwordinput.ui \
     website/updatenotificationdialog.ui \
-    ssh/serverconfigwidget.ui \
     options/sshserveroptionswidget.ui \
     options/fontoptionswidget.ui \
     main/aboutdialog.ui \
@@ -567,7 +586,86 @@ FORMS += \
     options/startupoptionswidget.ui \
     main/shutdownprompt.ui \
     main/regexptester.ui \
-    licence/offlineactivationdialog.ui
+    licence/offlineactivationdialog.ui \
+    ssh2/serverconfigwidget.ui \
+    ssh2/serverconfigdlg.ui \
+    ssh2/passworddlg.ui \
+    ssh2/hostkeydlg.ui \
+    options/advancedoptionswidget.ui \
+    ssh2/hostlog.ui
 
 RESOURCES += \
 	resources.qrc
+
+include($$PWD/tools/QsLog/QsLog.pri)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

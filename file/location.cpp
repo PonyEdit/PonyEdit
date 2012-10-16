@@ -1,7 +1,5 @@
 #include "file/location.h"
 #include "file/openfilemanager.h"
-#include "ssh/slaverequest.h"
-#include "ssh/sshhost.h"
 #include "file/slavefile.h"
 #include "main/globaldispatcher.h"
 #include <QFileIconProvider>
@@ -13,10 +11,9 @@
 #include <QMessageBox>
 #include "main/global.h"
 #include "file/favoritelocationdialog.h"
-#include "ssh/slavechannel.h"
-#include "ssh/requeststatuswidget.h"
-#include "ssh/ftprequest.h"
-#include "ssh/ftpchannel.h"
+#include "ssh2/sshhost.h"
+#include "ssh2/slaverequest.h"
+#include "ssh2/sftprequest.h"
 
 #ifdef Q_OS_WIN32
 	#include <windows.h>
@@ -63,7 +60,7 @@ Location::Location()
 Location::Location(const Location& other)
 {
 	mData = other.mData;
-	mData->mReferences++;
+	if (mData) mData->mReferences++;
 }
 
 Location& Location::operator=(const Location& other)
@@ -102,7 +99,7 @@ Location::Location(const Location& parent, const QString& path, Type type, int s
 	mData->mLastModified = lastModified;
 	mData->mSelfLoaded = true;
 	mData->mParent = parent;
-	mData->mCanRead = canRead;
+	mData->mCanRead = canRead | canWrite;
 	mData->mCanWrite = canWrite;
 }
 
@@ -110,12 +107,12 @@ LocationShared::LocationShared()
 {
 	initIconProvider();
 
+	mHost = NULL;
 	mSlaveChannel = NULL;
 	mReferences = 1;
 	mType = Location::Unknown;
 	mSize = -1;
 	mSelfLoaded = false;
-	mLoading = false;
 	mRemoteHost = NULL;
 	mSudo = false;
 }
@@ -228,6 +225,11 @@ const Location& Location::getParent() const
 QString Location::getParentPath() const
 {
 	QString parentPath = getPath();
+
+	//	If this is a home dir on a remote path, substitute for the remote home dir path first.
+	if (mData->mHost && parentPath.endsWith(":~"))
+		parentPath.replace(QRegExp("~$"), mData->mHost->getHomeDirectory());
+
 	int lastSlash = parentPath.lastIndexOf('/');
 	if (lastSlash < 0)
 		return "";
@@ -310,6 +312,10 @@ void LocationShared::setPath(const QString &path)
 		mRemoteUserName = parts[2];
 		mRemoteHostName = parts[3];
 		mRemotePath = parts[4];
+
+		if (mRemotePath.length() == 0)
+			mRemotePath = "/";
+		mRemotePath.replace(QRegExp("^/~"), "~");
 	}
 	else if (gSshServerRegExp.indexIn(mPath) > -1)
 	{
@@ -318,6 +324,9 @@ void LocationShared::setPath(const QString &path)
 		mRemoteUserName = parts[1];
 		mRemoteHostName = parts[2];
 		mRemotePath = parts[3];
+
+		if (mRemotePath.length() == 0)
+			mRemotePath = "/";
 
 		if (mRemoteUserName.endsWith('*'))
 		{
@@ -351,9 +360,9 @@ void LocationShared::localLoadListing(bool includeHidden)
 	if (!mSelfLoaded)
 		localLoadSelf();
 
-	mChildren.clear();
+	QList<Location> children;
 
-	QDir directory(mPath);
+	QDir directory(mPath + (mPath.endsWith(":") ? "/" : ""));
 	QDir::Filters filters = QDir::AllEntries | QDir::NoDotAndDotDot;
 	if (includeHidden)
 		filters |= QDir::Hidden;
@@ -365,55 +374,37 @@ void LocationShared::localLoadListing(bool includeHidden)
 			continue;
 
 		QFileInfo fileInfo(mPath + "/" + entry);
-		mChildren.append(Location(Location(this), fileInfo.absoluteFilePath(),
+		children.append(Location(Location(this), fileInfo.absoluteFilePath(),
 			fileInfo.isDir() ? Location::Directory : Location::File, fileInfo.size(),
 			fileInfo.lastModified(), fileInfo.isReadable(), fileInfo.isWritable()));
 	}
 
-	mLoading = false;
-	emitListLoadedSignal();
-}
-
-void LocationShared::emitListLoadedSignal()
-{
-	gDispatcher->emitLocationListSuccessful(mChildren, mPath);
-}
-
-void LocationShared::emitListLoadError(const QString& error, bool permissionError)
-{
-	gDispatcher->emitLocationListFailed(error, mPath, permissionError);
+	gDispatcher->emitLocationListSuccess(children, mPath);
 }
 
 void Location::asyncGetChildren(bool includeHidden)
 {
-	if (!mData->mLoading)
+	switch (mData->mProtocol)
 	{
-		mData->mLoading = true;
-		switch (mData->mProtocol)
-		{
-		case Local:
-			mData->localLoadListing(includeHidden);
-			break;
+	case Local:
+		mData->localLoadListing(includeHidden);
+		break;
 
-		case Ssh:
-			mData->sshLoadListing(includeHidden);
-			break;
+	case Ssh:
+		mData->sshLoadListing(includeHidden);
+		break;
 
-		case Sftp:
-			mData->sftpLoadListing(includeHidden);
-			break;
+	case Sftp:
+		mData->sftpLoadListing(includeHidden);
+		break;
 
-		default:
-			throw(QString("Invalid file protocol!"));
-		}
+	default:
+		throw(QString("Invalid file protocol!"));
 	}
 }
 
 BaseFile* Location::getFile()
 {
-	if (!mData->ensureConnected())
-		throw(QString("Failed to connect to remote host!"));
-
 	return BaseFile::getFile(*this);
 }
 
@@ -429,92 +420,70 @@ Location::Protocol Location::getProtocol() const
 
 SshHost* Location::getRemoteHost() const
 {
-	if (!mData->ensureConnected())
-		throw(QString("Failed to connect to remote host!"));
-
-	return mData->mRemoteHost;
+	return mData->getHost();
 }
 
 void LocationShared::sftpLoadListing(bool includeHidden)
 {
-	if (!ensureConnected())
-		childLoadError(QObject::tr("Failed to connect to remote host!"), false);
-	else
-		mFtpChannel->sendRequest(new FTPRequest(FTPRequest::Ls, Location(this), NULL, includeHidden ? FTPRequest::IncludeHidden : 0));
+	SFTPRequest* request = new SFTPRequest(SFTPRequest::Ls, Callback(this, SLOT(sshLsSuccess(QVariantMap)), SLOT(sftpLsFailure(QString, int))));
+	request->setPath(mRemotePath);
+	request->setIncludeHidden(includeHidden);
+	getHost()->sendSftpRequest(request);
 }
 
 void LocationShared::sshLoadListing(bool includeHidden)
 {
-	if (!ensureConnected())
-		childLoadError(QObject::tr("Failed to connect to remote host!"), false);
-	else
-		mSlaveChannel->sendRequest(new SlaveRequest_ls(Location(this), includeHidden));
+	QMap<QString, QVariant> params;
+	params.insert("dir", mRemotePath);
+	if (includeHidden)
+		params.insert("hidden", true);
+	getHost()->sendSlaveRequest(mSudo, NULL, "ls", QVariant(params), Callback(this, SLOT(sshLsSuccess(QVariantMap)), SLOT(sshLsFailure(QString,int))));
 }
 
-void Location::sshChildLoadResponse(const QList<Location>& children)
+void LocationShared::sshLsSuccess(QVariantMap results)
 {
-	mData->mChildren = children;
-	mData->mLoading = false;
-	mData->emitListLoadedSignal();
-}
+	QList<Location> children;
+	Location parentLocation(this);
 
-void Location::childLoadError(const QString& error, bool permissionError)
-{
-	mData->childLoadError(error, permissionError);
-}
-
-void LocationShared::childLoadError(const QString& error, bool permissionError)
-{
-	mLoading = false;
-	emitListLoadError(error, permissionError);
-}
-
-bool LocationShared::ensureConnected()
-{
-	//	Local locations are always connected
-	if (mProtocol == Location::Local) return true;
-
-	// Unsaved files are always connected
-	if (mProtocol == Location::Unsaved) return true;
-
-	if (mProtocol == Location::Ssh || mProtocol == Location::Sftp)
+	QVariantMap entries = results.value("entries").toMap();
+	QMapIterator<QString, QVariant> i(entries);
+	while (i.hasNext())
 	{
-		if (mRemoteHost == NULL)
-			mRemoteHost = SshHost::getHost(mRemoteHostName, mRemoteUserName);
+		i.next();
 
-		if (mRemoteHost)
-		{
-			RemoteConnection* connection = mRemoteHost->getConnection();
-			if (connection)
-			{
-				if (mProtocol == Location::Ssh)
-				{
-					mSlaveChannel = (mSudo ? connection->getSudoChannel() : connection->getSlaveChannel());
+		QVariantMap entry = i.value().toMap();
+		QByteArray flags = entry.value("f", "").toByteArray();
+		bool isDir = flags.contains('d');
+		bool canRead = flags.contains('r');
+		bool canWrite = flags.contains('w');
+		int size = entry.value("s", 0).toInt();
+		qint64 lastModified = entry.value("m", 0).toLongLong();
 
-					if (mSlaveChannel)
-					{
-						mPath.replace("~", connection->getHomeDirectory());
-						mRemotePath.replace("~", connection->getHomeDirectory());
-						mPath = mPath.trimmed();
-						mRemotePath = mRemotePath.trimmed();
-
-						if (mRemotePath.length() == 0)
-							mRemotePath = "/";
-
-						return true;
-					}
-				}
-				else
-				{
-					mFtpChannel = connection->getFtpChannel();
-					if (mFtpChannel)
-						return true;
-				}
-			}
-		}
+		children.append(Location(parentLocation, mPath + "/" + i.key(),
+			isDir ? Location::Directory : Location::File, size,
+			QDateTime::fromMSecsSinceEpoch(lastModified * 1000), canRead, canWrite));
 	}
 
-	return false;
+
+	gDispatcher->emitLocationListSuccess(children, mPath);
+}
+
+void LocationShared::sshLsFailure(QString error, int flags)
+{
+	gDispatcher->emitLocationListFailure(error, mPath, flags & SlaveRequest::PermissionError);
+}
+
+void LocationShared::sftpLsFailure(QString error, int /*flags*/)
+{
+	gDispatcher->emitLocationListFailure(error, mPath, false);
+}
+
+SshHost* LocationShared::getHost()
+{
+	if (mHost == NULL)
+		mHost = SshHost::getHost(mRemoteHostName.toAscii(), mRemoteUserName.toAscii());
+
+	return mHost;
 }
 
 void Location::addToFavorites()
@@ -608,42 +577,35 @@ QString Location::getDefaultFavoriteName()
 	}
 }
 
-bool Location::createNewDirectory(QString name)
+void Location::createNewDirectory(const QString& name, const Callback &callback)
 {
-	QDir currentDir;
-	Location currentLocDir = this->getDirectory();
 	switch(mData->mProtocol)
 	{
-	case Ssh:
-		return sshCreateDirectory(name);
+		case Ssh:
+		{
+			QVariantMap params;
+			params.insert("dir", mData->mRemotePath + "/" + name);
+			mData->getHost()->sendSlaveRequest(mData->mSudo, NULL, "mkdir", QVariant(params), callback);
+			break;
+		}
 
-	case Sftp:
-		throw("Unsupported");
+		case Sftp:
+		{
+			SFTPRequest* request = new SFTPRequest(SFTPRequest::MkDir, callback);
+			request->setPath(mData->mRemotePath + "/" + name);
+			mData->getHost()->sendSftpRequest(request);
+			break;
+		}
 
-	case Local:
-		currentDir.setPath(currentLocDir.getPath());
-		return currentDir.mkdir(name);
+		case Local:
+			if (QDir(getPath()).mkdir(name))
+				callback.triggerSuccess();
+			else
+				callback.triggerFailure("Unknown error");
+			break;
 
-	default: break;
+		default: break;
 	}
-
-	return false;
-}
-
-bool Location::sshCreateDirectory(QString name)
-{
-	if (!mData->ensureConnected())
-		return false;
-
-	RequestStatusWidget::Result result = mData->mSlaveChannel->waitForRequest(new SlaveRequest_createDirectory(Location(*this), name),
-																			  QObject::tr("Creating New Folder"), !isSudo() && canSudo());
-	if (result == RequestStatusWidget::SudoRequestedResult)
-	{
-		Location sudoLocation = getSudoLocation();
-		return sudoLocation.createNewDirectory(name);
-	}
-	else
-		return result == RequestStatusWidget::SuccessResult;
 }
 
 bool Location::canSudo() const

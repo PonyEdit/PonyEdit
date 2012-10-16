@@ -3,7 +3,7 @@
 #include <QStringList>
 #include <QList>
 
-#include "ssh/serverconfigwidget.h"
+#include "ssh2/serverconfigwidget.h"
 #include "sshserveroptionswidget.h"
 #include "main/globaldispatcher.h"
 
@@ -13,8 +13,7 @@
 #include "fontoptionswidget.h"
 #include "editoroptionswidget.h"
 #include "startupoptionswidget.h"
-
-QString OptionsDialog::sOptionsStrings[] = { tr("Editor"), tr("SSH Servers"), tr("Fonts & Colors"), tr("Startup") };
+#include "advancedoptionswidget.h"
 
 OptionsDialog::OptionsDialog(QWidget *parent) :
     QDialog(parent),
@@ -26,31 +25,20 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 	connect(ui->buttonBox, SIGNAL(clicked(QAbstractButton*)), this, SLOT(buttonClicked(QAbstractButton*)));
 	connect(this, SIGNAL(accepted()), this, SLOT(saveOptions()));
-	connect(ui->optionList,SIGNAL(currentRowChanged(int)),this,SLOT(updateSelectedOption(int)));
 
-	for(int ii = 0; ii < NumOptions; ii++)
-	{
-		ui->optionList->addItem(sOptionsStrings[ii]);
-	}
+	addPage(ui->editorButton, new EditorOptionsWidget(this));
+	addPage(ui->serversButton, new SshServerOptionsWidget(this));
+	addPage(ui->appearanceButton, new FontOptionsWidget(this));
+	addPage(ui->startupButton, new StartupOptionsWidget(this));
+	addPage(ui->loggingButton, new AdvancedOptionsWidget(this));
 
-	addPage(new EditorOptionsWidget(this));
-	addPage(new SshServerOptionsWidget(this));
-	addPage(new FontOptionsWidget(this));
-	addPage(new StartupOptionsWidget(this));
-
-	ui->optionList->setCurrentRow(0);
-	updateSelectedOption(0);
+	ui->editorButton->setChecked(true);
+	pageClicked(ui->editorButton);
 }
 
 OptionsDialog::~OptionsDialog()
 {
     delete ui;
-}
-
-void OptionsDialog::updateSelectedOption(int newOption)
-{
-	ui->stackedWidget->setCurrentIndex(newOption);
-	ui->optionLabel->setText(sOptionsStrings[newOption]);
 }
 
 void OptionsDialog::buttonClicked(QAbstractButton *button)
@@ -69,8 +57,26 @@ void OptionsDialog::saveOptions()
 	gDispatcher->emitOptionsChanged();
 }
 
-void OptionsDialog::addPage(OptionsDialogPage *page)
+void OptionsDialog::pageClicked()
 {
+	QToolButton* button = (QToolButton*)QObject::sender();
+	pageClicked(button);
+}
+
+void OptionsDialog::pageClicked(QToolButton *button)
+{
+	OptionsDialogPage* page = mPageMap.value(button, NULL);
+	if (page)
+	{
+		ui->stackedWidget->setCurrentWidget(page);
+		ui->optionLabel->setText(button->text());
+	}
+}
+
+void OptionsDialog::addPage(QToolButton* button, OptionsDialogPage *page)
+{
+	mPageMap.insert(button, page);
+	connect(button, SIGNAL(clicked()), this, SLOT(pageClicked()));
 	mPages.append(page);
 	ui->stackedWidget->addWidget(page);
 }
