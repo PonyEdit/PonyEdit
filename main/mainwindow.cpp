@@ -50,7 +50,6 @@ MainWindow::MainWindow(QWidget *parent)
 	mCurrentSyntaxMenuItem = NULL;
 
 	setWindowTitle(tr("PonyEdit"));
-	setUnifiedTitleAndToolBarOnMac(true);
 
 	setAcceptDrops(true);
 
