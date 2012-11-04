@@ -11,8 +11,6 @@
 #include "main/globaldispatcher.h"
 #include "main/mainwindow.h"
 
-//	TODO: Handle new files
-
 SlaveFile::SlaveFile(const Location& location) : BaseFile(location)
 {
 	mHost = location.getRemoteHost();
