@@ -311,7 +311,8 @@ void Tools::saveCurrentFiles()
 			continue;
 
 		Options::StartupFiles.append(loc.getDisplayPath());
-		Options::StartupFilesLineNo.append(file->getAttachedEditors().at(0)->currentLine());
+		if (file->getAttachedEditors().size() > 0)
+			Options::StartupFilesLineNo.append(file->getAttachedEditors().at(0)->currentLine());
 	}
 
 	Options::save();
