@@ -6,6 +6,7 @@
 #include "xferchannel.h"
 #include "xferrequest.h"
 #include "sftpchannel.h"
+#include "main/ponyedit.h"
 #include "main/globaldispatcher.h"
 #include "ssh2/serverconfigdlg.h"
 #include "main/tools.h"
@@ -179,6 +180,9 @@ void SshHost::assignSession(SshChannel* channel)
 SshChannel* SshHost::takeNextHomelessChannel()
 {
 	SshChannel* taken = NULL;
+
+	if (PonyEdit::isApplicationExiting())
+		return NULL;
 
 	mHomelessChannelsMutex.lock();
 	if (!mHomelessChannels.isEmpty())
