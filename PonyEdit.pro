@@ -40,7 +40,7 @@ macx {
 	TARGET = ponyedit
 }
 
-QT		+= core widgets gui network xml script webkit printsupport
+QT		+= core widgets gui network xml script webkit webkitwidgets printsupport
 LIBS	+= -lssh2 -lcrypto -lssl
 TEMPLATE = app
 
