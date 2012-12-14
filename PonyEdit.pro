@@ -10,7 +10,7 @@ DEFINES += "REVISION=6"
 DEFINES += "PRETTY_VERSION=\\\"0.91-beta6\\\""
 
 
-INCLUDEPATH += $$PWD/deps/libssh2/include/ $$PWD/deps/include/
+INCLUDEPATH += $$PWD/deps/include/ $$PWD/deps/include/libssh2/
 
 win32 {
 	LIBS        += -L$$PWD/deps/lib-win32/ -lwsock32 -lmpr
@@ -25,7 +25,6 @@ macx {
 	CONFIG  -= i386
 
 	LIBS		+= -L$$PWD/deps/lib-osx
-	INCLUDEPATH += -L$$PWD/deps/include-osx
 
 	data.files = syntaxdefs slave
 	data.path = Contents/Resources
