@@ -30,14 +30,14 @@ macx {
     TARGET = PonyEdit
     LIBS += -lz
 
-    debug {
-        INCLUDEPATH += $$PWD/deps/debug-osx/openssl-1.0.1c/include $$PWD/deps/debug-osx/openssl-1.0.1c/include/openssl
-        LIBS        += -L$$PWD/deps/debug-osx/openssl-1.0.1c -L$$PWD/deps/debug-osx/libssh2-1.4.3/src/.libs
-    }
-    release {
-        INCLUDEPATH += $$PWD/deps/include/ $$PWD/deps/include/libssh2/
-        LIBS        += -L$$PWD/deps/lib-osx
-    }
+	CONFIG(debug, debug|release) {
+		INCLUDEPATH += $$PWD/deps/debug-osx/openssl-1.0.1c/include $$PWD/deps/debug-osx/openssl-1.0.1c/include/openssl $$PWD/deps/debug-osx/libssh2-1.4.3/include
+		LIBS        += -L$$PWD/deps/debug-osx/openssl-1.0.1c -L$$PWD/deps/debug-osx/libssh2-1.4.3/src/.libs -Wl,-rpath,$$PWD/deps/debug-osx/openssl-1.0.1c
+	}
+	CONFIG(release, debug|release) {
+		INCLUDEPATH += $$PWD/deps/include/ $$PWD/deps/include/libssh2/
+		LIBS        += -L$$PWD/deps/lib-osx
+	}
 }
 !macx {
     TARGET = ponyedit
