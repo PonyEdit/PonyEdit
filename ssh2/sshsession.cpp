@@ -520,8 +520,9 @@ void SshSession::connect()
 
 	//	Create an SSH2 session
 	mHandle = libssh2_session_init_ex(NULL, NULL, NULL, (void*)this);
+	libssh2_trace(mHandle, LIBSSH2_TRACE_SOCKET|LIBSSH2_TRACE_TRANS|LIBSSH2_TRACE_KEX|LIBSSH2_TRACE_AUTH|LIBSSH2_TRACE_CONN|LIBSSH2_TRACE_SCP|LIBSSH2_TRACE_SFTP|LIBSSH2_TRACE_ERROR|LIBSSH2_TRACE_PUBLICKEY);
 	libssh2_session_flag(mHandle, LIBSSH2_FLAG_SIGPIPE, 0);
-	if (int rc = libssh2_session_startup(mHandle, mSocket))
+	if (int rc = libssh2_session_handshake(mHandle, mSocket))
 		throw(QObject::tr("Failed to start session: %1").arg(rc));
 	libssh2_keepalive_config(mHandle, 1, (KEEPALIVE_MSEC / 1000) - 5);
 

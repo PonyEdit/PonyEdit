@@ -9,34 +9,38 @@ DEFINES += "MINOR_VERSION=91"
 DEFINES += "REVISION=6"
 DEFINES += "PRETTY_VERSION=\\\"0.91-beta6\\\""
 
-
-INCLUDEPATH += $$PWD/deps/include/ $$PWD/deps/include/libssh2/
-
 win32 {
-	LIBS        += -L$$PWD/deps/lib-win32/ -lwsock32 -lmpr
-	INCLUDEPATH += $$PWD/deps/libssh2/src/
+    INCLUDEPATH += $$PWD/deps/include/ $$PWD/deps/include/libssh2/
 
-	RC_FILE = ponyedit.rc
+    LIBS        += -L$$PWD/deps/lib-win32/ -lwsock32 -lmpr
+    INCLUDEPATH += $$PWD/deps/libssh2/src/
+
+    RC_FILE     = ponyedit.rc
 }
 
 macx {
-	DEFINES += __DARWIN_64_BIT_INO_T
-	CONFIG  += x86_64
-	CONFIG  -= i386
+    DEFINES += __DARWIN_64_BIT_INO_T
+    CONFIG  += x86_64
+    CONFIG  -= i386
 
-	LIBS		+= -L$$PWD/deps/lib-osx
+    data.files = syntaxdefs slave
+    data.path = Contents/Resources
+    QMAKE_BUNDLE_DATA += data
+    ICON = icons/ponyedit.icns
+    TARGET = PonyEdit
+    LIBS += -lz
 
-	data.files = syntaxdefs slave
-	data.path = Contents/Resources
-
-	QMAKE_BUNDLE_DATA += data
-
-	ICON = icons/ponyedit.icns
-	TARGET = PonyEdit
-	LIBS += -lz
+    debug {
+        INCLUDEPATH += $$PWD/deps/debug-osx/openssl-1.0.1c/include $$PWD/deps/debug-osx/openssl-1.0.1c/include/openssl
+        LIBS        += -L$$PWD/deps/debug-osx/openssl-1.0.1c -L$$PWD/deps/debug-osx/libssh2-1.4.3/src/.libs
+    }
+    release {
+        INCLUDEPATH += $$PWD/deps/include/ $$PWD/deps/include/libssh2/
+        LIBS        += -L$$PWD/deps/lib-osx
+    }
 }
 !macx {
-	TARGET = ponyedit
+    TARGET = ponyedit
 }
 
 QT		+= core widgets gui network xml script webkit webkitwidgets printsupport
