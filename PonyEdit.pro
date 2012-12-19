@@ -30,14 +30,14 @@ macx {
     TARGET = PonyEdit
     LIBS += -lz
 
-	CONFIG(debug, debug|release) {
-		INCLUDEPATH += $$PWD/deps/debug-osx/openssl-1.0.1c/include $$PWD/deps/debug-osx/openssl-1.0.1c/include/openssl $$PWD/deps/debug-osx/libssh2-1.4.3/include
-		LIBS        += -L$$PWD/deps/debug-osx/openssl-1.0.1c -L$$PWD/deps/debug-osx/libssh2-1.4.3/src/.libs -Wl,-rpath,$$PWD/deps/debug-osx/openssl-1.0.1c
-	}
-	CONFIG(release, debug|release) {
-		INCLUDEPATH += $$PWD/deps/include/ $$PWD/deps/include/libssh2/
-		LIBS        += -L$$PWD/deps/lib-osx
-	}
+    INCLUDEPATH += $$PWD/deps/include/ $$PWD/deps/include/libssh2/
+    LIBS        += -L$$PWD/deps/lib-osx
+
+    dylibs.path = Contents/MacOS
+    dylibs.files = $$PWD/deps/lib-osx/libssh2.1.dylib
+    dylibs.files += $$PWD/deps/lib-osx/libssl.1.0.0.dylib
+    dylibs.files += $$PWD/deps/lib-osx/libcrypto.1.0.0.dylib
+    QMAKE_BUNDLE_DATA += dylibs
 }
 !macx {
     TARGET = ponyedit
