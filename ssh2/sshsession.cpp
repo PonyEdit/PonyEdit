@@ -48,7 +48,6 @@ SshSession::SshSession(SshHost* host) : mThreadEndedCalled(false), mSocket(0), m
 	moveToThread(mThread);	//	Give this QObject to the new thread; then all signals received by this object are run in the thread.
 
 	QObject::connect(mThread, SIGNAL(finished()), this, SLOT(threadEnded()));
-	QObject::connect(mThread, SIGNAL(terminated()), this, SLOT(threadEnded()));
 }
 
 SshSession::~SshSession()
