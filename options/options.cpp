@@ -65,8 +65,12 @@ void Options::load()
 		delete EditorFont;
 	EditorFont = new QFont();
 	EditorFont->fromString(fontString);
+
+	//	Sanity check the font
 	if (EditorFont->family().isEmpty())
 		EditorFont->setFamily(ntr("inconsolata"));
+	if (EditorFont->pointSize() < 5)
+		EditorFont->setPointSize(12);
 
 	EditorFontZoom = settings.value(ntr("editorFontZoom"), QVariant(100)).toInt();
 	WordWrap = settings.value(ntr("wordWrap"), QVariant(false)).toBool();

@@ -276,7 +276,7 @@ void CodeEditor::wheelEvent(QWheelEvent *e)
 
 void CodeEditor::updateFont()
 {
-	QFont* font = Options::EditorFont;
+	QFont* font = new QFont(*Options::EditorFont);
 	font->setWeight(QFont::Normal);
 
 	int pointSize = font->pointSize();
