@@ -19,6 +19,7 @@ CodeEditor::CodeEditor(BaseFile* file, QWidget *parent) : QPlainTextEdit(parent)
 	connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
 	connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumberArea(QRect,int)));
 	connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
+	connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightMatchingParenthesis()));
 
 	updateLineNumberAreaWidth(0);
 	highlightCurrentLine();
@@ -94,17 +95,16 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 void CodeEditor::highlightCurrentLine()
 {
 	QList<QTextEdit::ExtraSelection> extraSelections;
+	extraSelections.append(mMatchingParenthesis);
 
 	if (!isReadOnly()) {
-		QTextEdit::ExtraSelection selection;
-
 		QColor lineColor = QColor(220, 230, 255);
 
-		selection.format.setBackground(lineColor);
-		selection.format.setProperty(QTextFormat::FullWidthSelection, true);
-		selection.cursor = textCursor();
-		selection.cursor.clearSelection();
-		extraSelections.append(selection);
+		mCurrentLine.format.setBackground(lineColor);
+		mCurrentLine.format.setProperty(QTextFormat::FullWidthSelection, true);
+		mCurrentLine.cursor = textCursor();
+		mCurrentLine.cursor.clearSelection();
+		extraSelections.append(mCurrentLine);
 	}
 
 	setExtraSelections(extraSelections);
@@ -336,5 +336,118 @@ void CodeEditor::focusInEvent(QFocusEvent *e)
 	QPlainTextEdit::focusInEvent(e);
 }
 
+void CodeEditor::highlightMatchingParenthesis()
+{
+	QString doc = this->toPlainText();
+	int pos = this->textCursor().position();
 
+	QChar leftChar, rightChar, curChar, compareChar, skipChar;
+	int leftPos, rightPos = -1, bracketCount = 0;
+
+	if (pos > 0)
+		leftChar = doc.at(pos-1);
+	if (pos < doc.size())
+		rightChar = doc.at(pos);
+
+	if (leftChar == ']' || leftChar == '}' || leftChar == ')') {
+		if (leftChar == ']')
+			compareChar = '[';
+		else if (leftChar == '}')
+			compareChar = '{';
+		else if (leftChar == ')')
+			compareChar = '(';
+
+		rightPos = pos - 1;
+		for(int ii = rightPos - 1; ii >= 0; ii--) {
+			curChar = doc.at(ii);
+
+			if (!skipChar.isNull()) {
+				if(curChar == skipChar)
+					skipChar = '\0';
+
+				continue;
+			}
+
+			if (bracketCount == 0 && curChar == compareChar) {
+				leftPos = ii;
+				break;
+			}
+
+			if(curChar == '"' || curChar == '\'')
+				skipChar = curChar;
+
+			if (curChar == leftChar)
+				bracketCount++;
+
+			if (curChar == compareChar)
+				bracketCount--;
+		}
+	}
+	else if (rightChar == '[' || rightChar == '{' || rightChar == '(') {
+		if (rightChar == '[')
+			compareChar = ']';
+		else if (rightChar == '{')
+			compareChar = '}';
+		else if (rightChar == '(')
+			compareChar = ')';
+
+		leftPos = pos;
+		for(int ii = leftPos + 1; ii < doc.size(); ii++) {
+			curChar = doc.at(ii);
+
+			if (!skipChar.isNull()) {
+				if(curChar == skipChar)
+					skipChar = '\0';
+
+				continue;
+			}
+
+			if(bracketCount == 0 && curChar == compareChar) {
+				rightPos = ii;
+				break;
+			}
+
+			if(curChar == '"' || curChar == '\'')
+				skipChar = curChar;
+
+			if (curChar == rightChar)
+				bracketCount++;
+
+			if (curChar == compareChar)
+				bracketCount--;
+		}
+	}
+
+	QList<QTextEdit::ExtraSelection> extraSelections;
+	extraSelections.append(mCurrentLine);
+	mMatchingParenthesis.clear();
+
+	if (leftPos < 0 || rightPos < 0) {
+		setExtraSelections(extraSelections);
+		return;
+	}
+
+	QTextEdit::ExtraSelection selection;
+
+	QColor textColor = QColor(255, 0, 0);
+
+	selection.format.setForeground(textColor);
+	selection.format.setProperty(QTextFormat::CharFormat, true);
+
+	selection.cursor = textCursor();
+	selection.cursor.clearSelection();
+
+	selection.cursor.setPosition(leftPos);
+	selection.cursor.movePosition( QTextCursor::NextCharacter, QTextCursor::KeepAnchor );
+	mMatchingParenthesis.append(selection);
+
+	selection.cursor.setPosition(rightPos);
+	selection.cursor.movePosition( QTextCursor::NextCharacter, QTextCursor::KeepAnchor );
+	mMatchingParenthesis.append(selection);
+
+	extraSelections.append(mMatchingParenthesis);
+
+	setExtraSelections(extraSelections);
+
+}
 

@@ -39,11 +39,15 @@ private slots:
 	void updateLineNumberAreaWidth(int newBlockCount);
 	void updateLineNumberArea(const QRect &, int);
 	void highlightCurrentLine();
+	void highlightMatchingParenthesis();
 
 private:
 	LineNumberWidget *mLineNumberWidget;
 	SyntaxHighlighter* mSyntaxHighlighter;
 	BaseFile* mFile;
+
+	QTextEdit::ExtraSelection mCurrentLine;
+	QList<QTextEdit::ExtraSelection> mMatchingParenthesis;
 };
 
 #endif // CODEEDITOR_H
