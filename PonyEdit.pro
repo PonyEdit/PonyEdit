@@ -21,7 +21,7 @@ win32 {
     INCLUDEPATH += $$PWD/
 
     RC_FILE     = ponyedit.rc
-    LIBS	+= -llibssh2 -llibcrypto -llibssl
+    LIBS	+= -llibssh2 -lssleay -llibeay
 }
 
 macx {
