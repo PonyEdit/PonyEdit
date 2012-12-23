@@ -19,7 +19,7 @@ The OSX installer requires the `macdeployqt` tool, which should be included in t
 To create a new distributable dmg file, build the Release version of PonyEdit, then run the following commands in the build directory:
 
 shell> macdeployqt PonyEdit.app
-shell> mkdir PonyEdit && cp -R PonyEdit.app PonyEdit && cp ../PonyEdit/installer/OSX/Applications PonyEdit && cp ../PonyEdit/installer/OSX/Info.plist PonyEdit/PonyEdit.app/Contents
+shell> mkdir PonyEdit && cp -R PonyEdit.app PonyEdit && ln -s /Applications PonyEdit/Applications && cp ../PonyEdit/installer/OSX/Info.plist PonyEdit/PonyEdit.app/Contents
 
 Make sure all PonyEdit dmg files are unmounted before running this command:
 
