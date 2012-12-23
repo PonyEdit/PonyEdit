@@ -199,7 +199,9 @@ Source: {#QtDir}\bin\D3DCompiler_43.dll; DestDir: {app}
 Source: {#QtDir}\bin\icuin49.dll; DestDir: {app}
 Source: {#QtDir}\bin\icuuc49.dll; DestDir: {app}
 Source: {#QtDir}\bin\icudt49.dll; DestDir: {app}
+Source: {#QtDir}\plugins\platforms\qwindows.dll; DestDir: {app}\platforms
 Source: C:\Windows\System32\msvcr100.dll; DestDir: {app}
+Source: C:\Windows\System32\msvcp100.dll; DestDir: {app}
 
 [Setup]
 AppCopyright=Copyright (c) 2010, 2011 Pentalon
@@ -226,6 +228,7 @@ Root: HKCR; Subkey: "*\shell\Edit with PonyEdit\command"; ValueName: ""; ValueTy
 [Dirs]
 Name: {app}\slave
 Name: {app}\syntaxdefs
+Name: {app}\platforms
 [Tasks]
 Name: startmenu; Description: "Create a &Start Menu icon"
 Name: desktopicon; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"
