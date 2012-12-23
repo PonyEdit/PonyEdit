@@ -69,7 +69,7 @@ void UnsavedChangesDialog::buttonClicked(QAbstractButton* button)
 				{
 					file->save();
 				}
-				catch(QString &e)
+                catch(QString &/*e*/)
 				{
 					QLOG_ERROR() << "Unexpected throw while saving file" << file->getLocation().getLabel();
 				}
@@ -85,7 +85,7 @@ void UnsavedChangesDialog::buttonClicked(QAbstractButton* button)
 			{
 				if (file->canClose()) file->close();
 			}
-			catch(QString &e)
+            catch(QString &/*e*/)
 			{
 				QLOG_ERROR() << "Unexpected throw while discarding file" << file->getLocation().getLabel();
 			}
@@ -113,7 +113,7 @@ void UnsavedChangesDialog::fileStateChanged()
 			{
 				if (file->canClose()) file->close();
 			}
-			catch(QString &e)
+            catch(QString &/*e*/)
 			{
 				QLOG_ERROR() << "Unexpected throw while closing saved file" << file->getLocation().getLabel();
 			}

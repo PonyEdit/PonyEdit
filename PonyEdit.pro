@@ -10,12 +10,18 @@ DEFINES += "REVISION=6"
 DEFINES += "PRETTY_VERSION=\\\"0.91-beta6\\\""
 
 win32 {
+    DEFINES += NOMINMAX
+
     INCLUDEPATH += $$PWD/deps/include/ $$PWD/deps/include/libssh2/
 
     LIBS        += -L$$PWD/deps/lib-win32/ -lwsock32 -lmpr
     INCLUDEPATH += $$PWD/deps/libssh2/src/
 
+    # Just how dumb is MSVC anyway?
+    INCLUDEPATH += $$PWD/
+
     RC_FILE     = ponyedit.rc
+    LIBS	+= -llibssh2 -llibcrypto -llibssl
 }
 
 macx {
@@ -44,17 +50,18 @@ macx {
     QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/lib/libssh2.1.dylib @executable_path/libssh2.1.dylib $$OUT_PWD/PonyEdit.app/Contents/MacOS/PonyEdit;
     QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/ssl/lib/libssl.1.0.0.dylib @executable_path/libssl.1.0.0.dylib $$OUT_PWD/PonyEdit.app/Contents/MacOS/PonyEdit;
     QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/ssl/lib/libcrypto.1.0.0.dylib @executable_path/libcrypto.1.0.0.dylib $$OUT_PWD/PonyEdit.app/Contents/MacOS/PonyEdit;
+
+    QMAKE_CFLAGS += -Werror -Wunused-parameter
+    QMAKE_CXXFLAGS += -Werror -Wunused-parameter
+
+    LIBS	+= -lssh2 -lcrypto -lssl
 }
 !macx {
     TARGET = ponyedit
 }
 
 QT		+= core widgets gui network xml script webkit webkitwidgets printsupport
-LIBS	+= -lssh2 -lcrypto -lssl
 TEMPLATE = app
-
-QMAKE_CFLAGS	+= -Werror -Wunused-parameter
-QMAKE_CXXFLAGS	+= -Werror -Wunused-parameter
 
 SOURCES += \
 	editor/linenumberwidget.cpp \

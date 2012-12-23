@@ -254,7 +254,7 @@ bool Tools::compareSubstring(const QString& superstring, const QString& substrin
 
 QString Tools::getResourcePath(const QString& subpath)
 {
-#ifdef Q_OS_MAC && !defined QT_DEBUG
+#if defined Q_OS_MAC && !defined QT_DEBUG
     return QCoreApplication::applicationDirPath() + QString("/../Resources/") + subpath;
 #elif defined Q_OS_WIN && !defined QT_DEBUG
 	return QCoreApplication::applicationDirPath() + QString("/") + subpath;
@@ -364,17 +364,17 @@ QByteArray Tools::bin(const QByteArray& source)
 	while (c < end)
 	{
 		if (*c == 0x3 || *c == 0x4 || *c == 0x8 || *c == 0x11 || *c == 0x13 || *c == 0x1D || *c == 0x1E || *c == 0x18 || *c == 0x1A || *c == 0x1C || *c == 0x7F)
-			result.append(255).append(*c + 128);
+            result.append((unsigned short)255).append(*c + 128);
 		else if (*c == 10)
-			result.append(253);
+            result.append((unsigned short)253);
 		else if (*c == 13)
-			result.append(254);
+            result.append((unsigned short)254);
 		else if (*c == 253)
-			result.append(255).append('A');
+            result.append((unsigned short)255).append('A');
 		else if (*c == 254)
-			result.append(255).append('B');
+            result.append((unsigned short)255).append('B');
 		else if (*c == 255)
-			result.append(255).append('C');
+            result.append((unsigned short)255).append('C');
 		else
 			result.append(*c);
 

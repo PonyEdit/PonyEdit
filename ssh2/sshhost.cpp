@@ -466,7 +466,7 @@ SshHost* SshHost::getBlankHost(bool save)
 QString SshHost::getDefaultPath()
 {
 	if (mConnectionType == SFTP)
-		return "sftp://" + (mUsername.isEmpty() ? "" : mUsername + "@") + mHostname + "/" + mDefaultDirectory;
+        return QString("sftp://") + (mUsername.isEmpty() ? QString("") : mUsername + QString("@")) + mHostname + QString("/") + mDefaultDirectory;
 	else
 		return (mUsername.isEmpty() ? "" : mUsername + "@") + mHostname + ":" + mDefaultDirectory;
 }

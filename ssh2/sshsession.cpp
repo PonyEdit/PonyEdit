@@ -315,8 +315,12 @@ void SshSession::interactiveAuthCallback(const char*, int, const char*, int, int
 	if (num_prompts == 1)
 	{
 		SshSession* connection = (SshSession*)(*abstract);
-		responses[0].text = strdup(connection->mPasswordAttempt);
-		responses[0].length = connection->mPasswordAttempt.length();
+#ifdef Q_OS_WIN32
+        responses[0].text = _strdup(connection->mPasswordAttempt);
+#else
+        responses[0].text = strdup(connection->mPasswordAttempt);
+#endif
+        responses[0].length = connection->mPasswordAttempt.length();
 	}
 }
 

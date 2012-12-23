@@ -135,7 +135,7 @@ void UpdateManager::downloadFinished()
 
 	QProcess *installProc = new QProcess();
 
-#ifdef Q_OS_WIN
+#ifdef Q_OS_WIN32
 	progressLabel->setText(tr("Installing..."));
 	cmd = info.filePath();
 	args << "/verysilent" << "/suppressmsgboxes" << "/norestart";
@@ -190,7 +190,7 @@ void UpdateManager::downloadReadyRead()
 	mTempFile.write(mDownload->readAll());
 }
 
-void UpdateManager::downloadAuth(QNetworkReply */* reply */, QAuthenticator *authenticator)
+void UpdateManager::downloadAuth(QNetworkReply * /* reply */, QAuthenticator *authenticator)
 {
 	authenticator->setUser("prealpha");
 	authenticator->setPassword("letmein");

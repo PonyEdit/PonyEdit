@@ -62,7 +62,7 @@ BaseFile::~BaseFile()
 	if (mDocument) delete mDocument;
 }
 
-BaseFile::BaseFile(const Location& location = NULL)
+BaseFile::BaseFile(const Location& location = Location())
 {
 	mInRedoBlock = 0;
 	mInUndoBlock = 0;
