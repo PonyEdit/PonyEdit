@@ -97,12 +97,12 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	if(NULL != editor) {
 		Location currentLoc = editor->getLocation();
 		if(currentLoc.isNull())
-			showLocation(homeLocation);
+			showLocation(mLastLocation);
 		else
 			showLocation(currentLoc.getDirectory());
 	}
 	else {
-		showLocation(homeLocation);
+		showLocation(mLastLocation);
 	}
 
 	ui->fileName->setFocus();
