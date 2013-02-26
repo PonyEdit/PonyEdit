@@ -702,44 +702,32 @@ void MainWindow::showStatusMessage(QString message)
 
 void MainWindow::undo()
 {
-	Editor* current = gWindowManager->currentEditor();
-	if(current)
-		current->undo();
+	QMetaObject::invokeMethod(QApplication::focusWidget(), "undo");
 }
 
 void MainWindow::redo()
 {
-	Editor* current = gWindowManager->currentEditor();
-	if(current)
-		current->redo();
+	QMetaObject::invokeMethod(QApplication::focusWidget(), "redo");
 }
 
 void MainWindow::cut()
 {
-	Editor* current = gWindowManager->currentEditor();
-	if(current)
-		current->cut();
+	QMetaObject::invokeMethod(QApplication::focusWidget(), "cut");
 }
 
 void MainWindow::copy()
 {
-	Editor* current = gWindowManager->currentEditor();
-	if(current)
-		current->copy();
+	QMetaObject::invokeMethod(QApplication::focusWidget(), "copy");
 }
 
 void MainWindow::paste()
 {
-	Editor* current = gWindowManager->currentEditor();
-	if(current)
-		current->paste();
+	QMetaObject::invokeMethod(QApplication::focusWidget(), "paste");
 }
 
 void MainWindow::selectAll()
 {
-	Editor* current = gWindowManager->currentEditor();
-	if(current)
-		current->selectAll();
+	QMetaObject::invokeMethod(QApplication::focusWidget(), "selectAll");
 }
 
 void MainWindow::deleteLine()
