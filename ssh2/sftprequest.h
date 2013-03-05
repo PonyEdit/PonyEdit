@@ -28,7 +28,7 @@ public:
 	inline int getUndoLength() const { return mUndoLength; }
 
 	inline void setIncludeHidden(bool includeHidden) { mIncludeHidden = includeHidden; }
-	inline const bool getIncludeHidden() const { return mIncludeHidden; }
+	inline bool getIncludeHidden() const { return mIncludeHidden; }
 
 	inline void triggerSuccess(const QVariantMap& result) { mCallback.triggerSuccess(result); }
 	inline void triggerFailure(const QString& error, int flags = 0) { mCallback.triggerFailure(error, flags); }

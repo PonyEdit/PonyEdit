@@ -15,7 +15,7 @@ public:
 	enum OptionFlags { NoFlags = 0x00, CloseButtons = 0x01, MultiSelect = 0x02, UnsavedOnly = 0x04, RefreshButtons = 0x08 };
 
 	explicit OpenFileTreeView(QWidget* parent, int optionFlags, const QList<BaseFile*>* files = NULL);
-	virtual void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
+	virtual void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int> &roles = QVector<int>());
 
 	BaseFile* getSelectedFile() const;          //  Fetches one selected file. If multiple selected, returns only the first. Mostly useful when in single selection mode.
 	QList<BaseFile*> getSelectedFiles() const;  //  Returns a list of all selected files. Only really applies in multi-select mode.

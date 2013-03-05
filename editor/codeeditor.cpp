@@ -342,7 +342,7 @@ void CodeEditor::highlightMatchingParenthesis()
 	int pos = this->textCursor().position();
 
 	QChar leftChar, rightChar, curChar, compareChar, skipChar;
-	int leftPos, rightPos = -1, bracketCount = 0;
+	int leftPos = -1, rightPos = -1, bracketCount = 0;
 
 	if (pos > 0)
 		leftChar = doc.at(pos-1);
