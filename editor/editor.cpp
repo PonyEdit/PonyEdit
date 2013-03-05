@@ -333,7 +333,8 @@ void Editor::applyOptions()
 
 void Editor::setReadOnly(bool readOnly)
 {
-	mEditor->setReadOnly(readOnly);
+	mEditor->setTextInteractionFlags(readOnly ? Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard : Qt::TextEditorInteraction);
+	//mEditor->setReadOnly(readOnly);
 
 	if (!readOnly && mReadOnlyWarning)
 	{
