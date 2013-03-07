@@ -548,7 +548,7 @@ void FileDialog::fileDoubleClicked(QModelIndex index)
 		accept();
 }
 
-void FileDialog::fileListSelectionChanged(const QItemSelection&, const QItemSelection&)
+void FileDialog::fileListSelectionChanged(const QItemSelection& selected, const QItemSelection&)
 {
 	if (mInEditHandler) return;
 	mInEditHandler = true;
@@ -568,6 +568,10 @@ void FileDialog::fileListSelectionChanged(const QItemSelection&, const QItemSele
 	}
 
 	ui->fileName->lineEdit()->setText(selectionLabels.join(", "));
+
+	//	Ensure newly selected items are visible
+	if (selected.count() > 0)
+		ui->fileList->scrollTo(selected.first().topLeft());
 
 	mInEditHandler = false;
 }
