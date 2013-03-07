@@ -35,6 +35,10 @@ protected:
 	void applyIndent(QTextCursor& cursor, bool outdent);
 	void focusInEvent(QFocusEvent *e);
 
+public slots:
+	void undo();
+	void redo();
+
 private slots:
 	void updateLineNumberAreaWidth(int newBlockCount);
 	void updateLineNumberArea(const QRect &, int);

@@ -181,6 +181,18 @@ int CodeEditor::firstNonWhiteSpace(const QTextBlock& block)
 	return scan;
 }
 
+void CodeEditor::undo() {
+	mFile->beginUndoBlock();
+	QPlainTextEdit::undo();
+	mFile->endUndoBlock();
+}
+
+void CodeEditor::redo() {
+	mFile->beginRedoBlock();
+	QPlainTextEdit::redo();
+	mFile->endRedoBlock();
+}
+
 void CodeEditor::keyPressEvent(QKeyEvent* event)
 {
 	//	Take special note of undo/redo key chords, for version tracking

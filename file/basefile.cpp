@@ -150,7 +150,8 @@ void BaseFile::openSuccess(const QString& content, const QByteArray& checksum, b
 	mDocument->setPlainText(content);
 	unignoreChanges();
 
-	mLastSavedUndoLength = mDocument->availableUndoSteps();
+	mDocument->clearUndoRedoStacks();
+	savedRevision(mRevision, mDocument->availableUndoSteps(), QByteArray(getChecksum().toLatin1()));
 
 	setOpenStatus(Ready);
 }

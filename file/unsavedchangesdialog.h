@@ -15,7 +15,7 @@ class UnsavedChangesDialog : public QDialog
     Q_OBJECT
 
 public:
-	explicit UnsavedChangesDialog(const QList<BaseFile*>& files);
+	explicit UnsavedChangesDialog(const QList<BaseFile*>& files, bool closeFilesOnDiscard = true);
     ~UnsavedChangesDialog();
 
 private slots:
@@ -27,6 +27,7 @@ private slots:
 private:
 	QDialogButtonBox* mButtonBox;
 	OpenFileTreeView* mTreeView;
+	bool mCloseFilesOnDiscard;
 };
 
 #endif // UNSAVEDCHANGESDIALOG_H

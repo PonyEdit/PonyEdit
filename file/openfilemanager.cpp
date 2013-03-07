@@ -108,11 +108,10 @@ bool OpenFileManager::refreshFiles(const QList<BaseFile*>& files, bool force)
 		QList<BaseFile*> unsavedFiles = getUnsavedFiles(files);
 		if (unsavedFiles.length() > 0)
 		{
-			UnsavedChangesDialog dialog(unsavedFiles);
+			UnsavedChangesDialog dialog(unsavedFiles, false);
 			if (dialog.exec() != QDialog::Accepted)
 				return false;
 		}
-
 	}
 
 	foreach (BaseFile* file, files)

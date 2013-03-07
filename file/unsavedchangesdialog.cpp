@@ -11,8 +11,8 @@
 #include "filedialog.h"
 #include "QsLog.h"
 
-UnsavedChangesDialog::UnsavedChangesDialog(const QList<BaseFile*>& files) :
-	QDialog(0)
+UnsavedChangesDialog::UnsavedChangesDialog(const QList<BaseFile*>& files, bool closeFilesOnDiscard) :
+	QDialog(0), mCloseFilesOnDiscard(closeFilesOnDiscard)
 {
 	QVBoxLayout* layout = new QVBoxLayout(this);
 	setLayout(layout);
@@ -83,7 +83,11 @@ void UnsavedChangesDialog::buttonClicked(QAbstractButton* button)
 		{
 			try
 			{
-				if (file->canClose()) file->close();
+				if (mCloseFilesOnDiscard) {
+					if (file->canClose()) file->close();
+				}
+				else
+					fileClosed(file);
 			}
             catch(QString &/*e*/)
 			{
