@@ -752,12 +752,6 @@ void MainWindow::showAdvancedSearch()
 {
 	AdvancedSearchDialog dlg(this);
 
-	connect(&dlg, SIGNAL(find(QString,bool,bool,bool)), gWindowManager, SLOT(find(QString,bool,bool,bool)));
-	connect(&dlg, SIGNAL(globalFind(QString,QString,bool,bool,bool)), gWindowManager, SLOT(globalFind(QString,QString,bool,bool,bool)));
-
-	connect(&dlg, SIGNAL(replace(QString,QString,bool,bool,bool)), gWindowManager, SLOT(replace(QString,QString,bool,bool,bool)));
-	connect(&dlg, SIGNAL(globalReplace(QString,QString,QString,bool,bool,bool)), gWindowManager, SLOT(globalReplace(QString,QString,QString,bool,bool,bool)));
-
 	dlg.exec();
 }
 
