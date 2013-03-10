@@ -141,7 +141,7 @@ BaseFile* OpenFileManager::getNextFile(BaseFile* file)
 BaseFile* OpenFileManager::getPreviousFile(BaseFile* file)
 {
 	int index = mOpenFiles.indexOf(file);
-	return index < 1 ? mOpenFiles.at(0) : mOpenFiles.at(index + 1);
+	return index < 1 ? mOpenFiles.last() : mOpenFiles.at(index - 1);
 }
 
 
