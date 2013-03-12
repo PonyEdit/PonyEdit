@@ -5,8 +5,8 @@
 #include <QVariant>
 #include <QObject>
 #include "tools/callback.h"
+#include "file/slavefile.h"
 
-class SlaveFile;
 class SlaveRequest : QObject
 {
 	Q_OBJECT
@@ -38,8 +38,8 @@ signals:
 private:
 	const QByteArray& prepare(int bufferId);
 
-	SlaveFile* mFile;
-	SlaveFile* mOpeningFile;
+	QPointer<SlaveFile> mFile;
+	QPointer<SlaveFile> mOpeningFile;
 
 	QByteArray mRequest;
 	QVariant mParameters;
