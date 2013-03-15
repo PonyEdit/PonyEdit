@@ -316,11 +316,15 @@ bool SlaveChannel::mainUpdate()
 					if (request != NULL)
 					{
 						//	If the request was opening a file, and a bufferId is returned, record the relationship
-						if (request->getOpeningFile() && response.contains("bufferId"))
+						BaseFile::deletionLock();
 						{
-							mBufferIds.insert(request->getOpeningFile(), response.value("bufferId").toInt());
-							connect(this, SIGNAL(channelShutdown()), request->getOpeningFile(), SLOT(slaveChannelFailure()), Qt::QueuedConnection);
+							if (request->getOpeningFile() && response.contains("bufferId"))
+							{
+								mBufferIds.insert(request->getOpeningFile(), response.value("bufferId").toInt());
+								connect(this, SIGNAL(channelShutdown()), request->getOpeningFile(), SLOT(slaveChannelFailure()), Qt::QueuedConnection);
+							}
 						}
+						BaseFile::deletionUnlock();
 
 						//	Handle the response.
 						SlaveRequest* request = mRequestsAwaitingReplies.value(responseId, NULL);

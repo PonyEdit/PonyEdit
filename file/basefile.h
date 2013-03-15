@@ -6,6 +6,7 @@
 #include <QString>
 #include <QTextDocument>
 #include <QPlainTextDocumentLayout>
+#include <QMutex>
 
 #include "location.h"
 
@@ -66,6 +67,10 @@ public:
 
 	virtual void sudo();
 
+	//	Lock / unlock all basefiles against deletion, to prevent deletion in other threads
+	static void deletionLock() { sDeletionLock.lock(); }
+	static void deletionUnlock() { sDeletionLock.unlock(); }
+
 public slots:
 	void openSuccess(const QString& content, const QByteArray& checksum, bool readOnly);
 	void openFailure(const QString& error, int errorFlags);
@@ -119,6 +124,8 @@ protected:
 	QList<Editor*> mAttachedEditors;
 
 	SyntaxHighlighter* mHighlighter;
+
+	static QMutex sDeletionLock;	//	Used to prevent cross-thread operations sensitive to the sudden deletion of files from getting upset.
 };
 
 #endif // FILE_H

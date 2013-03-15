@@ -18,6 +18,7 @@
 #include "QsLog.h"
 
 const char* BaseFile::sStatusLabels[] =  { "Loading...", "Error while loading", "Ready", "Disconnected", "Reconnecting...", "Lost Synchronization; Repairing", "Syncronization Error", "Closing", "Closed" };
+QMutex BaseFile::sDeletionLock;
 
 BaseFile* BaseFile::getFile(const Location& location)
 {
@@ -230,9 +231,13 @@ void BaseFile::closeCompleted()
 		return;
 	}
 
+	sDeletionLock.lock();
+
 	setOpenStatus(Closed);
 	gOpenFileManager.deregisterFile(this);
 	delete this;
+
+	sDeletionLock.unlock();
 }
 
 void BaseFile::autodetectSyntax()
