@@ -65,7 +65,7 @@ Location::Location(const Location& other)
 
 Location& Location::operator=(const Location& other)
 {
-	if (mData != NULL)
+	if (mData != other.mData && mData != NULL)
 	{
 		mData->mReferences--;
 		if (mData->mReferences <= 0)
