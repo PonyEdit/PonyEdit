@@ -502,6 +502,11 @@ void FileDialog::showLocation(const Location& location)
 	showStatus(QPixmap(":/icons/loading.png"), tr("Loading ..."));
 
 	mCurrentLocation.asyncGetChildren(ui->showHidden->isChecked());
+
+	if (this->mSaveAs)
+		ui->fileName->setFocus();
+	else
+		ui->fileList->setFocus();
 }
 
 void FileDialog::showStatus(const QPixmap& icon, const QString& text)
