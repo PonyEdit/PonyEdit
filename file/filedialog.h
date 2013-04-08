@@ -50,6 +50,7 @@ public slots:
 protected:
 	void dragEnterEvent(QDragEnterEvent *);
 	void dropEvent(QDropEvent *);
+	bool eventFilter(QObject* target, QEvent* event);
 
 private slots:
 	void folderChildrenLoaded(const QList<Location>& children, const QString& locationPath);

@@ -31,6 +31,12 @@
 #define NODETYPE_ADD_FAVORITE 4
 #define NODETYPE_LOCAL_NETWORK 5
 
+#ifdef Q_OS_MAC
+	#define UPDIR_MODIFIER Qt::ControlModifier
+#else
+	#define UPDIR_MODIFIER Qt::AltModifier
+#endif
+
 Location FileDialog::mLastLocation;
 
 FileDialog::FileDialog(QWidget *parent, bool saveAs) :
@@ -87,6 +93,11 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	connect(ui->fileName, SIGNAL(editTextChanged(QString)), this, SLOT(fileNameIndexChanged()));
 	connect(ui->fileList->horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(columnHeaderClicked(int)));
 
+	// Install an event filter on all children, to catch some keyboard events
+	foreach (QObject* child, children()) {
+		child->installEventFilter(this);
+	}
+
 	populateFilterList();
 	populateFolderTree();
 	restoreState();
@@ -94,7 +105,7 @@ FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	Location homeLocation(QDir::homePath());
 	Editor* editor = gMainWindow->getCurrentEditor();
 
-	if(NULL != editor) {
+	if (NULL != editor) {
 		Location currentLoc = editor->getLocation();
 		if(currentLoc.isNull())
 			showLocation(mLastLocation);
@@ -507,7 +518,7 @@ void FileDialog::addNewServer()
 
 void FileDialog::keyPressEvent(QKeyEvent *event)
 {
-	if(event->key() == Qt::Key_Escape)
+	if (event->key() == Qt::Key_Escape)
 		reject();
 
 	if (focusWidget() == ui->currentPath && (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return))
@@ -755,6 +766,19 @@ void FileDialog::populateFilterList()
 
 		ui->filterList->addItem(category, filterRegExps);
 	}
+}
+
+bool FileDialog::eventFilter(QObject* target, QEvent* event)
+{
+	if (event->type() == QEvent::KeyPress) {
+		QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+		if (keyEvent->key() == Qt::Key_Up && (keyEvent->modifiers() & UPDIR_MODIFIER)) {
+			upLevel();
+			return true;
+		}
+	}
+
+	return QObject::eventFilter(target, event);
 }
 
 void FileDialog::fileNameIndexChanged()
