@@ -5,6 +5,7 @@
 #include "windowmanager.h"
 #include "file/basefile.h"
 #include "file/openfilemanager.h"
+#include "options/options.h"
 
 AdvancedSearchDialog::AdvancedSearchDialog(QWidget *parent) :
     QDialog(parent),
@@ -15,8 +16,9 @@ AdvancedSearchDialog::AdvancedSearchDialog(QWidget *parent) :
 	ui->context->addItem(tr("All Files"), QVariant(OpenFiles));
 	ui->context->addItem(tr("Current File"), QVariant(CurrentFile));
 
-	ui->caseSensitive->setChecked(true);
-	ui->filePattern->setText("*");
+	Options::autoPersist(ui->caseSensitive, "AdvancedSearchDialog::caseSensitive", true);
+	Options::autoPersist(ui->regularExpressions, "AdvancedSearchDialog::regularExpressions", false);
+	Options::autoPersist(ui->filePattern, "AdvancedSearchDialog::filePattern", "*");
 
 	ui->find->setFocus();
 

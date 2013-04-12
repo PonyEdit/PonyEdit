@@ -1,6 +1,9 @@
 #include "options.h"
 #include <QSettings>
+#include <QWidget>
 #include "main/global.h"
+#include <QCheckBox>
+#include <QLineEdit>
 
 QFont* Options::EditorFont = NULL;
 int Options::EditorFontZoom;
@@ -18,6 +21,69 @@ bool Options::ShutdownPrompt;
 Options::FileListTypes Options::FileListType;
 
 int Options::LoggingLevel;
+
+Options* Options::sInstance = NULL;
+
+Options* Options::getInstance()
+{
+	if (!sInstance)
+		sInstance = new Options();
+	return sInstance;
+}
+
+QVariant Options::get(const QString& key, const QVariant& defaultValue)
+{
+	QSettings settings;
+	return settings.value(key, defaultValue);
+}
+
+void Options::set(const QString& key, const QVariant& value)
+{
+	QSettings settings;
+	settings.setValue(key, value);
+}
+
+void Options::autoPersist(QCheckBox* control, const QString& optionKey, bool defaultValue)
+{
+	control->setChecked(get(optionKey, defaultValue).toBool());
+	getInstance()->autoPersist(control, optionKey, SIGNAL(clicked(bool)), SLOT(persistantCheckBoxChanged(bool)));
+}
+
+void Options::autoPersist(QLineEdit* control, const QString& optionKey, const QString& defaultValue)
+{
+	control->setText(get(optionKey, defaultValue).toString());
+	getInstance()->autoPersist(control, optionKey, SIGNAL(textChanged(QString)), SLOT(persistantLineEditChanged(QString)));
+}
+
+void Options::autoPersist(QWidget* control, const QString& optionKey, const char* changedSignal, const char* persistSlot)
+{
+	mPersistantKeys.insert(control, optionKey);
+	connect(control, changedSignal, this, persistSlot);
+	connect(control, SIGNAL(destroyed(QObject*)), this, SLOT(endAutoPersist(QObject*)));
+}
+
+void Options::endAutoPersist(QObject* control)
+{
+	mPersistantKeys.remove(control);
+}
+
+void Options::persistantCheckBoxChanged(bool checked)
+{
+	persistValue(QObject::sender(), checked);
+}
+
+void Options::persistantLineEditChanged(const QString& text)
+{
+	persistValue(QObject::sender(), text);
+}
+
+void Options::persistValue(QObject* control, const QVariant& value)
+{
+	QString optionKey = mPersistantKeys.value(control);
+	if (!optionKey.isEmpty()) {
+		set(optionKey, value);
+	}
+}
 
 void Options::save()
 {
