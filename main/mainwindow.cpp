@@ -37,8 +37,6 @@
 #include "website/sitemanager.h"
 #include "aboutdialog.h"
 #include "tools/htmlpreview.h"
-#include "licence/licence.h"
-#include "licence/licencecheckdialog.h"
 #include "shutdownprompt.h"
 #include "QsLog.h"
 
@@ -166,20 +164,6 @@ void MainWindow::createToolbar()
 
 	toolbar->setStyleSheet("QToolBar { margin: 0px; padding: 0px; spacing: 3px; }");
 	toolbar->setStyleSheet("QToolButton { margin: 0px; padding: 0px; width:22px; height:22px }");
-
-	//
-	//	Trial time left toolbar
-	//
-
-	mTrialRemainingBar = new QToolBar("Time Remaining");
-	mTrialRemainingButton = new QToolButton(mTrialRemainingBar);
-	connect(mTrialRemainingButton, SIGNAL(clicked()), this, SLOT(showLicenceDialog()));
-	addToolBar(mTrialRemainingBar);
-	mTrialRemainingBar->addWidget(mTrialRemainingButton);
-	mTrialRemainingBar->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-
-	mTrialRemainingBar->setStyleSheet("QToolBar { margin: 0px; padding: 0px; spacing: 3px; }");
-	mTrialRemainingBar->setStyleSheet("QToolButton { margin: 0px; padding: 0px; width:22px; height:22px }");
 
 	//
 	//	Feedback toolbar
@@ -644,50 +628,6 @@ void MainWindow::createShortcuts()
 
 	addAction(deleteLine);
 #endif
-}
-
-void MainWindow::showLicenceDialog()
-{
-	checkLicence(true);
-}
-
-void MainWindow::checkLicence(bool forceDialog)
-{
-	Licence l;
-
-	if (!l.isValid() || l.hasExpired() || forceDialog)
-	{
-		LicenceCheckDialog dlg(this, &l);
-		dlg.exec();
-
-		//	If the licence is invalid after running the dialog, exit.
-		l = Licence();
-		if (!l.isValid() || l.hasExpired())
-			close();
-	}
-
-	updateTrialToolbar();
-	// If we're on a trial, add a timer to update the toolbar hourly
-	if(!l.getExpiry().isNull())
-	{
-		mTrialTimer = new QTimer(this);
-		connect(mTrialTimer, SIGNAL(timeout()), this, SLOT(updateTrialToolbar()));
-		mTrialTimer->start(60*60*1000);
-	}
-}
-
-void MainWindow::updateTrialToolbar()
-{
-	Licence l = Licence();
-
-	//	Display a "time left on the trial" panel in the toolbar if appropriate
-	if (!l.getExpiry().isNull())
-	{
-		mTrialRemainingButton->setText(tr("Trial: %1 days left").arg(l.getDaysLeft()));
-		mTrialRemainingBar->show();
-	}
-	else
-		mTrialRemainingBar->hide();
 }
 
 void MainWindow::showErrorMessage(QString error)

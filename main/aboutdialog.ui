@@ -14,71 +14,31 @@
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="1">
-    <widget class="QLabel" name="iconLabel">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>100</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>100</width>
-       <height>100</height>
-      </size>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="pixmap">
-      <pixmap resource="../resources.qrc">:/icons/ponyedit.ico</pixmap>
-     </property>
-     <property name="scaledContents">
+   <item row="4" column="0" colspan="3">
+    <widget class="QPlainTextEdit" name="plainTextEdit">
+     <property name="readOnly">
       <bool>true</bool>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="3">
-    <widget class="QLabel" name="nameLabel">
-     <property name="text">
-      <string>&lt;span style=&quot; font-size:16pt; font-weight:bold;&quot;&gt;PonyEdit&lt;/span&gt;</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="3">
-    <widget class="QLabel" name="versionLabel">
-     <property name="text">
-      <string>Version %1 (%2.%3.%4)</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="3">
-    <widget class="QLabel" name="copyRightLabel">
-     <property name="text">
-      <string>Copyright 2010-2011 Pentalon.&lt;br /&gt;All Rights Reserved.</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="0" colspan="3">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Ok</set>
+     <property name="plainText">
+      <string>PonyEdit makes use of various libraries, all of which are awesome.
+
+Qt - http://qt.nokia.com/
+Licenced under the LGPL 2.1
+http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+
+libssh2 - http://www.libssh2.org/
+Licenced under the libssh2 licence
+http://www.libssh2.org/license.html
+
+This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.openssl.org/)
+
+KatePart - http://kate-editor.org/about-katepart/
+Licenced under the LGPL 2.0
+http://www.gnu.org/licenses/old-licenses/lgpl-2.0.html
+
+QsLog - https://bitbucket.org/razvanpetru/qt-components/wiki/QsLog
+Copyright (c) 2010, Razvan Petru
+</string>
      </property>
     </widget>
    </item>
@@ -108,55 +68,71 @@
      </property>
     </spacer>
    </item>
-   <item row="4" column="0" colspan="3">
-    <widget class="QLabel" name="licenceLabel">
+   <item row="3" column="0" colspan="3">
+    <widget class="QLabel" name="copyRightLabel">
      <property name="text">
-      <string>Licenced to: %1</string>
+      <string>Copyright 2010-2011 Pentalon.&lt;br /&gt;All Rights Reserved.</string>
      </property>
      <property name="alignment">
-      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label">
+   <item row="5" column="0" colspan="3">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="3">
+    <widget class="QLabel" name="nameLabel">
      <property name="text">
-      <string>Licence Details:</string>
+      <string>&lt;span style=&quot; font-size:16pt; font-weight:bold;&quot;&gt;PonyEdit&lt;/span&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>
-   <item row="6" column="0" colspan="3">
-    <widget class="QPlainTextEdit" name="licenceDetails">
-     <property name="readOnly">
-      <bool>true</bool>
+   <item row="2" column="0" colspan="3">
+    <widget class="QLabel" name="versionLabel">
+     <property name="text">
+      <string>Version %1 (%2.%3.%4)</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>
-   <item row="7" column="0" colspan="3">
-    <widget class="QPlainTextEdit" name="plainTextEdit">
-     <property name="readOnly">
+   <item row="0" column="1">
+    <widget class="QLabel" name="iconLabel">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>100</width>
+       <height>100</height>
+      </size>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../resources.qrc">:/icons/ponyedit.ico</pixmap>
+     </property>
+     <property name="scaledContents">
       <bool>true</bool>
      </property>
-     <property name="plainText">
-      <string>PonyEdit makes use of various libraries, all of which are awesome.
-
-Qt - http://qt.nokia.com/
-Licenced under the LGPL 2.1
-http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
-
-libssh2 - http://www.libssh2.org/
-Licenced under the libssh2 licence
-http://www.libssh2.org/license.html
-
-This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.openssl.org/)
-
-KatePart - http://kate-editor.org/about-katepart/
-Licenced under the LGPL 2.0
-http://www.gnu.org/licenses/old-licenses/lgpl-2.0.html
-
-QsLog - https://bitbucket.org/razvanpetru/qt-components/wiki/QsLog
-Copyright (c) 2010, Razvan Petru
-</string>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>

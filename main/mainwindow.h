@@ -33,10 +33,6 @@ public:
     ~MainWindow();
 
 public slots:
-	void checkLicence(bool forceDialog = false);
-	void showLicenceDialog();
-	void updateTrialToolbar();
-
 	void newFile();
 	void openFile();
 	void openSingleFile();
@@ -126,8 +122,6 @@ private:
 
 	void nextStartupPrompt();
 
-	QTimer *mTrialTimer;
-
 	FileList* mFileList;
 	TabbedFileList* mTabbedFileList;
 	QStatusBar* mStatusBar;
@@ -148,8 +142,6 @@ private:
 
 	QList<QDockWidget*> mMenuControlledDockWidgets;
 	QList<QToolBar*> mMenuControlledToolBar;
-	QToolBar* mTrialRemainingBar;
-	QToolButton* mTrialRemainingButton;
 	UnsavedChangesDialog* mUnsavedChangesDialog;
 
 	bool mWasMaximized;

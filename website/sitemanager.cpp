@@ -11,7 +11,6 @@
 
 #include "sitemanager.h"
 #include "tools/json.h"
-#include "licence/licence.h"
 
 SiteManager::SiteManager()
 {
@@ -44,49 +43,12 @@ SiteManager::~SiteManager()
 
 void SiteManager::checkForUpdates(bool forceNotification)
 {
-	Licence l = Licence();
 	QString version = QString("vmaj=%1&vmin=%2&rev=%3").arg(MAJOR_VERSION).arg(MINOR_VERSION).arg(REVISION);
 
-	QUrl url(QString(SITE_URL) + "version/?" + version + "&u=" + l.getLogin() + "&key=" + l.getKey());
+	QUrl url(QString(SITE_URL) + "version/?" + version);
 	QNetworkReply* reply = mManager->get(QNetworkRequest(url));
 
 	mReplies.insert(reply, forceNotification ? UpdateCheckForcedNotification : UpdateCheck);
-}
-
-void SiteManager::getLicence(const QString &username, const QString &password)
-{
-	QString version = QString("vmaj=%1&vmin=%2&rev=%3").arg(MAJOR_VERSION).arg(MINOR_VERSION).arg(REVISION);
-
-	QUrl url(QString(SITE_URL) + "licence/?f=getlicence&" + version);
-
-    QUrlQuery postData;
-	postData.addQueryItem("u", username);
-	postData.addQueryItem("p", password);
-
-	QNetworkRequest request(url);
-	request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    QNetworkReply* reply = mManager->post(request, postData.toString(QUrl::FullyEncoded).toLatin1());
-
-	mReplies.insert(reply, GetLicence);
-}
-
-void SiteManager::checkLicence()
-{
-	Licence l = Licence();
-	QString version = QString("vmaj=%1&vmin=%2&rev=%3").arg(MAJOR_VERSION).arg(MINOR_VERSION).arg(REVISION);
-
-	QUrl url(QString(SITE_URL) + "licence/?" + version + "&u=" + l.getLogin() + "&key=" + l.getKey());
-	QNetworkReply* reply = mManager->get(QNetworkRequest(url));
-
-	mReplies.insert(reply, LicenceCheck);
-}
-
-void SiteManager::getTrial()
-{
-	QUrl url(QString(SITE_URL) + "licence/?f=trial");
-	QNetworkReply* reply = mManager->get(QNetworkRequest(url));
-
-	mReplies.insert(reply, GetTrial);
 }
 
 void SiteManager::handleReply(QNetworkReply *reply)
@@ -120,21 +82,6 @@ void SiteManager::handleReply(QNetworkReply *reply)
 				else if(message == UpdateCheckForcedNotification)
 					emit noUpdateAvailable();
 				break;
-
-			case LicenceCheck:
-				emit licenceStatus(data["valid"].toBool());
-				break;
-
-			case GetTrial:
-				emit getTrial(data["key"].toString());
-				break;
-
-			case GetLicence:
-				if(data["key"].toString().isEmpty())
-					emit getLicenceFailed(data["error"].toString());
-				else
-					emit getLicence(data["key"].toString());
-				break;
 		}
 	}
 	catch (QString error)
@@ -144,18 +91,6 @@ void SiteManager::handleReply(QNetworkReply *reply)
 			case UpdateCheck:
 			case UpdateCheckForcedNotification:
 				//	Do nothing
-				break;
-
-			case LicenceCheck:
-				//	Do nothing
-				break;
-
-			case GetTrial:
-				emit getTrialFailed(error);
-				break;
-
-			case GetLicence:
-				emit getLicenceFailed(error);
 				break;
 		}
 	}

@@ -106,18 +106,15 @@ SOURCES += \
 	main/aboutdialog.cpp \
 	options/editoroptionswidget.cpp \
 	tools/htmlpreview.cpp \
-	licence/licence.cpp \
 	file/slavefile.cpp \
 	main/ponyedit.cpp \
 	main/windowmanager.cpp \
-	licence/licencecheckdialog.cpp \
 	main/statuswidget.cpp \
 	options/startupoptionswidget.cpp \
 	main/shutdownprompt.cpp \
 	file/filestatuswidget.cpp \
 	main/regexptester.cpp \
 	file/ftpfile.cpp \
-	licence/offlineactivationdialog.cpp \
 	file/tabbedfilelist.cpp \
 	main/editorpanel.cpp \
 	main/editorstack.cpp \
@@ -196,18 +193,15 @@ HEADERS  += \
 	main/aboutdialog.h \
 	options/editoroptionswidget.h \
 	tools/htmlpreview.h \
-	licence/licence.h \
 	file/slavefile.h \
 	main/ponyedit.h \
 	main/windowmanager.h \
-	licence/licencecheckdialog.h \
 	main/statuswidget.h \
 	options/startupoptionswidget.h \
 	main/shutdownprompt.h \
 	file/filestatuswidget.h \
 	main/regexptester.h \
 	file/ftpfile.h \
-	licence/offlineactivationdialog.h \
 	file/tabbedfilelist.h \
 	main/editorpanel.h \
 	main/editorstack.h \
@@ -596,12 +590,10 @@ FORMS += \
 	main/aboutdialog.ui \
 	options/editoroptionswidget.ui \
 	tools/htmlpreview.ui \
-	licence/licencecheckdialog.ui \
 	main/statuswidget.ui \
 	options/startupoptionswidget.ui \
 	main/shutdownprompt.ui \
 	main/regexptester.ui \
-	licence/offlineactivationdialog.ui \
 	ssh2/serverconfigwidget.ui \
 	ssh2/serverconfigdlg.ui \
 	ssh2/passworddlg.ui \
