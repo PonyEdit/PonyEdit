@@ -107,8 +107,6 @@ MainWindow::MainWindow(QWidget *parent)
 	resize(QSize(800, 600));
 	restoreState();
 
-	QTimer::singleShot(0, this, SLOT(checkLicence()));
-
 	openFileListChanged();
 	viewSplittingChanged();
 }

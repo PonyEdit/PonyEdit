@@ -25,12 +25,9 @@ public slots:
 	void checkForUpdates(bool forceNotification = false);
 	void handleReply(QNetworkReply* reply);
 
-	void purchase();
-
 signals:
 	void updateAvailable(const QVariantMap& version, const QVariantMap& changes);
 	void noUpdateAvailable();
-	void licenceStatus(bool valid);
 
 private:
 	QNetworkAccessManager* mManager;

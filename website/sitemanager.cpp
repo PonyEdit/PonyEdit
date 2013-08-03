@@ -99,9 +99,3 @@ void SiteManager::handleReply(QNetworkReply *reply)
 	reply->deleteLater();
 }
 
-void SiteManager::purchase()
-{
-	QUrl url(QString(SITE_URL) + "buy/");
-
-	QDesktopServices::openUrl(url);
-}
