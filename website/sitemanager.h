@@ -25,9 +25,6 @@ public slots:
 	void checkForUpdates(bool forceNotification = false);
 	void handleReply(QNetworkReply* reply);
 
-	void feedbackHappy();
-	void feedbackSad();
-
 	void purchase();
 
 signals:

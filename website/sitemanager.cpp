@@ -99,20 +99,6 @@ void SiteManager::handleReply(QNetworkReply *reply)
 	reply->deleteLater();
 }
 
-void SiteManager::feedbackHappy()
-{
-	QUrl url(QString(SITE_URL) + "feedback/?feedback=happy&version=" + QCoreApplication::applicationVersion());
-
-	QDesktopServices::openUrl(url);
-}
-
-void SiteManager::feedbackSad()
-{
-	QUrl url(QString(SITE_URL) + "feedback/?feedback=sad&version=" + QCoreApplication::applicationVersion());
-
-	QDesktopServices::openUrl(url);
-}
-
 void SiteManager::purchase()
 {
 	QUrl url(QString(SITE_URL) + "buy/");

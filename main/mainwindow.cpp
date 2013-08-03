@@ -164,34 +164,6 @@ void MainWindow::createToolbar()
 
 	toolbar->setStyleSheet("QToolBar { margin: 0px; padding: 0px; spacing: 3px; }");
 	toolbar->setStyleSheet("QToolButton { margin: 0px; padding: 0px; width:22px; height:22px }");
-
-	//
-	//	Feedback toolbar
-	//
-
-	QToolBar* feedbackToolbar = new QToolBar("Feedback Toolbar");
-	feedbackToolbar->setObjectName("Feedback Toolbar");
-	feedbackToolbar->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-
-	QToolButton* feedbackButton = new QToolButton(feedbackToolbar);
-	feedbackButton->setText(tr("Feedback") + " ");
-
-	QMenu *feedbackMenu = new QMenu(toolbar);
-
-	feedbackMenu->addAction(tr("PonyEdit Made Me Happy Because..."), gSiteManager, SLOT(feedbackHappy()));
-	feedbackMenu->addAction(tr("PonyEdit Made Me Sad Because..."), gSiteManager, SLOT(feedbackSad()));
-
-	feedbackButton->setMenu(feedbackMenu);
-
-	feedbackButton->setPopupMode(QToolButton::InstantPopup);
-
-	feedbackToolbar->addWidget(feedbackButton);
-
-	addToolBar(feedbackToolbar);
-	registerContextMenuItem(feedbackToolbar);
-
-	feedbackToolbar->setStyleSheet("QToolBar { margin: 0px; padding: 0px; spacing: 3px; }");
-	feedbackToolbar->setStyleSheet("QToolButton { margin: 0px; padding: 0px; height:22px }");
 }
 
 void MainWindow::newFile()
