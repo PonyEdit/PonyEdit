@@ -19,6 +19,7 @@ public:
 	bool isRunning();
 	bool sendMessage(const QString &message);
 
+	const QStringList& getPositionalArguments() { return mPositionalArguments; }
 	static inline bool isApplicationExiting() { return sApplicationExiting; }
 
 public slots:
@@ -35,6 +36,8 @@ private:
 	QSharedMemory mMemoryLock;
 	QLocalServer* mLocalServer;
 	DialogRethreader* mDialogRethreader;
+
+	QStringList mPositionalArguments;
 
 	static const int mTimeout = 1000;
 	static bool sApplicationExiting;

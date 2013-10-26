@@ -18,6 +18,7 @@
 #define KILOBYTE_MULTIPLIER 1024
 
 QThread* sMainThread = NULL;
+QString Tools::sResourcePath;
 
 QString Tools::humanReadableBytes(quint64 bytes)
 {
@@ -252,8 +253,19 @@ bool Tools::compareSubstring(const QString& superstring, const QString& substrin
 	return (l == -1);
 }
 
+void Tools::setResourcePath( const QString& path )
+{
+	sResourcePath = path;
+	if ( !sResourcePath.endsWith( "/" ) )
+			sResourcePath = sResourcePath + "/";
+}
+
 QString Tools::getResourcePath(const QString& subpath)
 {
+	if ( !sResourcePath.isEmpty() ) {
+		return sResourcePath + subpath;
+	}
+
 #if defined Q_OS_MAC && !defined QT_DEBUG
     return QCoreApplication::applicationDirPath() + QString("/../Resources/") + subpath;
 #elif defined Q_OS_WIN && !defined QT_DEBUG

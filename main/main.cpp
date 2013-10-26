@@ -45,33 +45,15 @@ int main(int argc, char *argv[])
 
 		PonyEdit a(argc, argv);
 
-		if(a.isRunning())
-		{
-			if(argc > 1)
-			{
-				for(int ii = 1; ii < argc; ii++)
-				{
-					QString name(argv[ii]);
-					if(name.trimmed().isNull())
-						continue;
-
-					a.sendMessage(name);
-				}
-			}
-
-			return 0;
-		}
-
-		if(argc > 1)
-		{
-			for(int ii = 1; ii < argc; ii++)
-			{
-				QString name(argv[ii]);
-				if(name.trimmed().isNull())
-					continue;
-
-				gMainWindow->openSingleFile(Location(name));
-			}
+		const QStringList& positionalArguments = a.getPositionalArguments();
+		if ( a.isRunning() ) {
+			//	App is already running; just send it messages, to open given files (if any)
+			foreach ( QString arg, positionalArguments )
+				a.sendMessage( arg );
+		} else {
+			//	App not running; open given filenames here.
+			foreach ( QString arg, positionalArguments )
+				gMainWindow->openSingleFile( Location( arg ) );
 		}
 
 		QNetworkProxyFactory::setUseSystemConfiguration(true);

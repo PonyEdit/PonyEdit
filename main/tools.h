@@ -37,12 +37,16 @@ public:
 	static QStringList splitQuotedList(const QString& list, QChar separator);
 
 	static QString getResourcePath(const QString& subpath);
+	static void setResourcePath( const QString& path );
 
 	static QString stringifyIpAddress(unsigned long ipAddress);
 
 	static int unbin(QByteArray& target, const char* source, int maxTarget, int maxSource, bool* leftoverEscape = NULL);
 	static QByteArray bin(const QByteArray& source);
 	static unsigned char unbinEscape(unsigned char c);
+
+private:
+	static QString sResourcePath;
 };
 
 #endif // TOOLS_H

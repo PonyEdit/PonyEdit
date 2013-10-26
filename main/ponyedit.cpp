@@ -21,6 +21,7 @@
 #include "ssh2/xferrequest.h"
 #include "ssh2/sshhost.h"
 #include "QsLog.h"
+#include <QCommandLineParser>
 
 GlobalDispatcher* gDispatcher = NULL;
 SiteManager* gSiteManager = NULL;
@@ -30,6 +31,24 @@ bool PonyEdit::sApplicationExiting = false;
 
 PonyEdit::PonyEdit(int argc, char** argv) : QApplication(argc, argv)
 {
+	//	Parse command line arguments
+	QCommandLineParser parser;
+	parser.setApplicationDescription( "PonyEdit: The fastest remote text editor under the sun. Or over it. " );
+	parser.addHelpOption();
+	parser.addVersionOption();
+	QCommandLineOption resourceLocationParam = QCommandLineOption(
+		QStringList() << "r" << "resource-location",
+		"Root directory of application resources. This directory should include syntaxdefs/ and slave/ subdirs.",
+		"directory"
+	);
+	parser.addOption( resourceLocationParam );
+	parser.process( *this );
+
+	mPositionalArguments = parser.positionalArguments();
+	QString resourceLocation = parser.value( resourceLocationParam );
+	if ( ! resourceLocation.isEmpty() )
+		Tools::setResourcePath( resourceLocation );
+
 #ifndef Q_OS_LINUX
 	QStringList substitutions;
 	substitutions.append("consolas");
