@@ -71,7 +71,7 @@ Copyright (c) 2010, Razvan Petru
    <item row="3" column="0" colspan="3">
     <widget class="QLabel" name="copyRightLabel">
      <property name="text">
-      <string>Copyright 2010-2011 Pentalon.&lt;br /&gt;All Rights Reserved.</string>
+      <string>Copyright 2010-2013 Pentalon.&lt;br/&gt;All Rights Reserved.</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
