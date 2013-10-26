@@ -350,7 +350,7 @@ bool SshSession::authenticatePublicKey()
 			{
 				//	Ask the user for a new key passphrase
 				QVariantMap options;
-				options.insert("title", QObject::tr("Key Passphrase").arg(mHost->getName()));
+				options.insert("title", QObject::tr("%1 Key Passphrase").arg(mHost->getName()));
 				options.insert("blurb", QObject::tr(mHost->getKeyPassphrase().isNull() ? "Please enter your key passphrase below." : "Your key passphrase was rejected. Please try again."));
 				options.insert("memorable", true);
 				options.insert("remember", remember);
