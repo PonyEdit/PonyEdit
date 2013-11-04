@@ -219,15 +219,16 @@ void CodeEditor::keyPressEvent(QKeyEvent* event)
 			int selectionEnd = textCursor().selectionEnd();
 			QTextBlock lastBlock = document()->findBlock(selectionEnd);
 			int lastLine = lastBlock.blockNumber();
-			if (selectionEnd > lastBlock.position())
+			if (selectionEnd > lastBlock.position() && lastLine < lastBlock.blockNumber())
 				lastLine++;
 
-			while (!tmpCursor.atEnd() && tmpCursor.blockNumber() < lastLine)
+			bool hasNextBlock = true;
+			while(hasNextBlock && tmpCursor.blockNumber() <= lastLine)
 			{
 				applyIndent(tmpCursor, outdent);
 
 				tmpCursor.movePosition(QTextCursor::StartOfLine);
-				tmpCursor.movePosition(QTextCursor::NextBlock);
+				hasNextBlock = tmpCursor.movePosition(QTextCursor::NextBlock);
 				tmpCursor.setPosition(firstNonWhiteSpace(tmpCursor.block()));
 			}
 		}
