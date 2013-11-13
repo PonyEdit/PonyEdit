@@ -339,12 +339,11 @@ void CodeEditor::focusInEvent(QFocusEvent *e)
 		if (strcmp("EditorPanel", object->metaObject()->className()) == 0)
 			break;
 
-	//	Tell the EditorStack that it should take focus
-	if (object)
-		((EditorPanel*)object)->takeFocus();
+	if ( ! object )
+		return;
 
-	//	Tell other things that this file has just been selected
-	gDispatcher->emitSelectFile(mFile);
+	EditorPanel* editorPanel = (EditorPanel*)object;
+	editorPanel->takeFocus();
 
 	QPlainTextEdit::focusInEvent(e);
 }

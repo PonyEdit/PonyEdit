@@ -1,5 +1,6 @@
 #include "editorpanel.h"
 #include "windowmanager.h"
+#include "globaldispatcher.h"
 #include <QDebug>
 
 EditorPanel::EditorPanel(QWidget* parent, EditorPanel* parentPanel, EditorStack* inheritedStack) :
@@ -192,6 +193,10 @@ EditorPanel* EditorPanel::findStack(Editor* editor)
 void EditorPanel::takeFocus()
 {
 	gWindowManager->setCurrentEditorPanel(this);
+
+	Editor* editor = getCurrentEditor();
+	if ( editor != NULL && editor->getFile() != NULL )
+		gDispatcher->emitSelectFile( editor->getFile() );
 }
 
 Editor* EditorPanel::getCurrentEditor() const
