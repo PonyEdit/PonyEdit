@@ -93,7 +93,7 @@ void SiteManager::handleUpdateCheckReply(QList<QVariant> reply, bool forceNotifi
 	int update_major = MAJOR_VERSION;
 	int update_minor = MINOR_VERSION;
 	int update_revision = REVISION;
-	QString pretty_version;
+	QString update_version;
 	QString update_url;
 	QStringList update_alerts;
 	QStringList update_changes;
@@ -106,7 +106,6 @@ void SiteManager::handleUpdateCheckReply(QList<QVariant> reply, bool forceNotifi
 
 		//	Split the version number...
 		QString version = entry["tag_name"].toString();
-		QString pretty_version = entry["name"].toString();
 		QStringList versionPieces = version.split( notNumeric );
 		int major = versionPieces.empty() ? 0 : versionPieces.takeFirst().toInt();
 		int minor = versionPieces.empty() ? 0 : versionPieces.takeFirst().toInt();
@@ -142,19 +141,17 @@ void SiteManager::handleUpdateCheckReply(QList<QVariant> reply, bool forceNotifi
 			if ( major > update_major ||
 				( major == update_major && minor > update_minor ) ||
 				( major == update_major && minor == update_minor && revision > update_revision ) ) {
+				update_version = version;
 				update_major = major;
 				update_minor = minor;
 				update_revision = revision;
 				update_url = entry_url;
-
-				if ( pretty_version.isEmpty() )
-					pretty_version = QString(major) + "." + QString(minor) + "-" + QString(revision);
 			}
 		}
 	}
 
 	if ( update_major != MAJOR_VERSION || update_minor != MINOR_VERSION || update_revision != REVISION )
-		UpdateManager::instance()->updateFound( pretty_version, update_url, update_alerts, update_changes );
+		UpdateManager::instance()->updateFound( update_version, update_url, update_alerts, update_changes );
 	else if ( forceNotification )
 		UpdateManager::instance()->noUpdateFound();
 }
