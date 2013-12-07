@@ -30,10 +30,10 @@ signals:
 	void noUpdateAvailable();
 
 private:
+	void handleUpdateCheckReply(QList<QVariant> reply, bool forceNotification);
+
 	QNetworkAccessManager* mManager;
 	QMap<QNetworkReply*, Messages> mReplies;
-	QString mOS;
-
 };
 
 extern SiteManager* gSiteManager;

@@ -31,26 +31,26 @@ void UpdateNotificationDialog::setNewVersion(const QString &version)
 	ui->updateLabel->setText(label);
 }
 
-void UpdateNotificationDialog::setChanges(const QVariantMap &changes)
+void UpdateNotificationDialog::setChanges(const QStringList &alerts, const QStringList &changes)
 {
 	QString changesStr;
-	QMapIterator<QString, QVariant> ii(changes);
-	while(ii.hasNext())
-	{
-		ii.next();
-		changesStr += "<strong>";
-		changesStr += tr("Version %1:").arg(ii.key());
-		changesStr += "</strong><br />";
-		changesStr += ii.value().toString();
-		changesStr += "<hr />";
+
+	if ( alerts.length() > 0 ) {
+		foreach ( const QString& alert, alerts ) {
+			changesStr += "<h4>" + alert + "</h4>";
+		}
 	}
 
-	ui->changesBrowser->setHtml(changesStr);
+	changesStr += "<ul>";
+	foreach ( const QString& change, changes ) {
+		changesStr += "<li>" + change + "</li>";
+	}
+	changesStr += "</ul>";
+	ui->changesBrowser->setHtml( changesStr );
 }
 
-void UpdateNotificationDialog::setDownloadURL(const QString &downloadURL, const QString& fileURL)
+void UpdateNotificationDialog::setDownloadURL(const QString& fileURL)
 {
-	mDownloadURL = downloadURL;
 	mFileURL = fileURL;
 }
 
@@ -61,7 +61,7 @@ void UpdateNotificationDialog::emitDownloadAndInstall()
 
 void UpdateNotificationDialog::openDownloadURL()
 {
-	QDesktopServices::openUrl(QUrl(mDownloadURL));
+	QDesktopServices::openUrl(QUrl("https://github.com/PonyEdit/PonyEdit/releases"));
 }
 
 QProgressBar* UpdateNotificationDialog::getProgressBar()

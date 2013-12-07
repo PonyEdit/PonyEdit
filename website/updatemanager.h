@@ -17,12 +17,14 @@ class UpdateManager : public QObject
 public:
     explicit UpdateManager(QObject *parent = 0);
 
+	static UpdateManager* instance() { return sInstance; }
+
+	void updateFound(const QString& version, const QString& url, const QStringList& alerts, const QStringList& changes);
+	void noUpdateFound();
+
 signals:
 
 public slots:
-	void updateFound(const QVariantMap& version, const QVariantMap& changes);
-	void noUpdateFound();
-
 	void startDownload(QString file);
 	void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
 	void downloadFinished();
@@ -30,11 +32,13 @@ public slots:
 	void downloadAuth(QNetworkReply * reply, QAuthenticator * authenticator);
 
 private:
+	static UpdateManager* sInstance;
 
 	UpdateNotificationDialog* mNotificationDlg;
 
 	QNetworkAccessManager mNetManager;
 	QNetworkReply *mDownload;
+	int mRedirectCount;
 
 	QFile mTempFile;
 

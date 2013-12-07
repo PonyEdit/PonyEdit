@@ -13,32 +13,24 @@
 #include "updatenotificationdialog.h"
 #include "file/openfilemanager.h"
 
+UpdateManager* UpdateManager::sInstance;
+
 UpdateManager::UpdateManager(QObject *parent) :
-    QObject(parent)
+	QObject(parent)
 {
-	connect(gSiteManager, SIGNAL(updateAvailable(const QVariantMap&, const QVariantMap&)), this, SLOT(updateFound(const QVariantMap&, const QVariantMap&)));
-	connect(gSiteManager, SIGNAL(noUpdateAvailable()), this, SLOT(noUpdateFound()));
+	sInstance = this;
+	mRedirectCount = 0;
 }
 
-void UpdateManager::updateFound(const QVariantMap& version, const QVariantMap& changes)
+void UpdateManager::updateFound(const QString& version, const QString& url, const QStringList& alerts, const QStringList& changes)
 {
-	QString url = QString("%1download/").arg(CDN_URL);
-	QString ext;
-#ifdef Q_OS_WIN
-	ext = "exe";
-#elif defined Q_OS_MAC
-	ext = "dmg";
-#endif
-
-	QString fullURL = QString("%1files/PonyEdit-%2.%3").arg(CDN_URL, version["pretty"].toString(), ext);
-
 	mNotificationDlg = new UpdateNotificationDialog();
 
 	connect(mNotificationDlg, SIGNAL(downloadAndInstall(QString)), this, SLOT(startDownload(QString)));
 
-	mNotificationDlg->setNewVersion(version["pretty"].toString());
-	mNotificationDlg->setChanges(changes);
-	mNotificationDlg->setDownloadURL(url, fullURL);
+	mNotificationDlg->setNewVersion(version);
+	mNotificationDlg->setChanges(alerts, changes);
+	mNotificationDlg->setDownloadURL(url);
 
 	mNotificationDlg->exec();
 }
@@ -66,13 +58,14 @@ void UpdateManager::startDownload(QString file)
 	buttonWrapper->hide();
 
 	connect(&mNetManager, SIGNAL(authenticationRequired(QNetworkReply*,QAuthenticator*)), this, SLOT(downloadAuth(QNetworkReply*,QAuthenticator*)));
-
+qDebug() << file;
 	QUrl download(file);
 
 	mTempFile.setFileName(QDir::tempPath() + "/" + QFileInfo(download.path()).fileName());
 	mTempFile.open(QIODevice::WriteOnly);
 
 	QNetworkRequest request(download);
+	request.setRawHeader( "Accept", "application/octet-stream" );;
 
 	mDownload = mNetManager.get(request);
 
@@ -107,13 +100,30 @@ void UpdateManager::downloadProgress(qint64 bytesReceived, qint64 bytesTotal)
 void UpdateManager::downloadFinished()
 {
 	mTempFile.close();
+	bool updateValid = true;
 
-	if(mDownload->error() != QNetworkReply::NoError)
+	QVariant redirect = mDownload->attribute( QNetworkRequest::RedirectionTargetAttribute );
+	if ( redirect.isValid() ) {
+		if ( mRedirectCount++ > 3 ) {
+			updateValid = false;
+		} else {
+			startDownload( redirect.toString() );
+			return;
+		}
+	}
+
+	if ( mDownload->error() != QNetworkReply::NoError )
+		updateValid = false;
+
+	if ( mTempFile.size() < 1024 * 1024 )	//	If we have less than 1MB of data, something is clearly up
+		updateValid = false;
+
+	if ( mDownload->error() != QNetworkReply::NoError )
 	{
 		QMessageBox msg;
 		msg.setWindowTitle(tr("Update unavailable"));
 		msg.setText(tr("There was a problem downloading the update."));
-		msg.setInformativeText(tr("Please try again later. If this error persists, please let us know on the <a href='%1'>support forum.</a>").arg(QString(SITE_URL) + "forums/"));
+		msg.setInformativeText(tr("Please try again later or visit the GitHub page at https://github.com/PonyEdit/PonyEdit to download an update manually."));
 		msg.setStandardButtons(QMessageBox::Ok);
 
 		msg.exec();

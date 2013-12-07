@@ -19,8 +19,8 @@ public:
     ~UpdateNotificationDialog();
 
 	void setNewVersion(const QString& version);
-	void setChanges(const QVariantMap& changes);
-	void setDownloadURL(const QString &downloadURL, const QString& fileURL);
+	void setChanges(const QStringList &alerts, const QStringList &changes);
+	void setDownloadURL(const QString& fileURL);
 
 	QProgressBar* getProgressBar();
 	QLabel* getProgressLabel();
@@ -36,7 +36,6 @@ private slots:
 private:
     Ui::UpdateNotificationDialog *ui;
 
-	QString mDownloadURL;
 	QString mFileURL;
 };
 
