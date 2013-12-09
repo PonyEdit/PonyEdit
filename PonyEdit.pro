@@ -4,6 +4,8 @@
 # 
 #-------------------------------------------------
 
+cache()
+
 DEFINES += "MAJOR_VERSION=0"
 DEFINES += "MINOR_VERSION=91"
 DEFINES += "REVISION=11"
