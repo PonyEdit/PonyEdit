@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language SYSTEM "language.dtd">
-<language name="Ansys" version="1.1" kateversion="2.0" section="Scientific" extensions="*.ans" author="Giovanni Bacci (giovanni@castellodilari.it)" license="LGPL" >
+<language name="Ansys" version="1.2" kateversion="2.0" section="Scientific" extensions="*.ans" author="Giovanni Bacci (giovanni@castellodilari.it)" license="LGPL" >
 <highlighting>
 	<list name="session_cmds">
 		<item>/BATCH</item>
@@ -1967,14 +1967,14 @@
 	</list>
 
 	<contexts>
-		<context attribute="Normal Text" lineEndContext="#pop" name="Normal Text" >
+		<context attribute="Normal Text" lineEndContext="#stay" name="Normal Text" >
 			<StringDetect attribute="comment" context="comment" String="C***" insensitive="true" firstNonSpace="true" />
 			<DetectChar attribute ="comment" context="comment" char="!" />
 			<keyword attribute="MatProp" context="#stay" String="various_labels" />
 			<RangeDetect attribute="Normal Text" context="#stay" char="(" char1=")" />
 			<DetectChar attribute="error" context="open_parentesis" char="(" />
 			<!-- the next one highlight variable assignements as normal text, to avoid F,,FY,1 been highlighted as F=10 -->
-			<RegExpr attribute="Normal Text" context="#stay" String="^[A-Za-Z0-9]+\=" />
+			<RegExpr attribute="Normal Text" context="#stay" String="^[A-Za-z0-9]+\=" />
 			<keyword attribute="Keyword" context="#stay" String="elements" />
 			<keyword attribute="MatProp" context="#stay" String="material_properties" />
 			<keyword attribute="Labels" context="#stay" String="force-displacement-labels" />

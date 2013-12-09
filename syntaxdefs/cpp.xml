@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language SYSTEM "language.dtd">
 <language name="C++" section="Sources"
-          version="1.47" kateversion="2.4"
+          version="1.50" kateversion="2.4"
           indenter="cstyle"
           mimetype="text/x-c++src;text/x-c++hdr;text/x-chdr"
           extensions="*.c++;*.cxx;*.cpp;*.cc;*.C;*.h;*.hh;*.H;*.h++;*.hxx;*.hpp;*.hcc;*.moc"
@@ -20,8 +20,10 @@
       <item> case </item>
       <item> catch </item>
       <item> class </item>
+      <item> constexpr </item>
       <item> const_cast </item>
       <item> continue </item>
+      <item> decltype </item>
       <item> default </item>
       <item> delete </item>
       <item> do </item>
@@ -32,6 +34,7 @@
       <item> export </item>
       <item> extern </item>
       <item> false </item>
+      <item> final </item>
       <item> friend </item>
       <item> for </item>
       <item> goto </item>
@@ -39,7 +42,10 @@
       <item> inline </item>
       <item> namespace </item>
       <item> new </item>
+      <item> noexcept </item>
+      <item> nullptr </item>
       <item> operator </item>
+      <item> override </item>
       <item> private </item>
       <item> protected </item>
       <item> public </item>
@@ -47,6 +53,7 @@
       <item> reinterpret_cast </item>
       <item> return </item>
       <item> sizeof </item>
+      <item> static_assert </item>
       <item> static_cast </item>
       <item> struct </item>
       <item> switch </item>
@@ -97,6 +104,7 @@
       <item> Q_DECLARE_SHARED </item>
       <item> Q_DECLARE_TYPEINFO </item>
       <item> Q_DISABLE_COPY </item>
+      <item> Q_EMIT </item>
       <item> Q_ENUMS </item>
       <item> Q_EXPORT </item>
       <item> Q_FLAGS </item>
@@ -150,6 +158,8 @@
       <item> auto </item>
       <item> bool </item>
       <item> char </item>
+      <item> char16_t </item>
+      <item> char32_t </item>
       <item> const </item>
       <item> double </item>
       <item> float </item>
