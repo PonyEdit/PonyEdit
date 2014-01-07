@@ -25,6 +25,6 @@ PonyEdit is released under the GPL Version 3. This software is released as-is, u
 
 ## Authors and Contributors
 
-PonyEdit was originally created by @thingalon and @pento.
+PonyEdit was originally created by [@thingalon](https://github.com/thingalon) and [@pento](https://github.com/pento).
 
 If you like PonyEdit and would like to contribute, please submit a pull request; we'd love your help! We are particularly interested in volunteers to maintain Windows and Linux binary releases for it.
