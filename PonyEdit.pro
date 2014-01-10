@@ -31,8 +31,8 @@ linux {
     LIBS += -lz
     LIBS += -lssh2 -lcrypto -lssl
 
-    QMAKE_CFLAGS += -Wunused-parameter
-    QMAKE_CXXFLAGS += -Wunused-parameter
+	QMAKE_CFLAGS += -Werror -Wunused-parameter
+	QMAKE_CXXFLAGS += -Werror -Wunused-parameter
 }
 
 macx {
