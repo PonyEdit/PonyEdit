@@ -118,7 +118,7 @@ void UpdateManager::downloadFinished()
 	if ( mTempFile.size() < 1024 * 1024 )	//	If we have less than 1MB of data, something is clearly up
 		updateValid = false;
 
-	if ( mDownload->error() != QNetworkReply::NoError )
+	if ( !updateValid || mDownload->error() != QNetworkReply::NoError )
 	{
 		QMessageBox msg;
 		msg.setWindowTitle(tr("Update unavailable"));
@@ -139,11 +139,13 @@ void UpdateManager::downloadFinished()
 	QString cmd;
 	QStringList args;
 
+#ifndef Q_OS_LINX
 	QLabel* progressLabel = mNotificationDlg->getProgressLabel();
 
 	QFileInfo info(mTempFile);
 
 	QProcess *installProc = new QProcess();
+#endif
 
 #ifdef Q_OS_WIN32
 	progressLabel->setText(tr("Installing..."));
