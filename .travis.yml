@@ -4,16 +4,16 @@ before_install:
     - if [ "$CXX" = "g++" ]; then sudo apt-get install g++-4.8; fi
     - if [ "$CXX" = "g++" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50; fi
     - if [ "$CXX" = "g++" ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50; fi
-    - wget -O Qt5.2.0.tar.xz https://i.cloudup.com/4S3hLrPjdq.gz
+    - wget -O Qt5.2.0.tar.xz https://i.cloudup.com/sObBTBlNX8.xz
     - mkdir ~/Qt5.2.0
     - tar -xJf Qt5.2.0.tar.xz -C ~/Qt5.2.0
     - sudo chmod -R 777 ~/Qt5.2.0/
-    - ln -s ~/Qt5.2.0/5.2.0/gcc_64/mkspecs/linux-g++ ~/Qt5.2.0/5.2.0/gcc_64/mkspecs/linux-gcc
+    - ln -s ~/Qt5.2.0/5.2.0/gcc/mkspecs/linux-g++ ~/Qt5.2.0/5.2.0/gcc_64/mkspecs/linux-gcc
     - sudo apt-get install libssh2-1-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev 
 
 script:
-    - ~/Qt5.2.0/5.2.0/gcc_64/bin/qmake -v
-    - ~/Qt5.2.0/5.2.0/gcc_64/bin/qmake
+    - ~/Qt5.2.0/5.2.0/gcc/bin/qmake -v
+    - ~/Qt5.2.0/5.2.0/gcc/bin/qmake
     - make -j3
 
 notifications:
