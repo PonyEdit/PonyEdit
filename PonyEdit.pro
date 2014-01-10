@@ -26,6 +26,15 @@ win32 {
     LIBS	+= -llibssh2 -lssleay -llibeay
 }
 
+linux {
+    TARGET = PonyEdit
+    LIBS += -lz
+    LIBS += -lssh2 -lcrypto -lssl
+
+    QMAKE_CFLAGS += -Werror -Wunused-parameter
+    QMAKE_CXXFLAGS += -Werror -Wunused-parameter
+}
+
 macx {
     DEFINES += __DARWIN_64_BIT_INO_T
     CONFIG  += x86_64
@@ -57,9 +66,6 @@ macx {
     QMAKE_CXXFLAGS += -Werror -Wunused-parameter
 
     LIBS	+= -lssh2 -lcrypto -lssl
-}
-!macx {
-    TARGET = ponyedit
 }
 
 QT		+= core widgets gui network xml script webkit webkitwidgets printsupport

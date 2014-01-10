@@ -9,6 +9,7 @@ before_install:
     - tar -xJf Qt5.2.0.tar.xz -C ~/Qt5.2.0
     - sudo chmod -R 777 ~/Qt5.2.0/
     - ln -s ~/Qt5.2.0/5.2.0/gcc_64/mkspecs/linux-g++ ~/Qt5.2.0/5.2.0/gcc_64/mkspecs/linux-gcc
+    - sudo apt-get install libssh2-1-dev
 
 script:
     - ~/Qt5.2.0/5.2.0/gcc_64/bin/qmake -v
