@@ -6,7 +6,7 @@ before_install:
     - if [ "$CXX" = "g++" ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50; fi
     - wget -O Qt5.2.0.tar.xz https://i.cloudup.com/sObBTBlNX8.xz
     - mkdir ~/Qt5.2.0
-    - tar -xJfv Qt5.2.0.tar.xz -C ~/Qt5.2.0
+    - tar -xJvf Qt5.2.0.tar.xz -C ~/Qt5.2.0
     - ls -l ~/Qt5.2.0/
     - ls -l ~/Qt5.2.0/5.2.0/
     - ls -l ~/Qt5.2.0/5.2.0/gcc/
