@@ -18,7 +18,7 @@ before_install:
 script:
     - ls -l ~/Qt5.2.0/5.2.0/gcc/bin/
     - ls -l ~/Qt5.2.0/5.2.0/gcc/bin/qmake
-    - ~/Qt5.2.0/5.2.0/gcc/bin/qmake -v
+    - ~/Qt5.2.0/5.2.0/gcc/bin/qmakeasaurus -v
     - ~/Qt5.2.0/5.2.0/gcc/bin/qmake
     - make -j3
 
