@@ -10,11 +10,12 @@ before_install:
     - ls -l ~/Qt5.2.0/5.2.0/gcc/bin/qmake
     - sudo chmod -R 777 ~/Qt5.2.0/
     - ln -s ~/Qt5.2.0/5.2.0/gcc/mkspecs/linux-g++ ~/Qt5.2.0/5.2.0/gcc/mkspecs/linux-gcc
+	- PATH=/home/travis/Qt5.2.0/5.2.0/gcc/bin/:$PATH
     - sudo apt-get install --yes libssh2-1-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev 
 
 script:
-    - ~/Qt5.2.0/5.2.0/gcc/bin/qmake -v
-    - ~/Qt5.2.0/5.2.0/gcc/bin/qmake
+	- qmake -v
+	- qmake
     - make -j3
 
 notifications:
