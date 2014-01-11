@@ -1,17 +1,14 @@
 before_install:
-    - if [ "$CXX" = "g++" ]; then sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y; fi
-    - if [ "$CXX" = "g++" ]; then sudo apt-get update -qq; fi
-    - if [ "$CXX" = "g++" ]; then sudo apt-get install g++-4.8; fi
-    - if [ "$CXX" = "g++" ]; then sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50; fi
-    - if [ "$CXX" = "g++" ]; then sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50; fi
-    - wget -O Qt5.2.0.tar.xz https://i.cloudup.com/sObBTBlNX8.xz
-    - mkdir ~/Qt5.2.0
-    - tar -xJvf Qt5.2.0.tar.xz -C ~/Qt5.2.0
-    - ls -l ~/Qt5.2.0/5.2.0/gcc/bin/qmake
-    - sudo chmod -R 777 ~/Qt5.2.0/
-    - ln -s ~/Qt5.2.0/5.2.0/gcc/mkspecs/linux-g++ ~/Qt5.2.0/5.2.0/gcc/mkspecs/linux-gcc
-    - PATH=/home/travis/Qt5.2.0/5.2.0/gcc/bin/:$PATH
-    - sudo apt-get install --yes libssh2-1-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev
+    - sudo apt-get install --yes libssh2-1-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev build-essential perl python git "^libxcb.*" libx11-xcb-dev libglu1-mesa-dev libxrender-dev flex bison gperf libicu-dev libxslt-dev ruby
+    - cd ~
+    - git clone git://gitorious.org/qt/qt5.git qt5
+    - cd qt5
+    - git checkout stable
+    - perl init-repository
+    - ./configure -opensource -nomake examples -nomake tests
+    - make -j 4
+    - sudo make install
+    - cd ~/PonyEdit/PonyEdit
 
 script:
     - qmake -v
