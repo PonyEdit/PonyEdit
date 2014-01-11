@@ -16,6 +16,8 @@ before_install:
     - sudo apt-get install libssh2-1-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev 
 
 script:
+    - ls -l ~/Qt5.2.0/5.2.0/gcc/bin/
+    - ls -l ~/Qt5.2.0/5.2.0/gcc/bin/qmake
     - ~/Qt5.2.0/5.2.0/gcc/bin/qmake -v
     - ~/Qt5.2.0/5.2.0/gcc/bin/qmake
     - make -j3
