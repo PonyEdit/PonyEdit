@@ -5,7 +5,7 @@ before_install:
     - cd qt5
     - git checkout stable
     - perl init-repository
-    - ./configure -opensource -nomake examples -nomake tests
+    - ./configure -opensource -nomake examples -nomake tests -confirm-license
     - make -j 4
     - sudo make install
     - cd ~/PonyEdit/PonyEdit
