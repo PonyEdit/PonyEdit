@@ -243,6 +243,7 @@ HEADERS  += \
 	ssh2/hostlog.h
 
 OTHER_FILES += \
+	.travis.yml \
 	slave/slave.pl \
 	syntaxdefs/perl.xml \
 	syntax/test.pl \
