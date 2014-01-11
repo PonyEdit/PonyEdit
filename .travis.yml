@@ -7,16 +7,13 @@ before_install:
     - wget -O Qt5.2.0.tar.xz https://i.cloudup.com/sObBTBlNX8.xz
     - mkdir ~/Qt5.2.0
     - tar -xJvf Qt5.2.0.tar.xz -C ~/Qt5.2.0
-    - ls -l ~/Qt5.2.0/
-    - ls -l ~/Qt5.2.0/5.2.0/
-    - ls -l ~/Qt5.2.0/5.2.0/gcc/
-    - ls -l ~/Qt5.2.0/5.2.0/gcc/bin/
+    - ls -l ~/Qt5.2.0/5.2.0/gcc/bin/qmake
     - sudo chmod -R 777 ~/Qt5.2.0/
     - ln -s ~/Qt5.2.0/5.2.0/gcc/mkspecs/linux-g++ ~/Qt5.2.0/5.2.0/gcc/mkspecs/linux-gcc
-    - sudo apt-get install libssh2-1-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev 
+    - sudo apt-get install --yes libssh2-1-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev 
 
 script:
-    - /home/travis/Qt5.2.0/5.2.0/gcc/bin/qmake -v
+    - ~/Qt5.2.0/5.2.0/gcc/bin/qmake -v
     - ~/Qt5.2.0/5.2.0/gcc/bin/qmake
     - make -j3
 
