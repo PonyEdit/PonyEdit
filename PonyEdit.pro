@@ -23,7 +23,7 @@ win32 {
     INCLUDEPATH += $$PWD/
 
     RC_FILE     = ponyedit.rc
-    LIBS	+= -llibssh2 -lssleay -llibeay
+	LIBS	+= -llibssh2 -lssleay32 -llibeay32
 }
 
 linux {
