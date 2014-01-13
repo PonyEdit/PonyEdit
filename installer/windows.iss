@@ -3,6 +3,8 @@
 #define QtDir "C:\Qt\Qt5.2.0\5.2.0\mingw48_32" 
 
 [Files]
+Source: "{#BuildDir}\release\ponyedit.exe"; DestDir: "{app}"
+Source: "{#SourceDir}\slave\slave.pl"; DestDir: "{app}\slave"
 Source: "{#SourceDir}\syntaxdefs\abap.xml"; DestDir: "{app}\syntaxdefs"
 Source: "{#SourceDir}\syntaxdefs\abc.xml"; DestDir: "{app}\syntaxdefs"
 Source: "{#SourceDir}\syntaxdefs\actionscript.xml"; DestDir: "{app}\syntaxdefs"
