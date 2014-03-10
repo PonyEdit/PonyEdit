@@ -579,12 +579,11 @@ void MainWindow::createMacDockMenu()
 #ifndef Q_OS_MAC
 	return;
 #else
-	//	TODO: Fix me for Qt5.
-	/*QMenu *dockMenu = new QMenu(this);
+	QMenu *dockMenu = new QMenu(this);
 
 	dockMenu->addAction(tr("New File"), this, SLOT(newFile()));
 
-	qt_mac_set_dock_menu(dockMenu);*/
+	qt_mac_set_dock_menu(dockMenu);
 #endif
 }
 

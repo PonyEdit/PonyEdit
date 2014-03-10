@@ -23,7 +23,16 @@ win32 {
     INCLUDEPATH += $$PWD/
 
     RC_FILE     = ponyedit.rc
-    LIBS	+= -llibssh2 -lssleay -llibeay
+	LIBS	+= -llibssh2 -lssleay32 -llibeay32
+}
+
+linux {
+    TARGET = PonyEdit
+    LIBS += -lz
+    LIBS += -lssh2 -lcrypto -lssl
+
+	QMAKE_CFLAGS += -Werror -Wunused-parameter
+	QMAKE_CXXFLAGS += -Werror -Wunused-parameter
 }
 
 macx {
@@ -57,9 +66,6 @@ macx {
     QMAKE_CXXFLAGS += -Werror -Wunused-parameter
 
     LIBS	+= -lssh2 -lcrypto -lssl
-}
-!macx {
-    TARGET = ponyedit
 }
 
 QT		+= core widgets gui network xml script webkit webkitwidgets printsupport
@@ -237,6 +243,7 @@ HEADERS  += \
 	ssh2/hostlog.h
 
 OTHER_FILES += \
+	.travis.yml \
 	slave/slave.pl \
 	syntaxdefs/perl.xml \
 	syntax/test.pl \

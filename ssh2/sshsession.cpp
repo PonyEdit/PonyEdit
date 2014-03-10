@@ -608,7 +608,6 @@ void SshSession::queueChannelUpdate()
 
 void SshSession::updateAllChannels()
 {
-	bool healthy = true;
 	bool goAgain = true;
 	while (goAgain)
 	{
@@ -652,7 +651,6 @@ void SshSession::updateAllChannels()
 			case SshChannel::Error:	//	Serious read/write error occurred. Assume the whole session is dead.
 				setErrorStatus(QObject::tr("Critical channel failure: ") + channel->getErrorDetails());
 				mThread->quit();		//	Abort QThread::exec, fall back to threadMain for cleanup.
-				healthy = false;
 				break;
 
 			case SshChannel::Disconnected:	//	Neatly disconnected. Just take it out of the roster, notify the host.

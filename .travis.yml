@@ -1,0 +1,22 @@
+before_install:
+    - sudo apt-get install --yes libssh2-1-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev build-essential perl python git "^libxcb.*" libx11-xcb-dev libglu1-mesa-dev libxrender-dev flex bison gperf libicu-dev libxslt-dev ruby
+    - cd ~
+    - git clone git://gitorious.org/qt/qt5.git qt5
+    - cd qt5
+    - git checkout stable
+    - perl init-repository
+    - ./configure -opensource -nomake examples -nomake tests -confirm-license
+    - make -j 4
+    - sudo make install
+    - cd ~/PonyEdit/PonyEdit
+
+script:
+    - qmake -v
+    - qmake
+    - make -j3
+
+notifications:
+  email:
+    - gary@pento.net
+    - thingalon@gmail.com
+
