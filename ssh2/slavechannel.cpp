@@ -15,7 +15,6 @@
 						"perl -e '"\
 							"use Digest::MD5;"\
 							"my $f=\".ponyedit/slave.pl\";"\
-							"die \"Old Perl $^V\\n\" if($^V lt v5.8.1);"\
 							"die \"No Slave\\n\" if(!-e $f);"\
 							"$d=Digest::MD5->new;"\
 							"open F,$f;"\
