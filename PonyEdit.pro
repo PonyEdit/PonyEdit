@@ -582,6 +582,7 @@ OTHER_FILES += \
 	syntaxdefs/abc.xml \
 	syntaxdefs/abap.xml \
 	syntaxdefs/markdown.xml \
+	syntaxdefs/jsx.xml \
 	ponyedit.rc \
 	tools/QsLog/QsLog.pri
 
