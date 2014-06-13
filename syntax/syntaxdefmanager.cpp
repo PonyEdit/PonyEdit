@@ -28,6 +28,8 @@ SyntaxDefManager::FilePattern::FilePattern(const QString& pattern)
 	rawPattern = pattern;
 	if ((isSimpleExtension = (pattern.startsWith("*.") && pattern.indexOf('*', 2) == -1)))
 		extension = pattern.mid(1);
+	else if ((isSimpleExtension = (pattern.indexOf('*') == -1)))
+		extension = pattern;
 	else
 		regExp = QRegExp(pattern, Qt::CaseSensitive, QRegExp::Wildcard);
 }
