@@ -1,14 +1,14 @@
 before_install:
-	- "sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test"
-	- "sudo apt-get -q update"
-	- "sudo apt-get install -y g++-4.8"
-	- "sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.8"
-	- "sudo apt-get install -qq alsa wget make ant curl cmake"
-	- "mkdir qt5"
-	- "wget -q -O qt5.zip http://ftp.osuosl.org/pub/musescore/utils/qt510.zip"
-	- "unzip -qq qt5.zip -d qt5"
-	- "export PATH=`pwd`/qt5/bin:$PATH"
-	- "export QT_PLUGIN_PATH=`pwd`/qt5/plugins"
+    - "sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test"
+    - "sudo apt-get -q update"
+    - "sudo apt-get install -y g++-4.8"
+    - "sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.8"
+    - "sudo apt-get install -qq alsa wget make ant curl cmake"
+    - "mkdir qt5"
+    - "wget -q -O qt5.zip http://ftp.osuosl.org/pub/musescore/utils/qt510.zip"
+    - "unzip -qq qt5.zip -d qt5"
+    - "export PATH=`pwd`/qt5/bin:$PATH"
+    - "export QT_PLUGIN_PATH=`pwd`/qt5/plugins"
 script:
     - qmake -v
     - qmake
