@@ -19,8 +19,8 @@ before_install:
     fi
 install:
   - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then
-      sudo apt-get install -qq libssh2-1-dev libssl-dev qt57base qt57script qt57webengine
-      source /opt/qt57/bin/qt57-env.sh
+      sudo apt-get install -qq libssh2-1-dev libssl-dev qt57base qt57script qt57webengine;
+      source /opt/qt57/bin/qt57-env.sh;
     else
       brew install qt5;
       brew link --force qt5;
