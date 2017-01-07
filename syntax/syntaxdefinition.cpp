@@ -84,11 +84,18 @@ bool SyntaxDefinition::link()
 				//	Parse it.
 				QString source = rule->getContext();
 				QSharedPointer<ContextDef> sourceContext;
+				int pos;
 				if (source.startsWith("##"))
 				{
 					SyntaxDefinition* includedDefinition = gSyntaxDefManager->getDefinitionForSyntax(source.mid(2));
 					if (includedDefinition)
 						sourceContext = includedDefinition->getDefaultContext();
+				}
+				else if ((pos = source.indexOf("##")) != -1)
+				{
+					SyntaxDefinition* includedDefinition = gSyntaxDefManager->getDefinitionForSyntax(source.mid(pos+2));
+					if(includedDefinition)
+						sourceContext = includedDefinition->getContext(source.left(pos));
 				}
 				else
 					sourceContext = getContext(source);

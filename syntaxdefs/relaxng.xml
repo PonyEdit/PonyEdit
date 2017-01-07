@@ -16,8 +16,8 @@
    - Namespace rules
 -->
 
-<language version="0.8"
-          kateversion="2.1"
+<language version="1"
+          kateversion="2.4"
           name="RELAX NG"
           section="Markup"
           extensions="*.rng;*.RNG"

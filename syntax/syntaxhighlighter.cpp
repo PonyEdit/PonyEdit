@@ -11,20 +11,46 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent, SyntaxDefinition* sy
 {
 	mSyntaxDefinition = syntaxDef;
 
+	// General
 	mDefaultColors.insert("dsnormal", QColor("black"));
 	mDefaultColors.insert("dskeyword", QColor("steelblue"));
+	mDefaultColors.insert("dsfunction", QColor("purple"));
+	mDefaultColors.insert("dsvariable", QColor("darkred"));
+	mDefaultColors.insert("dscontrolflow", QColor("steelblue"));
+	mDefaultColors.insert("dsoperator", QColor("black"));
+	mDefaultColors.insert("dsbuiltin", QColor("purple"));
+	mDefaultColors.insert("dsextension", QColor("purple"));
+	mDefaultColors.insert("dspreprocessor", QColor("darkslateblue"));
+	mDefaultColors.insert("dsattribute", QColor("darkslateblue"));
+
+	// Strings
+	mDefaultColors.insert("dschar", QColor("firebrick"));
+	mDefaultColors.insert("dsspecialchar", QColor("firebrick"));
+	mDefaultColors.insert("dsstring", QColor("firebrick"));
+	mDefaultColors.insert("dsverbatimstring", QColor("firebrick"));
+	mDefaultColors.insert("dsspecialstring", QColor("firebrick"));
+	mDefaultColors.insert("dsimport", QColor("firebrick"));
+
+	// Numbers
 	mDefaultColors.insert("dsdatatype", QColor("dodgerblue"));
 	mDefaultColors.insert("dsdecval", QColor("firebrick"));
 	mDefaultColors.insert("dsbasen", QColor("firebrick"));
 	mDefaultColors.insert("dsfloat", QColor("firebrick"));
-	mDefaultColors.insert("dschar", QColor("firebrick"));
-	mDefaultColors.insert("dsstring", QColor("firebrick"));
+	mDefaultColors.insert("dsconstant", QColor("firebrick"));
+
+	// Comments
 	mDefaultColors.insert("dscomment", QColor("limegreen"));
-	mDefaultColors.insert("dsothers", QColor("purple"));
-	mDefaultColors.insert("dsalert", QColor("red"));
-	mDefaultColors.insert("dsfunction", QColor("purple"));
+	mDefaultColors.insert("dsdocumentation", QColor("limegreen"));
+	mDefaultColors.insert("dsannotation", QColor("dodgerblue"));
+	mDefaultColors.insert("dscommentvar", QColor("steelblue"));
 	mDefaultColors.insert("dsregionmarker", QColor("chocolate"));
+
+	// Others
+	mDefaultColors.insert("dsinformation", QColor("red"));
+	mDefaultColors.insert("dswarning", QColor("red"));
+	mDefaultColors.insert("dsalert", QColor("red"));
 	mDefaultColors.insert("dserror", QColor("red"));
+	mDefaultColors.insert("dsothers", QColor("purple"));
 }
 
 void SyntaxHighlighter::highlightBlock(const QString &fullText)

@@ -9,16 +9,17 @@
     <!ENTITY convspec "diouxXeEfFgGaAcsP&#37;">
 ]>
 <language
-    name="C++11"
+    name="ISO C++"
     section="Sources"
-    version="1.61"
-    kateversion="2.4"
-    indenter="cppstyle"
+    version="6"
+    kateversion="5.0"
+    indenter="cstyle"
+    style="C++"
     mimetype="text/x-c++src;text/x-c++hdr;text/x-chdr"
     extensions="*.c++;*.cxx;*.cpp;*.cc;*.C;*.h;*.hh;*.H;*.h++;*.hxx;*.hpp;*.hcc;*.moc"
     author="Alex Turbov (i.zaufi@gmail.com)"
     license="LGPL"
-    priority="7"
+    priority="6"
   >
   <!--
     Complete list of changes by Alex Turbov (I.zaufi@gmail.com)
@@ -26,33 +27,40 @@
     http://kde-files.org/content/show.php?content=90660
   -->
   <highlighting>
+    <list name="controlflow">
+      <item> break </item>
+      <item> case </item>
+      <item> catch </item>
+      <item> continue </item>
+      <item> default </item>
+      <item> do </item>
+      <item> else </item>
+      <item> for </item>
+      <item> goto </item>
+      <item> if </item>
+      <item> return </item>
+      <item> switch </item>
+      <item> throw </item>
+      <item> try </item>
+      <item> while </item>
+    </list>
     <list name="keywords">
       <item> alignof </item>
       <item> alignas </item>
       <item> asm </item>
       <item> auto </item>
-      <item> break </item>
-      <item> case </item>
-      <item> catch </item>
       <item> class </item>
       <item> constexpr </item>
       <item> const_cast </item>
-      <item> continue </item>
       <item> decltype </item>
-      <item> default </item>
       <item> delete </item>
-      <item> do </item>
       <item> dynamic_cast</item>
-      <item> else </item>
       <item> enum </item>
       <item> explicit </item>
       <item> export </item> <!-- Unused but reserved for future use -->
       <item> false </item>
       <item> final </item> <!-- According N3272 -->
       <item> friend </item>
-      <item> for </item>
-      <item> goto </item>
-      <item> if </item>
       <item> inline </item>
       <item> namespace </item>
       <item> new </item>
@@ -64,24 +72,19 @@
       <item> protected </item>
       <item> public </item>
       <item> reinterpret_cast </item>
-      <item> return </item>
       <item> sizeof </item>
       <item> static_assert </item>
       <item> static_cast </item>
       <item> struct </item>
-      <item> switch </item>
       <item> template </item>
       <item> this </item>
-      <item> throw </item>
       <item> true </item>
-      <item> try </item>
       <item> typedef </item>
       <item> typeid </item>
       <item> typename </item>
       <item> union </item>
       <item> using </item>
       <item> virtual </item>
-      <item> while </item>
       <!-- Alternative operators (see 2.12) -->
       <item> and </item>
       <item> and_eq </item>
@@ -105,8 +108,11 @@
 
     <!-- 7.6 Attributes -->
     <list name="attributes">
+      <!-- C++11 -->
       <item> noreturn </item>
       <item> carries_dependency </item>
+      <!-- C++1y -->
+      <item> deprecated </item>
     </list>
 
     <list name="types">
@@ -130,7 +136,32 @@
       <item> uint16_t </item>
       <item> uint32_t </item>
       <item> uint64_t </item>
+      <item> int_least8_t </item>
+      <item> int_least16_t </item>
+      <item> int_least32_t </item>
+      <item> int_least64_t </item>
+      <item> uint_least8_t </item>
+      <item> uint_least16_t </item>
+      <item> uint_least32_t </item>
+      <item> uint_least64_t </item>
+      <item> int_fast8_t </item>
+      <item> int_fast16_t </item>
+      <item> int_fast32_t </item>
+      <item> int_fast64_t </item>
+      <item> uint_fast8_t </item>
+      <item> uint_fast16_t </item>
+      <item> uint_fast32_t </item>
+      <item> uint_fast64_t </item>
+      <item> size_t </item>
+      <item> ssize_t </item>
       <item> wchar_t </item>
+      <item> intptr_t </item>
+      <item> uintptr_t </item>
+      <item> intmax_t </item>
+      <item> uintmax_t </item>
+      <item> ptrdiff_t </item>
+      <item> sig_atomic_t </item>
+      <item> wint_t </item>
     </list>
     <list name="modifiers">
       <item> const </item>
@@ -158,8 +189,8 @@
     <contexts>
       <context name="Normal" attribute="Normal Text" lineEndContext="#stay">
         <DetectSpaces />
-        <RegExpr attribute="Preprocessor" context="Outscoped" String="(#|%\:|\?\?=)\s*if\s+(0|false)\s*" beginRegion="PP" firstNonSpace="true" />
-        <RegExpr attribute="Preprocessor" context="Inscoped" String="(#|%\:|\?\?=)\s*if\s+(1|true)\s*" beginRegion="PP" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="Outscoped" String="(#|%\:|\?\?=)\s*if\s+(0|false)\s*" beginRegion="PP" firstNonSpace="true" insensitive="false" />
+        <RegExpr attribute="Preprocessor" context="Inscoped" String="(#|%\:|\?\?=)\s*if\s+(1|true)\s*" beginRegion="PP" firstNonSpace="true" insensitive="false" />
         <IncludeRules context="Main" />
       </context>
 
@@ -179,20 +210,21 @@
         <RegExpr attribute="Normal Text" context="UDLOperator" String="operator\s*&quot;&quot; _[_0-9A-Za-z]*\b" lookAhead="true" />
         <RegExpr attribute="Error" context="#stay" String="operator\s*&quot;&quot; [_0-9A-Za-z]*\b" />
         <!-- Match keywords -->
+        <keyword attribute="Control Flow" context="#stay" String="controlflow" />
         <keyword attribute="Keyword" context="#stay" String="keywords" />
         <!-- Detect attributes -->
-        <Detect2Chars attribute="Normal Text" context="Attribute" char="[" char1="[" />
-        <!-- Match GCC extensions -->
-        <IncludeRules context="DetectGccExtensions##GCCExtensions" />
+        <Detect2Chars attribute="Symbol" context="Attribute" char="[" char1="[" />
         <!-- Match numbers -->
-        <!-- ATTENTION Builtin number detectors have strange behaviour and definitely lack of required features
-          -->
+        <!-- ATTENTION Builtin number detectors have strange behaviour and definitely lack of required features -->
         <!-- NOTE Order is important! -->
-        <RegExpr attribute="Hex" context="#stay" String="[\+\-]?0x[0-9A-Fa-f]+([Uu][Ll]{0,2}|[Ll]{0,2}[Uu]?|_[_0-9A-Za-z]*)?\b" />
-        <RegExpr attribute="Float" context="#stay" String="[\+\-]?([0-9]+[Ee][\+\-]?[0-9]+|([0-9]+\.|\.[0-9]+|[0-9]+\.[0-9]+)([Ee][\+\-]?[0-9]+)?)[FfLl]?" />
-        <RegExpr attribute="Octal" context="#stay" String="[\+\-]?0[0-7]+([Uu][Ll]{0,2}|[Ll]{0,2}[Uu]?|_[_0-9A-Za-z]*)?\b" />
-        <RegExpr attribute="Decimal" context="#stay" String="[\+\-]?(0|[1-9][0-9]*)([Uu][Ll]{0,2}|[Ll]{0,2}[Uu]?|_[_0-9A-Za-z]*)?\b" />
-        <RegExpr attribute="Error" context="#stay" String="[\+\-]?(0|[1-9][0-9]*)[0-9A-Za-z][_0-9A-Za-z]*\b" />
+        <RegExpr attribute="Hex" context="#stay" String="[\+\-]?0x[0-9A-Fa-f]('?[0-9A-Fa-f]+)*([Uu][Ll]{0,2}|[Ll]{0,2}[Uu]?|_[_0-9A-Za-z]*)?\b" />
+        <RegExpr attribute="Binary" context="#stay" String="0[Bb][01]('?[01]+)*([Uu][Ll]{0,2}|[Ll]{0,2}[Uu]?|_[_0-9A-Za-z]*)?\b" />
+        <Float attribute="Float" context="#stay">
+          <AnyChar String="FfLl" attribute="Float" context="#stay"/>
+        </Float>
+        <RegExpr attribute="Octal" context="#stay" String="[\+\-]?0'?[0-7]('?[0-7]+)*([Uu][Ll]{0,2}|[Ll]{0,2}[Uu]?|_[_0-9A-Za-z]*)?\b" />
+        <RegExpr attribute="Decimal" context="#stay" String="[\+\-]?(0|[1-9]('?[0-9]+)*)([Uu][Ll]{0,2}|[Ll]{0,2}[Uu]?|_[_0-9A-Za-z]*)?\b" />
+        <RegExpr attribute="Error" context="#stay" String="[\+\-]?(0x?|[1-9][0-9]*)[0-9A-Za-z][_0-9A-Za-z]*\b" />
         <!-- Match string literals -->
         <DetectChar attribute="String" context="String" char="&quot;" />
         <Detect2Chars attribute="String" context="String" char="U" char1="&quot;" />
@@ -205,6 +237,8 @@
         <Detect2Chars attribute="String" context="Char Literal" char="L" char1="'" />
         <Detect2Chars attribute="String" context="U-Char Literal" char="u" char1="'" />
         <Detect2Chars attribute="String" context="U-Char Literal" char="U" char1="'" />
+        <!-- Match GCC extensions -->
+        <IncludeRules context="DetectGccExtensions##GCCExtensions" />
         <!-- Match most used namespaces and styles -->
         <StringDetect attribute="Standard Classes" context="Standard Classes" String="std::" />
         <StringDetect attribute="Boost Stuff" context="Boost Stuff" String="boost::" />
@@ -227,8 +261,8 @@
         <DetectIdentifier />
         <!-- Match comments -->
         <IncludeRules context="##Doxygen" />
-        <IncludeRules context="AlignedComments" />
-        <Detect2Chars attribute="Comment" context="Commentar 2" char="/" char1="*" beginRegion="Comment" />
+        <Detect2Chars attribute="Comment" context="Comment 1" char="/" char1="/" />
+        <Detect2Chars attribute="Comment" context="Comment 2" char="/" char1="*" beginRegion="Comment" />
         <!-- Match scope regions -->
         <DetectChar attribute="Symbol" context="#stay" char="{" beginRegion="Brace1" />
         <DetectChar attribute="Symbol" context="#stay" char="}" endRegion="Brace1" />
@@ -280,7 +314,7 @@
         <LineContinue attribute="String" context="#stay" />
         <HlCStringChar attribute="String Char" context="#stay" />
         <IncludeRules context="Universal Char" />
-        <RegExpr attribute="String Char" context="#stay" String="%[^&quot;&convspec;]*[&convspec;]" />
+        <RegExpr attribute="String Char" context="#stay" String="%[^&quot;&convspec;\s]*[&convspec;]" />
         <DetectChar attribute="String" context="UDLStringSuffix" char="&quot;" />
       </context>
 
@@ -291,14 +325,16 @@
       </context>
 
       <context name="Attribute" attribute="Attribute" lineEndContext="#stay">
-        <keyword attribute="Attribute" context="#stay" String="attributes" />
-        <Detect2Chars attribute="Normal Text" context="#pop" char="]" char1="]" />
-        <DetectIdentifier context="#stay" attribute="Error" />
+        <keyword attribute="Standard Attribute" context="#stay" String="attributes" />
+        <Detect2Chars attribute="Symbol" context="#pop" char="]" char1="]" />
+        <AnyChar context="#stay" String="&ns_punctuators;" attribute="Symbol" />
+        <!-- Attributes may contain some text: [[deprecated("Reason text")]] -->
+        <DetectChar attribute="String" context="String" char="&quot;" />
       </context>
 
       <context name="RawString" attribute="String" lineEndContext="#stay" dynamic="true">
         <LineContinue attribute="String" context="#stay" />
-        <RegExpr attribute="String Char" context="#stay" String="%[^&quot;&convspec;]*[&convspec;]" />
+        <RegExpr attribute="String Char" context="#stay" String="%[^&quot;&convspec;\s]*[&convspec;]" />
         <RegExpr attribute="String" context="#pop" String="\)%2&quot;" dynamic="true"/>
       </context>
 
@@ -328,7 +364,7 @@
         <IncludeRules context="DetectNSEnd" />
       </context>
 
-      <context name="Commentar 1" attribute="Comment" lineEndContext="#pop">
+      <context name="Comment 1" attribute="Comment" lineEndContext="#pop">
         <LineContinue attribute="Comment" context="#stay" />
         <DetectSpaces />
         <IncludeRules context="##Alerts" />
@@ -336,7 +372,7 @@
         <DetectIdentifier />
       </context>
 
-      <context name="Commentar 2" attribute="Comment" lineEndContext="#stay">
+      <context name="Comment 2" attribute="Comment" lineEndContext="#stay">
         <DetectSpaces />
         <LineContinue attribute="Comment" context="#stay" />
         <Detect2Chars attribute="Comment" context="#pop" char="*" char1="/" endRegion="Comment" />
@@ -346,24 +382,31 @@
       </context>
 
       <context name="AfterHash" attribute="Error" lineEndContext="#pop">
-        <!-- define, elif, else, endif, error, if, ifdef, ifndef, include, include_next, line, pragma, undef, warning -->
-        <RegExpr attribute="Preprocessor" context="Preprocessor" String="(#|%\:|\?\?=)\s*if(?:def|ndef)?(?=\s+\S)" beginRegion="PP" firstNonSpace="true" />
-        <RegExpr attribute="Preprocessor" context="Preprocessor" String="(#|%\:|\?\?=)\s*endif" endRegion="PP" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="Include" String="#\s*(?:include|include_next)" insensitive="true" firstNonSpace="true" />
+
+        <!-- define, elif, else, endif, error, if, ifdef, ifndef, line, pragma, undef, warning -->
+        <RegExpr attribute="Preprocessor" context="Preprocessor" String="(#|%\:|\?\?=)\s*if(?:def|ndef)?(?=(?:\(|\s+)\S)" beginRegion="PP" firstNonSpace="true" insensitive="false" />
+        <RegExpr attribute="Preprocessor" context="Preprocessor" String="(#|%\:|\?\?=)\s*endif" endRegion="PP" firstNonSpace="true" insensitive="false" />
         <!-- Switch to seperate context for multiline #defines -->
-        <RegExpr attribute="Preprocessor" context="Define" String="(#|%\:|\?\?=)\s*(cmake)?define.*((?=\\))" firstNonSpace="true" lookAhead="true" />
-        <RegExpr attribute="Preprocessor" context="Preprocessor" String="(#|%\:|\?\?=)\s*(?:el(?:se|if)|include(?:_next)?|(cmake)?define|undef|line|error|warning|pragma)" insensitive="true" firstNonSpace="true" />
-        <RegExpr attribute="Preprocessor" context="Preprocessor" String="(#|%\:|\?\?=)\s+[0-9]+" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="Define" String="(#|%\:|\?\?=)\s*(cmake)?define.*((?=\\))" firstNonSpace="true" lookAhead="true" insensitive="false" />
+        <RegExpr attribute="Preprocessor" context="Preprocessor" String="(#|%\:|\?\?=)\s*(?:el(?:se|if)|(cmake)?define|undef|line|error|warning|pragma)" insensitive="false" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="Preprocessor" String="(#|%\:|\?\?=)\s+[0-9]+" firstNonSpace="true" insensitive="false" />
+      </context>
+
+      <context attribute="Preprocessor" lineEndContext="#pop" name="Include">
+        <LineContinue attribute="Preprocessor" context="#stay"/>
+        <RangeDetect attribute="Prep. Lib" context="#stay" char="&quot;" char1="&quot;"/>
+        <RangeDetect attribute="Prep. Lib" context="#stay" char="&lt;" char1="&gt;"/>
+        <IncludeRules context="Preprocessor" />
       </context>
 
       <context name="Preprocessor" attribute="Preprocessor" lineEndContext="#pop">
         <LineContinue attribute="Preprocessor" context="#stay" />
         <keyword attribute="Standard Macros" context="#stay" String="StdMacros" />
         <IncludeRules context="GNUMacros##GCCExtensions" />
-        <RangeDetect attribute="Prep. Lib" context="#stay" char="&quot;" char1="&quot;" />
-        <RangeDetect attribute="Prep. Lib" context="#stay" char="&lt;" char1="&gt;" />
         <IncludeRules context="##Doxygen" />
-        <Detect2Chars attribute="Comment" context="Commentar/Preprocessor" char="/" char1="*" beginRegion="Comment2" />
-        <IncludeRules context="AlignedComments" />
+        <Detect2Chars attribute="Comment" context="Comment/Preprocessor" char="/" char1="*" beginRegion="Comment2" />
+        <Detect2Chars attribute="Comment" context="Comment 1" char="/" char1="/" />
       </context>
 
       <context name="Define" attribute="Preprocessor" lineEndContext="#pop">
@@ -373,7 +416,7 @@
         <IncludeRules context="GNUMacros##GCCExtensions" />
       </context>
 
-      <context name="Commentar/Preprocessor" attribute="Comment" lineEndContext="#stay">
+      <context name="Comment/Preprocessor" attribute="Comment" lineEndContext="#stay">
         <DetectSpaces />
         <Detect2Chars attribute="Comment" context="#pop" char="*" char1="/" endRegion="Comment2" />
         <DetectIdentifier />
@@ -385,32 +428,33 @@
         <IncludeRules context="##Modelines" />
         <DetectIdentifier />
         <IncludeRules context="##Doxygen" />
-        <IncludeRules context="AlignedComments" />
+        <Detect2Chars attribute="Comment" context="Comment 1" char="/" char1="/" />
         <!-- Do not try to detect "C" style comments inside outscoped text
              to prevent incorrect highlighting in case of overlapped (or not closed properly)
              comment block...
 
-             <Detect2Chars attribute="Comment" context="Commentar 2" char="/" char1="*" beginRegion="Comment" />
+             <Detect2Chars attribute="Comment" context="Comment 2" char="/" char1="*" beginRegion="Comment" />
         -->
-        <RegExpr attribute="Comment" context="Outscoped intern" String="(#|%\:|\?\?=)\s*if" beginRegion="PP" firstNonSpace="true" />
+        <RegExpr attribute="Comment" context="Outscoped intern" String="(#|%\:|\?\?=)\s*if" beginRegion="PP" firstNonSpace="true" insensitive="false" />
         <LineContinue context="#stay" />
       </context>
 
       <context name="Outscoped" attribute="Comment" lineEndContext="#stay">
         <IncludeRules context="Outscoped Common" />
-        <RegExpr attribute="Preprocessor" context="#pop" String="(#|%\:|\?\?=)\s*el(?:se|if)" firstNonSpace="true" />
-        <RegExpr attribute="Preprocessor" context="#pop" String="(#|%\:|\?\?=)\s*endif" endRegion="PP" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="#pop" String="(#|%\:|\?\?=)\s*el(?:se|if)" firstNonSpace="true" insensitive="false" />
+        <RegExpr attribute="Preprocessor" context="#pop" String="(#|%\:|\?\?=)\s*endif" endRegion="PP" firstNonSpace="true" insensitive="false" />
       </context>
 
       <context name="Outscoped 2" attribute="Comment" lineEndContext="#stay">
         <IncludeRules context="Outscoped Common" />
-        <RegExpr attribute="Preprocessor" context="#pop#pop" String="(#|%\:|\?\?=)\s*endif" endRegion="PP" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="#pop#pop" String="(#|%\:|\?\?=)\s*endif" endRegion="PP" firstNonSpace="true" insensitive="false" />
       </context>
 
       <context name="Inscoped" attribute="Normal Text" lineEndContext="#stay">
         <DetectSpaces />
-        <RegExpr attribute="Preprocessor" context="Outscoped" String="(#|%\:|\?\?=)\s*if\s+(0|false)\s*" beginRegion="PP" firstNonSpace="true" />
-        <RegExpr attribute="Preprocessor" context="Outscoped 2" String="(#|%\:|\?\?=)\s*el(?:se|if)" firstNonSpace="true" />
+        <RegExpr attribute="Preprocessor" context="Outscoped" String="(#|%\:|\?\?=)\s*if\s+(0|false)\s*" beginRegion="PP" firstNonSpace="true" insensitive="false" />
+        <RegExpr attribute="Preprocessor" context="Outscoped 2" String="(#|%\:|\?\?=)\s*el(?:se|if)" firstNonSpace="true" insensitive="false" />
+        <RegExpr attribute="Preprocessor" context="#pop" String="(#|%\:|\?\?=)\s*endif" endRegion="PP" firstNonSpace="true" insensitive="false" />
         <IncludeRules context="Main" />
       </context>
 
@@ -420,59 +464,42 @@
         <IncludeRules context="##Modelines" />
         <DetectIdentifier />
         <IncludeRules context="##Doxygen" />
-        <IncludeRules context="AlignedComments" />
-        <Detect2Chars attribute="Comment" context="Commentar 2" char="/" char1="*" beginRegion="Comment" />
-        <RegExpr attribute="Comment" context="Outscoped intern" String="(#|%\:|\?\?=)\s*if" beginRegion="PP" firstNonSpace="true" />
-        <RegExpr attribute="Comment" context="#pop" String="(#|%\:|\?\?=)\s*endif" endRegion="PP" firstNonSpace="true" />
-      </context>
-
-      <context name="AlignedComments" lineEndContext="#stay" attribute="Comment">
-        <Detect2Chars attribute="Region Marker" context="Commentar 1" column="0" char="/" char1="/" />
-        <Detect2Chars attribute="Region Marker" context="Commentar 1" column="4" char="/" char1="/" />
-        <Detect2Chars attribute="Region Marker" context="Commentar 1" column="8" char="/" char1="/" />
-        <Detect2Chars attribute="Region Marker" context="Commentar 1" column="12" char="/" char1="/" />
-        <Detect2Chars attribute="Region Marker" context="Commentar 1" column="16" char="/" char1="/" />
-        <Detect2Chars attribute="Region Marker" context="Commentar 1" column="20" char="/" char1="/" />
-        <Detect2Chars attribute="Region Marker" context="Commentar 1" column="24" char="/" char1="/" />
-        <Detect2Chars attribute="Region Marker" context="Commentar 1" column="28" char="/" char1="/" />
-        <Detect2Chars attribute="Region Marker" context="Commentar 1" column="32" char="/" char1="/" />
-        <Detect2Chars attribute="Region Marker" context="Commentar 1" column="36" char="/" char1="/" />
-        <Detect2Chars attribute="Region Marker" context="Commentar 1" column="40" char="/" char1="/" />
-        <Detect2Chars attribute="Region Marker" context="Commentar 1" column="44" char="/" char1="/" />
-        <Detect2Chars attribute="Region Marker" context="Commentar 1" column="48" char="/" char1="/" />
-        <Detect2Chars attribute="Region Marker" context="Commentar 1" column="52" char="/" char1="/" />
-        <Detect2Chars attribute="Region Marker" context="Commentar 1" column="56" char="/" char1="/" />
-        <Detect2Chars attribute="Region Marker" context="Commentar 1" column="60" char="/" char1="/" />
-        <Detect2Chars attribute="Comment" context="Commentar 1" char="/" char1="/" />
+        <Detect2Chars attribute="Comment" context="Comment 1" char="/" char1="/" />
+        <Detect2Chars attribute="Comment" context="Comment 2" char="/" char1="*" beginRegion="Comment" />
+        <RegExpr attribute="Comment" context="Outscoped intern" String="(#|%\:|\?\?=)\s*if" beginRegion="PP" firstNonSpace="true" insensitive="false" />
+        <RegExpr attribute="Comment" context="#pop" String="(#|%\:|\?\?=)\s*endif" endRegion="PP" firstNonSpace="true" insensitive="false" />
       </context>
     </contexts>
 
     <itemDatas>
       <itemData name="Normal Text"        defStyleNum="dsNormal"   spellChecking="false" />
+      <itemData name="Control Flow"       defStyleNum="dsControlFlow" spellChecking="false" />
       <itemData name="Keyword"            defStyleNum="dsKeyword"  spellChecking="false" />
       <itemData name="Data Type"          defStyleNum="dsDataType" spellChecking="false" />
-      <itemData name="Type Modifiers"     defStyleNum="dsDataType" spellChecking="false" />
-      <itemData name="Attribute"          defStyleNum="dsKeyword"  spellChecking="false" bold="false" italic="true" />
+      <itemData name="Type Modifiers"     defStyleNum="dsAttribute" spellChecking="false" />
+      <itemData name="Attribute"          defStyleNum="dsAttribute" spellChecking="false" bold="false" italic="true" />
+      <itemData name="Standard Attribute" defStyleNum="dsAttribute" spellChecking="false" bold="false" italic="true" />
       <itemData name="Decimal"            defStyleNum="dsDecVal"   spellChecking="false" />
       <itemData name="Octal"              defStyleNum="dsBaseN"    spellChecking="false" />
       <itemData name="Hex"                defStyleNum="dsBaseN"    spellChecking="false" />
+      <itemData name="Binary"             defStyleNum="dsBaseN"    spellChecking="false" />
       <itemData name="Float"              defStyleNum="dsFloat"    spellChecking="false" />
       <itemData name="Char"               defStyleNum="dsChar"     spellChecking="false" />
       <itemData name="String"             defStyleNum="dsString"   spellChecking="true"  />
-      <itemData name="String Char"        defStyleNum="dsChar"     spellChecking="false" />
+      <itemData name="String Char"        defStyleNum="dsSpecialChar" spellChecking="false" />
       <itemData name="Comment"            defStyleNum="dsComment"  spellChecking="true"  />
       <itemData name="Symbol"             defStyleNum="dsNormal"   spellChecking="false" />
       <itemData name="Separator Symbol"   defStyleNum="dsNormal"   spellChecking="false" />
-      <itemData name="Data Members (m_*)" defStyleNum="dsNormal"   spellChecking="false" />
-      <itemData name="Globals (g_*)"      defStyleNum="dsNormal"   spellChecking="false" />
-      <itemData name="Statics (s_*)"      defStyleNum="dsNormal"   spellChecking="false" />
-      <itemData name="Types (*_t/*_type)" defStyleNum="dsNormal"   spellChecking="false" />
+      <itemData name="Data Members (m_*)" defStyleNum="dsVariable" spellChecking="false" />
+      <itemData name="Globals (g_*)"      defStyleNum="dsVariable" spellChecking="false" />
+      <itemData name="Statics (s_*)"      defStyleNum="dsVariable" spellChecking="false" />
+      <itemData name="Types (*_t/*_type)" defStyleNum="dsDataType" spellChecking="false" />
       <itemData name="CONSTS/MACROS"      defStyleNum="dsNormal"   spellChecking="false" />
-      <itemData name="Preprocessor"       defStyleNum="dsOthers"   spellChecking="false" />
-      <itemData name="Prep. Lib"          defStyleNum="dsOthers"   spellChecking="false" />
+      <itemData name="Preprocessor"       defStyleNum="dsPreprocessor" spellChecking="false" />
+      <itemData name="Prep. Lib"          defStyleNum="dsImport"   spellChecking="false" />
       <itemData name="Standard Macros"    defStyleNum="dsOthers"   spellChecking="false" />
-      <itemData name="Standard Classes"   defStyleNum="dsNormal"   spellChecking="false" color="#59ff00" selColor="#59ff00" />
-      <itemData name="Boost Stuff"        defStyleNum="dsNormal"   spellChecking="false" color="#23a45b" selColor="#23a45b" />
+      <itemData name="Standard Classes"   defStyleNum="dsBuiltIn"  spellChecking="false" />
+      <itemData name="Boost Stuff"        defStyleNum="dsExtension" spellChecking="false" />
       <itemData name="Internals"          defStyleNum="dsNormal"   spellChecking="false" color="#808080" selColor="#808080" />
       <itemData name="Region Marker"      defStyleNum="dsRegionMarker" spellChecking="false" />
       <itemData name="Error"              defStyleNum="dsError"    spellChecking="false" />

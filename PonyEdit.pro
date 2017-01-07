@@ -245,346 +245,280 @@ HEADERS  += \
 OTHER_FILES += \
 	.travis.yml \
 	slave/slave.pl \
-	syntaxdefs/perl.xml \
 	syntax/test.pl \
-	syntaxdefs/zonnon.xml \
-	syntaxdefs/yaml.xml \
-	syntaxdefs/yacc.xml \
-	syntaxdefs/yacas.xml \
-	syntaxdefs/xul.xml \
-	syntaxdefs/xslt.xml \
-	syntaxdefs/xorg.xml \
-	syntaxdefs/xmldebug.xml \
-	syntaxdefs/xml.xml \
-	syntaxdefs/xharbour.xml \
-	syntaxdefs/winehq.xml \
-	syntaxdefs/vrml.xml \
-	syntaxdefs/vhdl.xml \
-	syntaxdefs/verilog.xml \
-	syntaxdefs/velocity.xml \
-	syntaxdefs/uscript.xml \
-	syntaxdefs/txt2tags.xml \
-	syntaxdefs/tibasic.xml \
-	syntaxdefs/texinfo.xml \
-	syntaxdefs/tcl.xml \
-	syntaxdefs/systemc.xml \
-	syntaxdefs/stata.xml \
-	syntaxdefs/sql.xml \
-	syntaxdefs/sql-postgresql.xml \
-	syntaxdefs/sql-mysql.xml \
-	syntaxdefs/spice.xml \
-	syntaxdefs/sml.xml \
-	syntaxdefs/sisu.xml \
-	syntaxdefs/sieve.xml \
-	syntaxdefs/sgml.xml \
-	syntaxdefs/sci.xml \
-	syntaxdefs/scheme.xml \
-	syntaxdefs/scala.xml \
-	syntaxdefs/sather.xml \
-	syntaxdefs/ruby.xml \
-	syntaxdefs/rsiidl.xml \
-	syntaxdefs/rpmspec.xml \
-	syntaxdefs/roff.xml \
-	syntaxdefs/rib.xml \
-	syntaxdefs/rhtml.xml \
-	syntaxdefs/rexx.xml \
-	syntaxdefs/rapidq.xml \
-	syntaxdefs/r.xml \
-	syntaxdefs/qml.xml \
-	syntaxdefs/python.xml \
-	syntaxdefs/purebasic.xml \
-	syntaxdefs/prolog.xml \
-	syntaxdefs/progress.xml \
-	syntaxdefs/povray.xml \
-	syntaxdefs/postscript.xml \
-	syntaxdefs/pike.xml \
-	syntaxdefs/picsrc.xml \
-	syntaxdefs/php.xml \
-	syntaxdefs/pgn.xml \
-	syntaxdefs/pango.xml \
-	syntaxdefs/opal.xml \
-	syntaxdefs/octave.xml \
-	syntaxdefs/ocaml.xml \
-	syntaxdefs/objectivecpp.xml \
-	syntaxdefs/objectivec.xml \
-	syntaxdefs/noweb.xml \
-	syntaxdefs/nemerle.xml \
-	syntaxdefs/nasm.xml \
-	syntaxdefs/mup.xml \
-	syntaxdefs/monobasic.xml \
-	syntaxdefs/modula-2.xml \
-	syntaxdefs/modelica.xml \
-	syntaxdefs/mips.xml \
-	syntaxdefs/mergetagtext.xml \
-	syntaxdefs/mediawiki.xml \
-	syntaxdefs/maxima.xml \
-	syntaxdefs/matlab.xml \
-	syntaxdefs/mason.xml \
-	syntaxdefs/mandoc.xml \
-	syntaxdefs/makefile.xml \
-	syntaxdefs/mab.xml \
-	syntaxdefs/m3u.xml \
-	syntaxdefs/lua.xml \
-	syntaxdefs/lsl.xml \
-	syntaxdefs/lpc.xml \
-	syntaxdefs/logtalk.xml \
-	syntaxdefs/literate-haskell.xml \
-	syntaxdefs/lilypond.xml \
-	syntaxdefs/lex.xml \
-	syntaxdefs/ldif.xml \
-	syntaxdefs/latex.xml \
-	syntaxdefs/kbasic.xml \
-	syntaxdefs/jsp.xml \
-	syntaxdefs/json.xml \
-	syntaxdefs/javascript.xml \
-	syntaxdefs/javadoc.xml \
-	syntaxdefs/java.xml \
-	syntaxdefs/ini.xml \
-	syntaxdefs/inform.xml \
-	syntaxdefs/ilerpg.xml \
-	syntaxdefs/idl.xml \
-	syntaxdefs/idconsole.xml \
-	syntaxdefs/html.xml \
-	syntaxdefs/haxe.xml \
-	syntaxdefs/haskell.xml \
-	syntaxdefs/grammar.xml \
-	syntaxdefs/go.xml \
-	syntaxdefs/gnuassembler.xml \
-	syntaxdefs/glsl.xml \
-	syntaxdefs/gettext.xml \
-	syntaxdefs/gdl.xml \
-	syntaxdefs/gdb.xml \
-	syntaxdefs/gap.xml \
-	syntaxdefs/fstab.xml \
-	syntaxdefs/freebasic.xml \
-	syntaxdefs/fortran.xml \
-	syntaxdefs/fgl-per.xml \
-	syntaxdefs/fgl-4gl.xml \
-	syntaxdefs/ferite.xml \
-	syntaxdefs/euphoria.xml \
-	syntaxdefs/erlang.xml \
-	syntaxdefs/email.xml \
-	syntaxdefs/eiffel.xml \
-	syntaxdefs/e.xml \
-	syntaxdefs/dtd.xml \
-	syntaxdefs/doxygenlua.xml \
-	syntaxdefs/doxygen.xml \
-	syntaxdefs/djangotemplate.xml \
-	syntaxdefs/diff.xml \
-	syntaxdefs/desktop.xml \
-	syntaxdefs/debiancontrol.xml \
-	syntaxdefs/debianchangelog.xml \
-	syntaxdefs/d.xml \
-	syntaxdefs/cue.xml \
-	syntaxdefs/css.xml \
-	syntaxdefs/cs.xml \
-	syntaxdefs/cpp.xml \
-	syntaxdefs/component-pascal.xml \
-	syntaxdefs/commonlisp.xml \
-	syntaxdefs/coldfusion.xml \
-	syntaxdefs/cmake.xml \
-	syntaxdefs/clipper.xml \
-	syntaxdefs/cisco.xml \
-	syntaxdefs/changelog.xml \
-	syntaxdefs/cgis.xml \
-	syntaxdefs/cg.xml \
-	syntaxdefs/c.xml \
-	syntaxdefs/boo.xml \
-	syntaxdefs/bmethod.xml \
-	syntaxdefs/bibtex.xml \
-	syntaxdefs/bash.xml \
-	syntaxdefs/awk.xml \
-	syntaxdefs/asterisk.xml \
-	syntaxdefs/asp.xml \
-	syntaxdefs/asn1.xml \
-	syntaxdefs/asm6502.xml \
-	syntaxdefs/asm-m68k.xml \
-	syntaxdefs/asm-dsp56k.xml \
-	syntaxdefs/asm-avr.xml \
-	syntaxdefs/apache.xml \
-	syntaxdefs/ansys.xml \
-	syntaxdefs/ansic89.xml \
-	syntaxdefs/ample.xml \
-	syntaxdefs/alert.xml \
-	syntaxdefs/alert_indent.xml \
-	syntaxdefs/ahdl.xml \
-	syntaxdefs/ada.xml \
-	syntaxdefs/actionscript.xml \
-	syntaxdefs/abc.xml \
-	syntaxdefs/abap.xml \
-	syntaxdefs/zonnon.xml \
-	syntaxdefs/yaml.xml \
-	syntaxdefs/yacc.xml \
-	syntaxdefs/yacas.xml \
-	syntaxdefs/xul.xml \
-	syntaxdefs/xslt.xml \
-	syntaxdefs/xorg.xml \
-	syntaxdefs/xmldebug.xml \
-	syntaxdefs/xml.xml \
-	syntaxdefs/xharbour.xml \
-	syntaxdefs/winehq.xml \
-	syntaxdefs/vrml.xml \
-	syntaxdefs/vhdl.xml \
-	syntaxdefs/verilog.xml \
-	syntaxdefs/velocity.xml \
-	syntaxdefs/uscript.xml \
-	syntaxdefs/txt2tags.xml \
-	syntaxdefs/tibasic.xml \
-	syntaxdefs/texinfo.xml \
-	syntaxdefs/tcl.xml \
-	syntaxdefs/systemc.xml \
-	syntaxdefs/stata.xml \
-	syntaxdefs/sql-postgresql.xml \
-	syntaxdefs/sql-mysql.xml \
-	syntaxdefs/sql.xml \
-	syntaxdefs/spice.xml \
-	syntaxdefs/sml.xml \
-	syntaxdefs/sisu.xml \
-	syntaxdefs/sieve.xml \
-	syntaxdefs/sgml.xml \
-	syntaxdefs/sci.xml \
-	syntaxdefs/scheme.xml \
-	syntaxdefs/scala.xml \
-	syntaxdefs/sather.xml \
-	syntaxdefs/ruby.xml \
-	syntaxdefs/rsiidl.xml \
-	syntaxdefs/rpmspec.xml \
-	syntaxdefs/roff.xml \
-	syntaxdefs/rib.xml \
-	syntaxdefs/rhtml.xml \
-	syntaxdefs/rexx.xml \
-	syntaxdefs/rapidq.xml \
-	syntaxdefs/r.xml \
-	syntaxdefs/qml.xml \
-	syntaxdefs/python.xml \
-	syntaxdefs/purebasic.xml \
-	syntaxdefs/prolog.xml \
-	syntaxdefs/progress.xml \
-	syntaxdefs/povray.xml \
-	syntaxdefs/postscript.xml \
-	syntaxdefs/pike.xml \
-	syntaxdefs/picsrc.xml \
-	syntaxdefs/php.xml \
-	syntaxdefs/pgn.xml \
-	syntaxdefs/perl.xml \
-	syntaxdefs/pango.xml \
-	syntaxdefs/opal.xml \
-	syntaxdefs/octave.xml \
-	syntaxdefs/ocaml.xml \
-	syntaxdefs/objectivecpp.xml \
-	syntaxdefs/objectivec.xml \
-	syntaxdefs/noweb.xml \
-	syntaxdefs/nemerle.xml \
-	syntaxdefs/nasm.xml \
-	syntaxdefs/mup.xml \
-	syntaxdefs/monobasic.xml \
-	syntaxdefs/modula-2.xml \
-	syntaxdefs/modelica.xml \
-	syntaxdefs/mips.xml \
-	syntaxdefs/mergetagtext.xml \
-	syntaxdefs/mediawiki.xml \
-	syntaxdefs/maxima.xml \
-	syntaxdefs/matlab.xml \
-	syntaxdefs/mason.xml \
-	syntaxdefs/mandoc.xml \
-	syntaxdefs/makefile.xml \
-	syntaxdefs/mab.xml \
-	syntaxdefs/m3u.xml \
-	syntaxdefs/lua.xml \
-	syntaxdefs/lsl.xml \
-	syntaxdefs/lpc.xml \
-	syntaxdefs/logtalk.xml \
-	syntaxdefs/literate-haskell.xml \
-	syntaxdefs/lilypond.xml \
-	syntaxdefs/lex.xml \
-	syntaxdefs/ldif.xml \
-	syntaxdefs/latex.xml \
-	syntaxdefs/kbasic.xml \
-	syntaxdefs/jsp.xml \
-	syntaxdefs/json.xml \
-	syntaxdefs/javascript-php.xml \
-	syntaxdefs/javascript.xml \
-	syntaxdefs/javadoc.xml \
-	syntaxdefs/java.xml \
-	syntaxdefs/ini.xml \
-	syntaxdefs/inform.xml \
-	syntaxdefs/ilerpg.xml \
-	syntaxdefs/idl.xml \
-	syntaxdefs/idconsole.xml \
-	syntaxdefs/html-php.xml \
-	syntaxdefs/html.xml \
-	syntaxdefs/haxe.xml \
-	syntaxdefs/haskell.xml \
-	syntaxdefs/grammar.xml \
-	syntaxdefs/go.xml \
-	syntaxdefs/gnuassembler.xml \
-	syntaxdefs/glsl.xml \
-	syntaxdefs/gettext.xml \
-	syntaxdefs/gdl.xml \
-	syntaxdefs/gdb.xml \
-	syntaxdefs/gap.xml \
-	syntaxdefs/fstab.xml \
-	syntaxdefs/freebasic.xml \
-	syntaxdefs/fortran.xml \
-	syntaxdefs/fgl-per.xml \
-	syntaxdefs/fgl-4gl.xml \
-	syntaxdefs/ferite.xml \
-	syntaxdefs/euphoria.xml \
-	syntaxdefs/erlang.xml \
-	syntaxdefs/email.xml \
-	syntaxdefs/eiffel.xml \
-	syntaxdefs/e.xml \
-	syntaxdefs/dtd.xml \
-	syntaxdefs/doxygenlua.xml \
-	syntaxdefs/doxygen.xml \
-	syntaxdefs/djangotemplate.xml \
-	syntaxdefs/diff.xml \
-	syntaxdefs/desktop.xml \
-	syntaxdefs/debiancontrol.xml \
-	syntaxdefs/debianchangelog.xml \
-	syntaxdefs/d.xml \
-	syntaxdefs/cue.xml \
-	syntaxdefs/css-php.xml \
-	syntaxdefs/css.xml \
-	syntaxdefs/cs.xml \
-	syntaxdefs/cpp.xml \
-	syntaxdefs/component-pascal.xml \
-	syntaxdefs/commonlisp.xml \
-	syntaxdefs/coldfusion.xml \
-	syntaxdefs/cmake.xml \
-	syntaxdefs/clipper.xml \
-	syntaxdefs/cisco.xml \
-	syntaxdefs/changelog.xml \
-	syntaxdefs/cgis.xml \
-	syntaxdefs/cg.xml \
-	syntaxdefs/c.xml \
-	syntaxdefs/boo.xml \
-	syntaxdefs/bmethod.xml \
-	syntaxdefs/bibtex.xml \
-	syntaxdefs/bash.xml \
-	syntaxdefs/awk.xml \
-	syntaxdefs/asterisk.xml \
-	syntaxdefs/asp.xml \
-	syntaxdefs/asn1.xml \
-	syntaxdefs/asm-m68k.xml \
-	syntaxdefs/asm-dsp56k.xml \
-	syntaxdefs/asm-avr.xml \
-	syntaxdefs/asm6502.xml \
-	syntaxdefs/apache.xml \
-	syntaxdefs/ansys.xml \
-	syntaxdefs/ansic89.xml \
-	syntaxdefs/ample.xml \
-	syntaxdefs/alert_indent.xml \
-	syntaxdefs/alert.xml \
-	syntaxdefs/ahdl.xml \
-	syntaxdefs/ada.xml \
-	syntaxdefs/actionscript.xml \
-	syntaxdefs/abc.xml \
-	syntaxdefs/abap.xml \
-	syntaxdefs/markdown.xml \
-	syntaxdefs/jsx.xml \
 	ponyedit.rc \
-	tools/QsLog/QsLog.pri
+	tools/QsLog/QsLog.pri \
+	syntaxdefs/4dos.xml \
+	syntaxdefs/abap.xml \
+	syntaxdefs/abc.xml \
+	syntaxdefs/actionscript.xml \
+	syntaxdefs/ada.xml \
+	syntaxdefs/agda.xml \
+	syntaxdefs/ahdl.xml \
+	syntaxdefs/ahk.xml \
+	syntaxdefs/alert.xml \
+	syntaxdefs/alert_indent.xml \
+	syntaxdefs/ample.xml \
+	syntaxdefs/ansforth94.xml \
+	syntaxdefs/ansic89.xml \
+	syntaxdefs/ansys.xml \
+	syntaxdefs/apache.xml \
+	syntaxdefs/asm-avr.xml \
+	syntaxdefs/asm-dsp56k.xml \
+	syntaxdefs/asm-m68k.xml \
+	syntaxdefs/asm6502.xml \
+	syntaxdefs/asn1.xml \
+	syntaxdefs/asp.xml \
+	syntaxdefs/asterisk.xml \
+	syntaxdefs/awk.xml \
+	syntaxdefs/bash.xml \
+	syntaxdefs/bibtex.xml \
+	syntaxdefs/bitbake.xml \
+	syntaxdefs/bmethod.xml \
+	syntaxdefs/boo.xml \
+	syntaxdefs/c.xml \
+	syntaxdefs/carto-css.xml \
+	syntaxdefs/ccss.xml \
+	syntaxdefs/cg.xml \
+	syntaxdefs/cgis.xml \
+	syntaxdefs/changelog.xml \
+	syntaxdefs/chicken.xml \
+	syntaxdefs/cisco.xml \
+	syntaxdefs/clipper.xml \
+	syntaxdefs/clojure.xml \
+	syntaxdefs/cmake.xml \
+	syntaxdefs/coffee.xml \
+	syntaxdefs/coldfusion.xml \
+	syntaxdefs/commonlisp.xml \
+	syntaxdefs/component-pascal.xml \
+	syntaxdefs/context.xml \
+	syntaxdefs/cpp.xml \
+	syntaxdefs/crk.xml \
+	syntaxdefs/cs.xml \
+	syntaxdefs/css.xml \
+	syntaxdefs/cubescript.xml \
+	syntaxdefs/cue.xml \
+	syntaxdefs/curry.xml \
+	syntaxdefs/d.xml \
+	syntaxdefs/debianchangelog.xml \
+	syntaxdefs/debiancontrol.xml \
+	syntaxdefs/desktop.xml \
+	syntaxdefs/diff.xml \
+	syntaxdefs/djangotemplate.xml \
+	syntaxdefs/dockerfile.xml \
+	syntaxdefs/dosbat.xml \
+	syntaxdefs/dot.xml \
+	syntaxdefs/doxygen.xml \
+	syntaxdefs/doxygenlua.xml \
+	syntaxdefs/dtd.xml \
+	syntaxdefs/e.xml \
+	syntaxdefs/eiffel.xml \
+	syntaxdefs/elixir.xml \
+	syntaxdefs/email.xml \
+	syntaxdefs/erlang.xml \
+	syntaxdefs/euphoria.xml \
+	syntaxdefs/fasm.xml \
+	syntaxdefs/fastq.xml \
+	syntaxdefs/ferite.xml \
+	syntaxdefs/fgl-4gl.xml \
+	syntaxdefs/fgl-per.xml \
+	syntaxdefs/fortran.xml \
+	syntaxdefs/freebasic.xml \
+	syntaxdefs/fsharp.xml \
+	syntaxdefs/fstab.xml \
+	syntaxdefs/ftl.xml \
+	syntaxdefs/gap.xml \
+	syntaxdefs/gcc.xml \
+	syntaxdefs/gcode.xml \
+	syntaxdefs/gdb.xml \
+	syntaxdefs/gdl.xml \
+	syntaxdefs/gettext.xml \
+	syntaxdefs/git-ignore.xml \
+	syntaxdefs/git-rebase.xml \
+	syntaxdefs/gitolite.xml \
+	syntaxdefs/glosstex.xml \
+	syntaxdefs/glsl.xml \
+	syntaxdefs/gnuassembler.xml \
+	syntaxdefs/gnuplot.xml \
+	syntaxdefs/go.xml \
+	syntaxdefs/grammar.xml \
+	syntaxdefs/groovy.xml \
+	syntaxdefs/haml.xml \
+	syntaxdefs/hamlet.xml \
+	syntaxdefs/haskell.xml \
+	syntaxdefs/haxe.xml \
+	syntaxdefs/html.xml \
+	syntaxdefs/hunspell-aff.xml \
+	syntaxdefs/hunspell-dat.xml \
+	syntaxdefs/hunspell-dic.xml \
+	syntaxdefs/hunspell-idx.xml \
+	syntaxdefs/idconsole.xml \
+	syntaxdefs/idl.xml \
+	syntaxdefs/ilerpg.xml \
+	syntaxdefs/inform.xml \
+	syntaxdefs/ini.xml \
+	syntaxdefs/isocpp.xml \
+	syntaxdefs/j.xml \
+	syntaxdefs/jam.xml \
+	syntaxdefs/java.xml \
+	syntaxdefs/javadoc.xml \
+	syntaxdefs/javascript.xml \
+	syntaxdefs/jira.xml \
+	syntaxdefs/json.xml \
+	syntaxdefs/jsp.xml \
+	syntaxdefs/julia.xml \
+	syntaxdefs/k.xml \
+	syntaxdefs/kbasic.xml \
+	syntaxdefs/kconfig.xml \
+	syntaxdefs/kdesrc-buildrc.xml \
+	syntaxdefs/kotlin.xml \
+	syntaxdefs/latex.xml \
+	syntaxdefs/ld.xml \
+	syntaxdefs/ldif.xml \
+	syntaxdefs/less.xml \
+	syntaxdefs/lex.xml \
+	syntaxdefs/lilypond.xml \
+	syntaxdefs/literate-curry.xml \
+	syntaxdefs/literate-haskell.xml \
+	syntaxdefs/logtalk.xml \
+	syntaxdefs/lpc.xml \
+	syntaxdefs/lsl.xml \
+	syntaxdefs/lua.xml \
+	syntaxdefs/m3u.xml \
+	syntaxdefs/m4.xml \
+	syntaxdefs/mab.xml \
+	syntaxdefs/magma.xml \
+	syntaxdefs/mako.xml \
+	syntaxdefs/mandoc.xml \
+	syntaxdefs/markdown.xml \
+	syntaxdefs/mason.xml \
+	syntaxdefs/mathematica.xml \
+	syntaxdefs/matlab.xml \
+	syntaxdefs/maxima.xml \
+	syntaxdefs/mediawiki.xml \
+	syntaxdefs/mel.xml \
+	syntaxdefs/mergetagtext.xml \
+	syntaxdefs/meson.xml \
+	syntaxdefs/metafont.xml \
+	syntaxdefs/mips.xml \
+	syntaxdefs/modelica.xml \
+	syntaxdefs/modelines.xml \
+	syntaxdefs/modula-2.xml \
+	syntaxdefs/monobasic.xml \
+	syntaxdefs/mup.xml \
+	syntaxdefs/nagios.xml \
+	syntaxdefs/nasm.xml \
+	syntaxdefs/nemerle.xml \
+	syntaxdefs/nesc.xml \
+	syntaxdefs/noweb.xml \
+	syntaxdefs/nsis.xml \
+	syntaxdefs/objectivec.xml \
+	syntaxdefs/objectivecpp.xml \
+	syntaxdefs/ocaml.xml \
+	syntaxdefs/ocamllex.xml \
+	syntaxdefs/ocamlyacc.xml \
+	syntaxdefs/octave.xml \
+	syntaxdefs/oors.xml \
+	syntaxdefs/opal.xml \
+	syntaxdefs/opencl.xml \
+	syntaxdefs/pango.xml \
+	syntaxdefs/pascal.xml \
+	syntaxdefs/perl.xml \
+	syntaxdefs/pgn.xml \
+	syntaxdefs/php.xml \
+	syntaxdefs/picsrc.xml \
+	syntaxdefs/pig.xml \
+	syntaxdefs/pike.xml \
+	syntaxdefs/pli.xml \
+	syntaxdefs/ply.xml \
+	syntaxdefs/postscript.xml \
+	syntaxdefs/povray.xml \
+	syntaxdefs/ppd.xml \
+	syntaxdefs/praat.xml \
+	syntaxdefs/progress.xml \
+	syntaxdefs/prolog.xml \
+	syntaxdefs/protobuf.xml \
+	syntaxdefs/puppet.xml \
+	syntaxdefs/purebasic.xml \
+	syntaxdefs/python.xml \
+	syntaxdefs/q.xml \
+	syntaxdefs/qmake.xml \
+	syntaxdefs/qml.xml \
+	syntaxdefs/r.xml \
+	syntaxdefs/rapidq.xml \
+	syntaxdefs/relaxng.xml \
+	syntaxdefs/relaxngcompact.xml \
+	syntaxdefs/replicode.xml \
+	syntaxdefs/rest.xml \
+	syntaxdefs/rexx.xml \
+	syntaxdefs/rhtml.xml \
+	syntaxdefs/rib.xml \
+	syntaxdefs/rmarkdown.xml \
+	syntaxdefs/roff.xml \
+	syntaxdefs/rpmspec.xml \
+	syntaxdefs/rsiidl.xml \
+	syntaxdefs/rtf.xml \
+	syntaxdefs/ruby.xml \
+	syntaxdefs/rust.xml \
+	syntaxdefs/sather.xml \
+	syntaxdefs/scala.xml \
+	syntaxdefs/scheme.xml \
+	syntaxdefs/sci.xml \
+	syntaxdefs/scss.xml \
+	syntaxdefs/sed.xml \
+	syntaxdefs/sgml.xml \
+	syntaxdefs/sieve.xml \
+	syntaxdefs/sisu.xml \
+	syntaxdefs/sml.xml \
+	syntaxdefs/spice.xml \
+	syntaxdefs/sql-mysql.xml \
+	syntaxdefs/sql-oracle.xml \
+	syntaxdefs/sql-postgresql.xml \
+	syntaxdefs/sql.xml \
+	syntaxdefs/stata.xml \
+	syntaxdefs/stl.xml \
+	syntaxdefs/systemc.xml \
+	syntaxdefs/systemverilog.xml \
+	syntaxdefs/tads3.xml \
+	syntaxdefs/taskjuggler.xml \
+	syntaxdefs/tcl.xml \
+	syntaxdefs/tcsh.xml \
+	syntaxdefs/template-toolkit.xml \
+	syntaxdefs/texinfo.xml \
+	syntaxdefs/textile.xml \
+	syntaxdefs/tibasic.xml \
+	syntaxdefs/toml.xml \
+	syntaxdefs/txt2tags.xml \
+	syntaxdefs/uscript.xml \
+	syntaxdefs/vala.xml \
+	syntaxdefs/valgrind-suppression.xml \
+	syntaxdefs/varnish.xml \
+	syntaxdefs/varnish4.xml \
+	syntaxdefs/varnishcc.xml \
+	syntaxdefs/varnishcc4.xml \
+	syntaxdefs/varnishtest.xml \
+	syntaxdefs/varnishtest4.xml \
+	syntaxdefs/vcard.xml \
+	syntaxdefs/velocity.xml \
+	syntaxdefs/vera.xml \
+	syntaxdefs/verilog.xml \
+	syntaxdefs/vhdl.xml \
+	syntaxdefs/vrml.xml \
+	syntaxdefs/wavefront-obj.xml \
+	syntaxdefs/winehq.xml \
+	syntaxdefs/wml.xml \
+	syntaxdefs/xharbour.xml \
+	syntaxdefs/xml.xml \
+	syntaxdefs/xmldebug.xml \
+	syntaxdefs/xonotic-console.xml \
+	syntaxdefs/xorg.xml \
+	syntaxdefs/xslt.xml \
+	syntaxdefs/xul.xml \
+	syntaxdefs/yacas.xml \
+	syntaxdefs/yacc.xml \
+	syntaxdefs/yaml.xml \
+	syntaxdefs/zonnon.xml \
+	syntaxdefs/zsh.xml
 
 FORMS += \
 	file/filedialog.ui \
@@ -615,74 +549,3 @@ RESOURCES += \
 	resources.qrc
 
 include($$PWD/tools/QsLog/QsLog.pri)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

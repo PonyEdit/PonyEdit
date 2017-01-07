@@ -8,7 +8,7 @@
   * Updated for 16-bit devices, etc.: Laurence Withers <lwithers@users.sf.net>
 -->
 
-<language name="PicAsm" version="1.07" kateversion="2.3" section="Assembler" extensions="*.src;*.SRC;*.asm;*.ASM;*.pic;*.PIC" mimetype="text/x-PicSrc;text/x-PicHdr" author="Alain GIBAUD (alain.gibaud@univ-valenciennes.fr)" license="LGPL">
+<language name="PicAsm" version="2" kateversion="2.3" section="Assembler" extensions="*.src;*.SRC;*.asm;*.ASM;*.pic;*.PIC" mimetype="text/x-PicSrc;text/x-PicHdr" author="Alain GIBAUD (alain.gibaud@univ-valenciennes.fr)" license="LGPL">
   
   <highlighting>
     <list name="directives">
@@ -294,11 +294,11 @@
         <keyword attribute="Preprocessor" context="#stay" String="conditional"/>
         <keyword attribute="GPASM-macros" context="#stay" String="gpasm_macro"/>
         <HlCHex attribute="Based Numbers" context="#stay"/>
-        <RegExpr attribute="Based Numbers" context="#stay" String="([ \t,][0-9A-F]+H[ \t,])" insensitive="TRUE" />
-        <RegExpr attribute="Based Numbers" context="#stay" String="([ \t,][0-9A-F]+H)$" insensitive="TRUE" />
-        <RegExpr attribute="Based Numbers" context="#stay" String="([ \t,][0-9]+D)" insensitive="TRUE" />
-        <RegExpr attribute="Based Numbers" context="#stay" String="([ \t,][0-7]+O)" insensitive="TRUE" />
-        <RegExpr attribute="Based Numbers" context="#stay" String="([ \t,][0-1]+B)" insensitive="TRUE" />
+        <RegExpr attribute="Based Numbers" context="#stay" String="([ \t,][0-9A-F]+H[ \t,])" insensitive="true" />
+        <RegExpr attribute="Based Numbers" context="#stay" String="([ \t,][0-9A-F]+H)$" insensitive="true" />
+        <RegExpr attribute="Based Numbers" context="#stay" String="([ \t,][0-9]+D)" insensitive="true" />
+        <RegExpr attribute="Based Numbers" context="#stay" String="([ \t,][0-7]+O)" insensitive="true" />
+        <RegExpr attribute="Based Numbers" context="#stay" String="([ \t,][0-1]+B)" insensitive="true" />
         <Int attribute="Non Based Numbers" context="#stay" />
         <HlCChar attribute="Char" context="#stay"/>
         <Detect2Chars attribute="Char" context="ASCIIChar" char="A" char1="'" />

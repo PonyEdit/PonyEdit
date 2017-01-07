@@ -6,8 +6,6 @@
   Copyright 2004, Dominik Haumann <dhdev@gmx.de>
   Copyright 2008, Chusslove Illich <caslav.ilic@gmx.net>
 
-  Last change: 2008-12-03
-
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Library General Public
   License as published by the Free Software Foundation; either
@@ -23,7 +21,7 @@
   Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
   Boston, MA  02110-1301, USA.
  -->
-<language name="GNU Gettext" version="2.00" kateversion="2.4" section="Markup" extensions="*.po;*.pot" mimetype="text/x-gettext-translation" author="Dominik Haumann (dhdev@gmx.de)" license="LGPL">
+<language name="GNU Gettext" version="4" kateversion="5.0" section="Markup" extensions="*.po;*.pot" mimetype="text/x-gettext-translation" author="Dominik Haumann (dhdev@gmx.de)" license="LGPLv2+">
   <highlighting>
 
     <contexts>
@@ -83,7 +81,7 @@
         <DetectChar attribute = "StringTag" char="&gt;" context="#pop"/>
         <DetectChar attribute = "String" char="&quot;" context="StringWrapSub"/>
       </context>
-      <context name = "StringWrap" lineEndContext="#stay">
+      <context name = "StringWrap" attribute = "String" lineEndContext="#stay">
         <DetectChar attribute = "String" char="&quot;" context="#pop"/>
         <RegExpr String="." lookAhead="true" context="#pop#pop"/>
       </context>
@@ -97,7 +95,7 @@
         <StringDetect attribute = "StringDiffOldWrap" String="-}" context="#pop"/>
         <DetectChar attribute = "String" char="&quot;" context="StringWrapSub"/>
       </context>
-      <context name = "StringWrapSub" lineEndContext="#stay">
+      <context name = "StringWrapSub" attribute = "String" lineEndContext="#stay">
         <DetectChar attribute = "String" char="&quot;" context="#pop"/>
         <RegExpr String="." lookAhead="true" context="#pop#pop#pop"/>
       </context>
@@ -139,12 +137,12 @@
         <StringDetect attribute = "StringDiffOldWrapPrevious" String="-}" context="#pop"/>
         <DetectChar attribute = "StringPrevious" char="&quot;" context="StringWrapSubPrevious"/>
       </context>
-      <context name = "StringWrapPrevious" lineEndContext="#stay">
+      <context name = "StringWrapPrevious" attribute = "StringPrevious" lineEndContext="#stay">
         <RegExpr String="[^#]" firstNonSpace="true" lookAhead="true" context="#pop#pop"/>
         <RegExpr attribute = "StringPrevious" String="(#\|)? *&quot;" context="#pop"/>
         <RegExpr String="." lookAhead="true" context="#pop#pop"/>
       </context>
-      <context name = "StringWrapSubPrevious" lineEndContext="#stay">
+      <context name = "StringWrapSubPrevious" attribute = "StringPrevious" lineEndContext="#stay">
         <RegExpr String="[^#]" firstNonSpace="true" lookAhead="true" context="#pop#pop#pop"/>
         <RegExpr attribute = "StringPrevious" String="(#\|)? *&quot;" context="#pop"/>
         <RegExpr String="." lookAhead="true" context="#pop#pop#pop"/>
@@ -152,10 +150,10 @@
     </contexts>
 
     <itemDatas>
-      <itemData name = "Normal Text" defStyleNum ="dsNormal" color="#000000"/>
-      <itemData name = "Keyword" defStyleNum ="dsKeyword" color="#000000"/>
+      <itemData name = "Normal Text" defStyleNum ="dsNormal"/>
+      <itemData name = "Keyword" defStyleNum ="dsKeyword"/>
       <itemData name = "KeywordPrevious" defStyleNum ="dsKeyword" italic="true" color="#006060"/>
-      <itemData name = "String" defStyleNum ="dsString" color="#ff0000"/>
+      <itemData name = "String" defStyleNum ="dsString"/>
       <itemData name = "StringPrevious" defStyleNum ="dsString" italic="true" color="#008080"/>
       <itemData name = "Translator Comment" defStyleNum ="dsComment" color="#888888"/>
       <itemData name = "Automatic Comment" defStyleNum ="dsComment" color="#0000ff"/>
