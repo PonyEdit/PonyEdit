@@ -6,6 +6,7 @@ compiler: gcc
 
 before_install:
     - sudo add-apt-repository ppa:beineri/opt-qt571-trusty -y
+    - sudo apt-get update -qq
 install:
     - sudo apt-get install -qq qt57base qt57script qt57webengine
     - source /opt/qt57/bin/qt57-env.sh
