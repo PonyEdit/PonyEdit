@@ -1,19 +1,34 @@
 language: cpp
-os: linux
-dist: trusty
-sudo: required
-compiler: gcc
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+      compiler: gcc
+    - os: osx
+      compiler: clang
+
 
 before_install:
-    - sudo add-apt-repository ppa:beineri/opt-qt571-trusty -y
-    - sudo apt-get update -qq
+  - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then
+      sudo add-apt-repository ppa:beineri/opt-qt571-trusty -y;
+      sudo apt-get update -qq;
+    else
+      brew update;
+    fi
 install:
-    - sudo apt-get install -qq libssh2-1-dev libssl-dev qt57base qt57script qt57webengine
-    - source /opt/qt57/bin/qt57-env.sh
+  - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then
+      sudo apt-get install -qq libssh2-1-dev libssl-dev qt57base qt57script qt57webengine
+      source /opt/qt57/bin/qt57-env.sh
+    else
+      brew install qt5;
+      brew link --force qt5;
+    fi
 script:
-    - qmake -v
-    - qmake
-    - make
+  - qmake -v
+  - qmake
+  - make
 
 notifications:
   email:
