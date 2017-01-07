@@ -582,6 +582,8 @@ void SshSession::manageSslMutex(int mode, int n, const char* /*file*/, int /*lin
 
 void SshSession::sslThreadId(CRYPTO_THREADID* threadId)
 {
+	// Stop unused parameter warnings
+	(void)threadId;
 	CRYPTO_THREADID_set_pointer(threadId, QThread::currentThread());
 }
 
