@@ -11,9 +11,13 @@ PonyEdit is a remote SSH text editor like none you've ever seen before. Editing 
 
 PonyEdit opens your files in a fully local text editor; allowing you to make changes as quickly as if you were editing a local file. However, it keeps an SSH connection open in the background and streams your changes to the remote site as you edit, so when it the time comes to save, your changes are already on the server and saving is nearly instant!
 
-##Server Requirements
+## Server Requirements
 
 PonyEdit operates over a standard SSH shell connection, and only requires Perl on the remote server. There are no other special requirements, and it doesn't open any additional ports.
+
+## Build Requirements
+
+PonyEdit compiles with the latest version of [Qt](https://www.qt.io/).
 
 ## Getting PonyEdit
 
