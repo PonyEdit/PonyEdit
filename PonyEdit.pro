@@ -68,7 +68,7 @@ macx {
     LIBS	+= -lssh2 -lcrypto -lssl
 }
 
-QT		+= core widgets gui network xml script webkit webkitwidgets printsupport
+QT		+= core widgets gui network xml script webengine webenginewidgets printsupport
 TEMPLATE = app
 
 SOURCES += \
