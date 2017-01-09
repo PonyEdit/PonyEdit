@@ -1,0 +1,8 @@
+title: PonyEdit
+description: Coding at the speed of thought
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-slate
+
+gems:
+  - jekyll-mentions
