@@ -515,8 +515,10 @@ int SyntaxRule::detectStringChar(const QString& string, int position)
 		int nLength = 0;
 		if (*s == 'x')
 		{
-			while (nLength <= 4 && !s->isNull() && (s->isDigit() || (*s >= '0' && *s <= '9') || (*s >= 'a' && *s <= 'f') || (*s >= 'A' && *s <= 'F')))
-				s++;nLength++;
+            while (nLength <= 4 && !s->isNull() && (s->isDigit() || (*s >= '0' && *s <= '9') || (*s >= 'a' && *s <= 'f') || (*s >= 'A' && *s <= 'F'))) {
+                s++;
+                nLength++;
+            }
 			nLength = (nLength & 0x10) + 2;
 		}
 		else
