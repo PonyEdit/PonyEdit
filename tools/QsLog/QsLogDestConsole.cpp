@@ -1,4 +1,4 @@
-// Copyright (c) 2010, Razvan Petru
+// Copyright (c) 2013, Razvan Petru
 // All rights reserved.
 
 // Redistribution and use in source and binary forms, with or without modification,
@@ -23,15 +23,40 @@
 // OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef QSDEBUGOUTPUT_H
-#define QSDEBUGOUTPUT_H
+#include "QsLogDestConsole.h"
+#include <QString>
+#include <QtGlobal>
 
-class QString;
-
-class QsDebugOutput
+#if defined(Q_OS_UNIX) || defined(Q_OS_WIN) && defined(QS_LOG_WIN_PRINTF_CONSOLE)
+#include <cstdio>
+void QsDebugOutput::output( const QString& message )
 {
-public:
-   static void output(const QString& a_message);
-};
+   fprintf(stderr, "%s\n", qPrintable(message));
+   fflush(stderr);
+}
+#elif defined(Q_OS_WIN)
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+void QsDebugOutput::output( const QString& message )
+{
+   OutputDebugStringW(reinterpret_cast<const WCHAR*>(message.utf16()));
+   OutputDebugStringW(L"\n");
+}
+#endif
 
-#endif // QSDEBUGOUTPUT_H
+const char* const QsLogging::DebugOutputDestination::Type = "console";
+
+void QsLogging::DebugOutputDestination::write(const LogMessage& message)
+{
+    QsDebugOutput::output(message.formatted);
+}
+
+bool QsLogging::DebugOutputDestination::isValid()
+{
+    return true;
+}
+
+QString QsLogging::DebugOutputDestination::type() const
+{
+    return QString::fromLatin1(Type);
+}

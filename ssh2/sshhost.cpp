@@ -78,8 +78,8 @@ void SshHost::disconnect()
 
 SshHost::LogHelper::~LogHelper()
 {
-	QString completeLine = QsLogging::Logger::Helper::logifyLine(mLevel, mBuffer);
-	QsLogging::Logger::Helper::writeToLog(completeLine);
+	QString completeLine = QsLogging::LogMessage(mBuffer, QDateTime::currentDateTime(), mLevel).formatted;
+	QsLogging::Logger::Helper(mLevel).stream() << completeLine;
 	mHost->appendToHostLog(completeLine);
 }
 

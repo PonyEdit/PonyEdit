@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Razvan Petru
+// Copyright (c) 2013, Razvan Petru
 // All rights reserved.
 
 // Redistribution and use in source and binary forms, with or without modification,
@@ -23,47 +23,26 @@
 // OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "QsDebugOutput.h"
-#include <QString>
-#include <QtGlobal>
+#ifndef QSLOGLEVEL_H
+#define QSLOGLEVEL_H
+class QString;
 
-#if defined(Q_OS_WIN)
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-void QsDebugOutput::output( const QString& message )
+namespace QsLogging
 {
-   OutputDebugStringW(reinterpret_cast<const WCHAR*>(message.utf16()));
-   OutputDebugStringW(L"\n");
-}
-#elif defined(Q_OS_SYMBIAN)
-#include <e32debug.h>
-void QsDebugOutput::output( const QString& message )
+enum Level
 {
-    const int maxPrintSize = 256;
-    if(message.size() <= maxPrintSize)
-    {
-        TPtrC16 symbianMessage(reinterpret_cast<const TUint16*>(message.utf16()));
-        RDebug::RawPrint(symbianMessage);
-    }
-    else
-    {
-        QString slicedMessage = message;
-        while(!slicedMessage.isEmpty())
-        {
-            const int sliceSize = qMin(maxPrintSize, slicedMessage.size());
-            const QString slice = slicedMessage.left(sliceSize);
-            slicedMessage.remove(0, sliceSize);
+    TraceLevel = 0,
+    DebugLevel,
+    InfoLevel,
+    WarnLevel,
+    ErrorLevel,
+    FatalLevel,
+    OffLevel
+};
 
-            TPtrC16 symbianSlice(reinterpret_cast<const TUint16*>(slice.utf16()));
-            RDebug::RawPrint(symbianSlice);
-        }
-    }
+const char* LevelName(Level theLevel);
+QString LocalizedLevelName(Level theLevel);
+
 }
-#elif defined(Q_OS_UNIX)
-#include <cstdio>
-void QsDebugOutput::output( const QString& message )
-{
-   fprintf(stderr, "%s\n", qPrintable(message));
-   fflush(stderr);
-}
-#endif
+
+#endif // QSLOGLEVEL_H

@@ -38,8 +38,8 @@ int main(int argc, char *argv[])
 
         fileDestination = QsLogging::DestinationPtr( QsLogging::DestinationFactory::MakeFileDestination( QStandardPaths::writableLocation( QStandardPaths::DataLocation ) + "/ponyedit.log" ) );
 		debugDestination = QsLogging::DestinationPtr( QsLogging::DestinationFactory::MakeDebugOutputDestination() );
-		logger.addDestination( debugDestination.get() );
-		logger.addDestination( fileDestination.get() );
+		logger.addDestination( debugDestination );
+		logger.addDestination( fileDestination );
 
 		QLOG_INFO() << "PonyEdit version" << PRETTY_VERSION << "started";
 
