@@ -8,7 +8,7 @@ PonyEdit opens your files in a fully local text editor; allowing you to make cha
 PonyEdit operates over a standard SSH shell connection, and only requires Perl on the remote server. There are no other special requirements, and it doesn't open any additional ports.
 
 ### Getting PonyEdit
-You can download the latest version of PonyEdit [here](https://github.com/thingalon/PonyEdit/releases)
+You can download the latest version of PonyEdit [here](https://github.com/PonyEdit/PonyEdit/releases)
 
 ### License
 PonyEdit is released under the [GPL Version 3](http://www.gnu.org/licenses/gpl.html)
@@ -17,4 +17,4 @@ This software is released as-is, use at your own risk, etc.
 ### Authors and Contributors
 PonyEdit was originally created by @thingalon and @pento. 
 
-If you like PonyEdit and would like to contribute, please submit a pull request; we'd love your help! We are particularly interested in volunteers to maintain Windows and Linux binary releases for it.
+If you like PonyEdit and would like to contribute, please submit a pull request; we'd love your help!
