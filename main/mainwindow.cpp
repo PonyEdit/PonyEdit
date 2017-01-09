@@ -19,6 +19,8 @@
 #include <QErrorMessage>
 #include <QtPrintSupport/QPrintDialog>
 #include <QtPrintSupport/QPrinter>
+#include <QDesktopServices>
+#include <QHash>
 
 #include "file/filedialog.h"
 #include "file/filelist.h"
@@ -387,6 +389,208 @@ void MainWindow::about()
 	dlg.exec();
 }
 
+void MainWindow::contextHelp() {
+	Editor* editor = this->getCurrentEditor();
+	if(!editor) {
+		return;
+	}
+
+	QString text = editor->getCodeEditor()->textCursor().selectedText();
+	QString ext = editor->getFile()->getLocation().getPath().split('.').last();
+
+	bool dashInstalled = false;
+
+#ifdef Q_OS_MAC
+	dashInstalled = QDir("/Applications/Dash.app").exists();
+#endif
+
+	if(dashInstalled)
+	{
+		// Source for these hashes: https://kapeli.com/dash_plugins
+
+		QHash<QString, QString> keys;
+		// Language group name -> set of documentations for Dash to use
+		keys["actionscript"] = "actionscript";
+		keys["android"] = "android";
+		keys["boo"] = "unity3d";
+		keys["c"] = "c,glib,gl2,gl3,gl4,manpages";
+		keys["c++"] = "cpp,net,boost,qt,cvcpp,cocos2dx,c,manpages";
+		keys["c#"] = "net,mono,unity3d";
+		keys["cappuccino"] = "cappuccino";
+		keys["clojure"] = "clojure";
+		keys["coffeescript"] = "coffeescript";
+		keys["coldfusion"] = "coldfusion";
+		keys["config-files"] = "nginx";
+		keys["css"] = "css,bootstrap,foundation,less,awesome,cordova,phonegap";
+		keys["dart"] = "dartlang,polymerdart,angulardart";
+		keys["elixir"] = "elixir";
+		keys["erlang"] = "erlang";
+		keys["go"] = "go,godoc";
+		keys["gradle"] = "gradle";
+		keys["haskell"] = "haskell";
+		keys["haml"] = "haml";
+		keys["html"] = "html,svg,css,bootstrap,foundation,awesome,statamic,javascript,jquery,jqueryui,jquerym,angularjs,backbone,marionette,meteor,moo,prototype,ember,lodash,underscore,sencha,extjs,knockout,zepto,cordova,phonegap,yui";
+		keys["jade"] = "jade";
+		keys["java"] = "java,javafx,grails,groovy,playjava,spring,cvj,processing";
+		keys["javascript"] = "javascript,jquery,jqueryui,jquerym,angularjs,backbone,marionette,meteor,sproutcore,moo,prototype,bootstrap,foundation,lodash,underscore,ember,sencha,extjs,titanium,knockout,zepto,yui,d3,svg,dojo,coffee,nodejs,express,grunt,mongoose,moment,require,awsjs,jasmine,sails,sinon,chai,html,css,cordova,phonegap,unity3d";
+		keys["julia"] = "julia";
+		keys["less"] = "less";
+		keys["lisp"] = "lisp";
+		keys["lua"] = "lua,corona";
+		keys["markdown"] = "markdown";
+		keys["objective-c"] = "iphoneos,macosx,watchos,tvos,appledoc,cocos2d,cocos3d,kobold2d,sparrow,c,manpages";
+		keys["objective-c++"] = "cpp,iphoneos,macosx,appledoc,cocos2dx,cocos2d,cocos3d,kobold2d,sparrow,c,manpages";
+		keys["ocaml"] = "ocaml";
+		keys["perl"] = "perl,manpages";
+		keys["php"] = "php,wordpress,drupal,zend,laravel,yii,joomla,ee,codeigniter,cakephp,phpunit,symfony,typo3,twig,smarty,craft,phpp,html,statamic,mysql,sqlite,mongodb,psql,redis";
+		keys["processing"] = "processing";
+		keys["pug"] = "pug";
+		keys["puppet"] = "puppet";
+		keys["python"] = "python,django,twisted,sphinx,flask,tornado,sqlalchemy,numpy,scipy,salt,pandas,matplotlib,cvp";
+		keys["r"] = "r";
+		keys["racket"] = "racket";
+		keys["ruby"] = "ruby,rubygems,rails";
+		keys["rust"] = "rust";
+		keys["sass"] = "sass,compass,bourbon,neat,susy,css";
+		keys["scala"] = "scala,akka,playscala";
+		keys["shell-scripts"] = "bash,manpages";
+		keys["sql"] = "mysql,sqlite,psql";
+		keys["stylus"] = "stylus";
+		keys["swift"] = "swift,iphoneos,macosx,watchos,tvos,appledoc";
+		keys["tcl"] = "tcl";
+		keys["typescript"] = "typescript";
+		keys["yaml"] = "chef,ansible";
+
+		QHash<QString, QString> extensions;
+		// File extension -> language group name
+		extensions["as"] = "actionscript";
+		extensions["as3"] = "actionscript";
+		extensions["boo"] = "boo";
+		extensions["c"] = "c";
+		extensions["h"] = "c";
+		extensions["cpp"] = "c++";
+		extensions["cc"] = "c++";
+		extensions["cp"] = "c++";
+		extensions["cxx"] = "c++";
+		extensions["c++"] = "c++";
+		extensions["C"] = "c++";
+		extensions["hh"] = "c++";
+		extensions["hpp"] = "c++";
+		extensions["hxx"] = "c++";
+		extensions["h++"] = "c++";
+		extensions["ini"] = "c++";
+		extensions["ipp"] = "c++";
+		extensions["cs"] = "c#";
+		extensions["j"] = "cappuccino";
+		extensions["clj"] = "clojure";
+		extensions["edn"] = "clojure";
+		extensions["coffee"] = "coffeescript";
+		extensions["cfm"] = "coldfusion";
+		extensions["cfml"] = "coldfusion";
+		extensions["config"] = "config-files";
+		extensions["css"] = "css";
+		extensions["dart"] = "dart";
+		extensions["ex"] = "elixir";
+		extensions["exs"] = "elixir";
+		extensions["erl"] = "erlang";
+		extensions["hrl"] = "erlang";
+		extensions["go"] = "go";
+		extensions["gradle"] = "gradle";
+		extensions["hs"] = "haskell";
+		extensions["lhs"] = "haskell";
+		extensions["haml"] = "haml";
+		extensions["html"] = "html";
+		extensions["htm"] = "html";
+		extensions["shtml"] = "html";
+		extensions["xhtml"] = "html";
+		extensions["phtml"] = "html";
+		extensions["tmpl"] = "html";
+		extensions["tpl"] = "html";
+		extensions["ctp"] = "html";
+		extensions["jade"] = "jade";
+		extensions["java"] = "java";
+		extensions["jsp"] = "java";
+		extensions["bsh"] = "java";
+		extensions["js"] = "javascript";
+		extensions["htc"] = "javascript";
+		extensions["jsx"] = "javascript";
+		extensions["jl"] = "julia";
+		extensions["less"] = "less";
+		extensions["lisp"] = "lisp";
+		extensions["lua"] = "lua";
+		extensions["md"] = "markdown";
+		extensions["mdown"] = "markdown";
+		extensions["markdown"] = "markdown";
+		extensions["markdn"] = "markdown";
+		extensions["m"] = "objective-c";
+		extensions["mm"] = "objective-c++";
+		extensions["M"] = "objective-c++";
+		extensions["ml"] = "ocaml";
+		extensions["mli"] = "ocaml";
+		extensions["mll"] = "ocaml";
+		extensions["mly"] = "ocaml";
+		extensions["pl"] = "perl";
+		extensions["pm"] = "perl";
+		extensions["pod"] = "perl";
+		extensions["t"] = "perl";
+		extensions["cgi"] = "perl";
+		extensions["fcgi"] = "perl";
+		extensions["php"] = "php";
+		extensions["inc"] = "php";
+		extensions["pde"] = "processing";
+		extensions["pug"] = "pug";
+		extensions["pp"] = "puppet";
+		extensions["py"] = "python";
+		extensions["rpy"] = "python";
+		extensions["pyw"] = "python";
+		extensions["cpy"] = "python";
+		extensions["r"] = "r";
+		extensions["s"] = "r";
+		extensions["rd"] = "r";
+		extensions["Rprofile"] = "r";
+		extensions["rkt"] = "racket";
+		extensions["ss"] = "racket";
+		extensions["scm"] = "racket";
+		extensions["sch"] = "racket";
+		extensions["rb"] = "ruby";
+		extensions["rbx"] = "ruby";
+		extensions["rjs"] = "ruby";
+		extensions["Rakefile"] = "ruby";
+		extensions["rake"] = "ruby";
+		extensions["gemspec"] = "ruby";
+		extensions["irbrc"] = "ruby";
+		extensions["capfile"] = "ruby";
+		extensions["Gemfile"] = "ruby";
+		extensions["rb"] = "ruby";
+		extensions["rs"] = "rust";
+		extensions["rc"] = "rust";
+		extensions["sass"] = "sass";
+		extensions["scss"] = "sass";
+		extensions["scala"] = "scala";
+		extensions["sh"] = "shell-scripts";
+		extensions["sql"] = "sql";
+		extensions["styl"] = "stylus";
+		extensions["stylus"] = "stylus";
+		extensions["swift"] = "swift";
+		extensions["tcl"] = "tcl";
+		extensions["adp"] = "tcl";
+		extensions["ts"] = "typescript";
+		extensions["yaml"] = "yaml";
+		extensions["yml"] = "yaml";
+
+		QUrl url;
+		url.setScheme("dash-plugin");
+		url.setHost("");
+		url.setQuery("keys=" + keys[extensions[ext]] + "&query=" + text);
+		QDesktopServices::openUrl(url);
+	} else if (text.length() > 0)
+	{
+		if (ext.length() > 0)
+			ext += "%20";
+		QDesktopServices::openUrl(QUrl("https://google.com/search?q=" + ext + text));
+	}
+}
+
 void MainWindow::createFileMenu()
 {
 	QMenu *fileMenu = new QMenu(tr("&File"), this);
@@ -562,16 +766,20 @@ void MainWindow::createWindowMenu()
 
 void MainWindow::createHelpMenu()
 {
-	 QMenu *helpMenu = new QMenu(tr("&Help"), this);
-	 menuBar()->addMenu(helpMenu);
+	QMenu *helpMenu = new QMenu(tr("&Help"), this);
+	menuBar()->addMenu(helpMenu);
 
-	 helpMenu->addAction(tr("&About"), this, SLOT(about()));
+#ifdef Q_OS_MAC
+	helpMenu->addAction(tr("Context Help"), this, SLOT(contextHelp()), QKeySequence(Qt::Key_F1));
+#endif
 
-	 QAction *updates = new QAction(tr("&Check for updates..."), this);
-	 updates->setMenuRole(QAction::ApplicationSpecificRole);
-	 connect(updates, SIGNAL(triggered()), this, SLOT(checkForUpdates()));
+	helpMenu->addAction(tr("&About"), this, SLOT(about()));
 
-	 helpMenu->addAction(updates);
+	QAction *updates = new QAction(tr("&Check for updates..."), this);
+	updates->setMenuRole(QAction::ApplicationSpecificRole);
+	connect(updates, SIGNAL(triggered()), this, SLOT(checkForUpdates()));
+
+	helpMenu->addAction(updates);
 }
 
 void MainWindow::createMacDockMenu()

@@ -73,6 +73,7 @@ public slots:
 	void closeHTMLPreview(bool visible);
 	void options();
 
+	void contextHelp();
 	void about();
 	void checkForUpdates();
 
