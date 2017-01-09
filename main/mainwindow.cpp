@@ -769,9 +769,7 @@ void MainWindow::createHelpMenu()
 	QMenu *helpMenu = new QMenu(tr("&Help"), this);
 	menuBar()->addMenu(helpMenu);
 
-#ifdef Q_OS_MAC
 	helpMenu->addAction(tr("Context Help"), this, SLOT(contextHelp()), QKeySequence(Qt::Key_F1));
-#endif
 
 	helpMenu->addAction(tr("&About"), this, SLOT(about()));
 
