@@ -71,10 +71,13 @@ Copyright (c) 2010, Razvan Petru
    <item row="3" column="0" colspan="3">
     <widget class="QLabel" name="copyRightLabel">
      <property name="text">
-      <string>Copyright 2010-2013 Pentalon.&lt;br/&gt;All Rights Reserved.</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright 2010-2017 &lt;a href=&quot;http://thingalon.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Mark&lt;/span&gt;&lt;/a&gt; and &lt;a href=&quot;https://pento.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Gary&lt;/span&gt;&lt;/a&gt;.&lt;br/&gt;All Rights Reserved.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
