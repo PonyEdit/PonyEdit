@@ -19,6 +19,13 @@ PonyEdit operates over a standard SSH shell connection, and only requires Perl o
 
 PonyEdit compiles with the latest version of [Qt](https://www.qt.io/).
 
+On Linux, you'll also need to install these packages:
+
+* `libssl-dev`
+* `libssh2-1-dev`
+* `libgl1-mesa-dev`
+* `mesa-common-dev`
+
 ## Getting PonyEdit
 
 You can download the latest version of PonyEdit [here](https://github.com/PonyEdit/PonyEdit/releases).
