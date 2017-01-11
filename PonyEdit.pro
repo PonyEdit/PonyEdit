@@ -245,6 +245,7 @@ HEADERS  += \
 OTHER_FILES += \
 	README.md \
 	.gitignore \
+	.clang-format \
 	.travis.yml \
 	slave/slave.pl \
 	syntax/test.pl \

@@ -1,0 +1,39 @@
+---
+BasedOnStyle: WebKit
+AlignConsecutiveAssignments: 'true'
+AlignConsecutiveDeclarations: 'true'
+AlignEscapedNewlinesLeft: 'true'
+AlignOperands: 'true'
+AlignTrailingComments: 'true'
+AllowAllParametersOfDeclarationOnNextLine: 'true'
+AllowShortBlocksOnASingleLine: 'false'
+AllowShortCaseLabelsOnASingleLine: 'false'
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: 'false'
+AllowShortLoopsOnASingleLine: 'false'
+BreakBeforeBraces: Attach
+BreakBeforeTernaryOperators: 'false'
+BreakConstructorInitializersBeforeComma: 'true'
+ConstructorInitializerAllOnOneLineOrOnePerLine: 'true'
+IndentCaseLabels: 'true'
+IndentWidth: '4'
+KeepEmptyLinesAtTheStartOfBlocks: 'false'
+Language: Cpp
+MaxEmptyLinesToKeep: '1'
+NamespaceIndentation: All
+PointerAlignment: Right
+SortIncludes: 'true'
+SpaceAfterCStyleCast: 'true'
+SpaceBeforeAssignmentOperators: 'true'
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: 'false'
+SpacesBeforeTrailingComments: '1'
+SpacesInAngles: 'true'
+SpacesInCStyleCastParentheses: 'false'
+SpacesInParentheses: 'true'
+SpacesInSquareBrackets: 'true'
+Standard: Cpp11
+TabWidth: '4'
+UseTab: ForIndentation
+
+...
