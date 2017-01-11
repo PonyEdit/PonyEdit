@@ -247,6 +247,7 @@ OTHER_FILES += \
 	.gitignore \
 	.clang-format \
 	.travis.yml \
+	README.md \
 	slave/slave.pl \
 	syntax/test.pl \
 	ponyedit.rc \
