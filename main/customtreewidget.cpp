@@ -8,6 +8,8 @@
 CustomTreeWidget::CustomTreeWidget(QWidget *parent) :
     QTreeView(parent)
 {
+	mAnimationTimerId = 0;
+
 	mModel = new CustomTreeModel(this);
 	setModel(mModel);
 
