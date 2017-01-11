@@ -32,6 +32,9 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+	MainWindow(MainWindow const&) = delete;
+	MainWindow& operator=(MainWindow const&) = delete;
+
 public slots:
 	void newFile();
 	void openFile();

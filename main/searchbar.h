@@ -13,6 +13,9 @@ public:
     explicit SearchBar(QWidget *parent = 0);
 	~SearchBar();
 
+	SearchBar(SearchBar const&) = delete;
+	SearchBar& operator=(SearchBar const&) = delete;
+
 	void takeFocus();
 
 signals:

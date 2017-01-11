@@ -10,6 +10,10 @@ class EditorWarningBar : public QWidget
 
 public:
 	EditorWarningBar(QWidget* parent, const QPixmap& icon, const QString& message);
+
+	EditorWarningBar(EditorWarningBar const&) = delete;
+	EditorWarningBar& operator=(EditorWarningBar const&) = delete;
+
 	void addButton(const QString& label, QObject* callbackTarget, const char* callbackMethod);
 	void addCloseButton();
 

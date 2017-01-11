@@ -1,11 +1,16 @@
 #ifndef SYNTAXDEFINITION_H
 #define SYNTAXDEFINITION_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QMap>
 #include <QtXml>
 #include <QString>
 #include <QStringList>
 #include <QSharedPointer>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "main/stringtrie.h"
 
 class SyntaxRule;
@@ -44,6 +49,9 @@ public:
 	{
 		ContextDef();
 		~ContextDef();
+
+		ContextDef(ContextDef const&) = delete;
+		ContextDef& operator=(ContextDef const&) = delete;
 
 		QString attribute;
 		QString name;

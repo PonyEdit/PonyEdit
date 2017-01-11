@@ -18,6 +18,9 @@ class SyntaxHighlighter : public QSyntaxHighlighter
 public:
 	SyntaxHighlighter(QTextDocument* parent, SyntaxDefinition* syntaxDef);
 
+	SyntaxHighlighter(SyntaxHighlighter const&) = delete;
+	SyntaxHighlighter& operator=(SyntaxHighlighter const&) = delete;
+
 	inline SyntaxDefinition* getSyntaxDefinition() const { return mSyntaxDefinition; }
 	void setSyntaxDefinition(SyntaxDefinition* definition);
 

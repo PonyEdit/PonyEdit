@@ -1,8 +1,13 @@
 #include "editor.h"
+
+HIDE_COMPILE_WARNINGS
+
 #include <QGridLayout>
 #include <QSpacerItem>
 #include <QTextCursor>
 #include <QDebug>
+
+UNHIDE_COMPILE_WARNINGS
 
 #include "file/basefile.h"
 #include "syntax/syntaxhighlighter.h"
@@ -13,31 +18,34 @@
 #include "editorwarningbar.h"
 #include "file/openfilemanager.h"
 
-Editor::Editor(BaseFile* file) : QStackedWidget()
+Editor::Editor(BaseFile* file) : QStackedWidget(),
+	mFirstOpen(true),
+	mEditorPane(new QWidget(this)),
+	mEditorPaneLayout(new QVBoxLayout(mEditorPane)),
+	mFile(file),
+	mEditor(new CodeEditor(file, this)),
+	mDocument(),
+	mWorkingPane(new QWidget()),
+	mWorkingIcon(new QLabel()),
+	mWorkingText(new QLabel()),
+	mProgressBar(new QProgressBar()),
+	mReadOnlyWarning(NULL)
 {
-	mReadOnlyWarning = NULL;
-	mFirstOpen = true;
-
-	mEditorPane = new QWidget(this);
-	mEditorPaneLayout = new QVBoxLayout(mEditorPane);
 	mEditorPaneLayout->setSpacing(0);
 	mEditorPaneLayout->setMargin(0);
-	mEditor = new CodeEditor(file, this);
 	mEditorPaneLayout->addWidget(mEditor);
 	addWidget(mEditorPane);
 
-	mWorkingPane = new QWidget();
 	QGridLayout* layout = new QGridLayout(mWorkingPane);
 	layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding), 0, 0, 1, 4);
 	layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 1, 0);
-	mWorkingIcon = new QLabel();
+
 	mWorkingIcon->setFixedSize(16, 16);
 	layout->addWidget(mWorkingIcon, 1, 1, 1, 1);
-	mWorkingText = new QLabel();
+
 	layout->addWidget(mWorkingText, 1, 2, 1, 1);
 	layout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding), 1, 3);
 
-	mProgressBar = new QProgressBar();
 	mProgressBar->setMaximum(100);
 	mProgressBar->setValue(0);
 	layout->addWidget(mProgressBar, 2, 1, 1, 2);
@@ -45,7 +53,6 @@ Editor::Editor(BaseFile* file) : QStackedWidget()
 
 	addWidget(mWorkingPane);
 
-	mFile = file;
 	mFile->editorAttached(this);
 	connect(mFile, SIGNAL(openStatusChanged(int)), this, SLOT(openStatusChanged(int)));
 	connect(mFile, SIGNAL(fileProgress(int)), this, SLOT(fileOpenProgress(int)));

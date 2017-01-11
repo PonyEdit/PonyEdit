@@ -1,9 +1,13 @@
 #ifndef CODEEDITOR_H
 #define CODEEDITOR_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QPlainTextEdit>
 #include <QTextCursor>
 #include <QTextBlock>
+
+UNHIDE_COMPILE_WARNINGS
 
 class LineNumberWidget;
 class SyntaxHighlighter;
@@ -15,6 +19,9 @@ class CodeEditor : public QPlainTextEdit
     Q_OBJECT
 public:
 	CodeEditor(BaseFile* file, QWidget *parent = 0);
+
+	CodeEditor(CodeEditor const&) = delete;
+	CodeEditor& operator=(CodeEditor const&) = delete;
 
 	void lineNumberAreaPaintEvent(QPaintEvent *event);
 	int lineNumberAreaWidth();

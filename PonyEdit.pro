@@ -63,7 +63,7 @@ macx {
 	QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/ssl/lib/libcrypto.1.1.dylib @executable_path/libcrypto.1.1.dylib $$OUT_PWD/PonyEdit.app/Contents/MacOS/PonyEdit;
 
 	QMAKE_CFLAGS += -Werror -Wunused-parameter
-	QMAKE_CXXFLAGS += -Werror -Wunused-parameter
+	QMAKE_CXXFLAGS += -Werror -Wunused-parameter -Weffc++ -include $$PWD/main/global.h
 
     LIBS	+= -lssh2 -lcrypto -lssl
 }

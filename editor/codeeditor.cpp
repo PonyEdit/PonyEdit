@@ -1,5 +1,10 @@
+HIDE_COMPILE_WARNINGS
+
 #include <QPainter>
 #include <QTextBlock>
+#include <QChar>
+
+UNHIDE_COMPILE_WARNINGS
 
 #include "editor/codeeditor.h"
 #include "editor/linenumberwidget.h"
@@ -9,13 +14,11 @@
 #include "main/windowmanager.h"
 #include "file/basefile.h"
 #include "main/editorpanel.h"
-#include <QChar>
 
 CodeEditor::CodeEditor(BaseFile* file, QWidget *parent) : QPlainTextEdit(parent)
+	mFile(file),
+	mLineNumberWidget(new LineNumberWidget(this))
 {
-	mFile = file;
-	mLineNumberWidget = new LineNumberWidget(this);
-
 	connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
 	connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumberArea(QRect,int)));
 	connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));

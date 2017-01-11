@@ -15,6 +15,9 @@ public:
     explicit RegExpTester(QWidget *parent = 0);
     ~RegExpTester();
 
+	RegExpTester(RegExpTester const&) = delete;
+	RegExpTester& operator=(RegExpTester const&) = delete;
+
 	void takeFocus(QString initialText);
 
 private slots:

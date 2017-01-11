@@ -11,6 +11,9 @@ class Callback
 public:
 	Callback(QObject* target = 0, const char* successSlot = 0, const char* failureSlot = 0, const char* progressSlot = 0);
 
+	Callback(Callback const&) = delete;
+	Callback& operator=(Callback const&) = delete;
+
 	inline QObject* getTarget() const { return mTarget.data(); }
 	inline const char* getSuccessSlot() const { return mSuccessSlot; }
 	inline const char* getFailureSlot() const { return mFailureSlot; }

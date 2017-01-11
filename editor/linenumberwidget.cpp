@@ -1,9 +1,8 @@
 #include "linenumberwidget.h"
 #include "codeeditor.h"
 
-LineNumberWidget::LineNumberWidget(CodeEditor *editor) : QWidget(editor)
+LineNumberWidget::LineNumberWidget(CodeEditor *editor) : QWidget(editor), mEditor(editor)
 {
-	mEditor = editor;
 }
 
 QSize LineNumberWidget::sizeHint() const

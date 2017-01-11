@@ -93,6 +93,9 @@ class LocationShared : public QObject
 	Q_OBJECT
 	friend class Location;
 
+	LocationShared(LocationShared const&) = delete;
+	LocationShared& operator=(LocationShared const&) = delete;
+
 public:
 	static void cleanupIconProvider();
 

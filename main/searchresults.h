@@ -1,11 +1,17 @@
 #ifndef SEARCHRESULTS_H
 #define SEARCHRESULTS_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QTreeView>
 #include <QLineEdit>
 #include <QPushButton>
 #include <QLabel>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "searchresultmodel.h"
+
 class SearchResultDelegate;
 
 class SearchResults : public QWidget
