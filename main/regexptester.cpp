@@ -1,8 +1,14 @@
-#include "regexptester.h"
+HIDE_COMPILE_WARNINGS
+
+#include <QDebug>
+
 #include "ui_regexptester.h"
+
+UNHIDE_COMPILE_WARNINGS
+
+#include "regexptester.h"
 #include "globaldispatcher.h"
 #include "options/options.h"
-#include <QDebug>
 
 quint32 captureColors[] =
 {
@@ -17,7 +23,8 @@ quint32 captureColors[] =
 
 RegExpTester::RegExpTester(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::RegExpTester)
+    ui(new Ui::RegExpTester),
+    mUpdating(false)
 {
     ui->setupUi(this);
 
@@ -30,8 +37,6 @@ RegExpTester::RegExpTester(QWidget *parent) :
 	connect(ui->testData, SIGNAL(textChanged()), this, SLOT(updateResult()));
 	connect(ui->caseSensitive, SIGNAL(stateChanged(int)), this, SLOT(updateResult()));
 	connect(gDispatcher, SIGNAL(optionsChanged()), this, SLOT(applySettings()));
-
-	mUpdating = false;
 
 	applySettings();
 	updateResult();

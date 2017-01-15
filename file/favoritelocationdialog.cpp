@@ -1,13 +1,17 @@
 #include "favoritelocationdialog.h"
+
+HIDE_COMPILE_WARNINGS
+
 #include "ui_favoritelocationdialog.h"
 
+UNHIDE_COMPILE_WARNINGS
 
 FavoriteLocationDialog::FavoriteLocationDialog(QWidget *parent, Location::Favorite* favorite) : QDialog(parent),
-    ui(new Ui::FavoriteLocationDialog)
+    ui(new Ui::FavoriteLocationDialog),
+    mFavorite(favorite)
 {
     ui->setupUi(this);
 
-	mFavorite = favorite;
 	ui->name->setText(mFavorite->name);
 	ui->path->setText(mFavorite->path);
 

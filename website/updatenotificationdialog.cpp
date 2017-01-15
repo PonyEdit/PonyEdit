@@ -1,12 +1,18 @@
+HIDE_COMPILE_WARNINGS
+
 #include <QCoreApplication>
 #include <QDesktopServices>
 
-#include "updatenotificationdialog.h"
 #include "ui_updatenotificationdialog.h"
+
+UNHIDE_COMPILE_WARNINGS
+
+#include "updatenotificationdialog.h"
 
 UpdateNotificationDialog::UpdateNotificationDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::UpdateNotificationDialog)
+    ui(new Ui::UpdateNotificationDialog),
+    mFileURL()
 {
     ui->setupUi(this);
 

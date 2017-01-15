@@ -23,7 +23,14 @@ class BaseFile : public QObject
 	Q_OBJECT
 
 public:
-	struct Change { int revision; int position; int remove; QString insert; };
+	struct Change {
+		Change() : revision(), position(), remove(), insert() {}
+		
+		int revision;
+		int position;
+		int remove;
+		QString insert;
+	};
 	enum OpenStatus { Loading, LoadError, Ready, /**/Disconnected, Reconnecting, Repairing, SyncError, /**/Closing, Closed };
 	static const char* sStatusLabels[];
 

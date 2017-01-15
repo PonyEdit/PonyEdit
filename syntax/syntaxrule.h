@@ -1,9 +1,14 @@
 #ifndef SYNTAXRULE_H
 #define SYNTAXRULE_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QtXml>
 #include <QString>
 #include <QMap>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "syntaxdefinition.h"
 
 class SyntaxRule
@@ -38,6 +43,9 @@ public:
 	SyntaxRule(SyntaxRule* parent, QSharedPointer<SyntaxRule> other, bool duplicateChildren, bool maintainLinks);
 	~SyntaxRule();
 
+	SyntaxRule(SyntaxRule const&) = delete;
+	SyntaxRule& operator=(SyntaxRule const&) = delete;
+	
 	SyntaxRule* getParent() const { return mParent; }
 	const QString& getName() const { return mName; }
 	inline bool isValid() const { return mValid; }
@@ -63,7 +71,7 @@ public:
 private:
 	struct DynamicSlot
 	{
-		DynamicSlot(int p, int i) { pos = p; id = i; }
+		DynamicSlot(int p, int i) : pos(p), id(i) {}
 		int pos; int id;
 	};
 

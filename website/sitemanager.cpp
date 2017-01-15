@@ -1,3 +1,5 @@
+HIDE_COMPILE_WARNINGS
+
 #include <QCoreApplication>
 #include <QUrl>
 #include <QUrlQuery>
@@ -8,6 +10,8 @@
 #include <QtScript/QScriptEngine>
 #include <QtScript/QScriptValue>
 #include <QDesktopServices>
+
+UNHIDE_COMPILE_WARNINGS
 
 #include "sitemanager.h"
 #include "updatemanager.h"
@@ -23,9 +27,10 @@
 	#define DOWNLOAD_NAME "PonyEdit.rpm"
 #endif
 
-SiteManager::SiteManager()
+SiteManager::SiteManager() :
+    mManager(new QNetworkAccessManager(this)),
+    mReplies()
 {
-	mManager = new QNetworkAccessManager(this);
 	connect(mManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(handleReply(QNetworkReply*)));
 }
 

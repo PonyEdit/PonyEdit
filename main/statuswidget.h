@@ -1,10 +1,14 @@
 #ifndef STATUSWIDGET_H
 #define STATUSWIDGET_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QMap>
 #include <QWidget>
 #include <QAbstractButton>
 #include <QDialogButtonBox>
+
+UNHIDE_COMPILE_WARNINGS
 
 namespace Ui { class StatusWidget; }
 

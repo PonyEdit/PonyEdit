@@ -1,6 +1,10 @@
+HIDE_COMPILE_WARNINGS
+
 #include <QDockWidget>
 #include <QtAlgorithms>
 #include <QDebug>
+
+UNHIDE_COMPILE_WARNINGS
 
 #include "windowmanager.h"
 #include "file/openfilemanager.h"
@@ -9,18 +13,23 @@
 
 WindowManager* gWindowManager = NULL;
 
-WindowManager::WindowManager(QWidget *parent) :
-    QWidget(parent)
+WindowManager::WindowManager(QWidget *parent) : QWidget(parent),
+    mParent((MainWindow*)parent),
+    mCurrentEditorPanel(NULL),
+    mEditorSelectionLocked(false),
+    mRootEditorPanel(new EditorPanel(this)),
+    mLayout(new QVBoxLayout(this)),
+    mSearchBarWrapper(),
+    mSearchBar(),
+    mRegExpTesterWrapper(),
+    mRegExpTester(),
+    mSearchResultsWrapper(),
+    mSearchResults()
 {
-	mEditorSelectionLocked = false;
-	mParent = (MainWindow*)parent;
-	mCurrentEditorPanel = NULL;
 	gWindowManager = this;
 
 	//	Create a root editor stack
-	mLayout = new QVBoxLayout(this);
 	mLayout->setMargin(0);
-	mRootEditorPanel = new EditorPanel(this);
 	mLayout->addWidget(mRootEditorPanel);
 	setCurrentEditorPanel(mRootEditorPanel);
 

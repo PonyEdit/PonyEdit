@@ -1,13 +1,17 @@
 #include "gotolinedialog.h"
+
+HIDE_COMPILE_WARNINGS
+
 #include "ui_gotolinedialog.h"
+
+UNHIDE_COMPILE_WARNINGS
 
 GotoLineDialog::GotoLineDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::GotoLineDialog)
+    ui(new Ui::GotoLineDialog),
+    mLineNumber(0)
 {
 	ui->setupUi(this);
-
-	mLineNumber = 0;
 
 	connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 	connect(ui->gotoButton, SIGNAL(clicked()), this, SLOT(accept()));

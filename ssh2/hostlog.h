@@ -1,7 +1,11 @@
 #ifndef HOSTLOG_H
 #define HOSTLOG_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QWidget>
+
+UNHIDE_COMPILE_WARNINGS
 
 namespace Ui {
 class HostLog;

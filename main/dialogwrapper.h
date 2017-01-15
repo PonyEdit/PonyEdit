@@ -1,8 +1,12 @@
 #ifndef DIALOGWRAPPER_H
 #define DIALOGWRAPPER_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QDialog>
 #include <QVBoxLayout>
+
+UNHIDE_COMPILE_WARNINGS
 
 template<class T> class DialogWrapper : public QDialog
 {

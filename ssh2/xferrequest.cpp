@@ -3,10 +3,15 @@
 #include <QDebug>
 
 XferRequest::XferRequest(bool sudo, const QByteArray& filename, const Callback& callback) :
-	mSudo(sudo), mFilename(filename)
+	mSudo(sudo),
+    mUpload(false),
+    mFilename(filename),
+    mData(),
+    mRequestHeader(),
+    mChecksum(),
+    mEncodedData(),
+    mSize()
 {
-	mUpload = false;
-
 	connect(this, SIGNAL(transferSuccess(QVariantMap)), callback.getTarget(), callback.getSuccessSlot());
 	connect(this, SIGNAL(transferFailure(QString,int)), callback.getTarget(), callback.getFailureSlot());
 

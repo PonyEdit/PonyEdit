@@ -1,8 +1,12 @@
 #ifndef ADVANCEDSEARCHDIALOG_H
 #define ADVANCEDSEARCHDIALOG_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QDialog>
 #include <QFile>
+
+UNHIDE_COMPILE_WARNINGS
 
 namespace Ui { class AdvancedSearchDialog; }
 class BaseFile;

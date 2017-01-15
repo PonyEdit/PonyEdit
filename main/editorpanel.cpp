@@ -3,14 +3,13 @@
 #include "globaldispatcher.h"
 #include <QDebug>
 
-EditorPanel::EditorPanel(QWidget* parent, EditorPanel* parentPanel, EditorStack* inheritedStack) :
-	QFrame(parent)
+EditorPanel::EditorPanel(QWidget* parent, EditorPanel* parentPanel, EditorStack* inheritedStack) : QFrame(parent),
+    mLayout(new QVBoxLayout(this)),
+    mParentPanel(parentPanel),
+    mSplitWidget(NULL),
+    mChildPanels(),
+    mEditorStack(NULL)
 {
-	mParentPanel = parentPanel;
-	mLayout = new QVBoxLayout(this);
-	mLayout->setMargin(0);
-	mSplitWidget = NULL;
-
 	setupBorder();
 
 	if (inheritedStack)

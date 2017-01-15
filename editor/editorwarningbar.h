@@ -1,8 +1,12 @@
 #ifndef EDITORWARNINGBAR_H
 #define EDITORWARNINGBAR_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QWidget>
 #include <QHBoxLayout>
+
+UNHIDE_COMPILE_WARNINGS
 
 class EditorWarningBar : public QWidget
 {

@@ -13,6 +13,8 @@ class Options : QObject
 	Q_OBJECT
 
 public:
+	Options() : mPersistantKeys() {}
+
 	enum IndentModes
 	{
 		NoAutoIndent = 0,

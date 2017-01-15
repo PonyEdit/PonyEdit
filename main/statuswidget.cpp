@@ -1,17 +1,23 @@
-#include "statuswidget.h"
-#include "ui_statuswidget.h"
+HIDE_COMPILE_WARNINGS
+
 #include <QDialog>
 #include <QPushButton>
 
+#include "ui_statuswidget.h"
+
+UNHIDE_COMPILE_WARNINGS
+
+#include "statuswidget.h"
+
 StatusWidget::StatusWidget(bool dialogChild, QWidget *parent) :
 	QWidget(parent),
-	ui(new Ui::StatusWidget)
+	ui(new Ui::StatusWidget),
+    mCurrentInputWidget(NULL),
+    mDialogChild(dialogChild),
+    mCloseOnButton(false),
+    mButtons(),
+    mResult(None)
 {
-	mDialogChild = dialogChild;
-	mCurrentInputWidget = NULL;
-	mCloseOnButton = false;
-	mResult = None;
-
 	ui->setupUi(this);
 
 	connect(this, SIGNAL(signalUpdateLayouts()), this, SLOT(updateLayouts()), Qt::QueuedConnection);

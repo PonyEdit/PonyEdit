@@ -1,5 +1,10 @@
-#include "editoroptionswidget.h"
+HIDE_COMPILE_WARNINGS
+
 #include "ui_editoroptionswidget.h"
+
+UNHIDE_COMPILE_WARNINGS
+
+#include "editoroptionswidget.h"
 #include "options.h"
 
 EditorOptionsWidget::EditorOptionsWidget(QWidget *parent) :

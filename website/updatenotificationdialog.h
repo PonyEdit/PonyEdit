@@ -22,6 +22,9 @@ public:
     explicit UpdateNotificationDialog(QWidget *parent = 0);
     ~UpdateNotificationDialog();
 
+	UpdateNotificationDialog(UpdateNotificationDialog const&) = delete;
+	UpdateNotificationDialog& operator=(UpdateNotificationDialog const&) = delete;
+	
 	void setNewVersion(const QString& version);
 	void setChanges(const QStringList &alerts, const QStringList &changes);
 	void setDownloadURL(const QString& fileURL);

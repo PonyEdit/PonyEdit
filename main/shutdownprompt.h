@@ -1,7 +1,11 @@
 #ifndef SHUTDOWNPROMPT_H
 #define SHUTDOWNPROMPT_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QDialog>
+
+UNHIDE_COMPILE_WARNINGS
 
 namespace Ui {
     class ShutdownPrompt;

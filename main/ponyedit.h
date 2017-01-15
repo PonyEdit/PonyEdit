@@ -16,6 +16,9 @@ public:
 	PonyEdit(int argc, char** argv);
 	~PonyEdit();
 
+	PonyEdit(PonyEdit const&) = delete;
+	PonyEdit& operator=(PonyEdit const&) = delete;
+				
 	bool isRunning();
 	bool sendMessage(const QString &message);
 

@@ -4,10 +4,7 @@
 #include "tools/callback.h"
 #include <QCryptographicHash>
 
-FtpFile::FtpFile(const Location& location) : BaseFile(location)
-{
-	mHost = location.getRemoteHost();
-}
+FtpFile::FtpFile(const Location& location) : BaseFile(location), mHost(location.getRemoteHost()) {}
 
 BaseFile* FtpFile::newFile(const QString& content)
 {

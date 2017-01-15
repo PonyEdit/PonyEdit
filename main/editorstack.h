@@ -1,8 +1,12 @@
 #ifndef EDITORSTACK_H
 #define EDITORSTACK_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QStackedWidget>
 #include <QList>
+
+UNHIDE_COMPILE_WARNINGS
 
 class Editor;
 class EditorPanel;

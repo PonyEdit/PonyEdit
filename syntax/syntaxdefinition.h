@@ -34,6 +34,7 @@ public:
 
 	struct ItemData
 	{
+		ItemData() : name(), styleName(), styleNameLower(), color(), selColor(), italic(), bold(), underline(), strikeout() {}
 		QString name;
 		QString styleName;
 		QString styleNameLower;
@@ -50,7 +51,7 @@ public:
 		ContextDef();
 		~ContextDef();
 
-		ContextDef(ContextDef const&) = delete;
+		ContextDef(ContextDef const& obj);
 		ContextDef& operator=(ContextDef const&) = delete;
 
 		QString attribute;
@@ -72,6 +73,7 @@ public:
 
 	struct KeywordList
 	{
+		KeywordList() : name(), items(), lcItems() {}
 		QString name;
 		StringTrie items;
 		StringTrie lcItems;		//	For case-insensitive matching.

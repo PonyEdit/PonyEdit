@@ -1,7 +1,12 @@
 #ifndef NEWFOLDERDIALOG_H
 #define NEWFOLDERDIALOG_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QDialog>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "file/location.h"
 
 namespace Ui {

@@ -1,7 +1,12 @@
 #ifndef FAVORITELOCATIONDIALOG_H
 #define FAVORITELOCATIONDIALOG_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QDialog>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "location.h"
 
 namespace Ui { class FavoriteLocationDialog; }

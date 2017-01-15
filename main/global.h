@@ -12,7 +12,8 @@
 //#define UNLOCK_MUTEX(x) { //qDebug() << "Unlocking mutex " #x " at line " << __LINE__ << " in file " << __FILE__ << " in object " << (void*)this << ", thread " << (void*)QThread::currentThread(); x.unlock(); }
 
 #define HIDE_COMPILE_WARNINGS _Pragma("GCC diagnostic push") \
-_Pragma("GCC diagnostic ignored \"-Weffc++\"")
+	_Pragma("GCC diagnostic ignored \"-Weffc++\"") \
+	_Pragma("GCC diagnostic ignored \"-Wnon-virtual-dtor\"")
 
 #define UNHIDE_COMPILE_WARNINGS _Pragma("GCC diagnostic pop")
 

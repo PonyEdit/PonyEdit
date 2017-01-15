@@ -1,5 +1,10 @@
-#include "startupoptionswidget.h"
+HIDE_COMPILE_WARNINGS
+
 #include "ui_startupoptionswidget.h"
+
+UNHIDE_COMPILE_WARNINGS
+
+#include "startupoptionswidget.h"
 #include "options.h"
 #include "file/openfilemanager.h"
 #include "file/basefile.h"

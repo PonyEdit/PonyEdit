@@ -17,6 +17,9 @@ class UpdateManager : public QObject
 public:
     explicit UpdateManager(QObject *parent = 0);
 
+	UpdateManager(UpdateManager const&) = delete;
+	UpdateManager& operator=(UpdateManager const&) = delete;
+		
 	static UpdateManager* instance() { return sInstance; }
 
 	void updateFound(const QString& version, const QString& url, const QStringList& alerts, const QStringList& changes);

@@ -1,12 +1,17 @@
 #ifndef EDITORPANEL_H
 #define EDITORPANEL_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QWidget>
 #include <QSplitter>
 #include <QVBoxLayout>
+#include <QDebug>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include <editor/editor.h>
 #include "editorstack.h"
-#include <QDebug>
 
 class WindowManager;
 extern WindowManager* gWindowManager;

@@ -16,8 +16,10 @@ public:
     explicit HostKeyDlg(QWidget *parent = 0);
     ~HostKeyDlg();
 
+	HostKeyDlg(HostKeyDlg const&) = delete;
+	HostKeyDlg& operator=(HostKeyDlg const&) = delete;
+	
 	virtual void setOptions(const QVariantMap &options);
-
 
 private:
     Ui::HostKeyDlg *ui;

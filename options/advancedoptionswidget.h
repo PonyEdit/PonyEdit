@@ -16,6 +16,9 @@ public:
 	explicit AdvancedOptionsWidget(QWidget *parent = 0);
 	~AdvancedOptionsWidget();
 
+	AdvancedOptionsWidget(AdvancedOptionsWidget const&) = delete;
+	AdvancedOptionsWidget& operator=(AdvancedOptionsWidget const&) = delete;
+					
 	void apply();
 
 private slots:

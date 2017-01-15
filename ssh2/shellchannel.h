@@ -15,6 +15,9 @@ public:
 	ShellChannel(SshHost* host, bool machineReadable = true, const QByteArray& ptyType = "vanilla");
 	//	Pty types = vanilla, vt102, ansi or xterm.
 
+	ShellChannel(ShellChannel const&) = delete;
+	ShellChannel& operator=(ShellChannel const&) = delete;
+			
 	bool update();
 	virtual int getConnectionScore();
 	virtual QString getConnectionDescription();
@@ -25,7 +28,11 @@ signals:
 	void error(QString message);
 
 protected:
-	struct ReadReply { bool readAgain; QByteArray data; };
+	struct ReadReply {
+			ReadReply() : readAgain(), data() {}
+			bool readAgain;
+			QByteArray data;
+	};
 	enum SendResponse { SendAgain, SendFail, SendSucceed };
 	enum InternalStatus { _OpenSession = 30, _RequestPty = 31, _StartShell = 32, _SendInit = 33, _WaitForInitReply = 34 };
 

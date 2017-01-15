@@ -1,12 +1,18 @@
 #include "fontoptionswidget.h"
-#include "ui_fontoptionswidget.h"
 #include "options.h"
+
+HIDE_COMPILE_WARNINGS
+
+#include "ui_fontoptionswidget.h"
 #include <QStringList>
 #include <QDebug>
 
+UNHIDE_COMPILE_WARNINGS
+
 FontOptionsWidget::FontOptionsWidget(QWidget *parent) :
 	OptionsDialogPage(parent),
-    ui(new Ui::fontoptionswidget)
+    ui(new Ui::fontoptionswidget),
+    mFontDatabase()
 {
     ui->setupUi(this);
 

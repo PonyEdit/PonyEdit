@@ -1,7 +1,11 @@
 #ifndef GOTOLINEDIALOG_H
 #define GOTOLINEDIALOG_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QDialog>
+
+UNHIDE_COMPILE_WARNINGS
 
 namespace Ui {
     class GotoLineDialog;
