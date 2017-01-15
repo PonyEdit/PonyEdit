@@ -63,7 +63,11 @@ public:
 
 	bool operator==(const Location& other) const;
 
-	struct Favorite { QString path; QString name; };
+	struct Favorite {
+		Favorite() : path(), name() {}
+		QString path;
+		QString name;
+	};
 	void addToFavorites();
 	QString getDefaultFavoriteName();
 	static void deleteFavorite(const QString& path);

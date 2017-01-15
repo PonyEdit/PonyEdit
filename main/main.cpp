@@ -1,5 +1,7 @@
 #ifndef TESTPONY
 
+HIDE_COMPILE_WARNINGS
+
 #include <QtWidgets/QApplication>
 #include <QString>
 #include <QDebug>
@@ -8,6 +10,8 @@
 #include <QNetworkProxyFactory>
 #include <QStandardPaths>
 #include <QDir>
+
+UNHIDE_COMPILE_WARNINGS
 
 #include "global.h"
 #include "QsLogDest.h"

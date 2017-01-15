@@ -17,6 +17,9 @@ public:
     explicit ServerConfigWidget(QWidget *parent = 0);
     ~ServerConfigWidget();
 
+	ServerConfigWidget(ServerConfigWidget const&) = delete;
+	ServerConfigWidget& operator=(ServerConfigWidget const&) = delete;
+			
 	void setEditHost(SshHost* host);
 	SshHost* getEditHost();
 

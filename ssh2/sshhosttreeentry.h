@@ -13,6 +13,9 @@ class SshHostTreeEntry : public CustomTreeEntry
 public:
 	SshHostTreeEntry(SshHost* host);
 
+	SshHostTreeEntry(SshHostTreeEntry const&) = delete;
+	SshHostTreeEntry& operator=(SshHostTreeEntry const&) = delete;
+
 	//	Custom drawing stuff
 	virtual bool isCustomDrawn() const { return true; }
 	virtual void customDraw(QPainter* painter, const QStyleOptionViewItem& option);

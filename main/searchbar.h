@@ -1,7 +1,11 @@
 #ifndef SEARCHBAR_H
 #define SEARCHBAR_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QWidget>
+
+UNHIDE_COMPILE_WARNINGS
 
 namespace Ui { class SearchBar; }
 

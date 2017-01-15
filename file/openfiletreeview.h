@@ -1,7 +1,11 @@
 #ifndef OPENFILETREEVIEW_H
 #define OPENFILETREEVIEW_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QTreeView>
+
+UNHIDE_COMPILE_WARNINGS
 
 class OpenFileTreeModel;
 class OpenFileItemDelegate;
@@ -15,6 +19,10 @@ public:
 	enum OptionFlags { NoFlags = 0x00, CloseButtons = 0x01, MultiSelect = 0x02, UnsavedOnly = 0x04, RefreshButtons = 0x08 };
 
 	explicit OpenFileTreeView(QWidget* parent, int optionFlags, const QList<BaseFile*>* files = NULL);
+
+	OpenFileTreeView(OpenFileTreeView const&) = delete;
+	OpenFileTreeView& operator=(OpenFileTreeView const&) = delete;
+
 	virtual void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight, const QVector<int> &roles = QVector<int>());
 
 	BaseFile* getSelectedFile() const;          //  Fetches one selected file. If multiple selected, returns only the first. Mostly useful when in single selection mode.

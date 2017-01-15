@@ -24,6 +24,9 @@ public:
 	explicit OptionsDialog(QWidget *parent = 0);
     ~OptionsDialog();
 
+	OptionsDialog(OptionsDialog const&) = delete;
+	OptionsDialog& operator=(OptionsDialog const&) = delete;
+
 private slots:
 	void buttonClicked(QAbstractButton *button);
 	void saveOptions();

@@ -14,6 +14,9 @@ public:
 	explicit FavoriteLocationDialog(QWidget* parent, Location::Favorite* favorite);
     ~FavoriteLocationDialog();
 
+	FavoriteLocationDialog(FavoriteLocationDialog const&) = delete;
+	FavoriteLocationDialog& operator=(FavoriteLocationDialog const&) = delete;
+		
 private slots:
 	void acceptHandler();
 

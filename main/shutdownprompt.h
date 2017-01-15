@@ -15,6 +15,9 @@ public:
     explicit ShutdownPrompt(QWidget *parent = 0);
     ~ShutdownPrompt();
 
+	ShutdownPrompt(ShutdownPrompt const&) = delete;
+	ShutdownPrompt& operator=(ShutdownPrompt const&) = delete;
+		
 public slots:
 	void remember();
 	void dontRemember();

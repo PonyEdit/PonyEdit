@@ -12,6 +12,9 @@ class TabbedFileList : public QDockWidget
 public:
 	explicit TabbedFileList(QWidget *parent = 0);
 
+	TabbedFileList(TabbedFileList const&) = delete;
+	TabbedFileList& operator=(TabbedFileList const&) = delete;
+
 	int findTab(BaseFile* file);
 
 signals:

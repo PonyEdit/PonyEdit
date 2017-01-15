@@ -14,6 +14,9 @@ class FileList : public QDockWidget
 public:
     explicit FileList(QWidget *parent = 0);
 
+	FileList(FileList const&) = delete;
+	FileList& operator=(FileList const&) = delete;
+		
 private slots:
 	void selectFile(BaseFile* file);
 	void fileSelected();

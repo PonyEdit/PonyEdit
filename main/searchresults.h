@@ -19,6 +19,10 @@ class SearchResults : public QWidget
     Q_OBJECT
 public:
     explicit SearchResults(QWidget *parent = 0);
+
+	SearchResults(SearchResults const&) = delete;
+	SearchResults& operator=(SearchResults const&) = delete;
+	
 	void clearResults();
 	void showResults(const QList<SearchResultModel::Result>& results);
 

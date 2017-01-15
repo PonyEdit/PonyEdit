@@ -1,6 +1,8 @@
 #ifndef FILEDIALOG_H
 #define FILEDIALOG_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QMap>
 #include <QDialog>
 #include <QFileIconProvider>
@@ -9,6 +11,8 @@
 #include <QMouseEvent>
 #include <QAbstractButton>
 #include <QTableView>
+
+UNHIDE_COMPILE_WARNINGS
 
 #include "location.h"
 #include "main/statuswidget.h"
@@ -39,6 +43,9 @@ class FileDialog : public QDialog
 public:
 	explicit FileDialog(QWidget *parent = 0, bool saveAs = false);
     ~FileDialog();
+
+	FileDialog(FileDialog const&) = delete;
+	FileDialog& operator=(FileDialog const&) = delete;
 
 	void showLocation(const Location& location);
 	QList<Location> getSelectedLocations() const;

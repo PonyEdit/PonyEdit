@@ -17,6 +17,9 @@ public:
     explicit AdvancedSearchDialog(QWidget *parent = 0);
     ~AdvancedSearchDialog();
 
+	AdvancedSearchDialog(AdvancedSearchDialog const&) = delete;
+	AdvancedSearchDialog& operator=(AdvancedSearchDialog const&) = delete;
+
 private slots:
 	void search();
 	void searchAndReplace();

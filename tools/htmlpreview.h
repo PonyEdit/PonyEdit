@@ -17,6 +17,9 @@ public:
 	explicit HTMLPreview(MainWindow *parent = 0);
     ~HTMLPreview();
 
+	HTMLPreview(HTMLPreview const&) = delete;
+	HTMLPreview& operator=(HTMLPreview const&) = delete;
+	
 	void displayHTML(QString html);
 	void displayURL();
 

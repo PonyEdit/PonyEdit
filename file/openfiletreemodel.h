@@ -18,6 +18,9 @@ public:
 	OpenFileTreeModel(QObject* parent, int flags, const QList<BaseFile*>* explicitFiles = NULL);    // Displays explicitFiles if specified; if left NULL, gets a list of all currently open files
 	~OpenFileTreeModel();
 
+	OpenFileTreeModel(OpenFileTreeModel const&) = delete;
+	OpenFileTreeModel& operator=(OpenFileTreeModel const&) = delete;
+
 	QModelIndex index(int row, int column, const QModelIndex &parent) const;
 	QModelIndex parent(const QModelIndex& index) const;
 	int rowCount(const QModelIndex& parent = QModelIndex()) const;
@@ -40,7 +43,11 @@ private:
 	class Node
 	{
 	public:
-		Node(Level l) : level(l), parent(0), file(0) {}
+		Node(Level l) : level(l), parent(0), file(0), location(), children() {}
+
+		Node(Node const&) = delete;
+		Node& operator=(Node const&) = delete;
+
 		Node* findChildNode(const QString& label);
 		Node* findChildNode(const Location& location);
 		Node* findChildNode(BaseFile* file);

@@ -18,6 +18,9 @@ public:
 
 	SlaveFile(const Location& location);	//	Do not call; use File::getFile instead
 
+	SlaveFile(SlaveFile const&) = delete;
+	SlaveFile& operator=(SlaveFile const&) = delete;
+
 	virtual void sudo();
 
 public slots:

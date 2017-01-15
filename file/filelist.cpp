@@ -1,6 +1,10 @@
+HIDE_COMPILE_WARNINGS
+
 #include <QVBoxLayout>
 #include <QDebug>
 #include <QMap>
+
+UNHIDE_COMPILE_WARNINGS
 
 #include "file/openfiletreeview.h"
 #include "main/globaldispatcher.h"
@@ -9,13 +13,13 @@
 #include "editor/editor.h"
 
 FileList::FileList(QWidget *parent) :
-    QDockWidget(parent)
+    QDockWidget(parent),
+    mTreeView(new OpenFileTreeView(this, OpenFileTreeView::CloseButtons | OpenFileTreeView::RefreshButtons))
 {
 	setWindowTitle("Open Files");
 	QWidget* titleWidget = new QWidget(this);
 	setTitleBarWidget( titleWidget );
 
-	mTreeView = new OpenFileTreeView(this, OpenFileTreeView::CloseButtons | OpenFileTreeView::RefreshButtons);
 	mTreeView->setMinimumWidth(150);
 	setWidget(mTreeView);
 

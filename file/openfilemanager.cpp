@@ -7,10 +7,10 @@
 
 OpenFileManager gOpenFileManager;
 
-OpenFileManager::OpenFileManager() : QObject(0)
-{
-		mNewFiles = 1;
-}
+OpenFileManager::OpenFileManager() : QObject(0),
+    mOpenFiles(),
+    mNewFiles(1)
+{}
 
 BaseFile* OpenFileManager::getFile(const Location& location) const
 {

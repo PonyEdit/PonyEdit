@@ -66,6 +66,8 @@ macx {
 	QMAKE_CXXFLAGS += -Werror -Wunused-parameter -Weffc++ -include $$PWD/main/global.h
 
     LIBS	+= -lssh2 -lcrypto -lssl
+
+	QMAKE_CXX = /usr/local/bin/gcc-6
 }
 
 QT		+= core widgets gui network xml script webengine webenginewidgets printsupport

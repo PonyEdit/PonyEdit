@@ -15,6 +15,9 @@ public:
     explicit AboutDialog(QWidget *parent = 0);
     ~AboutDialog();
 
+	AboutDialog(AboutDialog const&) = delete;
+	AboutDialog& operator=(AboutDialog const&) = delete;
+
 private:
     Ui::AboutDialog *ui;
 };

@@ -17,6 +17,9 @@ public:
 	explicit CustomTreeEntry(CustomTreeModel* model);
 	~CustomTreeEntry();
 
+	CustomTreeEntry(CustomTreeEntry const&) = delete;
+	CustomTreeEntry& operator=(CustomTreeEntry const&) = delete;
+
 	//	Child management
 	inline CustomTreeEntry* getParent() const { return mParent; }
 	void addChild(CustomTreeEntry* child);

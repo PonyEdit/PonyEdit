@@ -28,6 +28,9 @@ public:
 	explicit StatusWidget(bool dialogChild, QWidget *parent = 0);
 	~StatusWidget();
 
+	StatusWidget(StatusWidget const&) = delete;
+	StatusWidget& operator=(StatusWidget const&) = delete;
+
 	void setStatus(const QPixmap& pixmap, const QString& message);
 	void close(Result result);
 	void close(bool result) { close(result ? SuccessResult : FailureResult); }

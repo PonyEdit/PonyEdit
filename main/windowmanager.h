@@ -29,6 +29,9 @@ public:
     explicit WindowManager(QWidget *parent = 0);
 	~WindowManager();
 
+	WindowManager(WindowManager const&) = delete;
+	WindowManager& operator=(WindowManager const&) = delete;
+	
 	void displayFile(BaseFile *file);
 	void displayLocation(const Location& location);
 

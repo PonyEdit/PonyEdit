@@ -15,9 +15,12 @@ UNHIDE_COMPILE_WARNINGS
 #include "file/basefile.h"
 #include "main/editorpanel.h"
 
-CodeEditor::CodeEditor(BaseFile* file, QWidget *parent) : QPlainTextEdit(parent)
+CodeEditor::CodeEditor(BaseFile* file, QWidget *parent) : QPlainTextEdit(parent),
+	mLineNumberWidget(new LineNumberWidget(this)),
+    mSyntaxHighlighter(),
 	mFile(file),
-	mLineNumberWidget(new LineNumberWidget(this))
+    mCurrentLine(),
+    mMatchingParenthesis()
 {
 	connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
 	connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumberArea(QRect,int)));

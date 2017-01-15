@@ -15,6 +15,9 @@ public:
     explicit GotoLineDialog(QWidget *parent = 0);
     ~GotoLineDialog();
 
+	GotoLineDialog(GotoLineDialog const&) = delete;
+	GotoLineDialog& operator=(GotoLineDialog const&) = delete;
+
 	int lineNumber();
 
 public slots:

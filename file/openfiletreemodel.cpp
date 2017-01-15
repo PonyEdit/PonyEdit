@@ -6,13 +6,14 @@
 #include <QDebug>
 #include <QMessageBox>
 
-OpenFileTreeModel::OpenFileTreeModel(QObject* parent, int flags, const QList<BaseFile*>* files) : QAbstractItemModel(parent)
+OpenFileTreeModel::OpenFileTreeModel(QObject* parent, int flags, const QList<BaseFile*>* files) : QAbstractItemModel(parent),
+    mFiles(),
+    mTopLevelNode(new Node(Root)),
+    mFileLookup(),
+	mParent((OpenFileTreeView*)parent),
+    mOptionFlags(flags),
+    mExplicitFiles(files != NULL)
 {
-	mOptionFlags = flags;
-	mTopLevelNode = new Node(Root);
-	mParent = (OpenFileTreeView*)parent;
-
-	mExplicitFiles = (files != NULL);
 	if (mExplicitFiles)
 	{
 		mFiles = *files;

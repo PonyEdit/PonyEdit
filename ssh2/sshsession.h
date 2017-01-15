@@ -39,6 +39,9 @@ public:
 	SshSession(SshHost* host);
 	~SshSession();
 
+	SshSession(SshSession const&) = delete;
+	SshSession& operator=(SshSession const&) = delete;
+
 	void start();
 
 	bool isAtChannelLimit();	//	Returns true if this session has hit the channel limit, and no channels have been closed.
@@ -125,6 +128,10 @@ class SshSessionThread : public QThread
 {
 public:
 	SshSessionThread(SshSession* session) : mSession(session) {}
+
+	SshSessionThread(SshSessionThread const&) = delete;
+	SshSessionThread& operator=(SshSessionThread const&) = delete;
+
 	void run() { mSession->threadMain(); }
 	int exec() { return QThread::exec(); }
 

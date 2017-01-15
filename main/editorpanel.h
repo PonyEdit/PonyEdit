@@ -18,6 +18,9 @@ public:
 	explicit EditorPanel(QWidget* parent, EditorPanel* parentPanel = NULL, EditorStack* inheritedStack = NULL);
 	~EditorPanel();
 
+	EditorPanel(EditorPanel const&) = delete;
+	EditorPanel& operator=(EditorPanel const&) = delete;
+			
 	void fileClosed(BaseFile* file);
 	inline bool isSplit() const { return mSplitWidget != NULL; }
 	inline bool isRootPanel() const { return parent() == (QObject*)gWindowManager; }

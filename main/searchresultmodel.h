@@ -13,7 +13,7 @@ class SearchResultModel : public QAbstractItemModel
 public:
 	struct Result
 	{
-		Result() : lineNumber(-1), start(-1), length(-1) {}
+		Result() : matchedLine(), location(), lineNumber(-1), start(-1), length(-1) {}
 		Result(QString ml, const Location& loc, int ln, int s, int l)
 			: matchedLine(ml), location(loc), lineNumber(ln), start(s), length(l) {}
 
@@ -26,6 +26,9 @@ public:
 
     explicit SearchResultModel(QObject *parent = 0);
 	~SearchResultModel();
+
+	SearchResultModel(SearchResultModel const&) = delete;
+	SearchResultModel& operator=(SearchResultModel const&) = delete;
 
 	void addResult(const Result& result);
 	void addResults(const QList<Result>& results);
@@ -47,8 +50,12 @@ public:
 private:
 	struct InternalTreeNode
 	{
-		InternalTreeNode() : parent(NULL), checked(Qt::Checked) {}
+		InternalTreeNode() : result(), parent(NULL), children(), checked(Qt::Checked) {}
 		~InternalTreeNode() { foreach (InternalTreeNode* n, children) delete n; }
+
+		InternalTreeNode(InternalTreeNode const&) = delete;
+		InternalTreeNode& operator=(InternalTreeNode const&) = delete;
+
 		Result result;
 		InternalTreeNode* parent;
 		QList<InternalTreeNode*> children;

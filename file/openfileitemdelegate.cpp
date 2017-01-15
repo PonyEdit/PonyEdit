@@ -2,6 +2,9 @@
 #include "file/openfiletreemodel.h"
 #include "file/basefile.h"
 #include "main/tools.h"
+
+HIDE_COMPILE_WARNINGS
+
 #include <QApplication>
 #include <QStylePainter>
 #include <QStyleOption>
@@ -10,10 +13,9 @@
 #include <QIcon>
 #include <QStyle>
 
-OpenFileItemDelegate::OpenFileItemDelegate(OpenFileTreeView *parent) : QStyledItemDelegate(parent)
-{
-	mParent = parent;
-}
+UNHIDE_COMPILE_WARNINGS
+
+OpenFileItemDelegate::OpenFileItemDelegate(OpenFileTreeView *parent) : QStyledItemDelegate(parent), mParent(parent) {}
 
 void OpenFileItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {

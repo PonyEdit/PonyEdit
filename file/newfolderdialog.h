@@ -16,6 +16,9 @@ public:
 	explicit NewFolderDialog(QWidget *parent, const Location& parentLocation);
     ~NewFolderDialog();
 
+	NewFolderDialog(NewFolderDialog const&) = delete;
+	NewFolderDialog& operator=(NewFolderDialog const&) = delete;
+		
 	virtual void accept();
 
 private slots:

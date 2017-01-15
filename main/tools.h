@@ -1,10 +1,14 @@
 #ifndef TOOLS_H
 #define TOOLS_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QFontMetrics>
 #include <QString>
 #include <QtXml>
 #include <QMap>
+
+UNHIDE_COMPILE_WARNINGS
 
 #include "file/location.h"
 
