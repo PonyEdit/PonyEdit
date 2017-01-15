@@ -114,7 +114,7 @@ PonyEdit::PonyEdit(int argc, char** argv) : QApplication(argc, argv),
 		gMainWindow = new MainWindow();
 		gMainWindow->show();
 
-		Tools::loadStartupFiles();
+		QTimer::singleShot( 1, this, SLOT( loadStartupFiles() ) );
 	}
 }
 

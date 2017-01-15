@@ -7,6 +7,7 @@
 
 #include "mainwindow.h"
 #include "ssh2/dialogrethreader.h"
+#include "tools.h"
 
 class PonyEdit : public QApplication
 {
@@ -29,6 +30,10 @@ public slots:
 	bool event(QEvent *e);
 	void receiveMessage();
 	bool notify(QObject *, QEvent *);
+	void loadStartupFiles() {
+		Tools::loadStartupFiles();
+	}
+
 
 signals:
 	void messageAvailable(QString message);
