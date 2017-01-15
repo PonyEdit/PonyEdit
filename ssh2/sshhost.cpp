@@ -16,10 +16,49 @@ QList<SshHost*> SshHost::sKnownHosts;
 QMap<QString, QByteArray> SshHost::sKnownHostFingerprints;
 
 SshHost::SshHost() :
-	mDesiredStatus(Disconnected), mFirstSlaveScriptChecker(0), mSlaveScriptChecked(false), mCachedIpAddress(0), mCachedAuthMethod(SshSession::AuthNone),
-	mChannelLimitGuess(CHANNEL_LIMIT_GUESS), mSaveHost(true), mSavePassword(false), mSaveKeyPassphrase(false), mPort(22)
+	mDesiredStatus(Disconnected),
+    mOverallStatus(),
+    mConnectionString(),
+    mOverallStatusDirty(true),
+    mNewSessionMutex(),
+    mHostLog(),
+    mLogWindow(),
+    mModifyingLogMutex(),
+    mSessions(),
+    mChannels(),
+    mHomelessChannelsMutex(),
+    mHomelessChannels(),
+    mSlaveRequestQueueMutex(),
+    mSudoSlaveRequestQueueMutex(),
+    mXferRequestQueueMutex(),
+    mSudoXferRequestQueueMutex(),
+    mSftpRequestQueueMutex(),
+    mSlaveRequestQueue(),
+    mSudoSlaveRequestQueue(),
+    mXferRequestQueue(),
+    mSudoXferRequestQueue(),
+    mSftpRequestQueue(),
+    mFirstSlaveScriptCheckerLock(),
+    mFirstSlaveScriptChecker(0),
+    mSlaveScriptChecked(false),
+    mCachedIpAddress(0),
+    mCachedAuthMethod(SshSession::AuthNone),
+	mChannelLimitGuess(CHANNEL_LIMIT_GUESS),
+    mHomeDirectory(),
+    mName(),
+    mSaveHost(true),
+    mSavePassword(false),
+    mSaveKeyPassphrase(false),
+    mHostname(),
+    mPort(22),
+    mUsername(),
+    mPassword(),
+    mKeyFile(),
+    mKeyPassphrase(),
+    mSudoPassword(),
+    mDefaultDirectory(),
+    mConnectionType()
 {
-	mOverallStatusDirty = true;
 	updateOverallStatus();
 
 	QObject::connect(this, SIGNAL(overallStatusInvalidated()), this, SLOT(updateOverallStatus()), Qt::QueuedConnection);

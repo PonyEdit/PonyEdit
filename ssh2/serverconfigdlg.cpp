@@ -1,17 +1,22 @@
-#include "serverconfigdlg.h"
-#include "ui_serverconfigdlg.h"
-#include "main/tools.h"
-#include "sshhost.h"
+HIDE_COMPILE_WARNINGS
+
 #include <QFileDialog>
 #include <QGridLayout>
 
+#include "ui_serverconfigdlg.h"
+
+UNHIDE_COMPILE_WARNINGS
+
+#include "serverconfigdlg.h"
+#include "main/tools.h"
+#include "sshhost.h"
+
 ServerConfigDlg::ServerConfigDlg(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::ServerConfigDlg)
+    ui(new Ui::ServerConfigDlg),
+    mConfigWidget(new ServerConfigWidget())
 {
     ui->setupUi(this);
-
-	mConfigWidget = new ServerConfigWidget;
 
 	QGridLayout *layout = new QGridLayout;
 	layout->setContentsMargins(0, 0, 0, 0);

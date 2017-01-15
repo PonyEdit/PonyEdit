@@ -68,6 +68,7 @@ macx {
     LIBS	+= -lssh2 -lcrypto -lssl
 
 	QMAKE_CXX = /usr/local/bin/gcc-6
+	QMAKESPEC = macx-gcc
 }
 
 QT		+= core widgets gui network xml script webengine webenginewidgets printsupport

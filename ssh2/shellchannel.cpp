@@ -7,11 +7,13 @@
 #define MACHINE_READABLE_INIT " stty -echo; export PS1=\\%-ponyedit-\\%\n"
 #define MACHINE_READABLE_PROMPT "%-ponyedit-%"
 
-ShellChannel::ShellChannel(SshHost* host, bool machineReadable, const QByteArray& ptyType) :
-	SshChannel(host), mInternalStatus(_OpenSession),
-	mMachineReadable(machineReadable), mPtyType(ptyType)
-{
-}
+ShellChannel::ShellChannel(SshHost* host, bool machineReadable, const QByteArray& ptyType) : SshChannel(host),
+    mHandle(),
+    mReadBuffer(),
+    mInternalStatus(_OpenSession),
+	mMachineReadable(machineReadable),
+    mPtyType(ptyType)
+{}
 
 bool ShellChannel::update()
 {

@@ -3,10 +3,12 @@
 #include <QDebug>
 #include <libssh2.h>
 
-SshChannel::SshChannel(SshHost* host) : mStatus(Sessionless)
-{
-	mHost = host;
-}
+SshChannel::SshChannel(SshHost* host) :
+    mHost(host),
+    mSession(),
+    mStatus(Sessionless),
+    mErrorDetails()
+{}
 
 SshChannel::~SshChannel()
 {

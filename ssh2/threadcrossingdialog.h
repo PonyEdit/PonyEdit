@@ -1,8 +1,12 @@
 #ifndef THREADCROSSINGDIALOG_H
 #define THREADCROSSINGDIALOG_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QDialog>
 #include <QVariantMap>
+
+UNHIDE_COMPILE_WARNINGS
 
 class ThreadCrossingDialog : public QDialog
 {

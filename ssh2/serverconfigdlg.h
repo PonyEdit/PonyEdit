@@ -1,7 +1,12 @@
 #ifndef SERVERCONFIGDLG_H
 #define SERVERCONFIGDLG_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QDialog>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "serverconfigwidget.h"
 
 namespace Ui { class ServerConfigDlg; }

@@ -1,7 +1,12 @@
 #ifndef CUSTOMTREEWIDGET_H
 #define CUSTOMTREEWIDGET_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QTreeView>
+
+UNHIDE_COMPILE_WARNINGS
+
 
 class CustomTreeEntry;
 class CustomTreeModel;

@@ -65,9 +65,17 @@ QByteArray SlaveChannel::sSlaveChannelInit(SLAVE_INIT);
 QByteArray SlaveChannel::sSlaveScript;
 QByteArray SlaveChannel::sSlaveUpload;
 
-SlaveChannel::SlaveChannel(SshHost* host, bool sudo) : ShellChannel(host), mInternalStatus(_WaitingForShell), mCurrentRequest(0), mNextMessageId(1)
+SlaveChannel::SlaveChannel(SshHost* host, bool sudo) :
+    ShellChannel(host),
+    mInternalStatus(_WaitingForShell),
+    mCurrentRequest(0),
+    mNextMessageId(1),
+    mSudo(sudo),
+    mSudoPasswordAttempt(),
+    mTriedSudoPassword(),
+    mRequestsAwaitingReplies(),
+    mBufferIds()
 {
-	mSudo = sudo;
 	SSHLOG_TRACE(host) << "Creating a new slave channel";
 }
 
