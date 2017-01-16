@@ -18,6 +18,9 @@ public:
 	explicit CustomTreeWidget(QWidget *parent = 0);
 	~CustomTreeWidget();
 
+	CustomTreeWidget(CustomTreeWidget const&) = delete;
+	CustomTreeWidget& operator=(CustomTreeWidget const&) = delete;
+	
 	void addTopLevelEntry(CustomTreeEntry* entry);
 	void mousePressEvent(QMouseEvent *event);
 

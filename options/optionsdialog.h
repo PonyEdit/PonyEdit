@@ -1,12 +1,17 @@
 #ifndef OPTIONSDIALOG_H
 #define OPTIONSDIALOG_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QDialog>
 #include <QAbstractButton>
 #include <QList>
-#include "optionsdialogpage.h"
 #include <QToolButton>
 #include <QMap>
+
+UNHIDE_COMPILE_WARNINGS
+
+#include "optionsdialogpage.h"
 
 class FontOptionsWidget;
 

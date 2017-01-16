@@ -1,7 +1,12 @@
 #ifndef HOSTKEYDLG_H
 #define HOSTKEYDLG_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QDialog>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "threadcrossingdialog.h"
 
 namespace Ui {

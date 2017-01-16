@@ -1,19 +1,24 @@
+HIDE_COMPILE_WARNINGS
+
+#include <QMouseEvent>
+#include <QDebug>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "customtreewidget.h"
 #include "customtreemodel.h"
 #include "customtreeentry.h"
 #include "customtreedelegate.h"
-#include <QMouseEvent>
-#include <QDebug>
 
-CustomTreeWidget::CustomTreeWidget(QWidget *parent) :
-    QTreeView(parent)
+CustomTreeWidget::CustomTreeWidget(QWidget *parent) : QTreeView(parent),
+    mModel(new CustomTreeModel(this)),
+    mDelegate(new CustomTreeDelegate(mModel)),
+    mLastClickedPoint(),
+    mAnimationTimerId(0),
+    mAnimatingIndices()
 {
-	mAnimationTimerId = 0;
-
-	mModel = new CustomTreeModel(this);
 	setModel(mModel);
 
-	mDelegate = new CustomTreeDelegate(mModel);
 	setItemDelegate(mDelegate);
 
 	setAttribute(Qt::WA_MacShowFocusRect, false);

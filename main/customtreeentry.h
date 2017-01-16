@@ -1,10 +1,14 @@
 #ifndef CUSTOMTREEENTRY_H
 #define CUSTOMTREEENTRY_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QObject>
 #include <QIcon>
 #include <QPoint>
 #include <QStyleOptionViewItem>
+
+UNHIDE_COMPILE_WARNINGS
 
 class CustomTreeModel;
 class QStylePainter;
@@ -69,9 +73,15 @@ public slots:
 	void invalidate();
 
 private:
-	struct GutterIcon { int id; bool hover; QIcon icon; QString tooltip; QRect visibleArea; };
+	struct GutterIcon {
+		GutterIcon() : id(), hover(), icon(), tooltip(), visibleArea() {}
+		int id;
+		bool hover;
+		QIcon icon;
+		QString tooltip;
+		QRect visibleArea;
+	};
 
-	void init();
 	template <class T> static void deleteData(void* data) { delete static_cast<T>(data); }
 	void handleDelayedLoad();
 	void updateChildIndices();

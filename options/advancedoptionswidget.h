@@ -1,7 +1,12 @@
 #ifndef ADVANCEDOPTIONSWIDGET_H
 #define ADVANCEDOPTIONSWIDGET_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QWidget>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "optionsdialogpage.h"
 
 namespace Ui {

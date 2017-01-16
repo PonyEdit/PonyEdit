@@ -1,9 +1,13 @@
 #ifndef SSHHOSTTREEENTRY_H
 #define SSHHOSTTREEENTRY_H
 
-#include "main/customtreeentry.h"
+HIDE_COMPILE_WARNINGS
+
 #include <QTextOption>
 
+UNHIDE_COMPILE_WARNINGS
+
+#include "main/customtreeentry.h"
 
 class SshHost;
 class SshHostTreeEntry : public CustomTreeEntry

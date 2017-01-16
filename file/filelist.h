@@ -1,8 +1,12 @@
 #ifndef FILELIST_H
 #define FILELIST_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QDockWidget>
 #include <QTreeView>
+
+UNHIDE_COMPILE_WARNINGS
 
 class Editor;
 class BaseFile;

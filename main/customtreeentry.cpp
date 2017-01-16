@@ -1,32 +1,43 @@
-#include "customtreeentry.h"
-#include "customtreemodel.h"
-#include "customtreewidget.h"
+HIDE_COMPILE_WARNINGS
+
 #include <QDebug>
 #include <QStylePainter>
 
-CustomTreeEntry::CustomTreeEntry(const QIcon& icon, const QString& label)
-{
-	init();
-	mStaticIcon = icon;
-	mStaticLabel = label;
-}
+UNHIDE_COMPILE_WARNINGS
 
-CustomTreeEntry::CustomTreeEntry(CustomTreeModel* model)
-{
-	init();
-	mModel = model;
-}
+#include "customtreeentry.h"
+#include "customtreemodel.h"
+#include "customtreewidget.h"
 
-void CustomTreeEntry::init()
-{
-	mIndex = 0;
-	mParent = NULL;
-	mModel = NULL;
-	mExpandable = false;
-	mData = NULL;
-	mDataDeleteProc = NULL;
-	mDelayedLoad = false;
-}
+CustomTreeEntry::CustomTreeEntry(const QIcon& icon, const QString& label) :
+    mModel(NULL),
+    mParent(NULL),
+    mIndex(0),
+    mChildren(),
+    mExpandable(false),
+    mDelayedLoad(false),
+    mStaticIcon(icon),
+    mStaticLabel(label),
+    mGutterIcons(),
+    mDataDeleteProc(NULL),
+    mData(NULL),
+    mHover()
+{}
+
+CustomTreeEntry::CustomTreeEntry(CustomTreeModel* model) :
+    mModel(model),
+    mParent(NULL),
+    mIndex(0),
+    mChildren(),
+    mExpandable(false),
+    mDelayedLoad(false),
+    mStaticIcon(NULL),
+    mStaticLabel(),
+    mGutterIcons(),
+    mDataDeleteProc(NULL),
+    mData(NULL),
+    mHover()
+{}
 
 CustomTreeEntry::~CustomTreeEntry()
 {

@@ -37,7 +37,8 @@ QsLogging::RotationStrategy::~RotationStrategy()
 }
 
 QsLogging::SizeRotationStrategy::SizeRotationStrategy()
-    : mCurrentSizeInBytes(0)
+    : mFileName()
+    , mCurrentSizeInBytes(0)
     , mMaxSizeInBytes(0)
     , mBackupsCount(0)
 {
@@ -147,7 +148,9 @@ bool QsLogging::SizeRotationStrategy::renameFileFromTo(const QString &from, cons
 const char* const QsLogging::FileDestination::Type = "file";
 
 QsLogging::FileDestination::FileDestination(const QString& filePath, RotationStrategyPtr rotationStrategy)
-    : mRotationStrategy(rotationStrategy)
+    : mFile()
+    , mOutputStream()
+    , mRotationStrategy(rotationStrategy)
 {
     mFile.setFileName(filePath);
     if (!mFile.open(QFile::WriteOnly | QFile::Text | mRotationStrategy->recommendedOpenModeFlag())) {

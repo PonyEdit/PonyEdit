@@ -1,5 +1,10 @@
-#include "hostlog.h"
+HIDE_COMPILE_WARNINGS
+
 #include "ui_hostlog.h"
+
+UNHIDE_COMPILE_WARNINGS
+
+#include "hostlog.h"
 #include "sshhost.h"
 
 HostLog::HostLog(SshHost* host) :

@@ -13,7 +13,8 @@
 
 #define HIDE_COMPILE_WARNINGS _Pragma("GCC diagnostic push") \
 	_Pragma("GCC diagnostic ignored \"-Weffc++\"") \
-	_Pragma("GCC diagnostic ignored \"-Wnon-virtual-dtor\"")
+	_Pragma("GCC diagnostic ignored \"-Wnon-virtual-dtor\"") \
+	_Pragma("GCC diagnostic ignored \"-Wterminate\"")
 
 #define UNHIDE_COMPILE_WARNINGS _Pragma("GCC diagnostic pop")
 
