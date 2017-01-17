@@ -39,9 +39,9 @@ install:
       brew link --force qt5;
     fi
 script:
-  - $(CXX) -v
+  - $CXX -v
   - qmake -v
-  - qmake QMAKE_CXX=$(CXX)
+  - qmake QMAKE_CXX=$CXX
   - make
 
 notifications:
