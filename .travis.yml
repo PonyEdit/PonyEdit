@@ -6,12 +6,6 @@ matrix:
       dist: trusty
       sudo: required
       compiler: gcc
-    - os: linux
-      dist: trusty
-      sudo: required
-      compiler: clang
-    - os: osx
-      compiler: gcc
     - os: osx
       compiler: clang
 
@@ -25,7 +19,7 @@ before_install:
     fi
 install:
   - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then
-      sudo apt-get install -qq libssh2-1-dev libssl-dev qt57base qt57script qt57webengine;
+      sudo apt-get install -qq g++-6 libssh2-1-dev libssl-dev qt57base qt57script qt57webengine;
       source /opt/qt57/bin/qt57-env.sh;
     else
       brew install qt5;
