@@ -1,8 +1,5 @@
 language: generic
 
-cache:
-  apt: true
-
 matrix:
   include:
     - os: linux
