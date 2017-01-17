@@ -25,7 +25,7 @@ matrix:
             - qt57webengine
     - os: osx
       compiler: clang
-
+      env: COMPILER_NAME=clang CXX=clang++ CC=clang
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" = "osx" ]]; then
