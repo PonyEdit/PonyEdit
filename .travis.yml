@@ -13,8 +13,8 @@ matrix:
       addons:
         apt:
           sources:
-            - ppa:beineri/opt-qt571-trusty
-            - ppa:ubuntu-toolchain-r/test
+            - ubuntu-toolchain-r-test
+            - sourceline: 'ppa:beineri/opt-qt571-trusty'
           packages:
             - gcc-6
             - g++-6
