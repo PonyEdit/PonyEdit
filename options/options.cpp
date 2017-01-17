@@ -8,7 +8,6 @@ HIDE_COMPILE_WARNINGS
 UNHIDE_COMPILE_WARNINGS
 
 #include "options.h"
-#include "main/global.h"
 
 QFont* Options::EditorFont = NULL;
 int Options::EditorFontZoom;

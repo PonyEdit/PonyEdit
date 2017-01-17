@@ -9,7 +9,6 @@ HIDE_COMPILE_WARNINGS
 
 UNHIDE_COMPILE_WARNINGS
 
-#include "global.h"
 #include "ponyedit.h"
 #include "file/location.h"
 #include "mainwindow.h"

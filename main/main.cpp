@@ -13,7 +13,6 @@ HIDE_COMPILE_WARNINGS
 
 UNHIDE_COMPILE_WARNINGS
 
-#include "global.h"
 #include "QsLogDest.h"
 #include "website/updatemanager.h"
 #include "website/sitemanager.h"

@@ -9,7 +9,6 @@
 #include <QDir>
 #include <QSettings>
 #include <QMessageBox>
-#include "main/global.h"
 #include "file/favoritelocationdialog.h"
 #include "ssh2/sshhost.h"
 #include "ssh2/slaverequest.h"
