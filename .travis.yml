@@ -6,6 +6,7 @@ matrix:
       dist: trusty
       sudo: required
       compiler: gcc
+      env: COMPILER_NAME=gcc CXX=g++-6 CC=gcc-6
     - os: osx
       compiler: clang
 
