@@ -1,11 +1,15 @@
 #ifndef SSHSESSION_H
 #define SSHSESSION_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QMap>
 #include <QThread>
 #include <QMutex>
 #include <QWaitCondition>
 #include <QTime>
+
+UNHIDE_COMPILE_WARNINGS
 
 //
 //	Note: All SshSession objects should only be created or deleted in the main thread,

@@ -25,6 +25,9 @@
 
 #include "QsLog.h"
 #include "QsLogDest.h"
+
+HIDE_COMPILE_WARNINGS
+
 #ifdef QS_LOG_SEPARATE_THREAD
 #include <QThread>
 #include <QWaitCondition>
@@ -37,6 +40,8 @@
 #include <QtGlobal>
 #include <cstdlib>
 #include <stdexcept>
+
+UNHIDE_COMPILE_WARNINGS
 
 namespace QsLogging
 {
