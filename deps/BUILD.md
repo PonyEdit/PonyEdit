@@ -7,7 +7,7 @@ Compiling for OSX
 
 Download source from https://www.openssl.org/source/, and extract.
 
-	./Configure darwin64-x86_64-cc shared
+	./Configure darwin64-x86_64-cc -shared
 	make
 
 	cp lib*.dylib lib*.a ../PonyEdit/deps/lib-osx
