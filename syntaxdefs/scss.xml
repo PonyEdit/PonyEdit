@@ -1003,6 +1003,7 @@ Changelog:
                 <RegExpr attribute="Value" context="#pop" String="[0-9.]+(em|ex|ch|rem|vw|vh|vm|px|in|cm|mm|pt|pc|deg|rad|grad|turn|ms|s|Hz|kHz|dpi|dpcm)\b" />
                 <RegExpr attribute="Value" context="#pop" String="[0-9.]+[%]?" />
                 <RegExpr attribute="Value" context="#pop" String="(portrait|landscape)" />
+                <RegExpr attribute="Variable" context="#pop" String="\$[^;)]*" />
                 <RegExpr attribute="Error" context="#stay" String=".*"/>
             </context>
 
