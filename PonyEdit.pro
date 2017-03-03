@@ -58,11 +58,14 @@ linux|macx {
 
     LIBS += -lz -lssh2 -lcrypto -lssl
 
-    QMAKE_CXXFLAGS += -Werror -Wunused-parameter -Weffc++ -include $$PWD/main/global.h
+    QMAKE_CXXFLAGS += -Werror -Wunused-parameter -Weffc++
 }
 
 QT		+= core widgets gui network xml script webengine webenginewidgets printsupport
 TEMPLATE = app
+
+CONFIG += precompile_header
+PRECOMPILED_HEADER = common.h
 
 SOURCES += \
 	editor/linenumberwidget.cpp \
@@ -177,7 +180,6 @@ HEADERS  += \
 	file/unsavedfile.h \
 	main/stringtrie.h \
 	website/updatemanager.h \
-	main/global.h \
 	file/favoritelocationdialog.h \
 	file/directorytree.h \
 	file/newfolderdialog.h \
@@ -233,7 +235,8 @@ HEADERS  += \
 	ssh2/sftprequest.h \
 	ssh2/sftpchannel.h \
 	options/advancedoptionswidget.h \
-	ssh2/hostlog.h
+	ssh2/hostlog.h \
+    common.h
 
 OTHER_FILES += \
 	.travis.yml \
