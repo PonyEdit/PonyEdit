@@ -8,9 +8,7 @@ QList<QVector<StringTrie::Node>*> StringTrie::sNodeHeaps;
 QVector<StringTrie::Node>* StringTrie::sCurrentNodeHeap;
 
 StringTrie::StringTrie() : mRoot(allocateNode())
-{
-	sNodeHeapCursor = NODE_HEAP_SIZE;
-}
+{}
 
 void StringTrie::addWord(const QString& word)
 {
@@ -40,6 +38,10 @@ bool StringTrie::containsWord(const QString& word)
 
 StringTrie::Node* StringTrie::allocateNode()
 {
+	if ( sNodeHeapCursor == 0 ) {
+		sNodeHeapCursor = NODE_HEAP_SIZE;
+	}
+
 	if (sNodeHeapCursor >= NODE_HEAP_SIZE)
 	{
 		sNodeHeapCursor = 0;
