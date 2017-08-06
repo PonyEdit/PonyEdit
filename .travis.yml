@@ -5,14 +5,23 @@ matrix:
     - os: linux
       dist: trusty
       sudo: required
-      compiler: gcc
+      compiler: clang
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty
+          packages:
+            - clang-5.0
+      env:
+        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
     - os: osx
       compiler: clang
 
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then
-    sudo add-apt-repository ppa:beineri/opt-qt591-trusty -y;
+      CC=clang-5.0 && CXX=clang++-5.0
+      sudo add-apt-repository ppa:beineri/opt-qt591-trusty -y;
       sudo apt-get update -qq;
     else
       brew update;
@@ -20,7 +29,7 @@ before_install:
 
 install:
   - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then
-      sudo apt-get install -qq libssh2-1-dev libssl-dev qt59base qt59script qt59webengine bear clang-format clang-tidy;
+      sudo apt-get install -qq libssh2-1-dev libssl-dev qt59base qt59script qt59webengine bear;
       source /opt/qt59/bin/qt59-env.sh;
     else
       brew install qt5 bear clang-format;
