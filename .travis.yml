@@ -45,6 +45,7 @@ script:
   - qmake
   - bear make
   - ./deps/run-clang-tidy.py .
+  - git status
 
 notifications:
   email:
