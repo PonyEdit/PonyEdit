@@ -44,7 +44,7 @@ script:
   - ./deps/clang-format-all .
   - qmake
   - bear make
-  - ./deps/run-clang-tidy.py .
+  - ./deps/run-clang-tidy.py -fix .
   - git status
 
 notifications:

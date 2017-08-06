@@ -31,8 +31,8 @@ linux {
     LIBS += -lz
     LIBS += -lssh2 -lcrypto -lssl
 
-    QMAKE_CFLAGS += -Werror -Wunused-parameter -Wno-terminate
-    QMAKE_CXXFLAGS += -Werror -Wunused-parameter -Wno-terminate
+	QMAKE_CFLAGS += -Werror -Wunused-parameter
+	QMAKE_CXXFLAGS += -Werror -Wunused-parameter
 }
 
 macx {
@@ -67,6 +67,14 @@ macx {
 
     LIBS	+= -lssh2 -lcrypto -lssl
 }
+
+release: DESTDIR = build/release
+debug:   DESTDIR = build/debug
+
+OBJECTS_DIR = $$DESTDIR/.obj
+MOC_DIR = $$DESTDIR/.moc
+RCC_DIR = $$DESTDIR/.qrc
+UI_DIR = $$DESTDIR/.ui
 
 QT		+= core widgets gui network xml script webengine webenginewidgets printsupport
 TEMPLATE = app

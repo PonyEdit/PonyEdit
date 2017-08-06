@@ -4,3 +4,5 @@ PonyEdit.pro.user
 .qmake.cache
 .qmake.stash
 Makefile
+build
+compile_commands.json
