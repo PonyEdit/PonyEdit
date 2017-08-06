@@ -1,19 +1,66 @@
+HIDE_COMPILE_WARNINGS
+
 #include <QtXml>
 #include <QFile>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "main/tools.h"
 #include "syntaxrule.h"
 #include "syntaxdefinition.h"
 #include "syntaxdefxmlhandler.h"
 #include "QsLog.h"
 
-SyntaxDefinition::ContextDef::ContextDef() : fallthrough(false), dynamic(false), listIndex(0), attributeLink(NULL) {}
+SyntaxDefinition::ContextDef::ContextDef() : 
+    attribute(),
+    name(),
+    lineEndContext(),
+    lineBeginContext(),
+    fallthrough(false),
+    fallthroughContext(),
+    dynamic(false),
+    rules(),
+    fallthroughContextLink(),
+    lineBeginContextLink(),
+    lineEndContextLink(),
+    listIndex(0),
+    attributeLink(NULL)
+{}
+
+SyntaxDefinition::ContextDef::ContextDef(const ContextDef &obj) : 
+    attribute(obj.attribute),
+    name(obj.name),
+    lineEndContext(obj.lineEndContext),
+    lineBeginContext(obj.lineBeginContext),
+    fallthrough(obj.fallthrough),
+    fallthroughContext(obj.fallthroughContext),
+    dynamic(obj.dynamic),
+    rules(obj.rules),
+    fallthroughContextLink(obj.fallthroughContextLink),
+    lineBeginContextLink(obj.lineBeginContextLink),
+    lineEndContextLink(obj.lineEndContextLink),
+    listIndex(obj.listIndex),
+    attributeLink(obj.attributeLink)
+{}
+
 SyntaxDefinition::ContextDef::~ContextDef() {}
 
-SyntaxDefinition::SyntaxDefinition(const QString& filename)
+SyntaxDefinition::SyntaxDefinition(const QString& filename) :
+    mValid(false),
+    mSyntaxName(),
+    mKeywordLists(),
+    mContextMap(),
+    mDefaultContext(),
+    mItemDatas(),
+    mContextList(),
+    mIndentationSensitive(),
+    mCaseSensitiveKeywords(),
+    mWeakDeliminators(),
+    mAdditionalDeliminators(),
+    mWordWrapDeliminator(),
+    mDeliminators(".():!+,-<=>%&/;?[]^{|}~\\*, \t"),
+    mCommentStyles()
 {
-	mValid = false;
-	mDeliminators = ".():!+,-<=>%&/;?[]^{|}~\\*, \t";
-
 	QFile file(filename);
 	if (file.open(QFile::ReadOnly))
 	{

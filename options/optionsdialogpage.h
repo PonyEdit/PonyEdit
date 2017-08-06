@@ -1,7 +1,11 @@
 #ifndef OPTIONSDIALOGPAGE_H
 #define OPTIONSDIALOGPAGE_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QWidget>
+
+UNHIDE_COMPILE_WARNINGS
 
 class OptionsDialogPage : public QWidget
 {

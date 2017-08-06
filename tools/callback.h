@@ -1,15 +1,22 @@
 #ifndef CALLBACK_H
 #define CALLBACK_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QVariantMap>
 #include <QObject>
 #include <QPointer>
+
+UNHIDE_COMPILE_WARNINGS
 
 class QObject;
 class Callback
 {
 public:
 	Callback(QObject* target = 0, const char* successSlot = 0, const char* failureSlot = 0, const char* progressSlot = 0);
+
+	Callback(Callback const& obj);
+	Callback& operator=(Callback const& obj);
 
 	inline QObject* getTarget() const { return mTarget.data(); }
 	inline const char* getSuccessSlot() const { return mSuccessSlot; }

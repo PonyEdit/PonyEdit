@@ -3,23 +3,23 @@
 #include "syntaxrule.h"
 #include "main/tools.h"
 
-SyntaxDefXmlHandler::SyntaxDefXmlHandler(SyntaxDefinition* definition)
-{
-	mRecord = NULL;
-	mDefinition = definition;
-	mCurrentBlocks = None;
+SyntaxDefXmlHandler::SyntaxDefXmlHandler(SyntaxDefinition* definition) :
+    mDefinition(definition),
+    mRecord(NULL),
+    mCurrentBlocks(None),
+    mKeywordList(NULL),
+    mContext(NULL),
+    mRule(NULL)
+{}
 
-	mKeywordList = NULL;
-	mContext = NULL;
-	mRule = NULL;
-}
-
-SyntaxDefXmlHandler::SyntaxDefXmlHandler(SyntaxDefManager::Record* record)
-{
-	mRecord = record;
-	mDefinition = NULL;
-	mCurrentBlocks = None;
-}
+SyntaxDefXmlHandler::SyntaxDefXmlHandler(SyntaxDefManager::Record* record) :
+    mDefinition(NULL),
+    mRecord(record),
+    mCurrentBlocks(None),
+    mKeywordList(NULL),
+    mContext(NULL),
+    mRule(NULL)
+{}
 
 QString SyntaxDefXmlHandler::errorString() const { return QString(); }
 bool SyntaxDefXmlHandler::startElement(const QString &/* namespaceURI */, const QString &localName, const QString &/* qName */, const QXmlAttributes &atts)

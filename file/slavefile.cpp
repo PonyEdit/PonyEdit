@@ -11,11 +11,14 @@
 #include "main/globaldispatcher.h"
 #include "main/mainwindow.h"
 
-SlaveFile::SlaveFile(const Location& location) : BaseFile(location)
-{
-	mHost = location.getRemoteHost();
-	mChangePumpCursor = 0;
-}
+SlaveFile::SlaveFile(const Location& location) : BaseFile(location),
+    mHost(location.getRemoteHost()),
+    mChangesSinceLastSave(),
+    mChangePumpCursor(0),
+    mSlaveOpenResults(),
+    mDownloadedData(),
+    mDownloadedChecksum()
+{}
 
 SlaveFile::~SlaveFile()
 {

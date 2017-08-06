@@ -1,7 +1,12 @@
+HIDE_COMPILE_WARNINGS
+
 #include <QCoreApplication>
 
-#include "aboutdialog.h"
 #include "ui_aboutdialog.h"
+
+UNHIDE_COMPILE_WARNINGS
+
+#include "aboutdialog.h"
 
 AboutDialog::AboutDialog(QWidget *parent) :
     QDialog(parent),

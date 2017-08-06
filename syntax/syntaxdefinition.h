@@ -1,11 +1,16 @@
 #ifndef SYNTAXDEFINITION_H
 #define SYNTAXDEFINITION_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QMap>
 #include <QtXml>
 #include <QString>
 #include <QStringList>
 #include <QSharedPointer>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "main/stringtrie.h"
 
 class SyntaxRule;
@@ -29,6 +34,7 @@ public:
 
 	struct ItemData
 	{
+		ItemData() : name(), styleName(), styleNameLower(), color(), selColor(), italic(), bold(), underline(), strikeout() {}
 		QString name;
 		QString styleName;
 		QString styleNameLower;
@@ -44,6 +50,9 @@ public:
 	{
 		ContextDef();
 		~ContextDef();
+
+		ContextDef(ContextDef const& obj);
+		ContextDef& operator=(ContextDef const&) = delete;
 
 		QString attribute;
 		QString name;
@@ -64,6 +73,7 @@ public:
 
 	struct KeywordList
 	{
+		KeywordList() : name(), items(), lcItems() {}
 		QString name;
 		StringTrie items;
 		StringTrie lcItems;		//	For case-insensitive matching.

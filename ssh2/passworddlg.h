@@ -15,6 +15,9 @@ public:
     explicit PasswordDlg(QWidget *parent = 0);
     ~PasswordDlg();
 
+	PasswordDlg(PasswordDlg const&) = delete;
+	PasswordDlg& operator=(PasswordDlg const&) = delete;
+			
 	virtual void setOptions(const QVariantMap &options);
 	virtual QVariantMap getResult();
 

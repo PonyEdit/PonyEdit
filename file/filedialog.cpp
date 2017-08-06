@@ -1,5 +1,4 @@
 #include "file/filedialog.h"
-#include "ui_filedialog.h"
 #include "main/tools.h"
 #include "main/globaldispatcher.h"
 #include "newfolderdialog.h"
@@ -11,6 +10,10 @@
 #include "main/customtreeentry.h"
 #include "ssh2/sshhosttreeentry.h"
 
+HIDE_COMPILE_WARNINGS
+
+#include "ui_filedialog.h"
+
 #include <QDir>
 #include <QDebug>
 #include <QKeyEvent>
@@ -18,6 +21,8 @@
 #include <QMessageBox>
 #include <QMenu>
 #include <QPushButton>
+
+UNHIDE_COMPILE_WARNINGS
 
 #define DATA_ROLE (Qt::UserRole)
 #define EXPANDED_ROLE (Qt::UserRole + 1)
@@ -41,20 +46,28 @@ Location FileDialog::mLastLocation;
 
 FileDialog::FileDialog(QWidget *parent, bool saveAs) :
 	QDialog(parent),
-    ui(new Ui::FileDialog)
+    ui(new Ui::FileDialog),
+    mIconProvider(),
+    mCurrentLocation(),
+    mFileListModel(new QStandardItemModel()),
+    mRemoteServersBranch(),
+    mFavoriteLocationsBranch(),
+    mLoadingLocations(),
+    mSaveAs(saveAs),
+    mInEditHandler(false),
+    mSortingColumn(),
+    mReverseSorting(),
+    mSelectFile()
 {
 	ui->setupUi(this);
 
 	setWindowModality(Qt::WindowModal);
 
-	mFileListModel = new QStandardItemModel();
 	mFileListModel->setSortRole(SORT_ROLE);
 	ui->fileList->setItemDelegate(new FileListDelegate(this));
 
 	setAcceptDrops(true);
 
-	mSaveAs = saveAs;
-	mInEditHandler = false;
 	setWindowTitle(saveAs ? tr("Save As") : tr("Open File"));
 
 	ui->fileList->setModel(mFileListModel);

@@ -2,11 +2,10 @@
 #include "customtreeentry.h"
 #include "customtreewidget.h"
 
-CustomTreeModel::CustomTreeModel(CustomTreeWidget* widget) : QAbstractItemModel()
-{
-	mWidget = widget;
-	mRootNode = new CustomTreeEntry(this);
-}
+CustomTreeModel::CustomTreeModel(CustomTreeWidget* widget) : QAbstractItemModel(),
+	mRootNode(new CustomTreeEntry(this)),
+	mWidget(widget)
+{}
 
 CustomTreeModel::~CustomTreeModel()
 {

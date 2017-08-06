@@ -1,3 +1,5 @@
+HIDE_COMPILE_WARNINGS
+
 #include <QMessageBox>
 #include <QDebug>
 #include <QVariantMap>
@@ -8,6 +10,8 @@
 #include <QApplication>
 #include <QUuid>
 
+UNHIDE_COMPILE_WARNINGS
+
 #include "sitemanager.h"
 #include "updatemanager.h"
 #include "updatenotificationdialog.h"
@@ -15,11 +19,14 @@
 
 UpdateManager* UpdateManager::sInstance;
 
-UpdateManager::UpdateManager(QObject *parent) :
-	QObject(parent)
+UpdateManager::UpdateManager(QObject *parent) : QObject(parent),
+    mNotificationDlg(NULL),
+    mNetManager(),
+    mDownload(),
+    mRedirectCount(0),
+    mTempFile()
 {
 	sInstance = this;
-	mRedirectCount = 0;
 }
 
 void UpdateManager::updateFound(const QString& version, const QString& url, const QStringList& alerts, const QStringList& changes)

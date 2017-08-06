@@ -1,10 +1,14 @@
 #ifndef SYNTAXHIGHLIGHTER_H
 #define SYNTAXHIGHLIGHTER_H
 
-#include <QSyntaxHighlighter>
+HIDE_COMPILE_WARNINGS
 
+#include <QSyntaxHighlighter>
 #include <QHash>
 #include <QTextCharFormat>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "syntax/syntaxdefinition.h"
 
 #define MAX_HIGHLIGHT_LENGTH 2000
@@ -17,6 +21,9 @@ class SyntaxHighlighter : public QSyntaxHighlighter
 
 public:
 	SyntaxHighlighter(QTextDocument* parent, SyntaxDefinition* syntaxDef);
+
+	SyntaxHighlighter(SyntaxHighlighter const&) = delete;
+	SyntaxHighlighter& operator=(SyntaxHighlighter const&) = delete;
 
 	inline SyntaxDefinition* getSyntaxDefinition() const { return mSyntaxDefinition; }
 	void setSyntaxDefinition(SyntaxDefinition* definition);

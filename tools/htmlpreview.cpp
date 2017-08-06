@@ -1,8 +1,13 @@
+HIDE_COMPILE_WARNINGS
+
 #include <QTextDocument>
 #include <QDebug>
 
-#include "htmlpreview.h"
 #include "ui_htmlpreview.h"
+
+UNHIDE_COMPILE_WARNINGS
+
+#include "htmlpreview.h"
 
 #include "main/globaldispatcher.h"
 #include "main/mainwindow.h"
@@ -10,10 +15,9 @@
 
 HTMLPreview::HTMLPreview(MainWindow *parent) :
     QWidget(parent),
-    ui(new Ui::HTMLPreview)
+    ui(new Ui::HTMLPreview),
+    mParent(parent)
 {
-	mParent = parent;
-
     ui->setupUi(this);
 
 	ui->refreshFrom->addItem(tr("Current File"));

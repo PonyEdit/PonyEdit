@@ -1,7 +1,12 @@
 #ifndef FAVORITELOCATIONDIALOG_H
 #define FAVORITELOCATIONDIALOG_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QDialog>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "location.h"
 
 namespace Ui { class FavoriteLocationDialog; }
@@ -14,6 +19,9 @@ public:
 	explicit FavoriteLocationDialog(QWidget* parent, Location::Favorite* favorite);
     ~FavoriteLocationDialog();
 
+	FavoriteLocationDialog(FavoriteLocationDialog const&) = delete;
+	FavoriteLocationDialog& operator=(FavoriteLocationDialog const&) = delete;
+		
 private slots:
 	void acceptHandler();
 

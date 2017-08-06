@@ -1,7 +1,11 @@
 #ifndef SEARCHBAR_H
 #define SEARCHBAR_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QWidget>
+
+UNHIDE_COMPILE_WARNINGS
 
 namespace Ui { class SearchBar; }
 
@@ -12,6 +16,9 @@ class SearchBar : public QWidget
 public:
     explicit SearchBar(QWidget *parent = 0);
 	~SearchBar();
+
+	SearchBar(SearchBar const&) = delete;
+	SearchBar& operator=(SearchBar const&) = delete;
 
 	void takeFocus();
 

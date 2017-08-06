@@ -1,15 +1,21 @@
 #include "newfolderdialog.h"
+
+HIDE_COMPILE_WARNINGS
+
 #include "ui_newfolderdialog.h"
 #include <QPushButton>
 #include <QMessageBox>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "ssh2/slaverequest.h"
 #include "tools/callback.h"
 
 NewFolderDialog::NewFolderDialog(QWidget *parent, const Location& parentLocation) :
     QDialog(parent),
-    ui(new Ui::NewFolderDialog)
+    ui(new Ui::NewFolderDialog),
+    mParentLocation(parentLocation)
 {
-	mParentLocation = parentLocation;
     ui->setupUi(this);
 	ui->folderName->setFocus();
 }

@@ -8,7 +8,35 @@
 QMap<QString, SyntaxRule::Type>* SyntaxRule::sTypeMap;
 bool SyntaxRule::sTypeMapInitialized = false;
 
-SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttributes& attributes)
+SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttributes& attributes) :
+    mDefinition(),
+    mParent(parent),
+    mName(name),
+    mType(),
+    mValid(false),
+    mAttribute(),
+    mContext(),
+    mBeginRegion(),
+    mEndRegion(),
+    mLookAhead(),
+    mFirstNonSpace(),
+    mColumn(),
+    mCharacterA(),
+    mCharacterB(),
+    mString(),
+    mCaseSensitivity(),
+    mDynamic(),
+    mMinimal(),
+    mIncludeAttrib(),
+    mLinked(false),
+    mChildRules(),
+    mAttributeLink(),
+    mRegExp(),
+    mRegExpLineStart(),
+    mKeywordLink(),
+    mContextLink(),
+    mDynamicCharIndex(),
+    mDynamicStringSlots()
 {
 	if (!sTypeMapInitialized)
 	{
@@ -33,11 +61,6 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttrib
 		sTypeMap->insert("includerules", IncludeRules);
 		sTypeMapInitialized = true;
 	}
-
-	mName = name;
-	mParent = parent;
-	mValid = false;
-	mLinked = false;
 
 	QString lcName = name.toLower();
 	if (sTypeMap->contains(lcName))
@@ -76,30 +99,36 @@ SyntaxRule::SyntaxRule(SyntaxRule* parent, const QString& name, const QXmlAttrib
 	}
 }
 
-SyntaxRule::SyntaxRule(SyntaxRule* parent, QSharedPointer<SyntaxRule> other, bool duplicateChildren, bool maintainLinks)
+SyntaxRule::SyntaxRule(SyntaxRule* parent, QSharedPointer<SyntaxRule> other, bool duplicateChildren, bool maintainLinks) :
+    mDefinition(),
+    mParent(parent),
+    mName(other->mName),
+    mType(other->mType),
+    mValid(other->mValid),
+    mAttribute(other->mAttribute),
+    mContext(other->mContext),
+    mBeginRegion(other->mBeginRegion),
+    mEndRegion(other->mEndRegion),
+    mLookAhead(other->mLookAhead),
+    mFirstNonSpace(other->mFirstNonSpace),
+    mColumn(other->mColumn),
+    mCharacterA(other->mCharacterA),
+    mCharacterB(other->mCharacterB),
+    mString(other->mString),
+    mCaseSensitivity(other->mCaseSensitivity),
+    mDynamic(other->mDynamic),
+    mMinimal(other->mMinimal),
+    mIncludeAttrib(other->mIncludeAttrib),
+    mLinked(),
+    mChildRules(),
+    mAttributeLink(),
+    mRegExp(),
+    mRegExpLineStart(),
+    mKeywordLink(),
+    mContextLink(),
+    mDynamicCharIndex(),
+    mDynamicStringSlots()
 {
-	mParent = parent;
-
-	mName = other->mName;
-	mType = other->mType;
-	mValid = other->mValid;
-
-	mAttribute = other->mAttribute;
-	mContext = other->mContext;
-	mBeginRegion = other->mBeginRegion;
-	mEndRegion = other->mEndRegion;
-	mLookAhead = other->mLookAhead;
-	mFirstNonSpace = other->mFirstNonSpace;
-	mColumn = other->mColumn;
-
-	mCharacterA = other->mCharacterA;
-	mCharacterB = other->mCharacterB;
-	mString = other->mString;
-	mCaseSensitivity = other->mCaseSensitivity;
-	mDynamic = other->mDynamic;
-	mMinimal = other->mMinimal;
-	mIncludeAttrib = other->mIncludeAttrib;
-
 	if (maintainLinks)
 	{
 		mAttributeLink = other->mAttributeLink;

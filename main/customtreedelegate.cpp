@@ -1,13 +1,17 @@
-#include "customtreedelegate.h"
-#include "customtreeentry.h"
-#include "customtreemodel.h"
+HIDE_COMPILE_WARNINGS
+
 #include <QStylePainter>
 #include <QDebug>
 
-CustomTreeDelegate::CustomTreeDelegate(CustomTreeModel* model)
-{
-	mModel = model;
-}
+UNHIDE_COMPILE_WARNINGS
+
+#include "customtreedelegate.h"
+#include "customtreeentry.h"
+#include "customtreemodel.h"
+
+CustomTreeDelegate::CustomTreeDelegate(CustomTreeModel* model) :
+    mModel(model)
+{}
 
 void CustomTreeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {

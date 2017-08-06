@@ -1,15 +1,20 @@
-#include "filestatuswidget.h"
-#include "ui_statuswidget.h"
-#include "main/statuswidget.h"
+HIDE_COMPILE_WARNINGS
+
 #include <QDebug>
 #include <QDialog>
 #include <QPushButton>
 #include <QTimer>
 
-FileStatusWidget::FileStatusWidget(BaseFile* file, QWidget* parent) :
-	StatusWidget(true, parent)
+#include "ui_statuswidget.h"
+
+UNHIDE_COMPILE_WARNINGS
+
+#include "filestatuswidget.h"
+#include "main/statuswidget.h"
+
+FileStatusWidget::FileStatusWidget(BaseFile* file, QWidget* parent) : StatusWidget(true, parent),
+    mFile(file)
 {
-	mFile = file;
 	setButtons(Cancel);
 	connect(file, SIGNAL(openStatusChanged(int)), this, SLOT(openStatusChanged()));
 }

@@ -9,6 +9,9 @@ class XferChannel : public SlaveChannel
 public:
 	XferChannel(SshHost* host, bool sudo);
 
+	XferChannel(XferChannel const&) = delete;
+	XferChannel& operator=(XferChannel const&) = delete;
+	
 	virtual Type getType() { return mSudo ? SudoXfer : Xfer; }
 
 protected:

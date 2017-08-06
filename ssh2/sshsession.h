@@ -1,11 +1,15 @@
 #ifndef SSHSESSION_H
 #define SSHSESSION_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QMap>
 #include <QThread>
 #include <QMutex>
 #include <QWaitCondition>
 #include <QTime>
+
+UNHIDE_COMPILE_WARNINGS
 
 //
 //	Note: All SshSession objects should only be created or deleted in the main thread,
@@ -38,6 +42,9 @@ public:
 
 	SshSession(SshHost* host);
 	~SshSession();
+
+	SshSession(SshSession const&) = delete;
+	SshSession& operator=(SshSession const&) = delete;
 
 	void start();
 
@@ -125,6 +132,10 @@ class SshSessionThread : public QThread
 {
 public:
 	SshSessionThread(SshSession* session) : mSession(session) {}
+
+	SshSessionThread(SshSessionThread const&) = delete;
+	SshSessionThread& operator=(SshSessionThread const&) = delete;
+
 	void run() { mSession->threadMain(); }
 	int exec() { return QThread::exec(); }
 

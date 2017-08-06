@@ -1,14 +1,19 @@
+HIDE_COMPILE_WARNINGS
+
 #include <QDialogButtonBox>
 #include <QAbstractButton>
 #include <QStringList>
 #include <QList>
+
+#include "ui_optionsdialog.h"
+
+UNHIDE_COMPILE_WARNINGS
 
 #include "ssh2/serverconfigwidget.h"
 #include "sshserveroptionswidget.h"
 #include "main/globaldispatcher.h"
 
 #include "optionsdialog.h"
-#include "ui_optionsdialog.h"
 #include "options.h"
 #include "fontoptionswidget.h"
 #include "editoroptionswidget.h"
@@ -17,7 +22,9 @@
 
 OptionsDialog::OptionsDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::OptionsDialog)
+    ui(new Ui::OptionsDialog),
+    mPages(),
+    mPageMap()
 {
     ui->setupUi(this);
 

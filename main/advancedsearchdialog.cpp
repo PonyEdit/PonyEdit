@@ -1,7 +1,11 @@
+HIDE_COMPILE_WARNINGS
+
 #include <QKeyEvent>
+#include "ui_advancedsearchdialog.h"
+
+UNHIDE_COMPILE_WARNINGS
 
 #include "advancedsearchdialog.h"
-#include "ui_advancedsearchdialog.h"
 #include "windowmanager.h"
 #include "file/basefile.h"
 #include "file/openfilemanager.h"

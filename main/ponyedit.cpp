@@ -1,10 +1,14 @@
+HIDE_COMPILE_WARNINGS
+
 #include <QEvent>
 #include <QFileOpenEvent>
 #include <QDebug>
 #include <QLocalSocket>
 #include <QMessageBox>
+#include <QCommandLineParser>
 
-#include "global.h"
+UNHIDE_COMPILE_WARNINGS
+
 #include "ponyedit.h"
 #include "file/location.h"
 #include "mainwindow.h"
@@ -21,7 +25,6 @@
 #include "ssh2/xferrequest.h"
 #include "ssh2/sshhost.h"
 #include "QsLog.h"
-#include <QCommandLineParser>
 
 GlobalDispatcher* gDispatcher = NULL;
 SiteManager* gSiteManager = NULL;
@@ -29,7 +32,18 @@ SyntaxDefManager* gSyntaxDefManager = NULL;
 MainWindow* gMainWindow = NULL;
 bool PonyEdit::sApplicationExiting = false;
 
-PonyEdit::PonyEdit(int argc, char** argv) : QApplication(argc, argv)
+PonyEdit::PonyEdit(int argc, char** argv) : QApplication(argc, argv),
+    mIsRunning(),
+    // UUID used to (hopefully) ensure memory name is unique
+#ifdef QT_DEBUG
+	mKey("PonyEdit-debug-lock-138ad7e0-2ecb-11e0-91fa-0800200c9a66"),
+#else
+	mKey("PonyEdit-lock-138ad7e0-2ecb-11e0-91fa-0800200c9a66"),
+#endif
+    mMemoryLock(mKey),
+    mLocalServer(NULL),
+    mDialogRethreader(NULL),
+    mPositionalArguments(NULL)
 {
 	//	Parse command line arguments
 	QCommandLineParser parser;
@@ -66,14 +80,6 @@ PonyEdit::PonyEdit(int argc, char** argv) : QApplication(argc, argv)
 	Tools::loadServers();
 	Location::loadFavorites();
 	Tools::initialize();
-
-	// UUID used to (hopefully) ensure memory name is unique
-#ifdef QT_DEBUG
-	mKey = "PonyEdit-debug-lock-138ad7e0-2ecb-11e0-91fa-0800200c9a66";
-#else
-	mKey = "PonyEdit-lock-138ad7e0-2ecb-11e0-91fa-0800200c9a66";
-#endif
-	mMemoryLock.setKey(mKey);
 
 	// In case PonyEdit crashed last run, attach() and detach(), to force the
 	// system to recognise that nothing is connected to this shared memory.

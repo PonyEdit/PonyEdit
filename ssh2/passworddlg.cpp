@@ -1,5 +1,10 @@
-#include "passworddlg.h"
+HIDE_COMPILE_WARNINGS
+
 #include "ui_passworddlg.h"
+
+UNHIDE_COMPILE_WARNINGS
+
+#include "passworddlg.h"
 
 PasswordDlg::PasswordDlg(QWidget *parent) : ThreadCrossingDialog(parent), ui(new Ui::PasswordDlg)
 {

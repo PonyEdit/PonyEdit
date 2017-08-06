@@ -1,7 +1,12 @@
 #ifndef CUSTOMTREEWIDGET_H
 #define CUSTOMTREEWIDGET_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QTreeView>
+
+UNHIDE_COMPILE_WARNINGS
+
 
 class CustomTreeEntry;
 class CustomTreeModel;
@@ -13,6 +18,9 @@ public:
 	explicit CustomTreeWidget(QWidget *parent = 0);
 	~CustomTreeWidget();
 
+	CustomTreeWidget(CustomTreeWidget const&) = delete;
+	CustomTreeWidget& operator=(CustomTreeWidget const&) = delete;
+	
 	void addTopLevelEntry(CustomTreeEntry* entry);
 	void mousePressEvent(QMouseEvent *event);
 

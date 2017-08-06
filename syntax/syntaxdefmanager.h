@@ -20,7 +20,7 @@ public:
 
 	struct Record
 	{
-		Record() : valid(false), priority(0) {}
+		Record() : filename(""), syntaxName(""), category(""), patterns(), lastUpdated(), valid(false), priority(0), hidden(false) {}
 		void pack(const QXmlAttributes& atts);
 
 		QString filename;

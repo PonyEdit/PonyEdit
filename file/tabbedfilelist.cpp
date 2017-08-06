@@ -4,14 +4,13 @@
 #include "basefile.h"
 #include "tabbedfilelist.h"
 
-TabbedFileList::TabbedFileList(QWidget *parent) :
-    QDockWidget(parent)
+TabbedFileList::TabbedFileList(QWidget *parent) : QDockWidget(parent),
+    mTabs(new QTabBar(this))
 {
 	setWindowTitle(tr("Tabbed File List"));
 	QWidget* titleWidget = new QWidget(this);
 	setTitleBarWidget( titleWidget );
 
-	mTabs = new QTabBar(this);
 	mTabs->setTabsClosable(true);
 
 	connect(mTabs, SIGNAL(currentChanged(int)), this, SLOT(currentChanged(int)));

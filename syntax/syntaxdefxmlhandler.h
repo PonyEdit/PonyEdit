@@ -1,8 +1,13 @@
 #ifndef SYNTAXDEFXMLHANDLER_H
 #define SYNTAXDEFXMLHANDLER_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QXmlContentHandler>
 #include <QXmlErrorHandler>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "syntaxdefinition.h"
 #include "syntaxdefmanager.h"
 
@@ -15,6 +20,9 @@ public:
 	//	Constructor with manager record = load basic info only, into record
 	SyntaxDefXmlHandler(SyntaxDefManager::Record* record);
 
+	SyntaxDefXmlHandler(SyntaxDefXmlHandler const&) = delete;
+	SyntaxDefXmlHandler& operator=(SyntaxDefXmlHandler const&) = delete;
+	
 	bool startElement(const QString &namespaceURI, const QString &localName, const QString &qName, const QXmlAttributes &atts);
 	bool endElement(const QString &namespaceURI, const QString &localName, const QString &qName);
 	bool characters(const QString &ch);

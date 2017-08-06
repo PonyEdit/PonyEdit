@@ -35,15 +35,27 @@
 bool SshSession::sLibsInitialized;
 QMap<int, QMutex*> SshSession::sSslMutexes;
 
-SshSession::SshSession(SshHost* host) : mThreadEndedCalled(false), mSocket(0), mHandle(0), mSocketReadNotifier(0), mSocketExceptionNotifier(0), mAtChannelLimit(false)
+SshSession::SshSession(SshHost* host) :
+    mHost(host),
+    mStatus(Disconnected),
+    mErrorDetails(),
+    mThreadEndedCalled(false),
+    mKeepaliveSent(),
+    mLastActivityTimer(),
+    mThread(new SshSessionThread(this)),
+    mSocket(0),
+    mHandle(0),
+    mSocketReadNotifier(0),
+    mSocketExceptionNotifier(0),
+    mChannels(),
+    mChannelsLock(),
+    mAtChannelLimit(false),
+    mPasswordAttempt()
 {
 	SSHLOG_TRACE(host) << "Opening a new session";
 
-	mHost = host;
-	mStatus = Disconnected;
 	initializeLibrary();
 
-	mThread = new SshSessionThread(this);
 	QObject::connect(this, SIGNAL(killThread()), mThread, SLOT(quit()), Qt::QueuedConnection);
 	moveToThread(mThread);	//	Give this QObject to the new thread; then all signals received by this object are run in the thread.
 

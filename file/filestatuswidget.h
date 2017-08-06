@@ -12,6 +12,9 @@ public:
 	FileStatusWidget(BaseFile* file, QWidget* parent);
 	~FileStatusWidget();
 
+	FileStatusWidget(FileStatusWidget const&) = delete;
+	FileStatusWidget& operator=(FileStatusWidget const&) = delete;
+		
 	void showEvent(QShowEvent*);
 
 private slots:

@@ -8,11 +8,15 @@
 #include "file/basefile.h"
 #include <QDebug>
 
-SFTPChannel::SFTPChannel(SshHost *host)
-	: SshChannel(host)
-{
-	mCurrentRequest = NULL;
-}
+SFTPChannel::SFTPChannel(SshHost *host) : SshChannel(host),
+    mHandle(),
+    mOperationHandle(),
+    mCurrentRequest(NULL),
+    mRequestState(),
+    mResult(),
+    mOperationSize(),
+    mOperationCursor()
+{}
 
 bool SFTPChannel::update()
 {

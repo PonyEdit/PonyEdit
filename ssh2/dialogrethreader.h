@@ -1,11 +1,16 @@
 #ifndef DIALOGRETHREADER_H
 #define DIALOGRETHREADER_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QObject>
 #include <QVariantMap>
 #include <QEvent>
 #include <QCoreApplication>
 #include <QMutex>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "threadcrossingdialog.h"
 #include "ssh2/passworddlg.h"
 
@@ -20,6 +25,10 @@ class DialogRethreader : public QObject
     Q_OBJECT
 public:
 	explicit DialogRethreader();
+
+	DialogRethreader(DialogRethreader const&) = delete;
+	DialogRethreader& operator=(DialogRethreader const&) = delete;
+				
 	template <class T> static QVariantMap rethreadDialog(const QVariantMap& options)
 	{
 		QMutex mutex;
@@ -48,6 +57,11 @@ private:
 
 	struct DialogRethreadRequest
 	{
+		DialogRethreadRequest() : factoryMethod(), options(), result(), lock() {}
+
+		DialogRethreadRequest(DialogRethreadRequest const&) = delete;
+		DialogRethreadRequest& operator=(DialogRethreadRequest const&) = delete;
+					
 		DialogFactory factoryMethod;
 		QVariantMap options;
 		QVariantMap result;
@@ -57,7 +71,11 @@ private:
 	class DialogEvent : public QEvent
 	{
 	public:
-		DialogEvent(int type) : QEvent((QEvent::Type)type) {}
+		DialogEvent(int type) : QEvent((QEvent::Type)type), request() {}
+
+		DialogEvent(DialogEvent const&) = delete;
+		DialogEvent& operator=(DialogEvent const&) = delete;
+					
 		DialogRethreadRequest* request;
 	};
 

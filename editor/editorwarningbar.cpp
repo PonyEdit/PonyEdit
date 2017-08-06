@@ -3,10 +3,9 @@
 #include <QToolButton>
 #include <QPushButton>
 
-EditorWarningBar::EditorWarningBar(QWidget* parent, const QPixmap& icon, const QString& message) : QWidget(parent)
+EditorWarningBar::EditorWarningBar(QWidget* parent, const QPixmap& icon, const QString& message) : QWidget(parent),
+    mLayout(new QHBoxLayout(this))
 {
-	mLayout = new QHBoxLayout(this);
-
 	QPalette p(palette());
 	p.setColor(QPalette::Background, p.color(QPalette::ToolTipBase));
 	setPalette(p);

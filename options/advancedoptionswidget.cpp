@@ -1,5 +1,10 @@
-#include "advancedoptionswidget.h"
+HIDE_COMPILE_WARNINGS
+
 #include "ui_advancedoptionswidget.h"
+
+UNHIDE_COMPILE_WARNINGS
+
+#include "advancedoptionswidget.h"
 #include "QsLog.h"
 #include "options.h"
 

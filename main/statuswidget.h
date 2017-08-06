@@ -1,10 +1,14 @@
 #ifndef STATUSWIDGET_H
 #define STATUSWIDGET_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QMap>
 #include <QWidget>
 #include <QAbstractButton>
 #include <QDialogButtonBox>
+
+UNHIDE_COMPILE_WARNINGS
 
 namespace Ui { class StatusWidget; }
 
@@ -27,6 +31,9 @@ public:
 
 	explicit StatusWidget(bool dialogChild, QWidget *parent = 0);
 	~StatusWidget();
+
+	StatusWidget(StatusWidget const&) = delete;
+	StatusWidget& operator=(StatusWidget const&) = delete;
 
 	void setStatus(const QPixmap& pixmap, const QString& message);
 	void close(Result result);

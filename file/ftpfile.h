@@ -12,6 +12,9 @@ class FtpFile : public BaseFile
 public:
 	FtpFile(const Location& location);
 
+	FtpFile(FtpFile const&) = delete;
+	FtpFile& operator=(FtpFile const&) = delete;
+
 	BaseFile* newFile(const QString& content);
 	void open();
 	void save();

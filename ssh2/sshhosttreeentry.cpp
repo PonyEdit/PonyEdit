@@ -1,6 +1,11 @@
+HIDE_COMPILE_WARNINGS
+
+#include <QStylePainter>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "sshhosttreeentry.h"
 #include "sshhost.h"
-#include <QStylePainter>
 
 bool SshHostTreeEntry::sCustomDrawKitInitialized = false;
 QTextOption SshHostTreeEntry::sLabelTextOption;
@@ -11,11 +16,11 @@ QIcon SshHostTreeEntry::sLogIcon;
 
 #define GUTTER_LOG	1
 
-SshHostTreeEntry::SshHostTreeEntry(SshHost* host) : CustomTreeEntry(QIcon(), QString())
+SshHostTreeEntry::SshHostTreeEntry(SshHost* host) : CustomTreeEntry(QIcon(), QString()),
+    mHost(host),
+    mAnimationFrame(0)
 {
-	mHost = host;
 	setData<SshHost*>(mHost);
-	mAnimationFrame = 0;
 
 	initializeCustomDrawKit();
 	addGutterIcon(GUTTER_LOG, true, sLogIcon, "Show log");

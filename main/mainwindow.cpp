@@ -43,12 +43,25 @@
 #include "QsLog.h"
 
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),
+    mFileList(new FileList()),
+    mTabbedFileList(new TabbedFileList()),
+    mStatusBar(new QStatusBar()),
+    mStatusLine(new QLabel()),
+    mRecentFiles(Tools::loadRecentFiles()),
+    mRecentFilesMenu(),
+    mQuickListMenuItem(),
+    mTabbedListMenuItem(),
+    mActionsRequiringFiles(),
+    mActionsRequiringSplitViews(),
+    mSyntaxMenuEntries(),
+    mCurrentSyntaxMenuItem(NULL),
+    mSyntaxMenu(),
+    mMenuControlledDockWidgets(),
+	mMenuControlledToolBar(),
+    mUnsavedChangesDialog(NULL),
+    mWasMaximized()
 {
-	mUnsavedChangesDialog = NULL;
-	mCurrentSyntaxMenuItem = NULL;
-
 	setWindowTitle(tr("PonyEdit"));
 
 	setAcceptDrops(true);
@@ -57,11 +70,9 @@ MainWindow::MainWindow(QWidget *parent)
 	gWindowManager->setMinimumWidth(200);
 	setCentralWidget(gWindowManager);
 
-	mFileList = new FileList();
 	addDockWidget(Qt::LeftDockWidgetArea, mFileList, Qt::Vertical);
 	mFileList->setObjectName("File List");
 
-	mTabbedFileList = new TabbedFileList();
 	addDockWidget(Qt::TopDockWidgetArea, mTabbedFileList, Qt::Horizontal);
 	mTabbedFileList->setObjectName("Tabbed File List");
 
@@ -76,8 +87,6 @@ MainWindow::MainWindow(QWidget *parent)
 		mTabbedFileList->setVisible(true);
 	}
 
-	mStatusLine = new QLabel();
-	mStatusBar = new QStatusBar();
 	mStatusBar->addPermanentWidget(mStatusLine);
 	setStatusBar(mStatusBar);
 
@@ -102,7 +111,6 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(&gOpenFileManager, SIGNAL(fileClosed(BaseFile*)), this, SLOT(openFileListChanged()));
 	connect(gWindowManager, SIGNAL(splitChanged()), this, SLOT(viewSplittingChanged()));
 
-	mRecentFiles = Tools::loadRecentFiles();
 	updateRecentFilesMenu();
 
 	// Set the default size to something relatively sane

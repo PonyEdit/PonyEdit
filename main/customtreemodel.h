@@ -15,6 +15,9 @@ public:
 	explicit CustomTreeModel(CustomTreeWidget* widget);
 	~CustomTreeModel();
 
+	CustomTreeModel(CustomTreeModel const&) = delete;
+	CustomTreeModel& operator=(CustomTreeModel const&) = delete;
+	
 	inline CustomTreeWidget* getWidget() const { return mWidget; }
 
 	QModelIndex index(int row, int column, const QModelIndex& parent) const;

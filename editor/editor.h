@@ -1,12 +1,16 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QLabel>
 #include <QTextEdit>
 #include <QStackedWidget>
 #include <QProgressBar>
 #include <QVBoxLayout>
 #include <QtPrintSupport/QPrinter>
+
+UNHIDE_COMPILE_WARNINGS
 
 #include "file/location.h"
 #include "file/basefile.h"
@@ -19,6 +23,10 @@ class Editor : public QStackedWidget
 public:
 	explicit Editor(BaseFile* file);
 	~Editor();
+
+	Editor(Editor const&) = delete;
+	Editor& operator=(Editor const&) = delete;
+
 	void save();
 	void close();
 

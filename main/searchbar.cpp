@@ -1,6 +1,11 @@
 #include "searchbar.h"
+
+HIDE_COMPILE_WARNINGS
+
 #include "ui_searchbar.h"
 #include <QKeyEvent>
+
+UNHIDE_COMPILE_WARNINGS
 
 SearchBar::SearchBar(QWidget *parent) :
 	QWidget(parent),

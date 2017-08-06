@@ -1,19 +1,24 @@
+HIDE_COMPILE_WARNINGS
+
 #include <QListWidgetItem>
+
+#include "ui_sshserveroptionswidget.h"
+
+UNHIDE_COMPILE_WARNINGS
 
 #include "ssh2/serverconfigwidget.h"
 #include "ssh2/sshhost.h"
 #include "main/tools.h"
 
 #include "sshserveroptionswidget.h"
-#include "ui_sshserveroptionswidget.h"
 
 SshServerOptionsWidget::SshServerOptionsWidget(QWidget *parent) :
 	OptionsDialogPage(parent),
-    ui(new Ui::SshServerOptionsWidget)
+    ui(new Ui::SshServerOptionsWidget),
+    mParent((OptionsDialog*)parent),
+    mConfigWidgets()
 {
     ui->setupUi(this);
-
-	mParent = (OptionsDialog*)parent;
 
 	QListWidgetItem* first = populateServers();
 

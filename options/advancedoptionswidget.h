@@ -1,7 +1,12 @@
 #ifndef ADVANCEDOPTIONSWIDGET_H
 #define ADVANCEDOPTIONSWIDGET_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QWidget>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "optionsdialogpage.h"
 
 namespace Ui {
@@ -16,6 +21,9 @@ public:
 	explicit AdvancedOptionsWidget(QWidget *parent = 0);
 	~AdvancedOptionsWidget();
 
+	AdvancedOptionsWidget(AdvancedOptionsWidget const&) = delete;
+	AdvancedOptionsWidget& operator=(AdvancedOptionsWidget const&) = delete;
+					
 	void apply();
 
 private slots:

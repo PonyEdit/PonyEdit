@@ -25,6 +25,9 @@
 
 #include "QsLog.h"
 #include "QsLogDest.h"
+
+HIDE_COMPILE_WARNINGS
+
 #ifdef QS_LOG_SEPARATE_THREAD
 #include <QThread>
 #include <QWaitCondition>
@@ -37,6 +40,8 @@
 #include <QtGlobal>
 #include <cstdlib>
 #include <stdexcept>
+
+UNHIDE_COMPILE_WARNINGS
 
 namespace QsLogging
 {
@@ -106,7 +111,9 @@ public:
 };
 
 LoggerImpl::LoggerImpl()
-    : level(InfoLevel)
+    : logMutex()
+    , level(InfoLevel)
+    , destList()
 {
     // assume at least file + console
     destList.reserve(2);
@@ -241,6 +248,8 @@ Level Logger::loggingLevel() const
     return d->level;
 }
 
+HIDE_COMPILE_WARNINGS
+
 Logger::Helper::~Helper()
 {
     try {
@@ -253,6 +262,8 @@ Logger::Helper::~Helper()
         throw;
     }
 }
+
+UNHIDE_COMPILE_WARNINGS
 
 //! directs the message to the task queue or writes it directly
 void Logger::enqueueWrite(const LogMessage& message)

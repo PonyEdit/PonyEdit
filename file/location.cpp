@@ -9,7 +9,6 @@
 #include <QDir>
 #include <QSettings>
 #include <QMessageBox>
-#include "main/global.h"
 #include "file/favoritelocationdialog.h"
 #include "ssh2/sshhost.h"
 #include "ssh2/slaverequest.h"
@@ -52,14 +51,10 @@ void LocationShared::cleanupIconProvider()
 //  Constructors & Destructors  //
 //////////////////////////////////
 
-Location::Location()
-{
-	mData = NULL;
-}
+Location::Location() : mData(NULL) {}
 
-Location::Location(const Location& other)
+Location::Location(const Location& other) : mData(other.mData)
 {
-	mData = other.mData;
 	if (mData) mData->mReferences++;
 }
 
@@ -78,21 +73,19 @@ Location& Location::operator=(const Location& other)
 	return *this;
 }
 
-Location::Location(LocationShared* data)
+Location::Location(LocationShared* data) : mData(data)
 {
-	mData = data;
 	mData->mReferences++;
 }
 
-Location::Location(const QString& path)
+Location::Location(const QString& path) : mData(new LocationShared())
 {
-	mData = new LocationShared();
 	mData->setPath(path);
 }
 
 Location::Location(const Location& parent, const QString& path, Type type, int size, QDateTime lastModified, bool canRead, bool canWrite)
+    : mData(new LocationShared())
 {
-	mData = new LocationShared();
 	mData->setPath(path);
 	mData->mType = type;
 	mData->mSize = size;
@@ -103,18 +96,28 @@ Location::Location(const Location& parent, const QString& path, Type type, int s
 	mData->mCanWrite = canWrite;
 }
 
-LocationShared::LocationShared()
+LocationShared::LocationShared() :
+    mReferences(1),
+    mPath(),
+    mLabel(),
+    mType(Location::Unknown),
+    mProtocol(),
+    mLastModified(),
+    mParent(),
+    mSelfLoaded(false),
+    mSize(-1),
+    mCanRead(),
+    mCanWrite(),
+    mSudo(false),
+    mHost(NULL),
+    mRemoteHostName(),
+    mRemoteUserName(),
+    mRemotePath(),
+    mRemoteHost(NULL),
+    mSlaveChannel(NULL),
+    mFtpChannel()
 {
 	initIconProvider();
-
-	mHost = NULL;
-	mSlaveChannel = NULL;
-	mReferences = 1;
-	mType = Location::Unknown;
-	mSize = -1;
-	mSelfLoaded = false;
-	mRemoteHost = NULL;
-	mSudo = false;
 }
 
 Location::~Location()

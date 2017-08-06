@@ -1,11 +1,15 @@
 #ifndef WINDOWMANAGER_H
 #define WINDOWMANAGER_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QWidget>
 #include <QSplitter>
 #include <QList>
 #include <QMap>
 #include <QVBoxLayout>
+
+UNHIDE_COMPILE_WARNINGS
 
 #include "editor/editor.h"
 #include "file/basefile.h"
@@ -25,6 +29,9 @@ public:
     explicit WindowManager(QWidget *parent = 0);
 	~WindowManager();
 
+	WindowManager(WindowManager const&) = delete;
+	WindowManager& operator=(WindowManager const&) = delete;
+	
 	void displayFile(BaseFile *file);
 	void displayLocation(const Location& location);
 

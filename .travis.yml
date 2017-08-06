@@ -1,4 +1,4 @@
-language: cpp
+language: generic
 
 matrix:
   include:
@@ -6,28 +6,39 @@ matrix:
       dist: trusty
       sudo: required
       compiler: gcc
+      env: COMPILER_NAME=gcc CXX=g++-6 CC=gcc-6
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - sourceline: 'ppa:beineri/opt-qt571-trusty'
+          packages:
+            - gcc-6
+            - g++-6
+            - libssh2-1-dev
+            - libssl-dev
+            - qt57base
+            - qt57script
+            - qt57webengine
     - os: osx
       compiler: clang
-
+      env: COMPILER_NAME=clang CXX=clang++ CC=clang
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then
-      sudo add-apt-repository ppa:beineri/opt-qt571-trusty -y;
-      sudo apt-get update -qq;
-    else
+  - if [[ "$TRAVIS_OS_NAME" = "osx" ]]; then
       brew update;
     fi
 install:
   - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then
-      sudo apt-get install -qq libssh2-1-dev libssl-dev qt57base qt57script qt57webengine;
       source /opt/qt57/bin/qt57-env.sh;
     else
       brew install qt5;
       brew link --force qt5;
     fi
 script:
+  - $CXX -v
   - qmake -v
-  - qmake
+  - qmake QMAKE_CXX=$CXX
   - make
 
 notifications:

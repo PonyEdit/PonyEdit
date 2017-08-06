@@ -1,8 +1,13 @@
 #ifndef FONTOPTIONSWIDGET_H
 #define FONTOPTIONSWIDGET_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QWidget>
 #include <QFontDatabase>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "optionsdialogpage.h"
 
 namespace Ui {
@@ -17,6 +22,9 @@ public:
 	explicit FontOptionsWidget(QWidget *parent = 0);
 	~FontOptionsWidget();
 
+	FontOptionsWidget(FontOptionsWidget const&) = delete;
+	FontOptionsWidget& operator=(FontOptionsWidget const&) = delete;
+		
 	void apply();
 
 private:

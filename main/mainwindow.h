@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QtWidgets/QMainWindow>
 #include <QStatusBar>
 #include <QTextEdit>
@@ -8,6 +10,8 @@
 #include <QToolButton>
 #include <QLabel>
 #include <QTimer>
+
+UNHIDE_COMPILE_WARNINGS
 
 #include "file/location.h"
 #include "windowmanager.h"
@@ -31,6 +35,9 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+	MainWindow(MainWindow const&) = delete;
+	MainWindow& operator=(MainWindow const&) = delete;
 
 public slots:
 	void newFile();

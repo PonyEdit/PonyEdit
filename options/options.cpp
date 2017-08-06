@@ -1,9 +1,13 @@
-#include "options.h"
+HIDE_COMPILE_WARNINGS
+
 #include <QSettings>
 #include <QWidget>
-#include "main/global.h"
 #include <QCheckBox>
 #include <QLineEdit>
+
+UNHIDE_COMPILE_WARNINGS
+
+#include "options.h"
 
 QFont* Options::EditorFont = NULL;
 int Options::EditorFontZoom;

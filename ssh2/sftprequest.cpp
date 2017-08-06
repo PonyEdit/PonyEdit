@@ -2,10 +2,15 @@
 #include <QRegExp>
 #include <QDebug>
 
-SFTPRequest::SFTPRequest(SFTPRequest::Type type, const Callback& callback)
-	: mType(type), mCallback(callback)
-{
-}
+SFTPRequest::SFTPRequest(SFTPRequest::Type type, const Callback& callback) :
+    mType(type),
+    mPath(),
+    mIncludeHidden(),
+    mCallback(callback),
+    mContent(),
+    mRevision(),
+    mUndoLength()
+{}
 
 void SFTPRequest::setPath(const QString& path)
 {

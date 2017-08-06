@@ -15,6 +15,10 @@ class SlaveChannel : public ShellChannel
 public:
 	explicit SlaveChannel(SshHost* host, bool sudo);
 	~SlaveChannel();
+
+	SlaveChannel(SlaveChannel const&) = delete;
+	SlaveChannel& operator=(SlaveChannel const&) = delete;
+			
 	bool update();
 
 	static void initialize();

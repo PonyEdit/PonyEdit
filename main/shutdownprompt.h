@@ -1,7 +1,11 @@
 #ifndef SHUTDOWNPROMPT_H
 #define SHUTDOWNPROMPT_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QDialog>
+
+UNHIDE_COMPILE_WARNINGS
 
 namespace Ui {
     class ShutdownPrompt;
@@ -15,6 +19,9 @@ public:
     explicit ShutdownPrompt(QWidget *parent = 0);
     ~ShutdownPrompt();
 
+	ShutdownPrompt(ShutdownPrompt const&) = delete;
+	ShutdownPrompt& operator=(ShutdownPrompt const&) = delete;
+		
 public slots:
 	void remember();
 	void dontRemember();

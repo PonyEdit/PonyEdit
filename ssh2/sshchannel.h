@@ -20,6 +20,9 @@ public:
 	explicit SshChannel(SshHost* host);	//	Only construct new SshChannel objects inside SshHost!!
 	~SshChannel();	//	Only delete SshChannel objects inside SshHost!!
 
+	SshChannel(SshChannel const&) = delete;
+	SshChannel& operator=(SshChannel const&) = delete;
+	
 	bool updateChannel();	//	Calls 'update' to do any actual work.
 	virtual bool update() = 0;	//	Return true if more to be done immediately.
 	virtual Type getType() = 0;

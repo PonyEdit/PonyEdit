@@ -16,6 +16,9 @@ class SFTPChannel : public SshChannel
 public:
 	SFTPChannel(SshHost* host);
 
+	SFTPChannel(SFTPChannel const&) = delete;
+	SFTPChannel& operator=(SFTPChannel const&) = delete;
+			
 	virtual bool update();
 	virtual Type getType() { return SshChannel::Sftp; }
 

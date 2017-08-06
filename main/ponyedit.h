@@ -1,9 +1,13 @@
 #ifndef PONYEDIT_H
 #define PONYEDIT_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QApplication>
 #include <QSharedMemory>
 #include <QLocalServer>
+
+UNHIDE_COMPILE_WARNINGS
 
 #include "mainwindow.h"
 #include "ssh2/dialogrethreader.h"
@@ -17,6 +21,9 @@ public:
 	PonyEdit(int argc, char** argv);
 	~PonyEdit();
 
+	PonyEdit(PonyEdit const&) = delete;
+	PonyEdit& operator=(PonyEdit const&) = delete;
+				
 	bool isRunning();
 	bool sendMessage(const QString &message);
 

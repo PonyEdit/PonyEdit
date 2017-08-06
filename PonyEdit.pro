@@ -26,15 +26,6 @@ win32 {
 	LIBS	+= -llibssh2 -lssleay32 -llibeay32
 }
 
-linux {
-    TARGET = PonyEdit
-    LIBS += -lz
-    LIBS += -lssh2 -lcrypto -lssl
-
-    QMAKE_CFLAGS += -Werror -Wunused-parameter -Wno-terminate
-    QMAKE_CXXFLAGS += -Werror -Wunused-parameter -Wno-terminate
-}
-
 macx {
     DEFINES += __DARWIN_64_BIT_INO_T
     CONFIG  += x86_64
@@ -45,7 +36,6 @@ macx {
     QMAKE_BUNDLE_DATA += data
     ICON = icons/ponyedit.icns
     TARGET = PonyEdit
-    LIBS += -lz
 
     INCLUDEPATH += $$PWD/deps/include/ $$PWD/deps/include/libssh2/
     LIBS        += -L$$PWD/deps/lib-osx
@@ -61,15 +51,21 @@ macx {
     QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/lib/libssh2.1.dylib @executable_path/libssh2.1.dylib $$OUT_PWD/PonyEdit.app/Contents/MacOS/PonyEdit;
 	QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/ssl/lib/libssl.1.0.0.dylib @executable_path/libssl.1.0.0.dylib $$OUT_PWD/PonyEdit.app/Contents/MacOS/PonyEdit;
 	QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/ssl/lib/libcrypto.1.0.0.dylib @executable_path/libcrypto.1.0.0.dylib $$OUT_PWD/PonyEdit.app/Contents/MacOS/PonyEdit;
+}
 
-	QMAKE_CFLAGS += -Werror -Wunused-parameter
-	QMAKE_CXXFLAGS += -Werror -Wunused-parameter
+linux|macx {
+    TARGET = PonyEdit
 
-    LIBS	+= -lssh2 -lcrypto -lssl
+    LIBS += -lz -lssh2 -lcrypto -lssl
+
+    QMAKE_CXXFLAGS += -Werror -Wunused-parameter -Weffc++
 }
 
 QT		+= core widgets gui network xml script webengine webenginewidgets printsupport
 TEMPLATE = app
+
+CONFIG += precompile_header
+PRECOMPILED_HEADER = common.h
 
 SOURCES += \
 	editor/linenumberwidget.cpp \
@@ -184,7 +180,6 @@ HEADERS  += \
 	file/unsavedfile.h \
 	main/stringtrie.h \
 	website/updatemanager.h \
-	main/global.h \
 	file/favoritelocationdialog.h \
 	file/directorytree.h \
 	file/newfolderdialog.h \
@@ -240,7 +235,8 @@ HEADERS  += \
 	ssh2/sftprequest.h \
 	ssh2/sftpchannel.h \
 	options/advancedoptionswidget.h \
-	ssh2/hostlog.h
+	ssh2/hostlog.h \
+    common.h
 
 OTHER_FILES += \
 	README.md \

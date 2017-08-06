@@ -1,15 +1,18 @@
-#include "searchresultdelegate.h"
-#include "searchresultmodel.h"
+HIDE_COMPILE_WARNINGS
+
 #include <QPainter>
-#include <options/options.h>
 #include <QDebug>
 #include <QEvent>
 
-SearchResultDelegate::SearchResultDelegate(SearchResultModel* model, QObject *parent) :
-    QStyledItemDelegate(parent)
-{
-	mModel = model;
-}
+UNHIDE_COMPILE_WARNINGS
+
+#include "searchresultdelegate.h"
+#include "searchresultmodel.h"
+#include <options/options.h>
+
+SearchResultDelegate::SearchResultDelegate(SearchResultModel* model, QObject *parent) : QStyledItemDelegate(parent),
+    mModel(model)
+{}
 
 void SearchResultDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {

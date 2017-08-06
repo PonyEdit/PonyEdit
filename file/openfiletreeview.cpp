@@ -6,18 +6,17 @@
 #include <QDebug>
 
 OpenFileTreeView::OpenFileTreeView(QWidget *parent, int optionFlags, const QList<BaseFile*>* files) :
-    QTreeView(parent)
+    QTreeView(parent),
+    mModel(new OpenFileTreeModel(this, optionFlags, files)),
+    mDelegate(new OpenFileItemDelegate(this)),
+	mExtraColumns(0),
+	mRefreshColumn(0),
+	mCloseColumn(0)
 {
-	mExtraColumns = 0;
-	mRefreshColumn = 0;
-	mCloseColumn = 0;
-
-	//	Create & attach the model; the model supplies the data in tree layout to display
-	mModel = new OpenFileTreeModel(this, optionFlags, files);
+	//	Attach the model; the model supplies the data in tree layout to display
 	setModel(mModel);
 
-	//	Create & attach the item delegate; it handles drawing each item
-	mDelegate = new OpenFileItemDelegate(this);
+	//	Attach the item delegate; it handles drawing each item
 	setItemDelegate(mDelegate);
 
 	//	Configure look & feel details

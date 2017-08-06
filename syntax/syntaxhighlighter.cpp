@@ -1,4 +1,8 @@
+HIDE_COMPILE_WARNINGS
+
 #include <QtWidgets>
+
+UNHIDE_COMPILE_WARNINGS
 
 #include "syntaxhighlighter.h"
 #include "syntaxdefinition.h"
@@ -6,11 +10,10 @@
 #include "syntaxblockdata.h"
 #include "QsLog.h"
 
-SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent, SyntaxDefinition* syntaxDef)
-	: QSyntaxHighlighter(parent)
+SyntaxHighlighter::SyntaxHighlighter(QTextDocument* parent, SyntaxDefinition* syntaxDef) : QSyntaxHighlighter(parent),
+    mSyntaxDefinition(syntaxDef),
+    mDefaultColors()
 {
-	mSyntaxDefinition = syntaxDef;
-
 	// General
 	mDefaultColors.insert("dsnormal", QColor("black"));
 	mDefaultColors.insert("dskeyword", QColor("steelblue"));

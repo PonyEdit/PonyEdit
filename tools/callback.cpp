@@ -5,6 +5,23 @@ Callback::Callback(QObject* target, const char* successSlot, const char* failure
 {
 }
 
+Callback::Callback(const Callback& obj) :
+    mTarget(obj.mTarget),
+    mSuccessSlot(obj.mSuccessSlot),
+    mFailureSlot(obj.mFailureSlot),
+    mProgressSlot(obj.mProgressSlot)
+{}    
+
+Callback& Callback::operator=(Callback const& obj)
+{
+	mTarget = obj.mTarget;
+    mSuccessSlot = obj.mSuccessSlot;
+    mFailureSlot = obj.mFailureSlot;
+    mProgressSlot = obj.mProgressSlot;
+
+	return *this;
+}
+
 void Callback::triggerSuccess(QVariantMap result) const
 {
 	if (mTarget == NULL) return;

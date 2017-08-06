@@ -1,5 +1,7 @@
 #ifndef TESTPONY
 
+HIDE_COMPILE_WARNINGS
+
 #include <QtWidgets/QApplication>
 #include <QString>
 #include <QDebug>
@@ -9,7 +11,8 @@
 #include <QStandardPaths>
 #include <QDir>
 
-#include "global.h"
+UNHIDE_COMPILE_WARNINGS
+
 #include "QsLogDest.h"
 #include "website/updatemanager.h"
 #include "website/sitemanager.h"

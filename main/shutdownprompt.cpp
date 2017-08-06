@@ -1,6 +1,10 @@
-#include "shutdownprompt.h"
+HIDE_COMPILE_WARNINGS
+
 #include "ui_shutdownprompt.h"
 
+UNHIDE_COMPILE_WARNINGS
+
+#include "shutdownprompt.h"
 #include "options/options.h"
 
 ShutdownPrompt::ShutdownPrompt(QWidget *parent) :

@@ -1,12 +1,16 @@
 #ifndef FILE_H
 #define FILE_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QObject>
 #include <QByteArray>
 #include <QString>
 #include <QTextDocument>
 #include <QPlainTextDocumentLayout>
 #include <QMutex>
+
+UNHIDE_COMPILE_WARNINGS
 
 #include "location.h"
 
@@ -19,13 +23,23 @@ class BaseFile : public QObject
 	Q_OBJECT
 
 public:
-	struct Change { int revision; int position; int remove; QString insert; };
+	struct Change {
+		Change() : revision(), position(), remove(), insert() {}
+		
+		int revision;
+		int position;
+		int remove;
+		QString insert;
+	};
 	enum OpenStatus { Loading, LoadError, Ready, /**/Disconnected, Reconnecting, Repairing, SyncError, /**/Closing, Closed };
 	static const char* sStatusLabels[];
 
 	static BaseFile* getFile(const Location& location);
 	static const QList<BaseFile*>& getActiveFiles();
 	virtual ~BaseFile();
+
+	BaseFile(BaseFile const&) = delete;
+	BaseFile& operator=(BaseFile const&) = delete;
 
 	inline const QString& getContent() const { return mContent; }
 	inline const Location& getLocation() const { return mLocation; }

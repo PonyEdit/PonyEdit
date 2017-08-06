@@ -1,9 +1,13 @@
 #ifndef SSHHOSTTREEENTRY_H
 #define SSHHOSTTREEENTRY_H
 
-#include "main/customtreeentry.h"
+HIDE_COMPILE_WARNINGS
+
 #include <QTextOption>
 
+UNHIDE_COMPILE_WARNINGS
+
+#include "main/customtreeentry.h"
 
 class SshHost;
 class SshHostTreeEntry : public CustomTreeEntry
@@ -12,6 +16,9 @@ class SshHostTreeEntry : public CustomTreeEntry
 
 public:
 	SshHostTreeEntry(SshHost* host);
+
+	SshHostTreeEntry(SshHostTreeEntry const&) = delete;
+	SshHostTreeEntry& operator=(SshHostTreeEntry const&) = delete;
 
 	//	Custom drawing stuff
 	virtual bool isCustomDrawn() const { return true; }

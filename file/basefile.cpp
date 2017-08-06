@@ -63,25 +63,27 @@ BaseFile::~BaseFile()
 	if (mDocument) delete mDocument;
 }
 
-BaseFile::BaseFile(const Location& location)
+BaseFile::BaseFile(const Location& location) :
+    mLocation(location),
+    mContent(),
+    mError(),
+    mDocument(new QTextDocument(this)),
+    mDocumentLayout(new QPlainTextDocumentLayout(mDocument)),
+    mChanged(false),
+    mDosLineEndings(),
+    mReadOnly(false),
+    mIgnoreChanges(0),
+    mInUndoBlock(0),
+    mInRedoBlock(0),
+    mRevision(0),
+    mLastSavedRevision(0),
+    mLastSavedUndoLength(0),
+    mLastSaveChecksum(),
+    mProgress(-1),
+    mOpenStatus(BaseFile::Closed),
+    mAttachedEditors(),
+    mHighlighter(NULL)
 {
-	mInRedoBlock = 0;
-	mInUndoBlock = 0;
-	mReadOnly = false;
-	mHighlighter = NULL;
-	mProgress = -1;
-	mOpenStatus = BaseFile::Closed;
-	mLocation = location;
-
-	mIgnoreChanges = 0;
-
-	mChanged = false;
-	mRevision = 0;
-	mLastSavedRevision = 0;
-	mLastSavedUndoLength = 0;
-
-	mDocument = new QTextDocument(this);
-	mDocumentLayout = new QPlainTextDocumentLayout(mDocument);
 	mDocument->setDocumentLayout(mDocumentLayout);
 
 	connect(mDocument, SIGNAL(contentsChange(int,int,int)), this, SLOT(documentChanged(int,int,int)));

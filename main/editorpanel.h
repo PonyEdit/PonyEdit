@@ -1,12 +1,17 @@
 #ifndef EDITORPANEL_H
 #define EDITORPANEL_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QWidget>
 #include <QSplitter>
 #include <QVBoxLayout>
+#include <QDebug>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include <editor/editor.h>
 #include "editorstack.h"
-#include <QDebug>
 
 class WindowManager;
 extern WindowManager* gWindowManager;
@@ -18,6 +23,9 @@ public:
 	explicit EditorPanel(QWidget* parent, EditorPanel* parentPanel = NULL, EditorStack* inheritedStack = NULL);
 	~EditorPanel();
 
+	EditorPanel(EditorPanel const&) = delete;
+	EditorPanel& operator=(EditorPanel const&) = delete;
+			
 	void fileClosed(BaseFile* file);
 	inline bool isSplit() const { return mSplitWidget != NULL; }
 	inline bool isRootPanel() const { return parent() == (QObject*)gWindowManager; }

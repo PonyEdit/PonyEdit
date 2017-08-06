@@ -3,11 +3,10 @@
 #include "windowmanager.h"
 #include "editorpanel.h"
 
-EditorStack::EditorStack(EditorPanel *parent) :
-	QStackedWidget(parent)
-{
-	mParentPanel = parent;
-}
+EditorStack::EditorStack(EditorPanel *parent) : QStackedWidget(parent),
+    mParentPanel(parent),
+    mEditors()
+{}
 
 Editor* EditorStack::getCurrentEditor() const
 {

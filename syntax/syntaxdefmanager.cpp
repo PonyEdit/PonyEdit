@@ -23,9 +23,12 @@ void SyntaxDefManager::Record::pack(const QXmlAttributes& atts)
 		valid = true;
 }
 
-SyntaxDefManager::FilePattern::FilePattern(const QString& pattern)
+SyntaxDefManager::FilePattern::FilePattern(const QString& pattern) :
+    isSimpleExtension(),
+    regExp(),
+    extension(),
+    rawPattern(pattern)
 {
-	rawPattern = pattern;
 	if ((isSimpleExtension = (pattern.startsWith("*.") && pattern.indexOf('*', 2) == -1)))
 		extension = pattern.mid(1);
 	else if ((isSimpleExtension = (pattern.indexOf('*') == -1)))
@@ -42,7 +45,13 @@ bool SyntaxDefManager::FilePattern::matches(const QString& filename)
 		return regExp.exactMatch(filename);
 }
 
-SyntaxDefManager::SyntaxDefManager()
+SyntaxDefManager::SyntaxDefManager() :
+    mRecordList(),
+    mRecordsByName(),
+    mSyntaxesByCategory(),
+    mFiltersByCategory(),
+    mOpenDefinitionList(),
+    mOpenDefinitionsByName()
 {
 	updateIndex();
 }

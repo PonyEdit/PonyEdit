@@ -3,8 +3,13 @@
 #include "main/tools.h"
 #include <QDebug>
 
-SlaveRequest::SlaveRequest(SlaveFile* file, const QByteArray& request, const QVariant& parameters, const Callback& callback)
-	: mFile(file), mOpeningFile(NULL), mRequest(request), mParameters(parameters)
+SlaveRequest::SlaveRequest(SlaveFile* file, const QByteArray& request, const QVariant& parameters, const Callback& callback) :
+    mFile(file),
+    mOpeningFile(NULL),
+    mRequest(request),
+    mParameters(parameters),
+    mMessageId(),
+    mPackedRequest()
 {
 	if (callback.getFailureSlot()) connect(this, SIGNAL(requestFailure(QString, int)), callback.getTarget(), callback.getFailureSlot());
 	if (callback.getSuccessSlot()) connect(this, SIGNAL(requestSuccess(QVariantMap)), callback.getTarget(), callback.getSuccessSlot());

@@ -6,10 +6,12 @@
 #include <QDebug>
 #include "main/tools.h"
 
-XferChannel::XferChannel(SshHost* host, bool sudo) : SlaveChannel(host, sudo), mInternalStatus(_WaitingForRequests)
-{
-	mLeftoverEscape = false;
-}
+XferChannel::XferChannel(SshHost* host, bool sudo) : SlaveChannel(host, sudo),
+    mInternalStatus(_WaitingForRequests),
+    mCurrentRequest(),
+    mBinaryReadBuffer(),
+    mLeftoverEscape(false)
+{}
 
 bool XferChannel::mainUpdate()
 {

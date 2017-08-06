@@ -1,18 +1,27 @@
 #include "unsavedchangesdialog.h"
 
 #include "basefile.h"
+
+HIDE_COMPILE_WARNINGS
+
 #include <QDebug>
 #include <QPushButton>
 #include <QDialogButtonBox>
 #include <QLabel>
 #include <QVBoxLayout>
+
+UNHIDE_COMPILE_WARNINGS
+
 #include "openfiletreeview.h"
 #include "openfilemanager.h"
 #include "filedialog.h"
 #include "QsLog.h"
 
 UnsavedChangesDialog::UnsavedChangesDialog(const QList<BaseFile*>& files, bool closeFilesOnDiscard) :
-	QDialog(0), mCloseFilesOnDiscard(closeFilesOnDiscard)
+	QDialog(0),
+    mButtonBox(new QDialogButtonBox(this)),
+    mTreeView(new OpenFileTreeView(this, OpenFileTreeView::MultiSelect | OpenFileTreeView::UnsavedOnly, &files)),
+    mCloseFilesOnDiscard(closeFilesOnDiscard)
 {
 	QVBoxLayout* layout = new QVBoxLayout(this);
 	setLayout(layout);
@@ -21,14 +30,12 @@ UnsavedChangesDialog::UnsavedChangesDialog(const QList<BaseFile*>& files, bool c
 	label->setText("The following files have unsaved changes: ");
 	layout->addWidget(label);
 
-	mTreeView = new OpenFileTreeView(this, OpenFileTreeView::MultiSelect | OpenFileTreeView::UnsavedOnly, &files);
 	layout->addWidget(mTreeView);
 	mTreeView->expandAll();
 	mTreeView->setMinimumWidth(250);
 	mTreeView->setMinimumHeight(200);
 	mTreeView->selectAll();
 
-	mButtonBox = new QDialogButtonBox(this);
 	mButtonBox->setStandardButtons(QDialogButtonBox::Save | QDialogButtonBox::Discard | QDialogButtonBox::Cancel);
 	mButtonBox->button(QDialogButtonBox::Save)->setDefault(true);
 	layout->addWidget(mButtonBox);

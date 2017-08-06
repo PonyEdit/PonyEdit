@@ -21,6 +21,9 @@ public:
     SiteManager();
 	~SiteManager();
 
+	SiteManager(SiteManager const&) = delete;
+	SiteManager& operator=(SiteManager const&) = delete;
+
 public slots:
 	void checkForUpdates(bool forceNotification = false);
 	void handleReply(QNetworkReply* reply);

@@ -1,14 +1,22 @@
-#include "serverconfigwidget.h"
-#include "ui_serverconfigwidget.h"
-#include "main/tools.h"
-#include "sshhost.h"
+HIDE_COMPILE_WARNINGS
+
 #include <QFileDialog>
 #include <QKeyEvent>
+
+#include "ui_serverconfigwidget.h"
+
+UNHIDE_COMPILE_WARNINGS
+
+#include "serverconfigwidget.h"
+#include "main/tools.h"
+#include "sshhost.h"
 #include "main/globaldispatcher.h"
 
 ServerConfigWidget::ServerConfigWidget(QWidget *parent) :
 	QWidget(parent),
-	ui(new Ui::ServerConfigWidget)
+	ui(new Ui::ServerConfigWidget),
+    mEditHost(),
+    mLastAutoName()
 {
 	ui->setupUi(this);
 

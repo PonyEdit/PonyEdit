@@ -1,7 +1,11 @@
 #ifndef SERVERCONFIGWIDGET_H
 #define SERVERCONFIGWIDGET_H
 
+HIDE_COMPILE_WARNINGS
+
 #include <QWidget>
+
+UNHIDE_COMPILE_WARNINGS
 
 namespace Ui {
     class ServerConfigWidget;
@@ -17,6 +21,9 @@ public:
     explicit ServerConfigWidget(QWidget *parent = 0);
     ~ServerConfigWidget();
 
+	ServerConfigWidget(ServerConfigWidget const&) = delete;
+	ServerConfigWidget& operator=(ServerConfigWidget const&) = delete;
+			
 	void setEditHost(SshHost* host);
 	SshHost* getEditHost();
 

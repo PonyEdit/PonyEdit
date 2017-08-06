@@ -1,23 +1,29 @@
-#include "searchresults.h"
-#include "file/basefile.h"
+HIDE_COMPILE_WARNINGS
+
 #include <QTextBlock>
 #include <QDebug>
-#include "searchresultmodel.h"
-#include "searchresultdelegate.h"
-#include "windowmanager.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 
-SearchResults::SearchResults(QWidget *parent) :
-	QWidget(parent)
+UNHIDE_COMPILE_WARNINGS
+
+#include "searchresults.h"
+#include "file/basefile.h"
+#include "searchresultmodel.h"
+#include "searchresultdelegate.h"
+#include "windowmanager.h"
+
+SearchResults::SearchResults(QWidget *parent) : QWidget(parent),
+    mTreeView(new QTreeView(this)),
+    mReplaceLabel(new QLabel(tr("Replace With: "), this)),
+    mReplaceWithText(new QLineEdit(this)),
+    mReplaceButton(new QPushButton(tr("Replace"), this)),
+    mModel(new SearchResultModel(this)),
+    mDelegate(new SearchResultDelegate(mModel, this))
 {
 	QVBoxLayout* mainLayout = new QVBoxLayout(this);
 	mainLayout->setMargin(0);
 
-	mModel = new SearchResultModel(this);
-	mDelegate = new SearchResultDelegate(mModel, this);
-
-	mTreeView = new QTreeView(this);
 	mTreeView->setModel(mModel);
 	mTreeView->setItemDelegate(mDelegate);
 	mTreeView->setHeaderHidden(true);
@@ -27,15 +33,12 @@ SearchResults::SearchResults(QWidget *parent) :
 	mainLayout->addLayout(childLayout);
 	childLayout->setMargin(5);
 
-	mReplaceLabel = new QLabel(tr("Replace With: "), this);
 	mReplaceLabel->setMargin(5);
 	childLayout->addWidget(mReplaceLabel);
 
-	mReplaceWithText = new QLineEdit(this);
 	mReplaceWithText->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 	childLayout->addWidget(mReplaceWithText);
 
-	mReplaceButton = new QPushButton(tr("Replace"), this);
 	mReplaceLabel->setMargin(5);
 	childLayout->addWidget(mReplaceButton);
 

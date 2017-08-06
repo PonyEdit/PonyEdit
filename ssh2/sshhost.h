@@ -54,6 +54,10 @@ public:
 
 	SshHost();
 	~SshHost();
+
+	SshHost(SshHost const&) = delete;
+	SshHost& operator=(SshHost const&) = delete;
+
 	static void cleanup();
 
 	static SshHost* getHost(const QByteArray& hostname, const QByteArray& username);
@@ -90,8 +94,12 @@ public:
 	class LogHelper
 	{
 	public:
-		LogHelper(SshHost* host, QsLogging::Level level) : mHost(host), mLevel(level), mDebug(&mBuffer) {}
+		LogHelper(SshHost* host, QsLogging::Level level) : mHost(host), mLevel(level), mBuffer(), mDebug(&mBuffer) {}
 		~LogHelper();
+
+		LogHelper(LogHelper const &obj) : mHost(obj.mHost), mLevel(obj.mLevel), mBuffer(obj.mBuffer), mDebug(obj.mDebug) {};
+		LogHelper& operator=(LogHelper const&) = delete;
+
 		inline QDebug& stream() { return mDebug; }
 
 	private:

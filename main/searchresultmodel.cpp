@@ -1,16 +1,21 @@
-#include "searchresultmodel.h"
+HIDE_COMPILE_WARNINGS
+
 #include <QStandardItemModel>
-#include "file/basefile.h"
-#include "options/options.h"
 #include <QDebug>
-#include "file/openfilemanager.h"
 #include <QTextBlock>
 
-SearchResultModel::SearchResultModel(QObject *parent) :
-	QAbstractItemModel(parent)
-{
-	mRootNode = new InternalTreeNode();
-}
+UNHIDE_COMPILE_WARNINGS
+
+#include "searchresultmodel.h"
+#include "file/basefile.h"
+#include "options/options.h"
+#include "file/openfilemanager.h"
+
+SearchResultModel::SearchResultModel(QObject *parent) : QAbstractItemModel(parent),
+    mRootNode(new InternalTreeNode()),
+    mFileNodeMap(),
+    mCheckboxes()
+{}
 
 SearchResultModel::~SearchResultModel()
 {

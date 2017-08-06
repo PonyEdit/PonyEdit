@@ -1,5 +1,10 @@
-#include "hostkeydlg.h"
+HIDE_COMPILE_WARNINGS
+
 #include "ui_hostkeydlg.h"
+
+UNHIDE_COMPILE_WARNINGS
+
+#include "hostkeydlg.h"
 
 HostKeyDlg::HostKeyDlg(QWidget *parent) :
 	ThreadCrossingDialog(parent),
