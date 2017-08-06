@@ -1,13 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QtWidgets/QMainWindow>
+#include <QLabel>
 #include <QStatusBar>
 #include <QTextEdit>
-#include <QStatusBar>
-#include <QToolButton>
-#include <QLabel>
 #include <QTimer>
+#include <QToolButton>
+#include <QtWidgets/QMainWindow>
 
 #include "file/location.h"
 #include "windowmanager.h"
@@ -21,34 +20,33 @@ class UnsavedChangesDialog;
 class WindowManager;
 
 #ifdef Q_OS_MAC
-extern void qt_mac_set_dock_menu(QMenu *menu);
+extern void qt_mac_set_dock_menu( QMenu *menu );
 #endif
 
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
+class MainWindow : public QMainWindow {
+	Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+	MainWindow( QWidget *parent = 0 );
+	~MainWindow();
 
 public slots:
 	void newFile();
 	void openFile();
 	void openSingleFile();
-	void openSingleFile(const Location& loc);
+	void openSingleFile( const Location &loc );
 	void saveFile();
 	void saveFileAs();
 	void saveAllFiles();
 	void closeFile();
 	void closeAllFiles();
 	void closeAllExceptCurrentFile();
-	void fileSelected(BaseFile* file);
+	void fileSelected( BaseFile *file );
 
 	void print();
 
 	void updateTitle();
-	void updateTitle(BaseFile* file);
+	void updateTitle( BaseFile *file );
 
 	void undo();
 	void redo();
@@ -70,15 +68,15 @@ public slots:
 	void toggleFullScreen();
 
 	void showHTMLPreview();
-	void closeHTMLPreview(bool visible);
+	void closeHTMLPreview( bool visible );
 	void options();
 
 	void contextHelp();
 	void about();
 	void checkForUpdates();
 
-	void showErrorMessage(QString error);
-	void showStatusMessage(QString message);
+	void showErrorMessage( QString error );
+	void showStatusMessage( QString message );
 
 	void syntaxMenuOptionClicked();
 
@@ -88,18 +86,22 @@ public slots:
 	void currentEditorChanged();
 	void updateSyntaxSelection();
 
-	Editor* getCurrentEditor();
+	Editor *getCurrentEditor();
 
 	void openFileListChanged();
 	void viewSplittingChanged();
 
-	void registerContextMenuItem(QDockWidget* widget) { mMenuControlledDockWidgets.append(widget); }
-	void registerContextMenuItem(QToolBar* toolbar) { mMenuControlledToolBar.append(toolbar); }
+	void registerContextMenuItem( QDockWidget *widget ) {
+		mMenuControlledDockWidgets.append( widget );
+	}
+	void registerContextMenuItem( QToolBar *toolbar ) {
+		mMenuControlledToolBar.append( toolbar );
+	}
 
 protected:
-	void closeEvent(QCloseEvent* event);
-	void dragEnterEvent(QDragEnterEvent *);
-	void dropEvent(QDropEvent *);
+	void closeEvent( QCloseEvent *event );
+	void dragEnterEvent( QDragEnterEvent * );
+	void dropEvent( QDropEvent * );
 
 	QMenu *createPopupMenu();
 
@@ -119,35 +121,35 @@ private:
 	void restoreState();
 
 	void updateRecentFilesMenu();
-	void addRecentFile(Location loc);
+	void addRecentFile( Location loc );
 
 	void nextStartupPrompt();
 
-	FileList* mFileList;
-	TabbedFileList* mTabbedFileList;
-	QStatusBar* mStatusBar;
-	QLabel* mStatusLine;
+	FileList *      mFileList;
+	TabbedFileList *mTabbedFileList;
+	QStatusBar *    mStatusBar;
+	QLabel *        mStatusLine;
 
-	QList<Location> mRecentFiles;
-	QMenu* mRecentFilesMenu;
+	QList< Location > mRecentFiles;
+	QMenu *           mRecentFilesMenu;
 
-	QAction* mQuickListMenuItem;
-	QAction* mTabbedListMenuItem;
+	QAction *mQuickListMenuItem;
+	QAction *mTabbedListMenuItem;
 
-	QList<QAction*> mActionsRequiringFiles;
-	QList<QAction*> mActionsRequiringSplitViews;
+	QList< QAction * > mActionsRequiringFiles;
+	QList< QAction * > mActionsRequiringSplitViews;
 
-	QMap<QString, QAction*> mSyntaxMenuEntries;
-	QAction* mCurrentSyntaxMenuItem;
-	QMenu* mSyntaxMenu;
+	QMap< QString, QAction * > mSyntaxMenuEntries;
+	QAction *                  mCurrentSyntaxMenuItem;
+	QMenu *                    mSyntaxMenu;
 
-	QList<QDockWidget*> mMenuControlledDockWidgets;
-	QList<QToolBar*> mMenuControlledToolBar;
-	UnsavedChangesDialog* mUnsavedChangesDialog;
+	QList< QDockWidget * > mMenuControlledDockWidgets;
+	QList< QToolBar * >    mMenuControlledToolBar;
+	UnsavedChangesDialog * mUnsavedChangesDialog;
 
 	bool mWasMaximized;
 };
 
-extern MainWindow* gMainWindow;
+extern MainWindow *gMainWindow;
 
 #endif // MAINWINDOW_H

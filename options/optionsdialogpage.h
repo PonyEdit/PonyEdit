@@ -3,11 +3,10 @@
 
 #include <QWidget>
 
-class OptionsDialogPage : public QWidget
-{
-    Q_OBJECT
+class OptionsDialogPage : public QWidget {
+	Q_OBJECT
 public:
-    explicit OptionsDialogPage(QWidget *parent = 0);
+	explicit OptionsDialogPage( QWidget *parent = 0 );
 
 	virtual void apply() {}
 };

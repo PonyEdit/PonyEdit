@@ -1,25 +1,24 @@
 #ifndef STARTUPOPTIONSWIDGET_H
 #define STARTUPOPTIONSWIDGET_H
 
-#include <QWidget>
 #include "optionsdialogpage.h"
+#include <QWidget>
 
 namespace Ui {
 	class StartupOptionsWidget;
 }
 
-class StartupOptionsWidget : public OptionsDialogPage
-{
-    Q_OBJECT
+class StartupOptionsWidget : public OptionsDialogPage {
+	Q_OBJECT
 
 public:
-	explicit StartupOptionsWidget(QWidget *parent = 0);
+	explicit StartupOptionsWidget( QWidget *parent = 0 );
 	~StartupOptionsWidget();
 
 	void apply();
 
 public slots:
-	void SetFilesToggled(bool checked);
+	void SetFilesToggled( bool checked );
 	void SetFilesToCurrent();
 
 private:

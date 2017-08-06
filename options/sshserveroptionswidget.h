@@ -1,26 +1,25 @@
 #ifndef SSHSERVEROPTIONSWIDGET_H
 #define SSHSERVEROPTIONSWIDGET_H
 
-#include <QWidget>
 #include <QListWidgetItem>
+#include <QWidget>
 
-#include "ssh2/serverconfigwidget.h"
 #include "options/optionsdialog.h"
 #include "options/optionsdialogpage.h"
+#include "ssh2/serverconfigwidget.h"
 
 namespace Ui {
-    class SshServerOptionsWidget;
+	class SshServerOptionsWidget;
 }
 
-class SshServerOptionsWidget : public OptionsDialogPage
-{
-    Q_OBJECT
+class SshServerOptionsWidget : public OptionsDialogPage {
+	Q_OBJECT
 
 public:
-    explicit SshServerOptionsWidget(QWidget *parent = 0);
-    ~SshServerOptionsWidget();
+	explicit SshServerOptionsWidget( QWidget *parent = 0 );
+	~SshServerOptionsWidget();
 
-	QListWidgetItem* populateServers();
+	QListWidgetItem *populateServers();
 
 signals:
 	void accepted();
@@ -29,16 +28,16 @@ signals:
 public slots:
 	void accept();
 	void reject();
-	void serverClicked(QListWidgetItem *current, QListWidgetItem *previous = NULL);
-	void serverNameUpdated(const QString& newName);
+	void serverClicked( QListWidgetItem *current, QListWidgetItem *previous = NULL );
+	void serverNameUpdated( const QString &newName );
 	void newServer();
 	void deleteServer();
 
 private:
-    Ui::SshServerOptionsWidget *ui;
+	Ui::SshServerOptionsWidget *ui;
 
-	OptionsDialog* mParent;
-	QList<ServerConfigWidget*> mConfigWidgets;
+	OptionsDialog *               mParent;
+	QList< ServerConfigWidget * > mConfigWidgets;
 };
 
 #endif // SSHSERVEROPTIONSWIDGET_H

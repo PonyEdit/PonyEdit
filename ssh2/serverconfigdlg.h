@@ -1,25 +1,26 @@
 #ifndef SERVERCONFIGDLG_H
 #define SERVERCONFIGDLG_H
 
-#include <QDialog>
 #include "serverconfigwidget.h"
+#include <QDialog>
 
-namespace Ui { class ServerConfigDlg; }
+namespace Ui {
+	class ServerConfigDlg;
+}
 
 class SshHost;
 
-class ServerConfigDlg : public QDialog
-{
-    Q_OBJECT
+class ServerConfigDlg : public QDialog {
+	Q_OBJECT
 
 public:
-    explicit ServerConfigDlg(QWidget *parent = 0);
-    ~ServerConfigDlg();
+	explicit ServerConfigDlg( QWidget *parent = 0 );
+	~ServerConfigDlg();
 
-	void setEditHost(SshHost* host);
+	void setEditHost( SshHost *host );
 
 private:
-    Ui::ServerConfigDlg *ui;
+	Ui::ServerConfigDlg *ui;
 
 	ServerConfigWidget *mConfigWidget;
 };
