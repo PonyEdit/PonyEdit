@@ -46,6 +46,7 @@ script:
   - bear make
   - ./deps/run-clang-tidy.py -fix .
   - git status
+  - git diff-index --quiet HEAD --
 
 notifications:
   email:

@@ -11,6 +11,14 @@ DEFINES += "MINOR_VERSION=91"
 DEFINES += "REVISION=11"
 DEFINES += "PRETTY_VERSION=\\\"0.91-beta11\\\""
 
+release: DESTDIR = build/release
+debug:   DESTDIR = build/debug
+
+OBJECTS_DIR = $$DESTDIR/.obj
+MOC_DIR = $$DESTDIR/.moc
+RCC_DIR = $$DESTDIR/.qrc
+UI_DIR = $$DESTDIR/.ui
+
 win32 {
     DEFINES += NOMINMAX
 
@@ -58,23 +66,15 @@ macx {
     QMAKE_BUNDLE_DATA += dylibs
 
     # Post-build steps; configure executable to look in .app for dylibs.
-    QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/lib/libssh2.1.dylib @executable_path/libssh2.1.dylib $$OUT_PWD/PonyEdit.app/Contents/MacOS/PonyEdit;
-	QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/ssl/lib/libssl.1.0.0.dylib @executable_path/libssl.1.0.0.dylib $$OUT_PWD/PonyEdit.app/Contents/MacOS/PonyEdit;
-	QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/ssl/lib/libcrypto.1.0.0.dylib @executable_path/libcrypto.1.0.0.dylib $$OUT_PWD/PonyEdit.app/Contents/MacOS/PonyEdit;
+	QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/lib/libssh2.1.dylib @executable_path/libssh2.1.dylib $$DESTDIR/PonyEdit.app/Contents/MacOS/PonyEdit;
+	QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/ssl/lib/libssl.1.0.0.dylib @executable_path/libssl.1.0.0.dylib $$DESTDIR/PonyEdit.app/Contents/MacOS/PonyEdit;
+	QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/ssl/lib/libcrypto.1.0.0.dylib @executable_path/libcrypto.1.0.0.dylib $$DESTDIR/PonyEdit.app/Contents/MacOS/PonyEdit;
 
 	QMAKE_CFLAGS += -Werror -Wunused-parameter
 	QMAKE_CXXFLAGS += -Werror -Wunused-parameter
 
     LIBS	+= -lssh2 -lcrypto -lssl
 }
-
-release: DESTDIR = build/release
-debug:   DESTDIR = build/debug
-
-OBJECTS_DIR = $$DESTDIR/.obj
-MOC_DIR = $$DESTDIR/.moc
-RCC_DIR = $$DESTDIR/.qrc
-UI_DIR = $$DESTDIR/.ui
 
 QT		+= core widgets gui network xml script webengine webenginewidgets printsupport
 TEMPLATE = app
