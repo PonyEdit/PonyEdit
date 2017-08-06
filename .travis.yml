@@ -46,7 +46,7 @@ script:
   - bear make
   - ./deps/run-clang-tidy.py -fix .
   - git status
-  - git diff-index --quiet HEAD --
+  - git diff-index --quiet HEAD -- || echo "Format/Tidy changed somes files." && exit 1
 
 notifications:
   email:
