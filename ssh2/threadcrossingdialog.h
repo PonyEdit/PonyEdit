@@ -4,13 +4,12 @@
 #include <QDialog>
 #include <QVariantMap>
 
-class ThreadCrossingDialog : public QDialog
-{
+class ThreadCrossingDialog : public QDialog {
 	Q_OBJECT
 public:
-	explicit ThreadCrossingDialog(QWidget *parent = 0);
+	explicit ThreadCrossingDialog( QWidget *parent = 0 );
 
-	virtual void setOptions(const QVariantMap& /*options*/) {}
+	virtual void        setOptions( const QVariantMap & /*options*/ ) {}
 	virtual QVariantMap getResult();
 };
 

@@ -1,51 +1,49 @@
 #ifndef TESTPONY
 
-#include <QtWidgets/QApplication>
-#include <QString>
 #include <QDebug>
-#include <QMetaType>
+#include <QDir>
 #include <QFont>
+#include <QMetaType>
 #include <QNetworkProxyFactory>
 #include <QStandardPaths>
-#include <QDir>
+#include <QString>
+#include <QtWidgets/QApplication>
 
-#include "global.h"
 #include "QsLogDest.h"
-#include "website/updatemanager.h"
-#include "website/sitemanager.h"
+#include "global.h"
 #include "ponyedit.h"
+#include "website/sitemanager.h"
+#include "website/updatemanager.h"
 
-int main(int argc, char *argv[])
-{
+int main( int argc, char *argv[] ) {
 	int result = 1;
 
-	UpdateManager* updateManager = NULL;
+	UpdateManager *updateManager = NULL;
 
-	QsLogging::Logger& logger = QsLogging::Logger::instance();
+	QsLogging::Logger &logger = QsLogging::Logger::instance();
 	logger.setLoggingLevel( QsLogging::TraceLevel );
 	QsLogging::DestinationPtr fileDestination, debugDestination;
 
-	try
-	{
-		QCoreApplication::setOrganizationName("Pentalon");
-		QCoreApplication::setApplicationName("PonyEdit");
-		QCoreApplication::setApplicationVersion(PRETTY_VERSION);
+	try {
+		QCoreApplication::setOrganizationName( "Pentalon" );
+		QCoreApplication::setApplicationName( "PonyEdit" );
+		QCoreApplication::setApplicationVersion( PRETTY_VERSION );
 
 		// Create our data directory if it doesn't already exist
-        QDir datadir(QStandardPaths::writableLocation( QStandardPaths::DataLocation ) );
-		if( !datadir.exists() )
-            datadir.mkpath( QStandardPaths::writableLocation( QStandardPaths::DataLocation ) );
+		QDir datadir( QStandardPaths::writableLocation( QStandardPaths::DataLocation ) );
+		if ( !datadir.exists() )
+			datadir.mkpath( QStandardPaths::writableLocation( QStandardPaths::DataLocation ) );
 
-        fileDestination = QsLogging::DestinationPtr( QsLogging::DestinationFactory::MakeFileDestination( QStandardPaths::writableLocation( QStandardPaths::DataLocation ) + "/ponyedit.log" ) );
+		fileDestination  = QsLogging::DestinationPtr( QsLogging::DestinationFactory::MakeFileDestination( QStandardPaths::writableLocation( QStandardPaths::DataLocation ) + "/ponyedit.log" ) );
 		debugDestination = QsLogging::DestinationPtr( QsLogging::DestinationFactory::MakeDebugOutputDestination() );
 		logger.addDestination( debugDestination );
 		logger.addDestination( fileDestination );
 
 		QLOG_INFO() << "PonyEdit version" << PRETTY_VERSION << "started";
 
-		PonyEdit a(argc, argv);
+		PonyEdit a( argc, argv );
 
-		const QStringList& positionalArguments = a.getPositionalArguments();
+		const QStringList &positionalArguments = a.getPositionalArguments();
 		if ( a.isRunning() ) {
 			//	App is already running; just send it messages, to open given files (if any)
 			foreach ( QString arg, positionalArguments )
@@ -56,16 +54,14 @@ int main(int argc, char *argv[])
 				gMainWindow->openSingleFile( Location( arg ) );
 		}
 
-		QNetworkProxyFactory::setUseSystemConfiguration(true);
+		QNetworkProxyFactory::setUseSystemConfiguration( true );
 
 		updateManager = new UpdateManager();
 
-		QTimer::singleShot(1000, gSiteManager, SLOT(checkForUpdates()));
+		QTimer::singleShot( 1000, gSiteManager, SLOT( checkForUpdates() ) );
 
 		result = a.exec();
-	}
-	catch (QString err)
-	{
+	} catch ( QString err ) {
 		QLOG_ERROR() << "FATAL ERROR: " << err;
 	}
 

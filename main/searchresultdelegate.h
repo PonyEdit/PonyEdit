@@ -4,15 +4,14 @@
 #include <QStyledItemDelegate>
 
 class SearchResultModel;
-class SearchResultDelegate : public QStyledItemDelegate
-{
-    Q_OBJECT
+class SearchResultDelegate : public QStyledItemDelegate {
+	Q_OBJECT
 public:
-	explicit SearchResultDelegate(SearchResultModel* model, QObject *parent = 0);
-	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+	explicit SearchResultDelegate( SearchResultModel *model, QObject *parent = 0 );
+	void paint( QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index ) const;
 
 private:
-	SearchResultModel* mModel;
+	SearchResultModel *mModel;
 };
 
 #endif // SEARCHRESULTDELEGATE_H

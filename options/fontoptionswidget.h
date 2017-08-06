@@ -1,27 +1,26 @@
 #ifndef FONTOPTIONSWIDGET_H
 #define FONTOPTIONSWIDGET_H
 
-#include <QWidget>
-#include <QFontDatabase>
 #include "optionsdialogpage.h"
+#include <QFontDatabase>
+#include <QWidget>
 
 namespace Ui {
-    class fontoptionswidget;
+	class fontoptionswidget;
 }
 
-class FontOptionsWidget : public OptionsDialogPage
-{
-    Q_OBJECT
+class FontOptionsWidget : public OptionsDialogPage {
+	Q_OBJECT
 
 public:
-	explicit FontOptionsWidget(QWidget *parent = 0);
+	explicit FontOptionsWidget( QWidget *parent = 0 );
 	~FontOptionsWidget();
 
 	void apply();
 
 private:
-    Ui::fontoptionswidget *ui;
-	QFontDatabase mFontDatabase;
+	Ui::fontoptionswidget *ui;
+	QFontDatabase          mFontDatabase;
 };
 
 #endif // FONTOPTIONSWIDGET_H
