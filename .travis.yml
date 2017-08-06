@@ -1,4 +1,4 @@
-language: cpp
+language: general
 
 matrix:
   include:
@@ -9,18 +9,19 @@ matrix:
       addons:
         apt:
           sources:
-            - llvm-toolchain-trusty
+            - llvm-toolchain-trusty-3.9
           packages:
-            - clang-5.0
+            - clang-3.9
+            - clang-format-3.9
+            - clang-tidy-3.9
       env:
-        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
+        - CC=clang-3.9 && CXX=clang++-3.9
     - os: osx
       compiler: clang
 
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then
-      CC=clang-5.0 && CXX=clang++-5.0
       sudo add-apt-repository ppa:beineri/opt-qt591-trusty -y;
       sudo apt-get update -qq;
     else
