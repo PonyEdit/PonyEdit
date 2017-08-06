@@ -243,6 +243,8 @@ HEADERS  += \
 	ssh2/hostlog.h
 
 OTHER_FILES += \
+	README.md \
+	.gitignore \
 	.travis.yml \
 	slave/slave.pl \
 	syntax/test.pl \

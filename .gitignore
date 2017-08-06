@@ -1,8 +1,6 @@
-
 PonyEdit.pro.user
+*.autosave
 
 .qmake.cache
-
 .qmake.stash
-
 Makefile
