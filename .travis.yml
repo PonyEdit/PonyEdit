@@ -33,9 +33,9 @@ install:
       sudo apt-get install -qq libssh2-1-dev libssl-dev qt59base qt59script qt59webengine bear;
       source /opt/qt59/bin/qt59-env.sh;
     else
-      brew install -v qt5 bear clang-format;
-      brew install -v llvm --with-clang-tools-extra
-      export PATH="$PATH:/usr/local/opt/llvm/bin:/usr/local/opt/llvm/share/clang"
+      brew install qt5 bear clang-format;
+      brew install llvm --with-clang-tools-extra;
+      export PATH="$PATH:/usr/local/opt/llvm/bin:/usr/local/opt/llvm/share/clang";
       brew link --force qt5;
     fi
 
@@ -44,7 +44,7 @@ script:
   - ./deps/clang-format-all .
   - qmake
   - bear make
-  - ./deps/run-clang-tidy.py -header-filter='.*' -checks='-*,modernize-use-override,readability-braces-around-statements' -fix .
+  - ./deps/run-clang-tidy.py .
 
 notifications:
   email:
