@@ -22,7 +22,6 @@ PonyEdit compiles with the latest version of [Qt](https://www.qt.io/).
 On OSX, you'll need:
 
 * XCode, available from the [Mac App Store](https://itunes.apple.com/au/app/xcode/id497799835?mt=12). Remember to open it and accept the Terms and Conditions, you need to do that before the command line tools will work.
-* `clang-format` available via [Homebrew](http://brew.sh/): `brew install clang-format`
 
 On Windows, you'll need:
 
@@ -32,9 +31,6 @@ On Linux, you'll also need to install these packages:
 
 * `libssl-dev`
 * `libssh2-1-dev`
-* `libgl1-mesa-dev`
-* `mesa-common-dev`
-* `clang-format`
 
 ## Getting PonyEdit
 
