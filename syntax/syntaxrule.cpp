@@ -333,10 +333,8 @@ int SyntaxRule::match( const QString &string, int position ) {
 
 			while ( ! s->isNull() && ! mDefinition->isDeliminator( *s ) ) {
 				if ( mKeywordLink->items.continueScan( &scan,
-				                                       static_cast< unsigned char >( caseSensitive ? s->
-				                                                                     toLatin1() : s->
-				                                                                     toLower().toLatin1() ) ) )
-                                {
+				                                       static_cast< unsigned char >( caseSensitive ? s->toLatin1() : s->
+				                                                                     toLower().toLatin1() ) ) ) {
 					length++;
 				} else {
 					length = 0;

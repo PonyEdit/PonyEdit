@@ -212,8 +212,7 @@ QTextCursor Editor::internalFind( const QString& text, bool backwards, bool case
 	} else {
 		if ( ! content.contains( text,
 		                         ( Qt::CaseSensitivity ) ( caseSensitive ) ? ( Qt::CaseSensitive ) : ( Qt::
-		                                                                                               CaseInsensitive ) ) )
-		{
+		                                                                                               CaseInsensitive ) ) ) {
 			return QTextCursor();
 		}
 

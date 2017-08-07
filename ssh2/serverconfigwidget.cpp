@@ -88,11 +88,8 @@ void ServerConfigWidget::acceptedHandler() {
 	mEditHost->setKeyFile( ui->keyFile->text().toUtf8() );
 	mEditHost->setKeyPassphrase( ui->keyPassphrase->text().toLatin1() );
 	mEditHost->setSaveKeyPassphrase( ui->saveKeyPassphrase->isChecked() );
-	mEditHost->setConnectionType( static_cast< SshHost::ConnectionType >( ui->connectionType->itemData( ui->
-	                                                                                                    connectionType
-	                                                                                                    ->
-	                                                                                                    currentIndex() )
-        .toInt() ) );
+	mEditHost->setConnectionType( static_cast< SshHost::ConnectionType >( ui->connectionType->itemData( ui->connectionType->currentIndex() )
+	                                                                      .toInt() ) );
 	gDispatcher->emitSshServersUpdated();
 }
 

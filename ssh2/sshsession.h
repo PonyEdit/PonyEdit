@@ -98,7 +98,14 @@ bool authenticatePassword( bool keyboardInteractive );
 bool authenticatePublicKey();
 bool authenticateAgent();
 AuthMethods getAuthenticationMethods();
-static void interactiveAuthCallback( const char*, int, const char*, int, int, const LIBSSH2_USERAUTH_KBDINT_PROMPT*, LIBSSH2_USERAUTH_KBDINT_RESPONSE*, void** );
+static void interactiveAuthCallback( const char*,
+                                     int,
+                                     const char*,
+                                     int,
+                                     int,
+                                     const LIBSSH2_USERAUTH_KBDINT_PROMPT*,
+                                     LIBSSH2_USERAUTH_KBDINT_RESPONSE*,
+                                     void** );
 
 static void initializeLibrary();
 static void manageSslMutex( int mode, int n, const char* file, int line );
