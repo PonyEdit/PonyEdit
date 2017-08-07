@@ -35,7 +35,7 @@ install:
       make;
       mv uncrustify ..;
       cd ..;
-      rm -rf uncrustify*;
+      rm -rf uncrustify-*;
     else
       brew install qt5 uncrustify;
       brew link --force qt5;
