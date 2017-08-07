@@ -39,7 +39,7 @@ install:
     else
       brew install qt5 uncrustify;
       brew link --force qt5;
-      ln -s `which uncrustify`
+      ln -s `which uncrustify`;
     fi
 
 script:
