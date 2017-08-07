@@ -31,11 +31,11 @@ install:
       tar -xvfz uncrustify-0.65.tar.gz;
       mkdir uncrustify-build;
       cd uncrustify-build;
-      cmake ../uncrustify-uncrustify-0.65
-      make
-      mv uncrustify ..
-      cd ..
-      rm -rf uncrustify*
+      cmake ../uncrustify-uncrustify-0.65;
+      make;
+      mv uncrustify ..;
+      cd ..;
+      rm -rf uncrustify*;
     else
       brew install qt5 uncrustify;
       brew link --force qt5;
