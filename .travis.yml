@@ -24,7 +24,7 @@ before_install:
 install:
   - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then
       sudo apt-get install -qq libssh2-1-dev libssl-dev qt59base qt59script qt59webengine;
-      source /opt/qt57/bin/qt59-env.sh;
+      source /opt/qt59/bin/qt59-env.sh;
     else
       brew install qt5 uncrustify;
       brew link --force qt5;
