@@ -10,24 +10,24 @@ class AdvancedOptionsWidget;
 
 class AdvancedOptionsWidget : public OptionsDialogPage
 {
-	Q_OBJECT
-	
-public:
-	explicit AdvancedOptionsWidget(QWidget *parent = 0);
-	~AdvancedOptionsWidget();
+Q_OBJECT
 
-	void apply();
+public:
+explicit AdvancedOptionsWidget( QWidget *parent = 0 );
+~AdvancedOptionsWidget();
+
+void apply();
 
 private slots:
-	void setTrace();
-	void setDebug();
-	void setInfo();
-	void setWarn();
-	void setError();
-	void setFatal();
-	
+void setTrace();
+void setDebug();
+void setInfo();
+void setWarn();
+void setError();
+void setFatal();
+
 private:
-	Ui::AdvancedOptionsWidget *ui;
+Ui::AdvancedOptionsWidget *ui;
 };
 
-#endif // ADVANCEDOPTIONSWIDGET_H
+#endif	// ADVANCEDOPTIONSWIDGET_H

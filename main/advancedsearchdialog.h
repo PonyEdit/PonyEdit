@@ -9,22 +9,22 @@ class BaseFile;
 
 class AdvancedSearchDialog : public QDialog
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-	enum Scope { CurrentFile, OpenFiles };
+enum Scope { CurrentFile, OpenFiles };
 
-    explicit AdvancedSearchDialog(QWidget *parent = 0);
-    ~AdvancedSearchDialog();
+explicit AdvancedSearchDialog( QWidget *parent = 0 );
+~AdvancedSearchDialog();
 
 private slots:
-	void search();
-	void searchAndReplace();
+void search();
+void searchAndReplace();
 
 private:
-	QList<BaseFile*> getLocalHaystackFiles();
+QList< BaseFile* > getLocalHaystackFiles();
 
-    Ui::AdvancedSearchDialog *ui;
+Ui::AdvancedSearchDialog *ui;
 };
 
-#endif // ADVANCEDSEARCHDIALOG_H
+#endif	// ADVANCEDSEARCHDIALOG_H

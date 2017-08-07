@@ -5,25 +5,25 @@
 #include "optionsdialogpage.h"
 
 namespace Ui {
-	class StartupOptionsWidget;
+class StartupOptionsWidget;
 }
 
 class StartupOptionsWidget : public OptionsDialogPage
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-	explicit StartupOptionsWidget(QWidget *parent = 0);
-	~StartupOptionsWidget();
+explicit StartupOptionsWidget( QWidget *parent = 0 );
+~StartupOptionsWidget();
 
-	void apply();
+void apply();
 
 public slots:
-	void SetFilesToggled(bool checked);
-	void SetFilesToCurrent();
+void SetFilesToggled( bool checked );
+void SetFilesToCurrent();
 
 private:
-	Ui::StartupOptionsWidget *ui;
+Ui::StartupOptionsWidget *ui;
 };
 
-#endif // STARTUPOPTIONSWIDGET_H
+#endif	// STARTUPOPTIONSWIDGET_H

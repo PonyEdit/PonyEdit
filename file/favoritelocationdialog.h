@@ -8,18 +8,18 @@ namespace Ui { class FavoriteLocationDialog; }
 
 class FavoriteLocationDialog : public QDialog
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-	explicit FavoriteLocationDialog(QWidget* parent, Location::Favorite* favorite);
-    ~FavoriteLocationDialog();
+explicit FavoriteLocationDialog( QWidget* parent, Location::Favorite* favorite );
+~FavoriteLocationDialog();
 
 private slots:
-	void acceptHandler();
+void acceptHandler();
 
 private:
-	Ui::FavoriteLocationDialog* ui;
-	Location::Favorite* mFavorite;
+Ui::FavoriteLocationDialog* ui;
+Location::Favorite* mFavorite;
 };
 
-#endif // FAVORITELOCATIONDIALOG_H
+#endif	// FAVORITELOCATIONDIALOG_H

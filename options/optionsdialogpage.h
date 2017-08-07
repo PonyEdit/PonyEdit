@@ -5,11 +5,11 @@
 
 class OptionsDialogPage : public QWidget
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-    explicit OptionsDialogPage(QWidget *parent = 0);
+explicit OptionsDialogPage( QWidget *parent = 0 );
 
-	virtual void apply() {}
+virtual void apply() {}
 };
 
-#endif // OPTIONSDIALOGPAGE_H
+#endif	// OPTIONSDIALOGPAGE_H

@@ -5,11 +5,11 @@
 
 class FileDlgTreeModel : public QStandardItemModel
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-	explicit FileDlgTreeModel(QObject *parent = 0);
+explicit FileDlgTreeModel( QObject *parent = 0 );
 
-	virtual QVariant data(const QModelIndex &index, int role) const;
+virtual QVariant data( const QModelIndex &index, int role ) const;
 };
 
-#endif // FILEDLGTREEMODEL_H
+#endif	// FILEDLGTREEMODEL_H

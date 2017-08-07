@@ -8,13 +8,13 @@
 
 class OpenFileItemDelegate : public QStyledItemDelegate
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-	explicit OpenFileItemDelegate(OpenFileTreeView *parent = 0);
-	virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+explicit OpenFileItemDelegate( OpenFileTreeView *parent = 0 );
+virtual void paint( QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index ) const;
 
 private:
-	OpenFileTreeView* mParent;
+OpenFileTreeView* mParent;
 };
 
-#endif // FILELISTITEMDELEGATE_H
+#endif	// FILELISTITEMDELEGATE_H

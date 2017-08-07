@@ -6,12 +6,12 @@
 
 class ThreadCrossingDialog : public QDialog
 {
-	Q_OBJECT
+Q_OBJECT
 public:
-	explicit ThreadCrossingDialog(QWidget *parent = 0);
+explicit ThreadCrossingDialog( QWidget *parent = 0 );
 
-	virtual void setOptions(const QVariantMap& /*options*/) {}
-	virtual QVariantMap getResult();
+virtual void setOptions( const QVariantMap& /*options*/ ) {}
+virtual QVariantMap getResult();
 };
 
-#endif // THREADCROSSINGDIALOG_H
+#endif	// THREADCROSSINGDIALOG_H

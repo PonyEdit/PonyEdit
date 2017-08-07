@@ -1,24 +1,24 @@
 #ifndef FILESTATUSWIDGET_H
 #define FILESTATUSWIDGET_H
 
-#include "main/statuswidget.h"
 #include "basefile.h"
+#include "main/statuswidget.h"
 
 class FileStatusWidget : public StatusWidget
 {
-	Q_OBJECT
+Q_OBJECT
 
 public:
-	FileStatusWidget(BaseFile* file, QWidget* parent);
-	~FileStatusWidget();
+FileStatusWidget( BaseFile* file, QWidget* parent );
+~FileStatusWidget();
 
-	void showEvent(QShowEvent*);
+void showEvent( QShowEvent* );
 
 private slots:
-	void openStatusChanged();
+void openStatusChanged();
 
 private:
-	BaseFile* mFile;
+BaseFile* mFile;
 };
 
-#endif // FILESTATUSWIDGET_H
+#endif	// FILESTATUSWIDGET_H

@@ -246,6 +246,7 @@ OTHER_FILES += \
 	README.md \
 	.gitignore \
 	.travis.yml \
+	uncrustify.cfg \
 	slave/slave.pl \
 	syntax/test.pl \
 	ponyedit.rc \

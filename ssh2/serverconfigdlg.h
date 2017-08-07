@@ -10,18 +10,18 @@ class SshHost;
 
 class ServerConfigDlg : public QDialog
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    explicit ServerConfigDlg(QWidget *parent = 0);
-    ~ServerConfigDlg();
+explicit ServerConfigDlg( QWidget *parent = 0 );
+~ServerConfigDlg();
 
-	void setEditHost(SshHost* host);
+void setEditHost( SshHost* host );
 
 private:
-    Ui::ServerConfigDlg *ui;
+Ui::ServerConfigDlg *ui;
 
-	ServerConfigWidget *mConfigWidget;
+ServerConfigWidget *mConfigWidget;
 };
 
-#endif // SERVERCONFIGDLG_H
+#endif	// SERVERCONFIGDLG_H

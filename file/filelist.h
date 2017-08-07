@@ -10,16 +10,16 @@ class OpenFileTreeView;
 
 class FileList : public QDockWidget
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-    explicit FileList(QWidget *parent = 0);
+explicit FileList( QWidget *parent = 0 );
 
 private slots:
-	void selectFile(BaseFile* file);
-	void fileSelected();
+void selectFile( BaseFile* file );
+void fileSelected();
 
 private:
-	OpenFileTreeView* mTreeView;
+OpenFileTreeView* mTreeView;
 };
 
-#endif // FILELIST_H
+#endif	// FILELIST_H

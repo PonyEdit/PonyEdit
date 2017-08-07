@@ -5,11 +5,11 @@
 
 class FileDlgTreeView : public QTreeView
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-    explicit FileDlgTreeView(QObject *parent = 0);
+explicit FileDlgTreeView( QObject *parent = 0 );
 
-	void mousePressEvent(QMouseEvent *event);
+void mousePressEvent( QMouseEvent *event );
 };
 
-#endif // FILEDLGTREEVIEW_H
+#endif	// FILEDLGTREEVIEW_H

@@ -8,19 +8,19 @@
 
 class LocalFile : public BaseFile
 {
-	Q_OBJECT
+Q_OBJECT
 
 public:
-	LocalFile(const Location& location);
+LocalFile( const Location& location );
 
-	BaseFile* newFile(const QString& content);
-	void open();
-	void save();
-	void close();
-	void refresh();
+BaseFile* newFile( const QString& content );
+void open();
+void save();
+void close();
+void refresh();
 
 signals:
-	void localFileOpened(const QString& content, const QByteArray& checksum, bool readOnly);
+void localFileOpened( const QString& content, const QByteArray& checksum, bool readOnly );
 };
 
-#endif // LOCALFILE_H
+#endif	// LOCALFILE_H

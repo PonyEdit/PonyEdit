@@ -1,59 +1,74 @@
 #ifndef EDITORPANEL_H
 #define EDITORPANEL_H
 
-#include <QWidget>
+#include <editor/editor.h>
+#include <QDebug>
 #include <QSplitter>
 #include <QVBoxLayout>
-#include <editor/editor.h>
+#include <QWidget>
 #include "editorstack.h"
-#include <QDebug>
 
 class WindowManager;
 extern WindowManager* gWindowManager;
 
 class EditorPanel : public QFrame
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-	explicit EditorPanel(QWidget* parent, EditorPanel* parentPanel = NULL, EditorStack* inheritedStack = NULL);
-	~EditorPanel();
+explicit EditorPanel( QWidget* parent, EditorPanel* parentPanel = NULL, EditorStack* inheritedStack = NULL );
+~EditorPanel();
 
-	void fileClosed(BaseFile* file);
-	inline bool isSplit() const { return mSplitWidget != NULL; }
-	inline bool isRootPanel() const { return parent() == (QObject*)gWindowManager; }
-	inline EditorPanel* getParentPanel() const { return mParentPanel; }
-	EditorPanel* findStack(Editor* editor);
+void fileClosed( BaseFile* file );
+inline bool isSplit() const {
+	return mSplitWidget != NULL;
+}
 
-	//	Public methods for split panels
-	inline EditorPanel* getFirstChild() const { return mChildPanels[0]; }
-	inline EditorPanel* getSecondChild() const { return mChildPanels[1]; }
-	void unsplit();
+inline bool isRootPanel() const {
+	return parent() == ( QObject * ) gWindowManager;
+}
 
-	//	Public methods for unsplit panels
-	void displayFile(BaseFile* file);
-	void displayEditor(Editor* editor);
-	Editor* getCurrentEditor() const;
-	void split(Qt::Orientation orientation);
-	void setActive(bool active);
-	void takeFocus();
+inline EditorPanel* getParentPanel() const {
+	return mParentPanel;
+}
 
-	EditorPanel* findNextPanel();
-	EditorPanel* findPreviousPanel();
+EditorPanel* findStack( Editor* editor );
+
+// Public methods for split panels
+inline EditorPanel* getFirstChild() const {
+	return mChildPanels[0];
+}
+
+inline EditorPanel* getSecondChild() const {
+	return mChildPanels[1];
+}
+
+void unsplit();
+
+// Public methods for unsplit panels
+void displayFile( BaseFile* file );
+void displayEditor( Editor* editor );
+Editor* getCurrentEditor() const;
+void split( Qt::Orientation orientation );
+void setActive( bool active );
+void takeFocus();
+
+EditorPanel* findNextPanel();
+EditorPanel* findPreviousPanel();
 
 protected:
-	void createEditor(BaseFile* file);
-	void setupBorder();
+void createEditor( BaseFile* file );
+void setupBorder();
 
 private:
-	QVBoxLayout* mLayout;
-	EditorPanel* mParentPanel;
+QVBoxLayout* mLayout;
+EditorPanel* mParentPanel;
 
-	//	Members for split panels
-	QSplitter* mSplitWidget;
-	QList<EditorPanel*> mChildPanels;
+// Members for split panels
+QSplitter* mSplitWidget;
+QList< EditorPanel* > mChildPanels;
 
-	//	Members for unsplit panels
-	EditorStack* mEditorStack;
+// Members for unsplit panels
+EditorStack* mEditorStack;
 };
 
-#endif // EDITORPANEL_H
+#endif	// EDITORPANEL_H

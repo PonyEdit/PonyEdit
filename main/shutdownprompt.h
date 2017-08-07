@@ -4,23 +4,23 @@
 #include <QDialog>
 
 namespace Ui {
-    class ShutdownPrompt;
+class ShutdownPrompt;
 }
 
 class ShutdownPrompt : public QDialog
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    explicit ShutdownPrompt(QWidget *parent = 0);
-    ~ShutdownPrompt();
+explicit ShutdownPrompt( QWidget *parent = 0 );
+~ShutdownPrompt();
 
 public slots:
-	void remember();
-	void dontRemember();
+void remember();
+void dontRemember();
 
 private:
-    Ui::ShutdownPrompt *ui;
+Ui::ShutdownPrompt *ui;
 };
 
-#endif // SHUTDOWNPROMPT_H
+#endif	// SHUTDOWNPROMPT_H

@@ -1,36 +1,36 @@
 #ifndef SEARCHRESULTS_H
 #define SEARCHRESULTS_H
 
-#include <QTreeView>
+#include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
-#include <QLabel>
+#include <QTreeView>
 #include "searchresultmodel.h"
 class SearchResultDelegate;
 
 class SearchResults : public QWidget
 {
-    Q_OBJECT
+Q_OBJECT
 public:
-    explicit SearchResults(QWidget *parent = 0);
-	void clearResults();
-	void showResults(const QList<SearchResultModel::Result>& results);
+explicit SearchResults( QWidget *parent = 0 );
+void clearResults();
+void showResults( const QList< SearchResultModel::Result >& results );
 
-	void showReplaceOptions(bool replaceOptions);
+void showReplaceOptions( bool replaceOptions );
 
 private slots:
-	void itemClicked(QModelIndex index);
-	void replaceClicked();
+void itemClicked( QModelIndex index );
+void replaceClicked();
 
 private:
-	QTreeView* mTreeView;
+QTreeView* mTreeView;
 
-	QLabel* mReplaceLabel;
-	QLineEdit* mReplaceWithText;
-	QPushButton* mReplaceButton;
+QLabel* mReplaceLabel;
+QLineEdit* mReplaceWithText;
+QPushButton* mReplaceButton;
 
-	SearchResultModel* mModel;
-	SearchResultDelegate* mDelegate;
+SearchResultModel* mModel;
+SearchResultDelegate* mDelegate;
 };
 
-#endif // SEARCHRESULTS_H
+#endif	// SEARCHRESULTS_H

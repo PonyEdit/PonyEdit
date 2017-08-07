@@ -1,8 +1,8 @@
 #ifndef SFTPCHANNEL_H
 #define SFTPCHANNEL_H
 
-#include "sshchannel.h"
 #include <QVariantMap>
+#include "sshchannel.h"
 
 struct _LIBSSH2_SFTP;
 typedef _LIBSSH2_SFTP LIBSSH2_SFTP;
@@ -14,31 +14,33 @@ class SFTPRequest;
 class SFTPChannel : public SshChannel
 {
 public:
-	SFTPChannel(SshHost* host);
+SFTPChannel( SshHost* host );
 
-	virtual bool update();
-	virtual Type getType() { return SshChannel::Sftp; }
+virtual bool update();
+virtual Type getType() {
+	return SshChannel::Sftp;
+}
 
 protected:
-	void criticalError(const QString& error);
-	bool handleOpening();
-	bool mainUpdate();
-	bool updateLs();
-	bool updateMkDir();
-	bool updateReadFile();
-	bool updateWriteFile();
+void criticalError( const QString& error );
+bool handleOpening();
+bool mainUpdate();
+bool updateLs();
+bool updateMkDir();
+bool updateReadFile();
+bool updateWriteFile();
 
 private:
-	enum RequestState { Beginning, Sizing, Reading, Writing, Finishing };
+enum RequestState { Beginning, Sizing, Reading, Writing, Finishing };
 
-	LIBSSH2_SFTP* mHandle;
-	LIBSSH2_SFTP_HANDLE* mOperationHandle;
-	SFTPRequest* mCurrentRequest;
-	RequestState mRequestState;
+LIBSSH2_SFTP* mHandle;
+LIBSSH2_SFTP_HANDLE* mOperationHandle;
+SFTPRequest* mCurrentRequest;
+RequestState mRequestState;
 
-	QVariantMap mResult;
-	int mOperationSize;
-	int mOperationCursor;
+QVariantMap mResult;
+int mOperationSize;
+int mOperationCursor;
 };
 
-#endif // SFTPCHANNEL_H
+#endif	// SFTPCHANNEL_H
