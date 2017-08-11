@@ -1,4 +1,4 @@
-#!bin/sh
+#!/bin/sh
 
 UNCRUSTIFY="uncrustify-0.65"
 OLD_PWD=$(pwd)
