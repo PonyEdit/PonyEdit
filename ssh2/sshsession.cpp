@@ -39,8 +39,7 @@ SshSession::SshSession( SshHost* host ) :
 	mThreadEndedCalled( false ),
 	mSocket( 0 ),
 	mHandle( 0 ),
-	mSocketReadNotifier(
-		0 ),
+	mSocketReadNotifier( 0 ),
 	mSocketExceptionNotifier( 0 ),
 	mAtChannelLimit( false ) {
 	SSHLOG_TRACE( host ) << "Opening a new session";

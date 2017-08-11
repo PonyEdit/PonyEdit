@@ -11,6 +11,9 @@ matrix:
           packages:
             - libssh2-1-dev
             - libssl-dev
+      cache:
+        directories:
+          - $HOME/extras
     - os: osx
       compiler: clang
 
@@ -27,24 +30,15 @@ install:
   - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then
       sudo apt-get install -qq qt59base qt59script qt59webengine;
       source /opt/qt59/bin/qt59-env.sh;
-      wget https://github.com/uncrustify/uncrustify/archive/uncrustify-0.65.tar.gz;
-      tar -xvf uncrustify-0.65.tar.gz;
-      mkdir uncrustify-build;
-      cd uncrustify-build;
-      cmake ../uncrustify-uncrustify-0.65;
-      make;
-      mv uncrustify ..;
-      cd ..;
-      rm -rf uncrustify-*;
+      sh deps/build-uncrustify.sh;
     else
       brew install qt5 uncrustify;
       brew link --force qt5;
-      ln -s `which uncrustify`;
     fi
 
 script:
   - qmake -v
-  - ./uncrustify -v
+  - uncrustify -v
   - find . \( -name \*.h -o -name \*.cpp \) -not -path './tools/QsLog/*' -not -path './deps/*' | xargs ./uncrustify -c uncrustify.cfg --check
   - qmake
   - make
