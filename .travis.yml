@@ -30,16 +30,17 @@ install:
   - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then
       sudo apt-get install -qq qt59base qt59script qt59webengine;
       source /opt/qt59/bin/qt59-env.sh;
-      sh deps/build-uncrustify.sh;
+      source deps/build-uncrustify.sh;
     else
       brew install qt5 uncrustify;
       brew link --force qt5;
     fi
 
 script:
+  - echo $PATH
   - qmake -v
   - uncrustify -v
-  - find . \( -name \*.h -o -name \*.cpp \) -not -path './tools/QsLog/*' -not -path './deps/*' | xargs ./uncrustify -c uncrustify.cfg --check
+  - find . \( -name \*.h -o -name \*.cpp \) -not -path './tools/QsLog/*' -not -path './deps/*' | xargs uncrustify -c uncrustify.cfg --check
   - qmake
   - make
 
