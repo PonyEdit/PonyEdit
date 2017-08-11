@@ -20,10 +20,6 @@ class SearchBar;
 class UnsavedChangesDialog;
 class WindowManager;
 
-#ifdef Q_OS_MAC
-extern void qt_mac_set_dock_menu( QMenu *menu );
-#endif
-
 class MainWindow : public QMainWindow {
 	Q_OBJECT
 

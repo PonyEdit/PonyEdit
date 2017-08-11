@@ -865,7 +865,7 @@ void MainWindow::createMacDockMenu() {
 
 	dockMenu->addAction( tr( "New File" ), this, SLOT( newFile() ) );
 
-	qt_mac_set_dock_menu( dockMenu );
+	dockMenu->setAsDockMenu();
 #endif
 }
 
