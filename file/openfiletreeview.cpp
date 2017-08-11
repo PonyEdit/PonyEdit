@@ -92,7 +92,7 @@ void OpenFileTreeView::itemClicked( QModelIndex index ) {
 QList< BaseFile* > OpenFileTreeView::getSelectedFiles() const {
 	QModelIndexList selectedIndices = selectionModel()->selectedIndexes();
 	QList< BaseFile* > selectedFiles;
-	foreach( QModelIndex index, selectedIndices ) {
+	foreach ( QModelIndex index, selectedIndices ) {
 		BaseFile* file = mModel->getFileAtIndex( index );
 		if ( file != NULL ) {
 			selectedFiles.append( file );

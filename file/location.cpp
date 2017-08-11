@@ -373,7 +373,7 @@ void LocationShared::localLoadListing( bool includeHidden ) {
 	}
 
 	QStringList entries = directory.entryList( filters );
-	foreach( QString entry, entries ) {
+	foreach ( QString entry, entries ) {
 		if ( ! includeHidden && entry.startsWith( '.' ) ) {
 			continue;
 		}
@@ -500,9 +500,10 @@ SshHost* LocationShared::getHost() {
 
 void Location::addToFavorites() {
 	if ( ! isNull() ) {
-		foreach( Favorite f, sFavorites )
-		if ( f.path == getPath() ) {
-			return;
+		foreach ( Favorite f, sFavorites ) {
+			if ( f.path == getPath() ) {
+				return;
+			}
 		}
 
 		Favorite f;
@@ -532,7 +533,7 @@ void Location::saveFavorites() {
 
 	int index = 0;
 	settings.beginWriteArray( ntr( "favorites" ) );
-	foreach( Favorite f, sFavorites ) {
+	foreach ( Favorite f, sFavorites ) {
 		settings.setArrayIndex( index++ );
 		settings.setValue( ntr( "name" ), f.name );
 		settings.setValue( ntr( "path" ), f.path );

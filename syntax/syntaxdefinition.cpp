@@ -38,25 +38,28 @@ SyntaxDefinition::SyntaxDefinition( const QString& filename ) {
 }
 
 void SyntaxDefinition::unlink() {
-	foreach( KeywordList * list, mKeywordLists )
-	delete list;
+	foreach ( KeywordList * list, mKeywordLists ) {
+		delete list;
+	}
 
-	foreach( ItemData * itemData, mItemDatas )
-	delete itemData;
+	foreach ( ItemData * itemData, mItemDatas ) {
+		delete itemData;
+	}
 
-	foreach( QSharedPointer< ContextDef > context, mContextList ) {
+	foreach ( QSharedPointer< ContextDef > context, mContextList ) {
 		context->fallthroughContextLink = ContextLink();
 		context->lineBeginContextLink = ContextLink();
 		context->lineEndContextLink = ContextLink();
 
-		foreach( QSharedPointer< SyntaxRule > rule, context->rules )
-		rule->unlink();
+		foreach ( QSharedPointer< SyntaxRule > rule, context->rules ) {
+			rule->unlink();
+		}
 	}
 }
 
 bool SyntaxDefinition::link() {
 	// Go through the rules in all contexts
-	foreach( QSharedPointer< ContextDef > context, mContextList ) {
+	foreach ( QSharedPointer< ContextDef > context, mContextList ) {
 		// Link up this context's fallthough, lineEnd, lineBegin references (if there is one)
 		if ( context->fallthrough ) {
 			linkContext( context->fallthroughContext, &context->fallthroughContextLink );
@@ -111,8 +114,9 @@ bool SyntaxDefinition::link() {
 					}
 
 					int insertionOffset = 0;
-					foreach( QSharedPointer< SyntaxRule > copyRule, sourceContext->rules )
-					context->rules.insert( i + insertionOffset++, copyRule );
+					foreach ( QSharedPointer< SyntaxRule > copyRule, sourceContext->rules ) {
+						context->rules.insert( i + insertionOffset++, copyRule );
+					}
 				}
 
 				i--;

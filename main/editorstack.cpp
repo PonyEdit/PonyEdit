@@ -24,7 +24,7 @@ void EditorStack::displayEditor( Editor *editor ) {
 
 void EditorStack::displayFile( BaseFile* file ) {
 	// First, see if there is already an editor in this stack for the file...
-	foreach( Editor * editor, mEditors ) {
+	foreach ( Editor * editor, mEditors ) {
 		if ( file->getLocation().getProtocol() == Location::Unsaved ) {
 			if ( editor->getLocation().getLabel() == file->getLocation().getLabel() ) {
 				displayEditor( editor );

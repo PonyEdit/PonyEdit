@@ -84,8 +84,9 @@ void CustomTreeWidget::registerAnimation( const QModelIndex& index ) {
 
 void CustomTreeWidget::timerEvent( QTimerEvent* event ) {
 	if ( event->timerId() == mAnimationTimerId ) {
-		foreach( const QModelIndex &index, mAnimatingIndices )
-		update( index );
+		foreach ( const QModelIndex &index, mAnimatingIndices ) {
+			update( index );
+		}
 	} else {
 		QTreeView::timerEvent( event );
 	}

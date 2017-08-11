@@ -54,12 +54,14 @@ int main( int argc, char *argv[] ) {
 		const QStringList& positionalArguments = a.getPositionalArguments();
 		if ( a.isRunning() ) {
 			// App is already running; just send it messages, to open given files (if any)
-			foreach( QString arg, positionalArguments )
-			a.sendMessage( arg );
+			foreach ( QString arg, positionalArguments ) {
+				a.sendMessage( arg );
+			}
 		} else {
 			// App not running; open given filenames here.
-			foreach( QString arg, positionalArguments )
-			gMainWindow->openSingleFile( Location( arg ) );
+			foreach ( QString arg, positionalArguments ) {
+				gMainWindow->openSingleFile( Location( arg ) );
+			}
 		}
 
 		QNetworkProxyFactory::setUseSystemConfiguration( true );

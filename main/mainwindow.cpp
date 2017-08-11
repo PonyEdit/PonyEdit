@@ -213,8 +213,9 @@ void MainWindow::openFile() {
 				return;
 			}
 		}
-		foreach( Location location, locations )
-		openSingleFile( location );
+		foreach ( Location location, locations ) {
+			openSingleFile( location );
+		}
 	}
 }
 
@@ -294,8 +295,9 @@ void MainWindow::saveFileAs() {
 void MainWindow::saveAllFiles() {
 	QList< BaseFile* > unsavedFiles = gOpenFileManager.getUnsavedFiles( gOpenFileManager.getOpenFiles() );
 
-	foreach( BaseFile * file, unsavedFiles )
-	file->save();
+	foreach ( BaseFile * file, unsavedFiles ) {
+		file->save();
+	}
 }
 
 void MainWindow::closeFile() {
@@ -317,9 +319,10 @@ void MainWindow::closeAllExceptCurrentFile() {
 
 	BaseFile* current = gWindowManager->currentEditor()->getFile();
 
-	foreach( BaseFile * file, openFiles )
-	if ( file != current ) {
-		file->close();
+	foreach ( BaseFile * file, openFiles ) {
+		if ( file != current ) {
+			file->close();
+		}
 	}
 }
 
@@ -342,7 +345,7 @@ void MainWindow::updateTitle() {
 	QList< Editor* > editors = file->getAttachedEditors();
 
 	bool current = false;
-	foreach( Editor * editor, editors ) {
+	foreach ( Editor * editor, editors ) {
 		if ( editor == gWindowManager->currentEditor() ) {
 			current = true;
 		}
@@ -754,13 +757,13 @@ void MainWindow::createViewMenu() {
 
 	QStringList categories = gSyntaxDefManager->getDefinitionCategories();
 	categories.sort();
-	foreach( const QString &category, categories ) {
+	foreach ( const QString &category, categories ) {
 		QMenu* syntaxSubMenu = new QMenu( category, viewMenu );
 		mSyntaxMenu->addMenu( syntaxSubMenu );
 
 		QStringList syntaxes = gSyntaxDefManager->getSyntaxesInCategory( category );
 		syntaxes.sort();
-		foreach( const QString &syntax, syntaxes ) {
+		foreach ( const QString &syntax, syntaxes ) {
 			QAction* action = syntaxSubMenu->addAction( syntax, this, SLOT( syntaxMenuOptionClicked() ) );
 			action->setData( syntax );
 			action->setCheckable( true );
@@ -1149,13 +1152,15 @@ void MainWindow::toggleFullScreen() {
 QMenu* MainWindow::createPopupMenu() {
 	QMenu* menu = new QMenu( this );
 
-	foreach( QDockWidget * dockWidget, mMenuControlledDockWidgets )
-	menu->addAction( dockWidget->toggleViewAction() );
+	foreach ( QDockWidget * dockWidget, mMenuControlledDockWidgets ) {
+		menu->addAction( dockWidget->toggleViewAction() );
+	}
 
 	menu->addSeparator();
 
-	foreach( QToolBar * toolbar, mMenuControlledToolBar )
-	menu->addAction( toolbar->toggleViewAction() );
+	foreach ( QToolBar * toolbar, mMenuControlledToolBar ) {
+		menu->addAction( toolbar->toggleViewAction() );
+	}
 
 	return menu;
 }
@@ -1183,13 +1188,15 @@ void MainWindow::switchtoTabbedList() {
 void MainWindow::openFileListChanged() {
 	// Enable / disable all actions that are dependant on open files
 	bool filesOpen = ( gOpenFileManager.getFileCount() > 0 );
-	foreach( QAction * action, mActionsRequiringFiles )
-	action->setEnabled( filesOpen );
+	foreach ( QAction * action, mActionsRequiringFiles ) {
+		action->setEnabled( filesOpen );
+	}
 }
 
 void MainWindow::viewSplittingChanged() {
 	// Enable / disable all actions that are dependant on split views
 	bool viewSplit = gWindowManager->isSplit();
-	foreach( QAction * action, mActionsRequiringSplitViews )
-	action->setEnabled( viewSplit );
+	foreach ( QAction * action, mActionsRequiringSplitViews ) {
+		action->setEnabled( viewSplit );
+	}
 }

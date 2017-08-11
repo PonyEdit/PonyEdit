@@ -30,8 +30,9 @@ SiteManager::SiteManager() {
 
 SiteManager::~SiteManager() {
 	// Clean out any leftover replies
-	foreach( QNetworkReply * reply, mReplies.keys() )
-	delete reply;
+	foreach ( QNetworkReply * reply, mReplies.keys() ) {
+		delete reply;
+	}
 
 	if ( mManager ) {
 		delete mManager;
@@ -98,7 +99,7 @@ void SiteManager::handleUpdateCheckReply( QList< QVariant > reply, bool forceNot
 	QRegExp notNumeric( "[^0-9]+" );
 	QRegExp newline( "[\r\n]+" );
 
-	foreach( QVariant rawEntry, reply ) {
+	foreach ( QVariant rawEntry, reply ) {
 		QVariantMap entry = rawEntry.toMap();
 
 		// Split the version number...
@@ -110,7 +111,7 @@ void SiteManager::handleUpdateCheckReply( QList< QVariant > reply, bool forceNot
 
 		// Find a download URL...
 		QString entry_url;
-		foreach( QVariant rawAsset, entry["assets"].toList() ) {
+		foreach ( QVariant rawAsset, entry["assets"].toList() ) {
 			QVariantMap asset = rawAsset.toMap();
 			if ( asset["name"].toString() == DOWNLOAD_NAME ) {
 				// This asset is for this OS :)
@@ -127,7 +128,7 @@ void SiteManager::handleUpdateCheckReply( QList< QVariant > reply, bool forceNot
 		     ( major == MAJOR_VERSION && minor == MINOR_VERSION && revision > REVISION ) ) {
 
 			QStringList releaseNotes = entry["body"].toString().split( newline );
-			foreach( QString note, releaseNotes ) {
+			foreach ( QString note, releaseNotes ) {
 				note = note.trimmed();
 				if ( note.startsWith( '*' ) && note.endsWith( '*' ) ) {
 					update_alerts.append( note.mid( 1, note.length() - 2 ) );

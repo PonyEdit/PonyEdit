@@ -714,7 +714,7 @@ SshChannel* SshSession::getMostConnectedChannel() {
 		result = ( mChannels.length() ? mChannels.at( 0 ) : NULL );
 	} else {
 		int mostConnectedScore = 0;
-		foreach( SshChannel * channel, mChannels ) {
+		foreach ( SshChannel * channel, mChannels ) {
 			int connectionScore = channel->getConnectionScore();
 			if ( connectionScore > mostConnectedScore ) {
 				mostConnectedScore = connectionScore;

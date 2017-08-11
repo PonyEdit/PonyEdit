@@ -34,7 +34,7 @@ CustomTreeEntry::~CustomTreeEntry() {
 		mModel->endRemoveRows();
 	}
 
-	foreach( CustomTreeEntry * child, mChildren ) {
+	foreach ( CustomTreeEntry * child, mChildren ) {
 		child->mParent = NULL;
 		child->mModel = NULL;
 		delete child;
@@ -47,8 +47,9 @@ CustomTreeEntry::~CustomTreeEntry() {
 
 void CustomTreeEntry::updateChildIndices() {
 	int index = 0;
-	foreach( CustomTreeEntry * child, mChildren )
-	child->mIndex = index++;
+	foreach ( CustomTreeEntry * child, mChildren ) {
+		child->mIndex = index++;
+	}
 }
 
 void CustomTreeEntry::addChild( CustomTreeEntry* child ) {
@@ -69,7 +70,7 @@ void CustomTreeEntry::removeAllChildren() {
 	}
 
 	mModel->beginRemoveRows( mModel->getEntryIndex( this ), 0, mChildren.count() - 1 );
-	foreach( CustomTreeEntry * entry, mChildren ) {
+	foreach ( CustomTreeEntry * entry, mChildren ) {
 		entry->mParent = NULL;
 		entry->mModel = NULL;
 		delete entry;
@@ -192,9 +193,10 @@ void CustomTreeEntry::drawGutterIcons( QPainter* painter, QRect* area ) {
 }
 
 int CustomTreeEntry::gutterIconAt( const QPoint& pos ) {
-	foreach( const GutterIcon &gi, mGutterIcons )
-	if ( gi.visibleArea.contains( pos ) ) {
-		return gi.id;
+	foreach ( const GutterIcon &gi, mGutterIcons ) {
+		if ( gi.visibleArea.contains( pos ) ) {
+			return gi.id;
+		}
 	}
 	return -1;
 }

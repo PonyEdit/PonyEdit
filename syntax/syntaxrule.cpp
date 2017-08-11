@@ -107,11 +107,12 @@ SyntaxRule::SyntaxRule( SyntaxRule* parent,
 	}
 
 	if ( duplicateChildren ) {
-		foreach( QSharedPointer< SyntaxRule > otherChild, other->mChildRules )
-		mChildRules.append( QSharedPointer< SyntaxRule >( new SyntaxRule( this,
-		                                                                  otherChild,
-		                                                                  duplicateChildren,
-		                                                                  maintainLinks ) ) );
+		foreach ( QSharedPointer< SyntaxRule > otherChild, other->mChildRules ) {
+			mChildRules.append( QSharedPointer< SyntaxRule >( new SyntaxRule( this,
+			                                                                  otherChild,
+			                                                                  duplicateChildren,
+			                                                                  maintainLinks ) ) );
+		}
 	} else {
 		mChildRules = other->mChildRules;
 	}
@@ -129,7 +130,7 @@ void SyntaxRule::applyDynamicCaptures( const QStringList& captures ) {
 			mCharacterA = captures[mDynamicCharIndex][0];
 		}
 	} else {
-		foreach( DynamicSlot slot, mDynamicStringSlots ) {
+		foreach ( DynamicSlot slot, mDynamicStringSlots ) {
 			if ( captures.length() > slot.id ) {
 				QString insert = captures[slot.id];
 				insert.replace( QRegExp( "(\\W)" ), "\\\\1" );
@@ -144,8 +145,9 @@ void SyntaxRule::applyDynamicCaptures( const QStringList& captures ) {
 }
 
 void SyntaxRule::unlink() {
-	foreach( QSharedPointer< SyntaxRule > rule, mChildRules )
-	rule->unlink();
+	foreach ( QSharedPointer< SyntaxRule > rule, mChildRules ) {
+		rule->unlink();
+	}
 
 	mContextLink = SyntaxDefinition::ContextLink();
 }
@@ -171,9 +173,10 @@ bool SyntaxRule::link( SyntaxDefinition* def ) {
 	}
 
 	// Link all children too
-	foreach( QSharedPointer< SyntaxRule > rule, mChildRules )
-	if ( ! rule->link( def ) ) {
-		return false;
+	foreach ( QSharedPointer< SyntaxRule > rule, mChildRules ) {
+		if ( ! rule->link( def ) ) {
+			return false;
+		}
 	}
 
 	// Rule specific link-ups
@@ -499,7 +502,7 @@ int SyntaxRule::match( const QString &string, int position ) {
 
 	// If this rule matches, check for child matches too
 	if ( match && position + match < string.length() ) {
-		foreach( QSharedPointer< SyntaxRule > rule, mChildRules ) {
+		foreach ( QSharedPointer< SyntaxRule > rule, mChildRules ) {
 			int childMatch = rule->match( string, position + match );
 			if ( childMatch > 0 ) {
 				match += childMatch;

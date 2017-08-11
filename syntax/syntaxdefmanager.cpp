@@ -11,7 +11,7 @@ void SyntaxDefManager::Record::pack( const QXmlAttributes& atts ) {
 	hidden = Tools::getIntXmlAttribute( atts, "hidden", 0 );
 
 	QStringList patternStrings = Tools::getStringXmlAttribute( atts, "extensions" ).split( ';' );
-	foreach( const QString &pattern, patternStrings ) {
+	foreach ( const QString &pattern, patternStrings ) {
 		QString trimmed = pattern.trimmed();
 		if ( trimmed.length() ) {
 			patterns.append( FilePattern( pattern ) );
@@ -47,17 +47,20 @@ SyntaxDefManager::SyntaxDefManager() {
 }
 
 SyntaxDefManager::~SyntaxDefManager() {
-	foreach( Record * r, mRecordList )
-	delete r;
-	foreach( SyntaxDefinition * d, mOpenDefinitionList )
-	delete d;
+	foreach ( Record * r, mRecordList ) {
+		delete r;
+	}
+	foreach ( SyntaxDefinition * d, mOpenDefinitionList ) {
+		delete d;
+	}
 }
 
 void SyntaxDefManager::updateIndex() {
 	QDir defDir( Tools::getResourcePath( "syntaxdefs/" ) );
 	QFileInfoList fileInfos = defDir.entryInfoList();
-	foreach( QFileInfo info, fileInfos )
-	indexFile( info );
+	foreach ( QFileInfo info, fileInfos ) {
+		indexFile( info );
+	}
 }
 
 void SyntaxDefManager::indexFile( const QFileInfo& fileinfo ) {
@@ -98,8 +101,9 @@ void SyntaxDefManager::addRecord( Record *record ) {
 	if ( ! record->hidden ) {
 		mSyntaxesByCategory.insertMulti( record->category, record->syntaxName );
 
-		foreach( const FilePattern &pattern, record->patterns )
-		mFiltersByCategory.insertMulti( record->category, pattern.rawPattern );
+		foreach ( const FilePattern &pattern, record->patterns ) {
+			mFiltersByCategory.insertMulti( record->category, pattern.rawPattern );
+		}
 	}
 }
 
@@ -151,10 +155,12 @@ SyntaxDefinition* SyntaxDefManager::getDefinition( const Record* record ) {
 }
 
 SyntaxDefManager::Record* SyntaxDefManager::getRecordFor( const QString& filename ) {
-	foreach( Record * record, mRecordList )
-	foreach( FilePattern pattern, record->patterns )
-	if ( pattern.matches( filename ) ) {
-		return record;
+	foreach ( Record * record, mRecordList ) {
+		foreach ( FilePattern pattern, record->patterns ) {
+			if ( pattern.matches( filename ) ) {
+				return record;
+			}
+		}
 	}
 	return NULL;
 }

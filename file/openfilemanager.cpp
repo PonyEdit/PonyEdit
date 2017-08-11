@@ -17,9 +17,10 @@ BaseFile* OpenFileManager::getFile( const Location& location ) const {
 		return NULL;
 	}
 
-	foreach( BaseFile * file, mOpenFiles )
-	if ( file->getLocation() == location ) {
-		return file;
+	foreach ( BaseFile * file, mOpenFiles ) {
+		if ( file->getLocation() == location ) {
+			return file;
+		}
 	}
 
 	return NULL;
@@ -64,7 +65,7 @@ bool OpenFileManager::closeFiles( const QList< BaseFile* >& files, bool force ) 
 		}
 	}
 
-	foreach( BaseFile * file, files ) {
+	foreach ( BaseFile * file, files ) {
 		if ( mOpenFiles.contains( file ) ) {
 			try{
 				file->close();
@@ -81,18 +82,20 @@ bool OpenFileManager::closeFiles( const QList< BaseFile* >& files, bool force ) 
 }
 
 bool OpenFileManager::unsavedChanges() const {
-	foreach( BaseFile * file, mOpenFiles )
-	if ( file->hasUnsavedChanges() ) {
-		return true;
+	foreach ( BaseFile * file, mOpenFiles ) {
+		if ( file->hasUnsavedChanges() ) {
+			return true;
+		}
 	}
 	return false;
 }
 
 QList< BaseFile* > OpenFileManager::getUnsavedFiles( const QList< BaseFile* >& files ) const {
 	QList< BaseFile* > result;
-	foreach( BaseFile * file, files )
-	if ( file->hasUnsavedChanges() ) {
-		result.append( file );
+	foreach ( BaseFile * file, files ) {
+		if ( file->hasUnsavedChanges() ) {
+			result.append( file );
+		}
 	}
 	return result;
 }
@@ -108,7 +111,7 @@ bool OpenFileManager::refreshFiles( const QList< BaseFile* >& files, bool force 
 		}
 	}
 
-	foreach( BaseFile * file, files ) {
+	foreach ( BaseFile * file, files ) {
 		if ( mOpenFiles.contains( file ) ) {
 			try{
 				file->refresh();

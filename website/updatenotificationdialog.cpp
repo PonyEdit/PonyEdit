@@ -32,13 +32,13 @@ void UpdateNotificationDialog::setChanges( const QStringList &alerts, const QStr
 	QString changesStr;
 
 	if ( alerts.length() > 0 ) {
-		foreach( const QString &alert, alerts ) {
+		foreach ( const QString &alert, alerts ) {
 			changesStr += "<h4>" + alert + "</h4>";
 		}
 	}
 
 	changesStr += "<ul>";
-	foreach( const QString &change, changes ) {
+	foreach ( const QString &change, changes ) {
 		changesStr += "<li>" + change + "</li>";
 	}
 	changesStr += "</ul>";

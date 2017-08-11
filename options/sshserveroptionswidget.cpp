@@ -69,7 +69,7 @@ QListWidgetItem* SshServerOptionsWidget::populateServers() {
 
 	// Go through the list of servers that should be there. Add new entries, mark existing ones as "ok to keep"
 	QList< SshHost* > knownHosts = SshHost::getKnownHosts();
-	foreach( SshHost * host, knownHosts ) {
+	foreach ( SshHost * host, knownHosts ) {
 		if ( currentList.contains( host ) ) {
 			currentList.insert( host, true );
 		} else {

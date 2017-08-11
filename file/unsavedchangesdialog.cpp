@@ -33,8 +33,9 @@ UnsavedChangesDialog::UnsavedChangesDialog( const QList< BaseFile* >& files, boo
 	mButtonBox->button( QDialogButtonBox::Save )->setDefault( true );
 	layout->addWidget( mButtonBox );
 
-	foreach( BaseFile * file, files )
-	connect( file, SIGNAL( unsavedStatusChanged() ), this, SLOT( fileStateChanged() ) );
+	foreach ( BaseFile * file, files ) {
+		connect( file, SIGNAL( unsavedStatusChanged() ), this, SLOT( fileStateChanged() ) );
+	}
 
 	connect( mTreeView->selectionModel(),
 	         SIGNAL( selectionChanged( QItemSelection, QItemSelection ) ),
@@ -51,7 +52,7 @@ void UnsavedChangesDialog::buttonClicked( QAbstractButton* button ) {
 	QList< BaseFile* > selectedFiles = mTreeView->getSelectedFiles();
 	if ( button == ( QAbstractButton * ) mButtonBox->button( QDialogButtonBox::Save ) ) {
 		// Save
-		foreach( BaseFile * file, selectedFiles ) {
+		foreach ( BaseFile * file, selectedFiles ) {
 			if ( file->getLocation().getProtocol() == Location::Unsaved ) {
 				FileDialog dlg( this, true );
 				if ( dlg.exec() ) {
@@ -69,7 +70,7 @@ void UnsavedChangesDialog::buttonClicked( QAbstractButton* button ) {
 		}
 	} else if ( button == ( QAbstractButton * ) mButtonBox->button( QDialogButtonBox::Discard ) ) {
 		// Discard
-		foreach( BaseFile * file, selectedFiles ) {
+		foreach ( BaseFile * file, selectedFiles ) {
 			try{
 				if ( mCloseFilesOnDiscard ) {
 					if ( file->canClose() ) {

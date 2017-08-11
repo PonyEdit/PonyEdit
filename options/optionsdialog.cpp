@@ -49,8 +49,9 @@ void OptionsDialog::buttonClicked( QAbstractButton *button ) {
 }
 
 void OptionsDialog::saveOptions() {
-	foreach( OptionsDialogPage * page, mPages )
-	page->apply();
+	foreach ( OptionsDialogPage * page, mPages ) {
+		page->apply();
+	}
 
 	::Options::save();
 

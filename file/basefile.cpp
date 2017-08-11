@@ -66,8 +66,9 @@ BaseFile* BaseFile::getFile( const Location& location ) {
 
 BaseFile::~BaseFile() {
 	// Tell every attached editor
-	foreach( Editor * editor, mAttachedEditors )
-	editor->fileClosed();
+	foreach ( Editor * editor, mAttachedEditors ) {
+		editor->fileClosed();
+	}
 
 	if ( mDocument ) {
 		delete mDocument;

@@ -70,8 +70,9 @@ void SearchResultModel::addResult( const Result& result ) {
 }
 
 void SearchResultModel::addResults( const QList< Result >& results ) {
-	foreach( const Result &r, results )
-	addResult( r );
+	foreach ( const Result &r, results ) {
+		addResult( r );
+	}
 }
 
 SearchResultModel::InternalTreeNode* SearchResultModel::getNodeForIndex( const QModelIndex& index ) const {
@@ -187,8 +188,9 @@ bool SearchResultModel::setData( const QModelIndex &index, const QVariant &value
 	if ( node->children.length() ) {
 		// Apply change to self & all children
 		node->checked = checked;
-		foreach( InternalTreeNode * child, node->children )
-		child->checked = checked;
+		foreach ( InternalTreeNode * child, node->children ) {
+			child->checked = checked;
+		}
 
 		emit dataChanged( index, index );
 		emit dataChanged( this->index( 0, 0, index ), this->index( 0, node->children.length() - 1, index ) );
@@ -199,7 +201,7 @@ bool SearchResultModel::setData( const QModelIndex &index, const QVariant &value
 		// Update the parent state to reflect the children.
 		bool childrenUnchecked = false;
 		bool childrenChecked = false;
-		foreach( InternalTreeNode * child, node->parent->children ) {
+		foreach ( InternalTreeNode * child, node->parent->children ) {
 			if ( child->checked == Qt::Checked ) {
 				childrenChecked = true;
 			} else if ( child->checked == Qt::Unchecked ) {
@@ -226,7 +228,7 @@ bool SearchResultModel::setData( const QModelIndex &index, const QVariant &value
 
 void SearchResultModel::replaceSelectedResults( const QString& replacement ) {
 	// go through each file
-	foreach( InternalTreeNode * locationNode, mRootNode->children ) {
+	foreach ( InternalTreeNode * locationNode, mRootNode->children ) {
 		if ( locationNode->checked == Qt::Unchecked ) {
 			continue;
 		}

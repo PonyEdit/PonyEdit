@@ -29,8 +29,9 @@ TabbedFileList::TabbedFileList( QWidget *parent ) :
 	connect( gDispatcher, SIGNAL( selectFile( BaseFile* ) ), this, SLOT( fileSelected( BaseFile* ) ) );
 
 	// Add any already-open files
-	foreach( BaseFile * file, gOpenFileManager.getOpenFiles() )
-	fileOpened( file );
+	foreach ( BaseFile * file, gOpenFileManager.getOpenFiles() ) {
+		fileOpened( file );
+	}
 }
 
 int TabbedFileList::findTab( BaseFile *file ) {

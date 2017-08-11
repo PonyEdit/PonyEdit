@@ -14,12 +14,13 @@ FontOptionsWidget::FontOptionsWidget( QWidget *parent ) :
 	//
 
 	QStringList families = mFontDatabase.families();
-	foreach( QString family, families )
-	ui->fontCombo->addItem( family );
+	foreach ( QString family, families ) {
+		ui->fontCombo->addItem( family );
+	}
 
 	QStringList fontFamilies = QFont::substitutes( Options::EditorFont->family() );
 	fontFamilies.push_front( Options::EditorFont->family() );
-	foreach( QString family, fontFamilies ) {
+	foreach ( QString family, fontFamilies ) {
 		int index = ui->fontCombo->findText( family, Qt::MatchFixedString );
 		if ( index > 0 ) {
 			ui->fontCombo->setCurrentIndex( index );
@@ -32,8 +33,9 @@ FontOptionsWidget::FontOptionsWidget( QWidget *parent ) :
 	//
 
 	QList< int > sizes = mFontDatabase.standardSizes();
-	foreach( int size, sizes )
-	ui->sizeCombo->addItem( QString::number( size ) );
+	foreach ( int size, sizes ) {
+		ui->sizeCombo->addItem( QString::number( size ) );
+	}
 
 	int index = ui->sizeCombo->findText( QString::number( Options::EditorFont->pointSize() ) );
 	ui->sizeCombo->setCurrentIndex( index );

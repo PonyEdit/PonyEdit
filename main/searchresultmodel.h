@@ -56,7 +56,9 @@ class SearchResultModel : public QAbstractItemModel {
 				parent( NULL ),
 				checked( Qt::Checked ) {}
 			~InternalTreeNode() {
-				foreach( InternalTreeNode * n, children ) delete n;
+				foreach ( InternalTreeNode * n, children ) {
+					delete n;
+				}
 			}
 
 			Result result;

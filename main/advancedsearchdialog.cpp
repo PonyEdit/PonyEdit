@@ -59,9 +59,10 @@ QList< BaseFile* > AdvancedSearchDialog::getLocalHaystackFiles() {
 	} else if ( scope == OpenFiles ) {
 		QRegExp namePattern( ui->filePattern->text(), Qt::CaseInsensitive, QRegExp::WildcardUnix );
 		QList< BaseFile* > files = gOpenFileManager.getOpenFiles();
-		foreach( BaseFile * file, files )
-		if ( namePattern.exactMatch( file->getLocation().getPath() ) ) {
-			result.append( file );
+		foreach ( BaseFile * file, files ) {
+			if ( namePattern.exactMatch( file->getLocation().getPath() ) ) {
+				result.append( file );
+			}
 		}
 	}
 

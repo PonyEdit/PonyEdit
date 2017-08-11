@@ -49,6 +49,7 @@ StringTrie::Node* StringTrie::allocateNode() {
 }
 
 void StringTrie::cleanup() {
-	foreach( QVector< Node >* vector, sNodeHeaps )
-	delete vector;
+	foreach ( QVector< Node >* vector, sNodeHeaps ) {
+		delete vector;
+	}
 }

@@ -57,8 +57,9 @@ void EditorPanel::displayFile( BaseFile* file ) {
 
 void EditorPanel::fileClosed( BaseFile* file ) {
 	if ( isSplit() ) {
-		foreach( EditorPanel * child, mChildPanels )
-		child->fileClosed( file );
+		foreach ( EditorPanel * child, mChildPanels ) {
+			child->fileClosed( file );
+		}
 	} else {
 		mEditorStack->fileClosed( file );
 	}
@@ -172,16 +173,17 @@ void EditorPanel::split( Qt::Orientation orientation ) {
 
 EditorPanel* EditorPanel::findStack( Editor* editor ) {
 	if ( isSplit() ) {
-		foreach( EditorPanel * child, mChildPanels ) {
+		foreach ( EditorPanel * child, mChildPanels ) {
 			EditorPanel* childResult = child->findStack( editor );
 			if ( childResult != NULL ) {
 				return childResult;
 			}
 		}
 	} else {
-		foreach( QObject * child, mEditorStack->children() )
-		if ( child == editor ) {
-			return this;
+		foreach ( QObject * child, mEditorStack->children() ) {
+			if ( child == editor ) {
+				return this;
+			}
 		}
 	}
 

@@ -19,8 +19,9 @@ OpenFileTreeModel::OpenFileTreeModel( QObject* parent,
 	if ( mExplicitFiles ) {
 		mFiles = *files;
 
-		foreach( BaseFile * file, mFiles )
-		fileOpened( file );
+		foreach ( BaseFile * file, mFiles ) {
+			fileOpened( file );
+		}
 	} else {
 		connect( &gOpenFileManager, SIGNAL( fileOpened( BaseFile* ) ), this, SLOT( fileOpened( BaseFile* ) ) );
 		connect( &gOpenFileManager,
@@ -30,8 +31,9 @@ OpenFileTreeModel::OpenFileTreeModel( QObject* parent,
 		         Qt::DirectConnection );
 
 		// Add any already-open files
-		foreach( BaseFile * file, gOpenFileManager.getOpenFiles() )
-		fileOpened( file );
+		foreach ( BaseFile * file, gOpenFileManager.getOpenFiles() ) {
+			fileOpened( file );
+		}
 	}
 }
 
@@ -56,25 +58,28 @@ QString OpenFileTreeModel::Node::getLabel() {
 }
 
 OpenFileTreeModel::Node* OpenFileTreeModel::Node::findChildNode( const QString& label ) {
-	foreach( Node * node, children )
-	if ( node->getLabel() == label ) {
-		return node;
+	foreach ( Node * node, children ) {
+		if ( node->getLabel() == label ) {
+			return node;
+		}
 	}
 	return NULL;
 }
 
 OpenFileTreeModel::Node* OpenFileTreeModel::Node::findChildNode( const Location& location ) {
-	foreach( Node * node, children )
-	if ( node->location == location ) {
-		return node;
+	foreach ( Node * node, children ) {
+		if ( node->location == location ) {
+			return node;
+		}
 	}
 	return NULL;
 }
 
 OpenFileTreeModel::Node* OpenFileTreeModel::Node::findChildNode( BaseFile* file ) {
-	foreach( Node * node, children )
-	if ( node->file == file ) {
-		return node;
+	foreach ( Node * node, children ) {
+		if ( node->file == file ) {
+			return node;
+		}
 	}
 	return NULL;
 }
@@ -319,8 +324,9 @@ QList< BaseFile* > OpenFileTreeModel::getIndexAndChildFiles( Node* node ) {
 		files.append( node->file );
 	}
 
-	foreach( Node * childNode, node->children )
-	files.append( getIndexAndChildFiles( childNode ) );
+	foreach ( Node * childNode, node->children ) {
+		files.append( getIndexAndChildFiles( childNode ) );
+	}
 
 	return files;
 }

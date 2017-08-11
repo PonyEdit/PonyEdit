@@ -19,7 +19,9 @@ SlaveFile::SlaveFile( const Location& location ) :
 }
 
 SlaveFile::~SlaveFile() {
-	foreach( Change * change, mChangesSinceLastSave ) delete change;
+	foreach ( Change * change, mChangesSinceLastSave ) {
+		delete change;
+	}
 	mChangesSinceLastSave.clear();
 }
 

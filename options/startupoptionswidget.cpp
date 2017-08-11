@@ -31,7 +31,7 @@ StartupOptionsWidget::StartupOptionsWidget( QWidget *parent ) :
 	if ( Options::StartupAction == Options::SetFiles ) {
 		ui->fileList->setEnabled( true );
 
-		foreach( QString file, Options::StartupFiles ) {
+		foreach ( QString file, Options::StartupFiles ) {
 			ui->fileList->appendPlainText( file.trimmed() );
 		}
 	} else {
@@ -87,7 +87,7 @@ void StartupOptionsWidget::SetFilesToCurrent() {
 	QList< BaseFile* > files = gOpenFileManager.getOpenFiles();
 
 	ui->fileList->clear();
-	foreach( BaseFile * file, files ) {
+	foreach ( BaseFile * file, files ) {
 		Location loc = file->getLocation();
 		ui->fileList->appendPlainText( loc.getDisplayPath() );
 	}

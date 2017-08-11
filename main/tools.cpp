@@ -40,7 +40,7 @@ void Tools::saveServers() {
 
 	int index = 0;
 	settings.beginWriteArray( "servers" );
-	foreach( SshHost * host, knownHosts ) {
+	foreach ( SshHost * host, knownHosts ) {
 		if ( host->getSaveHost() ) {
 			settings.setArrayIndex( index++ );
 			settings.setValue( "hostname", host->getHostname() );
@@ -144,7 +144,7 @@ void Tools::saveRecentFiles( QList< Location > recentFiles ) {
 
 	int index = 0;
 	settings.beginWriteArray( "recentFiles" );
-	foreach( Location loc, recentFiles ) {
+	foreach ( Location loc, recentFiles ) {
 		settings.setArrayIndex( index++ );
 		settings.setValue( "path", loc.getDisplayPath() );
 	}
@@ -308,7 +308,7 @@ void Tools::saveCurrentFiles() {
 
 	QList< BaseFile* > files = gOpenFileManager.getOpenFiles();
 
-	foreach( BaseFile * file, files ) {
+	foreach ( BaseFile * file, files ) {
 		Location loc = file->getLocation();
 		if ( loc.getProtocol() == Location::Unsaved ) {
 			continue;

@@ -302,7 +302,7 @@ void WindowManager::searchInFiles( const QList< BaseFile* > files,
                                    bool showReplaceOptions ) {
 	QList< SearchResultModel::Result > results;
 
-	foreach( BaseFile * file, files ) {
+	foreach ( BaseFile * file, files ) {
 		QTextDocument* doc = file->getTextDocument();
 		QTextCursor cursor( doc );
 		while ( ! ( cursor =

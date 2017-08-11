@@ -38,21 +38,24 @@ SshHost::SshHost() :
 
 SshHost::~SshHost() {
 	// Kill every session violenty.
-	foreach( SshSession * session, mSessions )
-	delete session;
+	foreach ( SshSession * session, mSessions ) {
+		delete session;
+	}
 }
 
 void SshHost::cleanup() {
 	// Call every host's destructor, forcing them to do nasty shutdowns.
-	foreach( SshHost * host, sKnownHosts )
-	delete host;
+	foreach ( SshHost * host, sKnownHosts ) {
+		delete host;
+	}
 }
 
 SshHost* SshHost::getHost( const QByteArray& hostname, const QByteArray& username ) {
 	// Search through the list of known hosts to see if we already know it...
-	foreach( SshHost * host, sKnownHosts )
-	if ( host->getHostname() == hostname && host->getUsername() == username ) {
-		return host;
+	foreach ( SshHost * host, sKnownHosts ) {
+		if ( host->getHostname() == hostname && host->getUsername() == username ) {
+			return host;
+		}
 	}
 
 	// No? Time to create a new one.
@@ -120,7 +123,7 @@ void SshHost::checkHeadroom() {
 
 	// Take a tally of how much free headroom there is for channels
 	int freeChannels = 0;
-	foreach( SshSession * session, mSessions ) {
+	foreach ( SshSession * session, mSessions ) {
 		if ( ! session->isAtChannelLimit() && session->getChannelCount() < mChannelLimitGuess ) {
 			freeChannels += mChannelLimitGuess - session->getChannelCount();
 		}
@@ -234,8 +237,9 @@ SshSession* SshHost::openSession() {
 void SshHost::showStatus() {
 	SSHLOG_INFO( this ) << mSessions.length() << " sessions";
 	int i = 1;
-	foreach( SshSession * session, mSessions )
-	SSHLOG_INFO( this ) << "Session " << i++ << " has " << session->getChannelCount() << " channels.";
+	foreach ( SshSession * session, mSessions ) {
+		SSHLOG_INFO( this ) << "Session " << i++ << " has " << session->getChannelCount() << " channels.";
+	}
 }
 
 void SshHost::sendSftpRequest( SFTPRequest* request ) {
@@ -266,7 +270,7 @@ void SshHost::sendSlaveRequest( bool sudo,
 	SlaveFile* relevantFile = newRequest->getFile();
 	if ( relevantFile != NULL ) {
 		bool ok = false;
-		foreach( SshChannel * channel, mChannels ) {
+		foreach ( SshChannel * channel, mChannels ) {
 			if ( channel->is( SshChannel::Slave ) || channel->is( SshChannel::SudoSlave ) ) {
 				SlaveChannel* slaveChannel = static_cast< SlaveChannel* >( channel );
 				if ( slaveChannel->handlesFileBuffer( relevantFile ) ) {
@@ -340,9 +344,10 @@ void SshHost::checkChannelCount() {
 
 int SshHost::countChannels( SshChannel::Type type ) {
 	int count = 0;
-	foreach( SshChannel * channel, mChannels )
-	if ( channel->is( type ) ) {
-		count++;
+	foreach ( SshChannel * channel, mChannels ) {
+		if ( channel->is( type ) ) {
+			count++;
+		}
 	}
 	return count;
 }
@@ -507,7 +512,7 @@ void SshHost::updateOverallStatus() {
 	SshSession* mostConnectedSession = NULL;
 	int mostConnectedScore = 0;
 
-	foreach( SshSession * session, mSessions ) {
+	foreach ( SshSession * session, mSessions ) {
 		SshChannel* localMaximum = session->getMostConnectedChannel();
 		int score = localMaximum ? localMaximum->getConnectionScore() : session->getStatus();
 		if ( score > mostConnectedScore ) {
@@ -551,8 +556,9 @@ void SshHost::sessionEnded( SshSession* session ) {
 	// By the time, we get in here, the session's thread should be terminated and the connection closed.
 	// Remove the session, and all its channels from my records.
 	mSessions.removeAll( session );
-	foreach( SshChannel * channel, session->getChannels() )
-	removeChannel( channel );
+	foreach ( SshChannel * channel, session->getChannels() ) {
+		removeChannel( channel );
+	}
 
 	// Something special to watch for: If this was the last session, fail all queued requests and channels
 	if ( mSessions.length() == 0 ) {
@@ -562,8 +568,9 @@ void SshHost::sessionEnded( SshSession* session ) {
 
 	// Delete all channels, and the session. This is a separate step from removing channels from my records,
 	// because deleting channels triggers reconnect attempts; I want my records clear before reconnect attempts.
-	foreach( SshChannel * channel, session->getChannels() )
-	delete channel;
+	foreach ( SshChannel * channel, session->getChannels() ) {
+		delete channel;
+	}
 	delete session;
 
 	checkChannelCount();
@@ -573,7 +580,7 @@ void SshHost::sessionEnded( SshSession* session ) {
 
 void SshHost::failAllHomelessChannels() {
 	mHomelessChannelsMutex.lock();
-	foreach( SshChannel * channel, mHomelessChannels ) {
+	foreach ( SshChannel * channel, mHomelessChannels ) {
 		mChannels.removeAll( channel );
 		delete channel;
 	}
@@ -598,7 +605,7 @@ void SshHost::failSlaveRequests( const QString& error,
 	requestList.clear();
 	listLock.unlock();
 
-	foreach( SlaveRequest * request, listCopy ) {
+	foreach ( SlaveRequest * request, listCopy ) {
 		SlaveFile* relatedFile = request->getFile();
 		if ( channel == NULL || channel->handlesFileBuffer( relatedFile ) ) {
 			request->failRequest( error, flags );

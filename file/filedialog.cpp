@@ -115,7 +115,7 @@ FileDialog::FileDialog( QWidget *parent, bool saveAs ) :
 	         SLOT( columnHeaderClicked( int ) ) );
 
 	// Install an event filter on all children, to catch some keyboard events
-	foreach( QObject * child, children() ) {
+	foreach ( QObject * child, children() ) {
 		child->installEventFilter( this );
 	}
 
@@ -167,14 +167,15 @@ void FileDialog::populateFolderTree() {
 #ifdef Q_OS_MAC
 	QDir directory( "/Volumes" );
 	QStringList entries = directory.entryList( QDir::AllDirs | QDir::NoDotAndDotDot );
-	foreach( QString entry, entries ) {
+	foreach ( QString entry, entries ) {
 		QFileInfo driveFileInfo( "/Volumes/" + entry );
 		addLocationToTree( localComputer, Location( driveFileInfo.absoluteFilePath() ) );
 	}
 #elif defined Q_OS_WIN
 	QFileInfoList driveList = QDir::drives();
-	foreach( QFileInfo driveFileInfo, driveList )
-	addLocationToTree( localComputer, Location( driveFileInfo.absoluteFilePath() ) );
+	foreach ( QFileInfo driveFileInfo, driveList ) {
+		addLocationToTree( localComputer, Location( driveFileInfo.absoluteFilePath() ) );
+	}
 #else
 	addLocationToTree( localComputer, Location( "/" ) );
 #endif
@@ -234,7 +235,7 @@ void FileDialog::populateRemoteServers() {
 
 	// Go through the list of servers that should be there. Add new entries, mark existing ones as "ok to keep"
 	QList< SshHost* > knownHosts = SshHost::getKnownHosts();
-	foreach( SshHost * host, knownHosts ) {
+	foreach ( SshHost * host, knownHosts ) {
 		if ( currentList.contains( host ) ) {
 			currentList.insert( host, true );
 		} else {
@@ -353,9 +354,10 @@ void FileDialog::folderChildrenLoaded( const QList< Location >& children, const 
 		mLoadingLocations.remove( locationPath );
 		entry->removeAllChildren();
 
-		foreach( Location childLocation, children )
-		if ( childLocation.isDirectory() && ! childLocation.isHidden() ) {
-			addLocationToTree( entry, childLocation );
+		foreach ( Location childLocation, children ) {
+			if ( childLocation.isDirectory() && ! childLocation.isHidden() ) {
+				addLocationToTree( entry, childLocation );
+			}
 		}
 	}
 
@@ -379,11 +381,11 @@ void FileDialog::folderChildrenLoaded( const QList< Location >& children, const 
 			  QList<
 				  QVariant >() );
 
-		foreach( Location childLocation, children ) {
+		foreach ( Location childLocation, children ) {
 			const QString& name = childLocation.getLabel();
 			if ( ! childLocation.isDirectory() && filters.length() ) {
 				bool match = false;
-				foreach( QVariant filter, filters ) {
+				foreach ( QVariant filter, filters ) {
 					if ( filter.toRegExp().exactMatch( name ) ) {
 						match = true;
 						break;
@@ -443,8 +445,9 @@ void FileDialog::folderChildrenLoaded( const QList< Location >& children, const 
 			QItemSelectionModel *mdl = ui->fileList->selectionModel();
 			mdl->clearSelection();
 
-			foreach( QStandardItem * item, items )
-			mdl->select( item->index(), QItemSelectionModel::Select );
+			foreach ( QStandardItem * item, items ) {
+				mdl->select( item->index(), QItemSelectionModel::Select );
+			}
 
 			mSelectFile = "";
 		}
@@ -587,7 +590,7 @@ void FileDialog::fileListSelectionChanged( const QItemSelection& selected, const
 	QList< Location > selections = getSelectedLocations();
 	QStringList selectionLabels;
 
-	foreach( Location l, selections ) {
+	foreach ( Location l, selections ) {
 		if ( ! l.isDirectory() ) {
 			QString label = l.getLabel();
 			label.replace( '\\', "\\\\" );
@@ -609,9 +612,10 @@ void FileDialog::fileListSelectionChanged( const QItemSelection& selected, const
 QList< Location > FileDialog::getSelectedLocations() const {
 	QList< Location > selections;
 	QModelIndexList allSelected = ui->fileList->selectionModel()->selectedIndexes();
-	foreach( QModelIndex index, allSelected )
-	if ( index.column() == 0 ) {
-		selections.append( mFileListModel->itemFromIndex( index )->data( DATA_ROLE ).value< Location >() );
+	foreach ( QModelIndex index, allSelected ) {
+		if ( index.column() == 0 ) {
+			selections.append( mFileListModel->itemFromIndex( index )->data( DATA_ROLE ).value< Location >() );
+		}
 	}
 
 	return selections;
@@ -683,7 +687,7 @@ void FileDialog::updateFavorites() {
 
 	// Go through the list of favorites. Add new entries, mark existing ones as keepers
 	QList< Location::Favorite > favorites = Location::getFavorites();
-	foreach( const Location::Favorite& f, favorites ) {
+	foreach ( const Location::Favorite& f, favorites ) {
 		if ( currentList.contains( f.path ) ) {
 			currentList.insert( f.path, true );
 		} else {
@@ -772,11 +776,12 @@ void FileDialog::populateFilterList() {
 	ui->filterList->addItem( tr( "All Files" ) );
 
 	QStringList categories = gSyntaxDefManager->getDefinitionCategories();
-	foreach( QString category, categories ) {
+	foreach ( QString category, categories ) {
 		QStringList filterStrings = gSyntaxDefManager->getFiltersForCategory( category );
 		QList< QVariant > filterRegExps;
-		foreach( const QString &filter, filterStrings )
-		filterRegExps.append( QVariant( QRegExp( filter, Qt::CaseInsensitive, QRegExp::Wildcard ) ) );
+		foreach ( const QString &filter, filterStrings ) {
+			filterRegExps.append( QVariant( QRegExp( filter, Qt::CaseInsensitive, QRegExp::Wildcard ) ) );
+		}
 
 		ui->filterList->addItem( category, filterRegExps );
 	}
