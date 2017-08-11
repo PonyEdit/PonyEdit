@@ -16,7 +16,7 @@ cd extras
 cd uncrustify-build
 
 [ ! -e "Makefile" ] && cmake "../uncrustify-$UNCRUSTIFY"
-[ ! -e "uncrustify" ] && make && cp uncrustify ..
+[ ! -e "uncrustify" ] && make
 
 export PATH=$PATH:$(pwd)
 
