@@ -70,9 +70,9 @@ QByteArray Json::serialize( const QVariant &data, bool &success ) {
 	QByteArray str;
 	success = true;
 
-	if ( ! data.isValid() ) {	// invalid or null?
+	if ( ! data.isValid() ) {       // invalid or null?
 		str = "null";
-	} else if ( data.type() == QVariant::List ) {	// variant is a list?
+	} else if ( data.type() == QVariant::List ) {   // variant is a list?
 		QList< QByteArray > values;
 		const QVariantList list = data.toList();
 		foreach( const QVariant &v, list ) {
@@ -85,7 +85,7 @@ QByteArray Json::serialize( const QVariant &data, bool &success ) {
 		}
 
 		str = "[" + join( values, "," ) + "]";
-	} else if ( data.type() == QVariant::Map ) {	// variant is a map?
+	} else if ( data.type() == QVariant::Map ) {    // variant is a map?
 		const QVariantMap vmap = data.toMap();
 		QMapIterator< QString, QVariant > it( vmap );
 		str = "{";
@@ -101,21 +101,21 @@ QByteArray Json::serialize( const QVariant &data, bool &success ) {
 		}
 		str += join( pairs, "," );
 		str += "}";
-	} else if ( ( data.type() == QVariant::String ) || ( data.type() == QVariant::ByteArray ) ) {	// a string or a
-													// byte array?
+	} else if ( ( data.type() == QVariant::String ) || ( data.type() == QVariant::ByteArray ) ) {   // a string or a
+		                                                                                        // byte array?
 		str = sanitizeString( data.toString() ).toUtf8();
-	} else if ( data.type() == QVariant::Double ) {	// double?
+	} else if ( data.type() == QVariant::Double ) { // double?
 		str = QByteArray::number( data.toDouble() );
 		if ( ! str.contains( "." ) && ! str.contains( "e" ) ) {
 			str += ".0";
 		}
-	} else if ( data.type() == QVariant::Bool ) {	// boolean value?
+	} else if ( data.type() == QVariant::Bool ) {   // boolean value?
 		str = data.toBool() ? "true" : "false";
-	} else if ( data.type() == QVariant::ULongLong ) {	// large unsigned number?
+	} else if ( data.type() == QVariant::ULongLong ) {      // large unsigned number?
 		str = QByteArray::number( data.value< qulonglong >() );
-	} else if ( data.canConvert< qlonglong >() ) {	// any signed number?
+	} else if ( data.canConvert< qlonglong >() ) {  // any signed number?
 		str = QByteArray::number( data.value< qlonglong >() );
-	} else if ( data.canConvert< QString >() ) {	// can value be converted to string?
+	} else if ( data.canConvert< QString >() ) {    // can value be converted to string?
 
 		// this will catch QDate, QDateTime, QUrl, ...
 		str = sanitizeString( data.toString() ).toUtf8();

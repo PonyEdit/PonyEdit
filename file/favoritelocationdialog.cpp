@@ -2,7 +2,8 @@
 #include "ui_favoritelocationdialog.h"
 
 
-FavoriteLocationDialog::FavoriteLocationDialog( QWidget *parent, Location::Favorite* favorite ) : QDialog( parent ),
+FavoriteLocationDialog::FavoriteLocationDialog( QWidget *parent, Location::Favorite* favorite ) :
+	QDialog( parent ),
 	ui( new Ui::FavoriteLocationDialog ) {
 	ui->setupUi( this );
 

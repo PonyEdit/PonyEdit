@@ -8,20 +8,19 @@ namespace Ui { class ServerConfigDlg; }
 
 class SshHost;
 
-class ServerConfigDlg : public QDialog
-{
-Q_OBJECT
+class ServerConfigDlg : public QDialog {
+	Q_OBJECT
 
-public:
-explicit ServerConfigDlg( QWidget *parent = 0 );
-~ServerConfigDlg();
+	public:
+		explicit ServerConfigDlg( QWidget *parent = 0 );
+		~ServerConfigDlg();
 
-void setEditHost( SshHost* host );
+		void setEditHost( SshHost* host );
 
-private:
-Ui::ServerConfigDlg *ui;
+	private:
+		Ui::ServerConfigDlg *ui;
 
-ServerConfigWidget *mConfigWidget;
+		ServerConfigWidget *mConfigWidget;
 };
 
-#endif	// SERVERCONFIGDLG_H
+#endif  // SERVERCONFIGDLG_H

@@ -113,7 +113,10 @@ void CustomTreeEntry::setDelayedLoad( QObject* callbackTarget, const char* loadS
 
 	mExpandable = mDelayedLoad = ( callbackTarget != NULL );
 	if ( callbackTarget != NULL ) {
-		connect( this, SIGNAL( expandItem( CustomTreeEntry* ) ), callbackTarget, loadSlot,
+		connect( this,
+		         SIGNAL( expandItem( CustomTreeEntry* ) ),
+		         callbackTarget,
+		         loadSlot,
 		         Qt::QueuedConnection );
 	}
 }

@@ -22,7 +22,9 @@ SshServerOptionsWidget::SshServerOptionsWidget( QWidget *parent ) :
 	connect( mParent, SIGNAL( accepted() ), this, SLOT( accept() ) );
 	connect( mParent, SIGNAL( rejected() ), this, SLOT( reject() ) );
 
-	connect( ui->serversList, SIGNAL( currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ), this,
+	connect( ui->serversList,
+	         SIGNAL( currentItemChanged( QListWidgetItem*, QListWidgetItem* ) ),
+	         this,
 	         SLOT( serverClicked( QListWidgetItem*, QListWidgetItem* ) ) );
 
 	ui->serversList->setCurrentItem( first );
@@ -93,7 +95,9 @@ QListWidgetItem* SshServerOptionsWidget::populateServers() {
 
 			connect( mConfigWidgets[i], SIGNAL( accepted() ), mParent, SLOT( accept() ) );
 			connect( mConfigWidgets[i], SIGNAL( rejected() ), mParent, SLOT( reject() ) );
-			connect( mConfigWidgets[i], SIGNAL( nameUpdated( QString ) ), this,
+			connect( mConfigWidgets[i],
+			         SIGNAL( nameUpdated( QString ) ),
+			         this,
 			         SLOT( serverNameUpdated( QString ) ) );
 
 			connect( this, SIGNAL( accepted() ), mConfigWidgets[i], SLOT( acceptedHandler() ) );

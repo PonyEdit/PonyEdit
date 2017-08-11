@@ -149,7 +149,9 @@ void WindowManager::createSearchBar() {
 	mSearchBarWrapper->setTitleBarWidget( new QWidget( this ) );
 	connect( mSearchBar, SIGNAL( closeRequested() ), this, SLOT( hideSearchBar() ) );
 	connect( mSearchBar, SIGNAL( find( QString, bool ) ), this, SLOT( findInCurrentEditor( QString, bool ) ) );
-	connect( mSearchBar, SIGNAL( replace( QString, QString, bool ) ), this,
+	connect( mSearchBar,
+	         SIGNAL( replace( QString, QString, bool ) ),
+	         this,
 	         SLOT( replaceInCurrentEditor( QString, QString, bool ) ) );
 	mSearchBarWrapper->setObjectName( "Search Bar" );
 }
@@ -304,10 +306,16 @@ void WindowManager::searchInFiles( const QList< BaseFile* > files,
 		QTextDocument* doc = file->getTextDocument();
 		QTextCursor cursor( doc );
 		while ( ! ( cursor =
-				    Editor::find( doc, cursor, text, false, caseSensitive, useRegExp,
+				    Editor::find( doc,
+				                  cursor,
+				                  text,
+				                  false,
+				                  caseSensitive,
+				                  useRegExp,
 				                  false ) ).isNull() ) {
 			results.append( SearchResultModel::Result( cursor.block().text(),
-			                                           file->getLocation(), cursor.blockNumber(),
+			                                           file->getLocation(),
+			                                           cursor.blockNumber(),
 			                                           cursor.selectionStart() - cursor.block().position(),
 			                                           cursor.selectionEnd() - cursor.selectionStart() ) );
 		}

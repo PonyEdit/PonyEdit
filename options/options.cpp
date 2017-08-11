@@ -43,13 +43,17 @@ void Options::set( const QString& key, const QVariant& value ) {
 
 void Options::autoPersist( QCheckBox* control, const QString& optionKey, bool defaultValue ) {
 	control->setChecked( get( optionKey, defaultValue ).toBool() );
-	getInstance()->autoPersist( control, optionKey, SIGNAL( clicked( bool ) ),
+	getInstance()->autoPersist( control,
+	                            optionKey,
+	                            SIGNAL( clicked( bool ) ),
 	                            SLOT( persistantCheckBoxChanged( bool ) ) );
 }
 
 void Options::autoPersist( QLineEdit* control, const QString& optionKey, const QString& defaultValue ) {
 	control->setText( get( optionKey, defaultValue ).toString() );
-	getInstance()->autoPersist( control, optionKey, SIGNAL( textChanged( QString ) ),
+	getInstance()->autoPersist( control,
+	                            optionKey,
+	                            SIGNAL( textChanged( QString ) ),
 	                            SLOT( persistantLineEditChanged( QString ) ) );
 }
 

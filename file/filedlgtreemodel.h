@@ -3,13 +3,13 @@
 
 #include <QStandardItemModel>
 
-class FileDlgTreeModel : public QStandardItemModel
-{
-Q_OBJECT
-public:
-explicit FileDlgTreeModel( QObject *parent = 0 );
+class FileDlgTreeModel : public QStandardItemModel {
+	Q_OBJECT
 
-virtual QVariant data( const QModelIndex &index, int role ) const;
+	public:
+		explicit FileDlgTreeModel( QObject *parent = 0 );
+
+		virtual QVariant data( const QModelIndex &index, int role ) const;
 };
 
-#endif	// FILEDLGTREEMODEL_H
+#endif  // FILEDLGTREEMODEL_H

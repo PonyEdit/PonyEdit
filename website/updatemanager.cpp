@@ -56,7 +56,9 @@ void UpdateManager::startDownload( QString file ) {
 	QWidget* buttonWrapper = mNotificationDlg->getButtonWrapper();
 	buttonWrapper->hide();
 
-	connect( &mNetManager, SIGNAL( authenticationRequired( QNetworkReply*, QAuthenticator* ) ), this,
+	connect( &mNetManager,
+	         SIGNAL( authenticationRequired( QNetworkReply*, QAuthenticator* ) ),
+	         this,
 	         SLOT( downloadAuth( QNetworkReply*, QAuthenticator* ) ) );
 	qDebug() << file;
 	QUrl download( file );
@@ -97,8 +99,10 @@ void UpdateManager::downloadProgress( qint64 bytesReceived, qint64 bytesTotal ) 
 
 	total /= 1024 * 1024;
 
-	progressLabel->setText( QString( "%1 %2 of %3 MiB" ).arg( rec, 0, 'f', 1 ).arg( units[unit] ).arg( total, 0,
-	                                                                                                   'f', 1 ) );
+	progressLabel->setText( QString( "%1 %2 of %3 MiB" ).arg( rec, 0, 'f', 1 ).arg( units[unit] ).arg( total,
+	                                                                                                   0,
+	                                                                                                   'f',
+	                                                                                                   1 ) );
 }
 
 void UpdateManager::downloadFinished() {
@@ -119,7 +123,7 @@ void UpdateManager::downloadFinished() {
 		updateValid = false;
 	}
 
-	if ( mTempFile.size() < 1024 * 1024 ) {	// If we have less than 1MB of data, something is clearly up
+	if ( mTempFile.size() < 1024 * 1024 ) { // If we have less than 1MB of data, something is clearly up
 		updateValid = false;
 	}
 

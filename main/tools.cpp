@@ -330,14 +330,14 @@ QStringList Tools::splitQuotedList( const QString& quotedList, QChar separator )
 
 	for ( int i = 0; i < quotedList.length(); i++ ) {
 		const QChar& c = quotedList.at( i );
-		if ( ! inQuotes && c == separator ) {		// Separator; push current to list
+		if ( ! inQuotes && c == separator ) {           // Separator; push current to list
 			if ( current.length() > 0 ) {
 				result.append( current );
 			}
 			current.clear();
-		} else if ( c == '\\' ) {	// Escape char; skip next char
+		} else if ( c == '\\' ) {       // Escape char; skip next char
 			i++;
-		} else if ( c == '"' ) {	// Handle quotes
+		} else if ( c == '"' ) {        // Handle quotes
 			inQuotes = ! inQuotes;
 		} else if ( current.length() || ! c.isSpace() ) {
 			current.append( c );

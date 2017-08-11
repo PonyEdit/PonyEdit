@@ -11,7 +11,8 @@
 #include "options/options.h"
 #include "syntax/syntaxhighlighter.h"
 
-CodeEditor::CodeEditor( BaseFile* file, QWidget *parent ) : QPlainTextEdit( parent ) {
+CodeEditor::CodeEditor( BaseFile* file, QWidget *parent ) :
+	QPlainTextEdit( parent ) {
 	mFile = file;
 	mLineNumberWidget = new LineNumberWidget( this );
 
@@ -37,7 +38,7 @@ int CodeEditor::lineNumberAreaWidth() {
 	return space;
 }
 
-void CodeEditor::updateLineNumberAreaWidth( int	/*newBlockCount*/ ) {
+void CodeEditor::updateLineNumberAreaWidth( int /*newBlockCount*/ ) {
 	setViewportMargins( lineNumberAreaWidth(), 0, 0, 0 );
 }
 
@@ -76,9 +77,12 @@ void CodeEditor::lineNumberAreaPaintEvent( QPaintEvent *event ) {
 		if ( block.isVisible() && bottom <= frameRect().height() ) {
 			QString number = QString::number( blockNumber + 1 );
 			painter.setPen( Qt::darkGray );
-			painter.drawText( 0, ( int ) ( top + offset ), mLineNumberWidget->width(),
+			painter.drawText( 0,
+			                  ( int ) ( top + offset ),
+			                  mLineNumberWidget->width(),
 			                  fontMetrics().height(),
-			                  Qt::AlignRight, number );
+			                  Qt::AlignRight,
+			                  number );
 		}
 
 		block = block.next();

@@ -10,24 +10,23 @@ class BaseFile;
 class QDialogButtonBox;
 class OpenFileTreeView;
 
-class UnsavedChangesDialog : public QDialog
-{
-Q_OBJECT
+class UnsavedChangesDialog : public QDialog {
+	Q_OBJECT
 
-public:
-explicit UnsavedChangesDialog( const QList< BaseFile* >& files, bool closeFilesOnDiscard = true );
-~UnsavedChangesDialog();
+	public:
+		explicit UnsavedChangesDialog( const QList< BaseFile* >& files, bool closeFilesOnDiscard = true );
+		~UnsavedChangesDialog();
 
-private slots:
-void buttonClicked( QAbstractButton* button );
-void selectionChanged( QItemSelection before, QItemSelection after );
-void fileStateChanged();
-void fileClosed( BaseFile* file );
+	private slots:
+		void buttonClicked( QAbstractButton* button );
+		void selectionChanged( QItemSelection before, QItemSelection after );
+		void fileStateChanged();
+		void fileClosed( BaseFile* file );
 
-private:
-QDialogButtonBox* mButtonBox;
-OpenFileTreeView* mTreeView;
-bool mCloseFilesOnDiscard;
+	private:
+		QDialogButtonBox* mButtonBox;
+		OpenFileTreeView* mTreeView;
+		bool mCloseFilesOnDiscard;
 };
 
-#endif	// UNSAVEDCHANGESDIALOG_H
+#endif  // UNSAVEDCHANGESDIALOG_H

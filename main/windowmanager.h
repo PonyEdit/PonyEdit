@@ -18,110 +18,112 @@
 class MainWindow;
 class EditorPanel;
 
-class WindowManager : public QWidget
-{
-Q_OBJECT
-public:
-explicit WindowManager( QWidget *parent = 0 );
-~WindowManager();
+class WindowManager : public QWidget {
+	Q_OBJECT
 
-void displayFile( BaseFile *file );
-void displayLocation( const Location& location );
+	public:
+		explicit WindowManager( QWidget *parent = 0 );
+		~WindowManager();
 
-BaseFile* getCurrentFile();
-Editor* currentEditor();
+		void displayFile( BaseFile *file );
+		void displayLocation( const Location& location );
 
-void setCurrentEditorPanel( EditorPanel* stack );
-void editorFocusSet( CodeEditor* newFocus );
+		BaseFile* getCurrentFile();
+		Editor* currentEditor();
 
-inline EditorPanel* getCurrentPanel() const {
-	return mCurrentEditorPanel;
-}
+		void setCurrentEditorPanel( EditorPanel* stack );
+		void editorFocusSet( CodeEditor* newFocus );
 
-inline void lockEditorSelection() {
-	mEditorSelectionLocked = true;
-}
+		inline EditorPanel* getCurrentPanel() const {
+			return mCurrentEditorPanel;
+		}
 
-inline void unlockEditorSelection() {
-	mEditorSelectionLocked = false;
-}
+		inline void lockEditorSelection() {
+			mEditorSelectionLocked = true;
+		}
 
-EditorPanel* getFirstPanel();
-EditorPanel* getLastPanel();
+		inline void unlockEditorSelection() {
+			mEditorSelectionLocked = false;
+		}
 
-void showSearchResults( const QList< SearchResultModel::Result >& results, bool showReplaceOptions );
-void showAndSelect( const Location& location, int lineNumber, int start, int length );
-void hideSearchResults();
+		EditorPanel* getFirstPanel();
+		EditorPanel* getLastPanel();
 
-signals:
-void currentChanged();
-void splitChanged();
+		void showSearchResults( const QList< SearchResultModel::Result >& results, bool showReplaceOptions );
+		void showAndSelect( const Location& location, int lineNumber, int start, int length );
+		void hideSearchResults();
 
-public slots:
-void fileClosed( BaseFile* file );
+	signals:
+		void currentChanged();
+		void splitChanged();
 
-void findNext();
-void findPrevious();
+	public slots:
+		void fileClosed( BaseFile* file );
 
-void findInCurrentEditor( const QString& text, bool backwards, bool caseSensitive = false, bool useRegExp = false );
-void replaceInCurrentEditor( const QString& text, const QString& replaceText, bool all );
-void searchInFiles( const QList< BaseFile* > files,
-                    const QString& text,
-                    bool caseSensitive,
-                    bool useRegExp,
-                    bool showReplaceOptions );
+		void findNext();
+		void findPrevious();
 
-void showSearchBar();
-void hideSearchBar();
-void showRegExpTester();
+		void findInCurrentEditor( const QString& text, bool backwards, bool caseSensitive = false, bool useRegExp = false );
+		void replaceInCurrentEditor( const QString& text, const QString& replaceText, bool all );
+		void searchInFiles( const QList< BaseFile* > files,
+		                    const QString& text,
+		                    bool caseSensitive,
+		                    bool useRegExp,
+		                    bool showReplaceOptions );
 
-void previousWindow();
-void nextWindow();
+		void showSearchBar();
+		void hideSearchBar();
+		void showRegExpTester();
 
-void notifyEditorChanged( EditorPanel* stack );		// Called by EditorStacks, to notify the WindowManager when
-							// their current editor changes.
+		void previousWindow();
+		void nextWindow();
 
-void splitVertically();
-void splitHorizontally();
-void removeSplit();
-void removeAllSplits();
-bool isSplit();
+		void notifyEditorChanged( EditorPanel* stack ); // Called by EditorStacks, to notify the WindowManager
+		                                                // when
+		                                                // their current editor changes.
 
-void nextSplit();
-void previousSplit();
+		void splitVertically();
+		void splitHorizontally();
+		void removeSplit();
+		void removeAllSplits();
+		bool isSplit();
 
-private:
-int find( Editor* editor, const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true );
-int replace( Editor* editor,
-             const QString& findText,
-             const QString& replaceText,
-             bool caseSensitive,
-             bool useRegexp,
-             bool all );
+		void nextSplit();
+		void previousSplit();
 
-void createSearchBar();
-void createRegExpTester();
-void createSearchResults();
+	private:
+		int find( Editor* editor, const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true );
+		int replace( Editor* editor,
+		             const QString& findText,
+		             const QString& replaceText,
+		             bool caseSensitive,
+		             bool useRegexp,
+		             bool all );
 
-MainWindow *mParent;
+		void createSearchBar();
+		void createRegExpTester();
+		void createSearchResults();
 
-EditorPanel* mCurrentEditorPanel;
-bool mEditorSelectionLocked;		// While rearranging editors, it is a good idea to lock editor seleciton.
+		MainWindow *mParent;
 
-EditorPanel* mRootEditorPanel;
-QLayout* mLayout;
+		EditorPanel* mCurrentEditorPanel;
+		bool mEditorSelectionLocked;    // While rearranging editors, it is a good idea to lock editor
+		                                // seleciton.
 
-QDockWidget* mSearchBarWrapper;
-SearchBar* mSearchBar;
+		EditorPanel* mRootEditorPanel;
+		QLayout* mLayout;
 
-QDockWidget* mRegExpTesterWrapper;
-RegExpTester* mRegExpTester;
+		QDockWidget* mSearchBarWrapper;
+		SearchBar* mSearchBar;
 
-QDockWidget* mSearchResultsWrapper;
-SearchResults* mSearchResults;
+		QDockWidget* mRegExpTesterWrapper;
+		RegExpTester* mRegExpTester;
+
+		QDockWidget* mSearchResultsWrapper;
+		SearchResults* mSearchResults;
 };
 
 // One and only WindowManager object, created by MainWindow.
 extern WindowManager* gWindowManager;
 
-#endif	// WINDOWMANAGER_H
+#endif  // WINDOWMANAGER_H

@@ -22,7 +22,9 @@ OptionsDialog::OptionsDialog( QWidget *parent ) :
 
 	connect( ui->buttonBox, SIGNAL( accepted() ), this, SLOT( accept() ) );
 	connect( ui->buttonBox, SIGNAL( rejected() ), this, SLOT( reject() ) );
-	connect( ui->buttonBox, SIGNAL( clicked( QAbstractButton* ) ), this,
+	connect( ui->buttonBox,
+	         SIGNAL( clicked( QAbstractButton* ) ),
+	         this,
 	         SLOT( buttonClicked( QAbstractButton* ) ) );
 	connect( this, SIGNAL( accepted() ), this, SLOT( saveOptions() ) );
 

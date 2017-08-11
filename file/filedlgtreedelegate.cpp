@@ -11,7 +11,8 @@ FileDlgTreeDelegate::FileDlgTreeDelegate( QObject *parent ) :
 	QStyledItemDelegate( parent )
 {}
 
-void FileDlgTreeDelegate::paint( QPainter *painter, const QStyleOptionViewItem &option,
+void FileDlgTreeDelegate::paint( QPainter *painter,
+                                 const QStyleOptionViewItem &option,
                                  const QModelIndex &index ) const {
 	QString label = index.data( Qt::UserRole ).toString();
 

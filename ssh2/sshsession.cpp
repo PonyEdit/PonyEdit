@@ -35,8 +35,14 @@
 bool SshSession::sLibsInitialized;
 QMap< int, QMutex* > SshSession::sSslMutexes;
 
-SshSession::SshSession( SshHost* host ) : mThreadEndedCalled( false ), mSocket( 0 ), mHandle( 0 ), mSocketReadNotifier(
-		0 ), mSocketExceptionNotifier( 0 ), mAtChannelLimit( false ) {
+SshSession::SshSession( SshHost* host ) :
+	mThreadEndedCalled( false ),
+	mSocket( 0 ),
+	mHandle( 0 ),
+	mSocketReadNotifier(
+		0 ),
+	mSocketExceptionNotifier( 0 ),
+	mAtChannelLimit( false ) {
 	SSHLOG_TRACE( host ) << "Opening a new session";
 
 	mHost = host;
@@ -45,8 +51,8 @@ SshSession::SshSession( SshHost* host ) : mThreadEndedCalled( false ), mSocket( 
 
 	mThread = new SshSessionThread( this );
 	QObject::connect( this, SIGNAL( killThread() ), mThread, SLOT( quit() ), Qt::QueuedConnection );
-	moveToThread( mThread );	// Give this QObject to the new thread; then all signals received by this object
-					// are run in the thread.
+	moveToThread( mThread );        // Give this QObject to the new thread; then all signals received by this object
+	                                // are run in the thread.
 
 	QObject::connect( mThread, SIGNAL( finished() ), this, SLOT( threadEnded() ) );
 }
@@ -579,8 +585,8 @@ void SshSession::initializeLibrary() {
 	sLibsInitialized = true;
 }
 
-void SshSession::manageSslMutex( int mode, int n, const char* /*file*/, int /*line*/ ) {	// Callback for OpenSSL
-												// threading support
+void SshSession::manageSslMutex( int mode, int n, const char* /*file*/, int /*line*/ ) {        // Callback for OpenSSL
+	                                                                                        // threading support
 	if ( PonyEdit::isApplicationExiting() ) {
 		return;
 	}
@@ -641,8 +647,8 @@ void SshSession::updateAllChannels() {
 			}catch ( QString err ) {
 				QLOG_ERROR() << "Critical channel failure:" << err;
 				setErrorStatus( QObject::tr( "Critical channel failure: " ) + err );
-				mThread->quit();		// Abort QThread::exec, fall back to threadMain for
-								// cleanup.
+				mThread->quit();                // Abort QThread::exec, fall back to threadMain for
+				                                // cleanup.
 				continue;
 			}
 
@@ -653,28 +659,28 @@ void SshSession::updateAllChannels() {
 			// Deal with any of the possible failure states
 			SshChannel::Status status = channel->getStatus();
 			switch ( status ) {
-			case SshChannel::Sessionless:	// Server refused to create another channel on this session;
-							// pass back to SshHost to find a new home.
+			case SshChannel::Sessionless:   // Server refused to create another channel on this session;
+				                        // pass back to SshHost to find a new home.
 				mChannels.removeAt( i-- );
 				mAtChannelLimit = true;
 				mHost->setChannelLimitGuess( mChannels.count() );
 				emit hitChannelLimit( channel );
 				break;
 
-			case SshChannel::Error:	// Serious read/write error occurred. Assume the whole session is dead.
+			case SshChannel::Error: // Serious read/write error occurred. Assume the whole session is dead.
 				setErrorStatus( QObject::tr( "Critical channel failure: " ) +
 				                channel->getErrorDetails() );
-				mThread->quit();		// Abort QThread::exec, fall back to threadMain for
-								// cleanup.
+				mThread->quit();                // Abort QThread::exec, fall back to threadMain for
+				                                // cleanup.
 				break;
 
-			case SshChannel::Disconnected:	// Neatly disconnected. Just take it out of the roster, notify
-							// the host.
+			case SshChannel::Disconnected:  // Neatly disconnected. Just take it out of the roster, notify
+				                        // the host.
 				mChannels.removeAt( i-- );
 				emit channelNeatlyClosed( channel );
 				break;
 
-			default:	// All was ok :)
+			default:        // All was ok :)
 				break;
 			}
 		}

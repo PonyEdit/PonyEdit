@@ -13,7 +13,8 @@
 #include "syntax/syntaxdefmanager.h"
 #include "syntax/syntaxhighlighter.h"
 
-Editor::Editor( BaseFile* file ) : QStackedWidget() {
+Editor::Editor( BaseFile* file ) :
+	QStackedWidget() {
 	mReadOnlyWarning = NULL;
 	mFirstOpen = true;
 
@@ -235,7 +236,10 @@ QTextCursor Editor::internalFind( const QString& text, bool backwards, bool case
 	return newSelection;
 }
 
-int Editor::replace( const QString &findText, const QString &replaceText, bool caseSensitive, bool useRegex,
+int Editor::replace( const QString &findText,
+                     const QString &replaceText,
+                     bool caseSensitive,
+                     bool useRegex,
                      bool all ) {
 	if ( findText.length() <= 0 ) {
 		return 0;
@@ -252,7 +256,12 @@ int Editor::replace( const QString &findText, const QString &replaceText, bool c
 
 		int replacements = 0;
 		while ( ! ( searcher =
-				    Editor::find( doc, searcher, findText, false, caseSensitive, useRegex,
+				    Editor::find( doc,
+				                  searcher,
+				                  findText,
+				                  false,
+				                  caseSensitive,
+				                  useRegex,
 				                  false ) ).isNull() ) {
 			editor.setPosition( searcher.anchor() );
 			editor.setPosition( searcher.position(), QTextCursor::KeepAnchor );
@@ -269,7 +278,8 @@ int Editor::replace( const QString &findText, const QString &replaceText, bool c
 		if ( useRegex ) {
 			QRegExp re( findText, caseSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive );
 			match = re.exactMatch( selectedText );
-		} else if ( QString::compare( findText, selectedText,
+		} else if ( QString::compare( findText,
+		                              selectedText,
 		                              caseSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive ) == 0 ) {
 			match = true;
 		}

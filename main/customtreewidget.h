@@ -6,30 +6,30 @@
 class CustomTreeEntry;
 class CustomTreeModel;
 class CustomTreeDelegate;
-class CustomTreeWidget : public QTreeView
-{
-Q_OBJECT
-public:
-explicit CustomTreeWidget( QWidget *parent = 0 );
-~CustomTreeWidget();
+class CustomTreeWidget : public QTreeView {
+	Q_OBJECT
 
-void addTopLevelEntry( CustomTreeEntry* entry );
-void mousePressEvent( QMouseEvent *event );
+	public:
+		explicit CustomTreeWidget( QWidget *parent = 0 );
+		~CustomTreeWidget();
 
-virtual void paintEvent( QPaintEvent* event );
-virtual void timerEvent( QTimerEvent* event );
-void registerAnimation( const QModelIndex& area );
+		void addTopLevelEntry( CustomTreeEntry* entry );
+		void mousePressEvent( QMouseEvent *event );
 
-private slots:
-void entryClicked( QModelIndex index );
+		virtual void paintEvent( QPaintEvent* event );
+		virtual void timerEvent( QTimerEvent* event );
+		void registerAnimation( const QModelIndex& area );
 
-private:
-CustomTreeModel* mModel;
-CustomTreeDelegate* mDelegate;
-QPoint mLastClickedPoint;
+	private slots:
+		void entryClicked( QModelIndex index );
 
-int mAnimationTimerId;
-QList< QModelIndex > mAnimatingIndices;
+	private:
+		CustomTreeModel* mModel;
+		CustomTreeDelegate* mDelegate;
+		QPoint mLastClickedPoint;
+
+		int mAnimationTimerId;
+		QList< QModelIndex > mAnimatingIndices;
 };
 
-#endif	// CUSTOMTREEWIDGET_H
+#endif  // CUSTOMTREEWIDGET_H

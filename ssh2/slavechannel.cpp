@@ -65,8 +65,11 @@ QByteArray SlaveChannel::sSlaveChannelInit( SLAVE_INIT );
 QByteArray SlaveChannel::sSlaveScript;
 QByteArray SlaveChannel::sSlaveUpload;
 
-SlaveChannel::SlaveChannel( SshHost* host, bool sudo ) : ShellChannel( host ), mInternalStatus( _WaitingForShell ),
-	mCurrentRequest( 0 ), mNextMessageId( 1 ) {
+SlaveChannel::SlaveChannel( SshHost* host, bool sudo ) :
+	ShellChannel( host ),
+	mInternalStatus( _WaitingForShell ),
+	mCurrentRequest( 0 ),
+	mNextMessageId( 1 ) {
 	mSudo = sudo;
 	SSHLOG_TRACE( host ) << "Creating a new slave channel";
 }
@@ -93,7 +96,7 @@ void SlaveChannel::initialize() {
 	QByteArray checksum = hash.result().toHex().toLower();
 
 	sSlaveChannelInit.replace( "[[CHECKSUM]]", checksum );
-	sSlaveUpload = SLAVE_START_UPLOAD;	// + sSlaveScript;
+	sSlaveUpload = SLAVE_START_UPLOAD;      // + sSlaveScript;
 }
 
 bool SlaveChannel::update() {
@@ -154,7 +157,7 @@ bool SlaveChannel::handleOpening() {
 
 		QByteArray response = reply.data.trimmed();
 		if ( response.length() == 0 ) {
-			return true;	// Try again
+			return true;    // Try again
 		}
 		if ( response.startsWith( "No Perl" ) ) {
 			criticalError( "No Perl found on the remote server!" );
@@ -227,7 +230,7 @@ bool SlaveChannel::handleOpening() {
 
 		QByteArray response = reply.data.trimmed();
 		if ( response.length() == 0 ) {
-			return true;	// Try again
+			return true;    // Try again
 		}
 		if ( response.contains( "Sudo fail" ) ) {
 			criticalError( "Failed to sudo" );

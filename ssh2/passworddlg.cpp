@@ -1,7 +1,9 @@
 #include "passworddlg.h"
 #include "ui_passworddlg.h"
 
-PasswordDlg::PasswordDlg( QWidget *parent ) : ThreadCrossingDialog( parent ), ui( new Ui::PasswordDlg ) {
+PasswordDlg::PasswordDlg( QWidget *parent ) :
+	ThreadCrossingDialog( parent ),
+	ui( new Ui::PasswordDlg ) {
 	ui->setupUi( this );
 	ui->password->setFocus();
 }

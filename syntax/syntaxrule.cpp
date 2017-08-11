@@ -108,15 +108,16 @@ SyntaxRule::SyntaxRule( SyntaxRule* parent,
 
 	if ( duplicateChildren ) {
 		foreach( QSharedPointer< SyntaxRule > otherChild, other->mChildRules )
-		mChildRules.append( QSharedPointer< SyntaxRule >( new SyntaxRule( this, otherChild, duplicateChildren,
+		mChildRules.append( QSharedPointer< SyntaxRule >( new SyntaxRule( this,
+		                                                                  otherChild,
+		                                                                  duplicateChildren,
 		                                                                  maintainLinks ) ) );
 	} else {
 		mChildRules = other->mChildRules;
 	}
 }
 
-SyntaxRule::~SyntaxRule()
-{}
+SyntaxRule::~SyntaxRule() {}
 
 void SyntaxRule::addChildRule( QSharedPointer< SyntaxRule > rule ) {
 	mChildRules.append( rule );

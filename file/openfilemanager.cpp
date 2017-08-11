@@ -7,7 +7,8 @@
 
 OpenFileManager gOpenFileManager;
 
-OpenFileManager::OpenFileManager() : QObject( 0 ) {
+OpenFileManager::OpenFileManager() :
+	QObject( 0 ) {
 	mNewFiles = 1;
 }
 

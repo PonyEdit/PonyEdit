@@ -6,7 +6,8 @@
 #include "xferchannel.h"
 #include "xferrequest.h"
 
-XferChannel::XferChannel( SshHost* host, bool sudo ) : SlaveChannel( host, sudo ),
+XferChannel::XferChannel( SshHost* host, bool sudo ) :
+	SlaveChannel( host, sudo ),
 	mInternalStatus( _WaitingForRequests ) {
 	mLeftoverEscape = false;
 }
@@ -48,7 +49,8 @@ bool XferChannel::mainUpdate() {
 		if ( r.data.startsWith( "Error: " ) ) {
 			if ( r.data.contains( "File not found" ) ) {
 				mCurrentRequest->handleFailure( QString( mCurrentRequest->getFilename() ) + " - " +
-				                                tr( "File not found" ), 0 );
+				                                tr( "File not found" ),
+				                                0 );
 				mInternalStatus = _WaitingForRequests;
 				return true;
 			} else {

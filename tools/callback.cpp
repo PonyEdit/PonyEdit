@@ -1,8 +1,10 @@
 #include "callback.h"
 
 Callback::Callback( QObject* target, const char* successSlot, const char* failureSlot, const char* progressSlot )
-	: mTarget( target ), mSuccessSlot( successSlot ), mFailureSlot( failureSlot ), mProgressSlot( progressSlot )
-{}
+	: mTarget( target ),
+	mSuccessSlot( successSlot ),
+	mFailureSlot( failureSlot ),
+	mProgressSlot( progressSlot ) {}
 
 void Callback::triggerSuccess( QVariantMap result ) const {
 	if ( mTarget == NULL ) {

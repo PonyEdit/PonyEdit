@@ -379,9 +379,13 @@ void LocationShared::localLoadListing( bool includeHidden ) {
 		}
 
 		QFileInfo fileInfo( mPath + "/" + entry );
-		children.append( Location( Location( this ), fileInfo.absoluteFilePath(),
-		                           fileInfo.isDir() ? Location::Directory : Location::File, fileInfo.size(),
-		                           fileInfo.lastModified(), fileInfo.isReadable(), fileInfo.isWritable() ) );
+		children.append( Location( Location( this ),
+		                           fileInfo.absoluteFilePath(),
+		                           fileInfo.isDir() ? Location::Directory : Location::File,
+		                           fileInfo.size(),
+		                           fileInfo.lastModified(),
+		                           fileInfo.isReadable(),
+		                           fileInfo.isWritable() ) );
 	}
 
 	gDispatcher->emitLocationListSuccess( children, mPath );
@@ -425,7 +429,8 @@ SshHost* Location::getRemoteHost() const {
 void LocationShared::sftpLoadListing( bool includeHidden ) {
 	SFTPRequest* request =
 		new SFTPRequest( SFTPRequest::Ls,
-		                 Callback( this, SLOT( sshLsSuccess( QVariantMap ) ),
+		                 Callback( this,
+		                           SLOT( sshLsSuccess( QVariantMap ) ),
 		                           SLOT( sftpLsFailure( QString, int ) ) ) );
 	request->setPath( mRemotePath );
 	request->setIncludeHidden( includeHidden );
@@ -438,8 +443,12 @@ void LocationShared::sshLoadListing( bool includeHidden ) {
 	if ( includeHidden ) {
 		params.insert( "hidden", true );
 	}
-	getHost()->sendSlaveRequest( mSudo, NULL, "ls", QVariant( params ),
-	                             Callback( this, SLOT( sshLsSuccess( QVariantMap ) ),
+	getHost()->sendSlaveRequest( mSudo,
+	                             NULL,
+	                             "ls",
+	                             QVariant( params ),
+	                             Callback( this,
+	                                       SLOT( sshLsSuccess( QVariantMap ) ),
 	                                       SLOT( sshLsFailure( QString, int ) ) ) );
 }
 
@@ -460,9 +469,13 @@ void LocationShared::sshLsSuccess( QVariantMap results ) {
 		int size = entry.value( "s", 0 ).toInt();
 		qint64 lastModified = entry.value( "m", 0 ).toLongLong();
 
-		children.append( Location( parentLocation, mPath + "/" + i.key(),
-		                           isDir ? Location::Directory : Location::File, size,
-		                           QDateTime::fromMSecsSinceEpoch( lastModified * 1000 ), canRead, canWrite ) );
+		children.append( Location( parentLocation,
+		                           mPath + "/" + i.key(),
+		                           isDir ? Location::Directory : Location::File,
+		                           size,
+		                           QDateTime::fromMSecsSinceEpoch( lastModified * 1000 ),
+		                           canRead,
+		                           canWrite ) );
 	}
 
 

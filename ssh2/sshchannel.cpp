@@ -3,12 +3,12 @@
 #include "sshchannel.h"
 #include "sshhost.h"
 
-SshChannel::SshChannel( SshHost* host ) : mStatus( Sessionless ) {
+SshChannel::SshChannel( SshHost* host ) :
+	mStatus( Sessionless ) {
 	mHost = host;
 }
 
-SshChannel::~SshChannel()
-{}
+SshChannel::~SshChannel() {}
 
 void SshChannel::setSession( SshSession* session ) {
 	if ( mSession != session ) {

@@ -1,8 +1,7 @@
 #include "unsavedfile.h"
 
 UnsavedFile::UnsavedFile( const Location& location ) :
-	BaseFile( location )
-{}
+	BaseFile( location ) {}
 
 BaseFile* UnsavedFile::newFile( const QString& /* content */ ) {
 	setOpenStatus( Ready );
@@ -22,5 +21,4 @@ void UnsavedFile::close() {
 	closeCompleted();
 }
 
-void UnsavedFile::refresh()
-{}
+void UnsavedFile::refresh() {}

@@ -50,7 +50,8 @@ OpenFileTreeView::OpenFileTreeView( QWidget *parent, int optionFlags, const QLis
 	}
 }
 
-void OpenFileTreeView::dataChanged( const QModelIndex& /*topLeft*/, const QModelIndex& /*bottomRight*/,
+void OpenFileTreeView::dataChanged( const QModelIndex& /*topLeft*/,
+                                    const QModelIndex& /*bottomRight*/,
                                     const QVector< int >& /*roles*/ ) {
 	this->expandAll();
 }

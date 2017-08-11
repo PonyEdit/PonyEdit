@@ -12,7 +12,8 @@
 #include "ssh2/slaverequest.h"
 #include "ssh2/sshhost.h"
 
-SlaveFile::SlaveFile( const Location& location ) : BaseFile( location ) {
+SlaveFile::SlaveFile( const Location& location ) :
+	BaseFile( location ) {
 	mHost = location.getRemoteHost();
 	mChangePumpCursor = 0;
 }
@@ -29,8 +30,11 @@ BaseFile* SlaveFile::newFile( const QString& content ) {
 	clearTempOpenData();
 
 	// Retrieve the file content on a separate SSH channel...
-	mHost->setFileContent( mLocation.isSudo(), mLocation.getRemotePath().toLatin1(), content.toUtf8(),
-	                       Callback( this, SLOT( createSuccess( QVariantMap ) ),
+	mHost->setFileContent( mLocation.isSudo(),
+	                       mLocation.getRemotePath().toLatin1(),
+	                       content.toUtf8(),
+	                       Callback( this,
+	                                 SLOT( createSuccess( QVariantMap ) ),
 	                                 SLOT( openFailure( QString, int ) ),
 	                                 SLOT( downloadProgress( int ) ) ) );
 
@@ -51,13 +55,19 @@ void SlaveFile::open() {
 	// Tell the Slave script to open the file as a buffer
 	QMap< QString, QVariant > params;
 	params.insert( "file", mLocation.getRemotePath() );
-	mHost->sendSlaveRequest( mLocation.isSudo(), this, "open", QVariant( params ),
-	                         Callback( this, SLOT( slaveOpenSuccess( QVariantMap ) ),
+	mHost->sendSlaveRequest( mLocation.isSudo(),
+	                         this,
+	                         "open",
+	                         QVariant( params ),
+	                         Callback( this,
+	                                   SLOT( slaveOpenSuccess( QVariantMap ) ),
 	                                   SLOT( openFailure( QString, int ) ) ) );
 
 	// Retrieve the file content on a separate SSH channel...
-	mHost->getFileContent( mLocation.isSudo(), mLocation.getRemotePath().toLatin1(),
-	                       Callback( this, SLOT( downloadSuccess( QVariantMap ) ),
+	mHost->getFileContent( mLocation.isSudo(),
+	                       mLocation.getRemotePath().toLatin1(),
+	                       Callback( this,
+	                                 SLOT( downloadSuccess( QVariantMap ) ),
 	                                 SLOT( openFailure( QString, int ) ),
 	                                 SLOT( downloadProgress( int ) ) ) );
 }
@@ -124,8 +134,12 @@ void SlaveFile::reconnect() {
 	// Tell the slave to open the file as a buffer
 	QMap< QString, QVariant > params;
 	params.insert( "file", mLocation.getRemotePath() );
-	mHost->sendSlaveRequest( mLocation.isSudo(), this, "open", QVariant( params ),
-	                         Callback( this, SLOT( slaveReconnectSuccess( QVariantMap ) ),
+	mHost->sendSlaveRequest( mLocation.isSudo(),
+	                         this,
+	                         "open",
+	                         QVariant( params ),
+	                         Callback( this,
+	                                   SLOT( slaveReconnectSuccess( QVariantMap ) ),
 	                                   SLOT( slaveReconnectFailure( QString, int ) ) ) );
 }
 
@@ -197,7 +211,10 @@ void SlaveFile::pumpChangeQueue() {
 			params.insert( "a", change->insert );
 		}
 
-		mHost->sendSlaveRequest( mLocation.isSudo(), this, "change", QVariant( params ),
+		mHost->sendSlaveRequest( mLocation.isSudo(),
+		                         this,
+		                         "change",
+		                         QVariant( params ),
 		                         Callback( this, NULL, SLOT( changePushFailure( QString, int ) ) ) );
 	}
 }
@@ -214,8 +231,12 @@ void SlaveFile::save() {
 	params.insert( "revision", mRevision );
 	params.insert( "undoLength", mDocument->availableUndoSteps() );
 
-	mHost->sendSlaveRequest( mLocation.isSudo(), this, "save", QVariant( params ),
-	                         Callback( this, SLOT( slaveSaveSuccess( QVariantMap ) ),
+	mHost->sendSlaveRequest( mLocation.isSudo(),
+	                         this,
+	                         "save",
+	                         QVariant( params ),
+	                         Callback( this,
+	                                   SLOT( slaveSaveSuccess( QVariantMap ) ),
 	                                   SLOT( slaveSaveFailure( QString, int ) ) ) );
 }
 

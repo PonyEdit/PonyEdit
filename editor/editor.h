@@ -13,113 +13,113 @@
 #include "file/location.h"
 
 class EditorWarningBar;
-class Editor : public QStackedWidget
-{
-Q_OBJECT
-public:
-explicit Editor( BaseFile* file );
-~Editor();
-void save();
-void close();
+class Editor : public QStackedWidget {
+	Q_OBJECT
 
-BaseFile* getFile() const {
-	return mFile;
-}
+	public:
+		explicit Editor( BaseFile* file );
+		~Editor();
+		void save();
+		void close();
 
-const Location& getLocation() const {
-	return mFile->getLocation();
-}
+		BaseFile* getFile() const {
+			return mFile;
+		}
 
-void fileClosed();					// Called when the file this editor is attached to, is closed.
+		const Location& getLocation() const {
+			return mFile->getLocation();
+		}
 
-void gotoLine( int lineNumber );
-int currentLine() const {
-	return mEditor->textCursor().blockNumber();
-}
+		void fileClosed();                      // Called when the file this editor is attached to, is closed.
 
-void gotoEnd();
+		void gotoLine( int lineNumber );
+		int currentLine() const {
+			return mEditor->textCursor().blockNumber();
+		}
 
-void setReadOnly( bool readOnly );
-void showReadOnlyWarning();
+		void gotoEnd();
 
-inline void print( QPrinter *printer ) {
-	mEditor->print( printer );
-}
+		void setReadOnly( bool readOnly );
+		void showReadOnlyWarning();
 
-CodeEditor* getCodeEditor() {
-	return mEditor;
-}
+		inline void print( QPrinter *printer ) {
+			mEditor->print( printer );
+		}
 
-static QTextCursor find( QTextDocument* doc,
-                         const QTextCursor& start,
-                         const QString& text,
-                         bool backwards,
-                         bool caseSensitive,
-                         bool useRegExp,
-                         bool loop );
-void selectText( int lineNumber, int start, int length );
+		CodeEditor* getCodeEditor() {
+			return mEditor;
+		}
 
-public slots:
-void openStatusChanged( int openStatus );
-void fileOpenProgress( int percent );
-bool find( const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true );
-int replace( const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegex, bool all );
-void setFocus();
-bool hasFocus();
-void applyOptions();
-void enableEditing() {
-	setReadOnly( false );
-}
+		static QTextCursor find( QTextDocument* doc,
+		                         const QTextCursor& start,
+		                         const QString& text,
+		                         bool backwards,
+		                         bool caseSensitive,
+		                         bool useRegExp,
+		                         bool loop );
+		void selectText( int lineNumber, int start, int length );
 
-void undo() {
-	mFile->beginUndoBlock(); mEditor->undo(); mFile->endUndoBlock();
-}
+	public slots:
+		void openStatusChanged( int openStatus );
+		void fileOpenProgress( int percent );
+		bool find( const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true );
+		int replace( const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegex, bool all );
+		void setFocus();
+		bool hasFocus();
+		void applyOptions();
+		void enableEditing() {
+			setReadOnly( false );
+		}
 
-void redo() {
-	mFile->beginRedoBlock(); mEditor->redo(); mFile->endRedoBlock();
-}
+		void undo() {
+			mFile->beginUndoBlock(); mEditor->undo(); mFile->endUndoBlock();
+		}
 
-void copy() {
-	mEditor->copy();
-}
+		void redo() {
+			mFile->beginRedoBlock(); mEditor->redo(); mFile->endRedoBlock();
+		}
 
-void cut() {
-	mEditor->cut();
-}
+		void copy() {
+			mEditor->copy();
+		}
 
-void paste() {
-	mEditor->paste();
-}
+		void cut() {
+			mEditor->cut();
+		}
 
-void selectAll() {
-	mEditor->selectAll();
-}
+		void paste() {
+			mEditor->paste();
+		}
 
-void deleteLine() {
-	mEditor->deleteLine();
-}
+		void selectAll() {
+			mEditor->selectAll();
+		}
 
-void sudo();
+		void deleteLine() {
+			mEditor->deleteLine();
+		}
 
-private:
-void showLoading();
-void showError( const QString& error );
-QTextCursor internalFind( const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true );
+		void sudo();
 
-bool mFirstOpen;
+	private:
+		void showLoading();
+		void showError( const QString& error );
+		QTextCursor internalFind( const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true );
 
-QWidget* mEditorPane;
-QVBoxLayout* mEditorPaneLayout;
-BaseFile* mFile;
-CodeEditor* mEditor;
-QTextDocument* mDocument;
+		bool mFirstOpen;
 
-QWidget* mWorkingPane;
-QLabel* mWorkingIcon;
-QLabel* mWorkingText;
-QProgressBar* mProgressBar;
+		QWidget* mEditorPane;
+		QVBoxLayout* mEditorPaneLayout;
+		BaseFile* mFile;
+		CodeEditor* mEditor;
+		QTextDocument* mDocument;
 
-EditorWarningBar* mReadOnlyWarning;
+		QWidget* mWorkingPane;
+		QLabel* mWorkingIcon;
+		QLabel* mWorkingText;
+		QProgressBar* mProgressBar;
+
+		EditorWarningBar* mReadOnlyWarning;
 };
 
-#endif	// EDITOR_H
+#endif  // EDITOR_H

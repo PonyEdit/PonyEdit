@@ -11,11 +11,13 @@
 #include "file/openfiletreemodel.h"
 #include "main/tools.h"
 
-OpenFileItemDelegate::OpenFileItemDelegate( OpenFileTreeView *parent ) : QStyledItemDelegate( parent ) {
+OpenFileItemDelegate::OpenFileItemDelegate( OpenFileTreeView *parent ) :
+	QStyledItemDelegate( parent ) {
 	mParent = parent;
 }
 
-void OpenFileItemDelegate::paint( QPainter *painter, const QStyleOptionViewItem &option,
+void OpenFileItemDelegate::paint( QPainter *painter,
+                                  const QStyleOptionViewItem &option,
                                   const QModelIndex &index ) const {
 	Location location = index.data( OpenFileTreeModel::LocationRole ).value< Location >();
 	BaseFile* file = ( BaseFile * ) index.data( OpenFileTreeModel::FileRole ).value< void* >();
@@ -39,7 +41,10 @@ void OpenFileItemDelegate::paint( QPainter *painter, const QStyleOptionViewItem 
 		// Show the refresh icon, but it's only visible on mouse-over.
 		QStyledItemDelegate::paint( painter, option, index );
 		if ( option.state & QStyle::State_MouseOver ) {
-			painter->drawPixmap( option.rect.left(), option.rect.top(), 16, 16,
+			painter->drawPixmap( option.rect.left(),
+			                     option.rect.top(),
+			                     16,
+			                     16,
 			                     QPixmap( ":/icons/resync.png" ) );
 		}
 	} else {
@@ -56,17 +61,26 @@ void OpenFileItemDelegate::paint( QPainter *painter, const QStyleOptionViewItem 
 				BaseFile::OpenStatus fileStatus = file->getOpenStatus();
 
 				if ( file->hasUnsavedChanges() ) {
-					sp.drawPixmap( labelRect.right() - 16, labelRect.top(), 16, 16,
+					sp.drawPixmap( labelRect.right() - 16,
+					               labelRect.top(),
+					               16,
+					               16,
 					               QPixmap( ":/icons/filechanged.png" ) );
 					labelRect.adjust( 0, 0, -18, 0 );
 				}
 
 				if ( fileStatus == BaseFile::Disconnected || fileStatus == BaseFile::Reconnecting ) {
-					sp.drawPixmap( labelRect.right() - 16, labelRect.top(), 16, 16,
+					sp.drawPixmap( labelRect.right() - 16,
+					               labelRect.top(),
+					               16,
+					               16,
 					               QPixmap( ":/icons/disconnected.png" ) );
 					labelRect.adjust( 0, 0, -18, 0 );
 				} else if ( fileStatus == BaseFile::Repairing ) {
-					sp.drawPixmap( labelRect.right() - 16, labelRect.top(), 16, 16,
+					sp.drawPixmap( labelRect.right() - 16,
+					               labelRect.top(),
+					               16,
+					               16,
 					               QPixmap( ":/icons/resync.png" ) );
 					labelRect.adjust( 0, 0, -18, 0 );
 				}

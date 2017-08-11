@@ -1,8 +1,7 @@
 #include "threadcrossingdialog.h"
 
 ThreadCrossingDialog::ThreadCrossingDialog( QWidget *parent ) :
-	QDialog( parent )
-{}
+	QDialog( parent ) {}
 
 QVariantMap ThreadCrossingDialog::getResult() {
 	QVariantMap result;

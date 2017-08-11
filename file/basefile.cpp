@@ -95,8 +95,11 @@ BaseFile::BaseFile( const Location& location ) {
 	mDocument->setDocumentLayout( mDocumentLayout );
 
 	connect( mDocument, SIGNAL( contentsChange( int, int, int ) ), this, SLOT( documentChanged( int, int, int ) ) );
-	connect( this, SIGNAL( fileOpenedRethreadSignal( QString, QByteArray, bool ) ), this,
-	         SLOT( openSuccess( QString, QByteArray, bool ) ), Qt::QueuedConnection );
+	connect( this,
+	         SIGNAL( fileOpenedRethreadSignal( QString, QByteArray, bool ) ),
+	         this,
+	         SLOT( openSuccess( QString, QByteArray, bool ) ),
+	         Qt::QueuedConnection );
 	connect( this, SIGNAL( closeCompletedRethreadSignal() ), this, SLOT( closeCompleted() ), Qt::QueuedConnection );
 	connect( this,
 	         SIGNAL( saveFailedRethreadSignal( QString, bool ) ),

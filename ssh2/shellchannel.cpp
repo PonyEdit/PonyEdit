@@ -8,9 +8,10 @@
 #define MACHINE_READABLE_PROMPT "%-ponyedit-%"
 
 ShellChannel::ShellChannel( SshHost* host, bool machineReadable, const QByteArray& ptyType ) :
-	SshChannel( host ), mInternalStatus( _OpenSession ),
-	mMachineReadable( machineReadable ), mPtyType( ptyType )
-{}
+	SshChannel( host ),
+	mInternalStatus( _OpenSession ),
+	mMachineReadable( machineReadable ),
+	mPtyType( ptyType ) {}
 
 bool ShellChannel::update() {
 	switch ( mStatus ) {
@@ -43,7 +44,8 @@ bool ShellChannel::handleOpening() {
 					setSession( NULL );
 				} else {
 					criticalError( tr( "Failed to open a channel %1: %2" ).arg( ( unsigned long )
-					                                                            mHandle, 0,
+					                                                            mHandle,
+					                                                            0,
 					                                                            16 ).arg( rc ) );
 				}
 				return false;
@@ -59,7 +61,9 @@ bool ShellChannel::handleOpening() {
 		;
 		if ( rc < 0 ) {
 			criticalError( tr( "Failed to request an appropriate pty %1: %2" ).arg( ( unsigned long )
-			                                                                        mHandle, 0, 16 ).arg(
+			                                                                        mHandle,
+			                                                                        0,
+			                                                                        16 ).arg(
 					       rc ) );
 			return false;
 		}
@@ -80,7 +84,8 @@ bool ShellChannel::handleOpening() {
 			if ( rc == LIBSSH2_ERROR_EAGAIN ) {
 				return true;
 			}
-			criticalError( tr( "Failed to open a shell %1: %2" ).arg( ( unsigned long ) mHandle, 0,
+			criticalError( tr( "Failed to open a shell %1: %2" ).arg( ( unsigned long ) mHandle,
+			                                                          0,
 			                                                          16 ).arg( rc ) );
 			return false;
 		}

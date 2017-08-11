@@ -8,22 +8,21 @@ namespace Ui {
 class StartupOptionsWidget;
 }
 
-class StartupOptionsWidget : public OptionsDialogPage
-{
-Q_OBJECT
+class StartupOptionsWidget : public OptionsDialogPage {
+	Q_OBJECT
 
-public:
-explicit StartupOptionsWidget( QWidget *parent = 0 );
-~StartupOptionsWidget();
+	public:
+		explicit StartupOptionsWidget( QWidget *parent = 0 );
+		~StartupOptionsWidget();
 
-void apply();
+		void apply();
 
-public slots:
-void SetFilesToggled( bool checked );
-void SetFilesToCurrent();
+	public slots:
+		void SetFilesToggled( bool checked );
+		void SetFilesToCurrent();
 
-private:
-Ui::StartupOptionsWidget *ui;
+	private:
+		Ui::StartupOptionsWidget *ui;
 };
 
-#endif	// STARTUPOPTIONSWIDGET_H
+#endif  // STARTUPOPTIONSWIDGET_H

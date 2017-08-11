@@ -9,19 +9,18 @@ namespace Ui {
 class fontoptionswidget;
 }
 
-class FontOptionsWidget : public OptionsDialogPage
-{
-Q_OBJECT
+class FontOptionsWidget : public OptionsDialogPage {
+	Q_OBJECT
 
-public:
-explicit FontOptionsWidget( QWidget *parent = 0 );
-~FontOptionsWidget();
+	public:
+		explicit FontOptionsWidget( QWidget *parent = 0 );
+		~FontOptionsWidget();
 
-void apply();
+		void apply();
 
-private:
-Ui::fontoptionswidget *ui;
-QFontDatabase mFontDatabase;
+	private:
+		Ui::fontoptionswidget *ui;
+		QFontDatabase mFontDatabase;
 };
 
-#endif	// FONTOPTIONSWIDGET_H
+#endif  // FONTOPTIONSWIDGET_H

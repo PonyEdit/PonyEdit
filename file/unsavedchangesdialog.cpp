@@ -12,7 +12,8 @@
 #include "unsavedchangesdialog.h"
 
 UnsavedChangesDialog::UnsavedChangesDialog( const QList< BaseFile* >& files, bool closeFilesOnDiscard ) :
-	QDialog( 0 ), mCloseFilesOnDiscard( closeFilesOnDiscard ) {
+	QDialog( 0 ),
+	mCloseFilesOnDiscard( closeFilesOnDiscard ) {
 	QVBoxLayout* layout = new QVBoxLayout( this );
 	setLayout( layout );
 
@@ -35,7 +36,9 @@ UnsavedChangesDialog::UnsavedChangesDialog( const QList< BaseFile* >& files, boo
 	foreach( BaseFile * file, files )
 	connect( file, SIGNAL( unsavedStatusChanged() ), this, SLOT( fileStateChanged() ) );
 
-	connect( mTreeView->selectionModel(), SIGNAL( selectionChanged( QItemSelection, QItemSelection ) ), this,
+	connect( mTreeView->selectionModel(),
+	         SIGNAL( selectionChanged( QItemSelection, QItemSelection ) ),
+	         this,
 	         SLOT( selectionChanged( QItemSelection, QItemSelection ) ) );
 	connect( mButtonBox, SIGNAL( rejected() ), this, SLOT( reject() ) );
 	connect( mButtonBox, SIGNAL( clicked( QAbstractButton* ) ), this, SLOT( buttonClicked( QAbstractButton* ) ) );

@@ -23,9 +23,9 @@ QString SyntaxDefXmlHandler::errorString() const {
 	return QString();
 }
 
-bool SyntaxDefXmlHandler::startElement( const QString &	/* namespaceURI */,
+bool SyntaxDefXmlHandler::startElement( const QString & /* namespaceURI */,
                                         const QString &localName,
-                                        const QString &	/* qName */,
+                                        const QString & /* qName */,
                                         const QXmlAttributes &atts ) {
 	switch ( mCurrentBlocks ) {
 	case None:
@@ -134,7 +134,8 @@ bool SyntaxDefXmlHandler::startElement( const QString &	/* namespaceURI */,
 		if ( localName.compare( "comments", Qt::CaseInsensitive ) == 0 ) {
 			mCurrentBlocks |= Comments;
 		} else if ( localName.compare( "folding", Qt::CaseInsensitive ) == 0 ) {
-			mDefinition->setIndentationSensitive( Tools::getIntXmlAttribute( atts, "indentationsensitive",
+			mDefinition->setIndentationSensitive( Tools::getIntXmlAttribute( atts,
+			                                                                 "indentationsensitive",
 			                                                                 0 ) );
 		} else if ( localName.compare( "keywords", Qt::CaseInsensitive ) == 0 ) {
 			mDefinition->setCaseSensitiveKeywords( Tools::getIntXmlAttribute( atts, "casesensitive", 1 ) );
@@ -160,7 +161,8 @@ bool SyntaxDefXmlHandler::startElement( const QString &	/* namespaceURI */,
 	return true;
 }
 
-bool SyntaxDefXmlHandler::endElement( const QString & /* namespaceURI */, const QString &localName,
+bool SyntaxDefXmlHandler::endElement( const QString & /* namespaceURI */,
+                                      const QString &localName,
                                       const QString & /* qName */ ) {
 	switch ( mCurrentBlocks ) {
 	case Language:

@@ -8,20 +8,19 @@ class HostLog;
 }
 
 class SshHost;
-class HostLog : public QWidget
-{
-Q_OBJECT
+class HostLog : public QWidget {
+	Q_OBJECT
 
-public:
-explicit HostLog( SshHost* host );
-~HostLog();
-void closeEvent( QCloseEvent* );
+	public:
+		explicit HostLog( SshHost* host );
+		~HostLog();
+		void closeEvent( QCloseEvent* );
 
-public slots:
-void newLogLine( QString line );
+	public slots:
+		void newLogLine( QString line );
 
-private:
-Ui::HostLog *ui;
+	private:
+		Ui::HostLog *ui;
 };
 
-#endif	// HOSTLOG_H
+#endif  // HOSTLOG_H

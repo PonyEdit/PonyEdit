@@ -3,7 +3,8 @@
 #include "xferrequest.h"
 
 XferRequest::XferRequest( bool sudo, const QByteArray& filename, const Callback& callback ) :
-	mSudo( sudo ), mFilename( filename ) {
+	mSudo( sudo ),
+	mFilename( filename ) {
 	mUpload = false;
 
 	connect( this, SIGNAL( transferSuccess( QVariantMap ) ), callback.getTarget(), callback.getSuccessSlot() );

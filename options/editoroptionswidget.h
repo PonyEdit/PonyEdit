@@ -6,18 +6,17 @@
 
 namespace Ui { class EditorOptionsWidget; }
 
-class EditorOptionsWidget : public OptionsDialogPage
-{
-Q_OBJECT
+class EditorOptionsWidget : public OptionsDialogPage {
+	Q_OBJECT
 
-public:
-explicit EditorOptionsWidget( QWidget *parent = 0 );
-~EditorOptionsWidget();
+	public:
+		explicit EditorOptionsWidget( QWidget *parent = 0 );
+		~EditorOptionsWidget();
 
-virtual void apply();
+		virtual void apply();
 
-private:
-Ui::EditorOptionsWidget *ui;
+	private:
+		Ui::EditorOptionsWidget *ui;
 };
 
-#endif	// EDITOROPTIONSWIDGET_H
+#endif  // EDITOROPTIONSWIDGET_H

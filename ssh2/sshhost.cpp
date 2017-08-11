@@ -16,10 +16,16 @@ QList< SshHost* > SshHost::sKnownHosts;
 QMap< QString, QByteArray > SshHost::sKnownHostFingerprints;
 
 SshHost::SshHost() :
-	mDesiredStatus( Disconnected ), mFirstSlaveScriptChecker( 0 ), mSlaveScriptChecked( false ),
-	mCachedIpAddress( 0 ), mCachedAuthMethod( SshSession::AuthNone ),
-	mChannelLimitGuess( CHANNEL_LIMIT_GUESS ), mSaveHost( true ), mSavePassword( false ),
-	mSaveKeyPassphrase( false ), mPort( 22 ) {
+	mDesiredStatus( Disconnected ),
+	mFirstSlaveScriptChecker( 0 ),
+	mSlaveScriptChecked( false ),
+	mCachedIpAddress( 0 ),
+	mCachedAuthMethod( SshSession::AuthNone ),
+	mChannelLimitGuess( CHANNEL_LIMIT_GUESS ),
+	mSaveHost( true ),
+	mSavePassword( false ),
+	mSaveKeyPassphrase( false ),
+	mPort( 22 ) {
 	mOverallStatusDirty = true;
 	updateOverallStatus();
 
@@ -138,7 +144,10 @@ void SshHost::channelNeatlyClosed( SshChannel* channel ) {
 void SshHost::removeChannel( SshChannel* channel ) {
 	switch ( channel->getType() ) {
 	case SshChannel::Slave:
-		failSlaveRequests( "Channel closed.", 0, mSlaveRequestQueueMutex, mSlaveRequestQueue,
+		failSlaveRequests( "Channel closed.",
+		                   0,
+		                   mSlaveRequestQueueMutex,
+		                   mSlaveRequestQueue,
 		                   static_cast< SlaveChannel* >( channel ) );
 		break;
 
@@ -202,11 +211,17 @@ SshChannel* SshHost::takeNextHomelessChannel() {
 
 SshSession* SshHost::openSession() {
 	SshSession* newSession = new SshSession( this );
-	QObject::connect( newSession, SIGNAL( hitChannelLimit( SshChannel* ) ), this,
+	QObject::connect( newSession,
+	                  SIGNAL( hitChannelLimit( SshChannel* ) ),
+	                  this,
 	                  SLOT( channelRejected( SshChannel* ) ) );
-	QObject::connect( newSession, SIGNAL( channelNeatlyClosed( SshChannel* ) ), this,
+	QObject::connect( newSession,
+	                  SIGNAL( channelNeatlyClosed( SshChannel* ) ),
+	                  this,
 	                  SLOT( channelNeatlyClosed( SshChannel* ) ) );
-	QObject::connect( newSession, SIGNAL( sessionClosed( SshSession* ) ), this,
+	QObject::connect( newSession,
+	                  SIGNAL( sessionClosed( SshSession* ) ),
+	                  this,
 	                  SLOT( sessionEnded( SshSession* ) ) );
 	mSessions.append( newSession );
 	newSession->start();
@@ -392,7 +407,7 @@ void SshHost::firstSlaveCheckComplete() {
 	mFirstSlaveScriptChecker = NULL;
 }
 
-void SshHost::handleUnsolicitedSlaveMessage( const QVariantMap&	/*message*/ ) {
+void SshHost::handleUnsolicitedSlaveMessage( const QVariantMap& /*message*/ ) {
 	SSHLOG_INFO( this ) << "Unsolicited slave message received";
 }
 
@@ -400,7 +415,9 @@ void SshHost::getFileContent( bool sudo, const QByteArray& filename, const Callb
 	enqueueXferRequest( new XferRequest( sudo, filename, callback ) );
 }
 
-void SshHost::setFileContent( bool sudo, const QByteArray& filename, const QByteArray& content,
+void SshHost::setFileContent( bool sudo,
+                              const QByteArray& filename,
+                              const QByteArray& content,
                               const Callback &callback ) {
 	XferRequest* rq = new XferRequest( sudo, filename, callback );
 	rq->setData( content );
@@ -590,7 +607,9 @@ void SshHost::failSlaveRequests( const QString& error,
 	}
 }
 
-void SshHost::failXferRequests( const QString& error, int flags, QMutex& listLock,
+void SshHost::failXferRequests( const QString& error,
+                                int flags,
+                                QMutex& listLock,
                                 QList< XferRequest* >& requestList ) {
 	listLock.lock();
 	for ( int i = 0; i < requestList.length(); i++ ) {

@@ -10,33 +10,32 @@ namespace Ui {
 class UpdateNotificationDialog;
 }
 
-class UpdateNotificationDialog : public QDialog
-{
-Q_OBJECT
+class UpdateNotificationDialog : public QDialog {
+	Q_OBJECT
 
-public:
-explicit UpdateNotificationDialog( QWidget *parent = 0 );
-~UpdateNotificationDialog();
+	public:
+		explicit UpdateNotificationDialog( QWidget *parent = 0 );
+		~UpdateNotificationDialog();
 
-void setNewVersion( const QString& version );
-void setChanges( const QStringList &alerts, const QStringList &changes );
-void setDownloadURL( const QString& fileURL );
+		void setNewVersion( const QString& version );
+		void setChanges( const QStringList &alerts, const QStringList &changes );
+		void setDownloadURL( const QString& fileURL );
 
-QProgressBar* getProgressBar();
-QLabel* getProgressLabel();
-QWidget* getButtonWrapper();
+		QProgressBar* getProgressBar();
+		QLabel* getProgressLabel();
+		QWidget* getButtonWrapper();
 
-signals:
-void downloadAndInstall( QString );
+	signals:
+		void downloadAndInstall( QString );
 
-private slots:
-void emitDownloadAndInstall();
-void openDownloadURL();
+	private slots:
+		void emitDownloadAndInstall();
+		void openDownloadURL();
 
-private:
-Ui::UpdateNotificationDialog *ui;
+	private:
+		Ui::UpdateNotificationDialog *ui;
 
-QString mFileURL;
+		QString mFileURL;
 };
 
-#endif	// UPDATENOTIFICATIONDIALOG_H
+#endif  // UPDATENOTIFICATIONDIALOG_H

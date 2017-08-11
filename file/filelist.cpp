@@ -19,7 +19,9 @@ FileList::FileList( QWidget *parent ) :
 	setWidget( mTreeView );
 
 	connect( gDispatcher, SIGNAL( selectFile( BaseFile* ) ), this, SLOT( selectFile( BaseFile* ) ) );
-	connect( mTreeView->selectionModel(), SIGNAL( currentChanged( QModelIndex, QModelIndex ) ), this,
+	connect( mTreeView->selectionModel(),
+	         SIGNAL( currentChanged( QModelIndex, QModelIndex ) ),
+	         this,
 	         SLOT( fileSelected() ) );
 }
 

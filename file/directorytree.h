@@ -10,16 +10,16 @@
 // trying to get at the context menu to delete them.
 //
 
-class DirectoryTree : public QTreeWidget
-{
-public:
-DirectoryTree( QWidget* parent = 0 ) : QTreeWidget( parent ) {}
-void mousePressEvent( QMouseEvent *event ) {
-	if ( event->button() == Qt::RightButton ) {
-		return;
-	}
-	QTreeWidget::mousePressEvent( event );
-}
+class DirectoryTree : public QTreeWidget {
+	public:
+		DirectoryTree( QWidget* parent = 0 ) :
+			QTreeWidget( parent ) {}
+		void mousePressEvent( QMouseEvent *event ) {
+			if ( event->button() == Qt::RightButton ) {
+				return;
+			}
+			QTreeWidget::mousePressEvent( event );
+		}
 };
 
-#endif	// DIRECTORYTREE_H
+#endif  // DIRECTORYTREE_H

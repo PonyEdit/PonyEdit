@@ -8,19 +8,17 @@ namespace Ui {
 class HostKeyDlg;
 }
 
-class HostKeyDlg : public ThreadCrossingDialog
-{
-Q_OBJECT
+class HostKeyDlg : public ThreadCrossingDialog {
+	Q_OBJECT
 
-public:
-explicit HostKeyDlg( QWidget *parent = 0 );
-~HostKeyDlg();
+	public:
+		explicit HostKeyDlg( QWidget *parent = 0 );
+		~HostKeyDlg();
 
-virtual void setOptions( const QVariantMap &options );
+		virtual void setOptions( const QVariantMap &options );
 
-
-private:
-Ui::HostKeyDlg *ui;
+	private:
+		Ui::HostKeyDlg *ui;
 };
 
-#endif	// HOSTKEYDLG_H
+#endif  // HOSTKEYDLG_H

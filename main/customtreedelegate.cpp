@@ -9,7 +9,8 @@ CustomTreeDelegate::CustomTreeDelegate( CustomTreeModel* model ) {
 	mModel = model;
 }
 
-void CustomTreeDelegate::paint( QPainter *painter, const QStyleOptionViewItem &option,
+void CustomTreeDelegate::paint( QPainter *painter,
+                                const QStyleOptionViewItem &option,
                                 const QModelIndex &index ) const {
 	CustomTreeEntry* entry = mModel->getEntry( index );
 	entry->setHover( option.state & QStyle::State_MouseOver );

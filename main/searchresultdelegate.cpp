@@ -11,7 +11,8 @@ SearchResultDelegate::SearchResultDelegate( SearchResultModel* model, QObject *p
 	mModel = model;
 }
 
-void SearchResultDelegate::paint( QPainter *painter, const QStyleOptionViewItem &option,
+void SearchResultDelegate::paint( QPainter *painter,
+                                  const QStyleOptionViewItem &option,
                                   const QModelIndex &index ) const {
 	QStyledItemDelegate::paint( painter, option, index );
 
@@ -37,8 +38,11 @@ void SearchResultDelegate::paint( QPainter *painter, const QStyleOptionViewItem 
 		int matchWidth = painter->boundingRect( drawRect, match ).width();
 
 		// Draw a highlight rectangle
-		painter->fillRect( QRect( drawRect.left() + leftWidth, drawRect.top() + 1, matchWidth,
-		                          drawRect.height() - 2 ), QColor( 255, 255, 0 ) );
+		painter->fillRect( QRect( drawRect.left() + leftWidth,
+		                          drawRect.top() + 1,
+		                          matchWidth,
+		                          drawRect.height() - 2 ),
+		                   QColor( 255, 255, 0 ) );
 
 		painter->setPen( originalPen );
 		painter->drawText( drawRect, result->matchedLine );

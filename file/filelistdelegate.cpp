@@ -4,8 +4,7 @@
 QIcon FileListDelegate::sUnreadable;
 
 FileListDelegate::FileListDelegate( QObject *parent ) :
-	QStyledItemDelegate( parent )
-{}
+	QStyledItemDelegate( parent ) {}
 
 void FileListDelegate::paint( QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index ) const {
 	QStyledItemDelegate::paint( painter, option, index );

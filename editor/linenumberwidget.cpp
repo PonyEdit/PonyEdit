@@ -1,7 +1,8 @@
 #include "codeeditor.h"
 #include "linenumberwidget.h"
 
-LineNumberWidget::LineNumberWidget( CodeEditor *editor ) : QWidget( editor ) {
+LineNumberWidget::LineNumberWidget( CodeEditor *editor ) :
+	QWidget( editor ) {
 	mEditor = editor;
 }
 

@@ -7,21 +7,19 @@
 
 class CodeEditor;
 
-class LineNumberWidget : public QWidget
-{
-public:
-explicit LineNumberWidget( CodeEditor *editor = 0 );
-QSize sizeHint() const;
+class LineNumberWidget : public QWidget {
+	public:
+		explicit LineNumberWidget( CodeEditor *editor = 0 );
+		QSize sizeHint() const;
 
-protected:
-void paintEvent( QPaintEvent *event );
+	protected:
+		void paintEvent( QPaintEvent *event );
 
-private:
-CodeEditor *mEditor;
+	private:
+		CodeEditor *mEditor;
 
-signals:
-
-public slots:
+	signals:
+	public slots:
 };
 
-#endif	// LINENUMBERWIDGET_H
+#endif  // LINENUMBERWIDGET_H

@@ -7,22 +7,21 @@ namespace Ui {
 class GotoLineDialog;
 }
 
-class GotoLineDialog : public QDialog
-{
-Q_OBJECT
+class GotoLineDialog : public QDialog {
+	Q_OBJECT
 
-public:
-explicit GotoLineDialog( QWidget *parent = 0 );
-~GotoLineDialog();
+	public:
+		explicit GotoLineDialog( QWidget *parent = 0 );
+		~GotoLineDialog();
 
-int lineNumber();
+		int lineNumber();
 
-public slots:
-void accept();
+	public slots:
+		void accept();
 
-private:
-Ui::GotoLineDialog *ui;
-int mLineNumber;
+	private:
+		Ui::GotoLineDialog *ui;
+		int mLineNumber;
 };
 
-#endif	// GOTOLINEDIALOG_H
+#endif  // GOTOLINEDIALOG_H

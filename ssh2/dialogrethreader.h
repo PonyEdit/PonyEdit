@@ -15,56 +15,56 @@
 // QVariant result = DialogRethreader<MyDialog>::rethreadDialog(QVariant options);
 //
 
-class DialogRethreader : public QObject
-{
-Q_OBJECT
-public:
-explicit DialogRethreader();
-template < class T > static QVariantMap rethreadDialog( const QVariantMap& options ) {
-	QMutex mutex;
+class DialogRethreader : public QObject {
+	Q_OBJECT
 
-	DialogRethreadRequest rq;
-	rq.options = options;
-	rq.factoryMethod = ( createDialog< T >);
-	rq.lock = &mutex;
+	public:
+		explicit DialogRethreader();
+		template < class T > static QVariantMap rethreadDialog( const QVariantMap& options ) {
+			QMutex mutex;
 
-	DialogEvent* e = new DialogEvent( sRunDialogEventId );
-	e->request = &rq;
+			DialogRethreadRequest rq;
+			rq.options = options;
+			rq.factoryMethod = ( createDialog< T >);
+			rq.lock = &mutex;
 
-	mutex.lock();
-	QCoreApplication::postEvent( sInstance, e );
+			DialogEvent* e = new DialogEvent( sRunDialogEventId );
+			e->request = &rq;
 
-	// Use the mutex to wait for the dialog to finish; ui thread will unlock the mutex when done.
-	mutex.lock();
+			mutex.lock();
+			QCoreApplication::postEvent( sInstance, e );
 
-	return rq.result;
-}
+			// Use the mutex to wait for the dialog to finish; ui thread will unlock the mutex when done.
+			mutex.lock();
 
-bool event( QEvent* event );
+			return rq.result;
+		}
 
-private:
-typedef ThreadCrossingDialog*(*DialogFactory)();
+		bool event( QEvent* event );
 
-struct DialogRethreadRequest {
-	DialogFactory factoryMethod;
-	QVariantMap options;
-	QVariantMap result;
-	QMutex* lock;
+	private:
+		typedef ThreadCrossingDialog*(*DialogFactory)();
+
+		struct DialogRethreadRequest {
+			DialogFactory factoryMethod;
+			QVariantMap options;
+			QVariantMap result;
+			QMutex* lock;
+		};
+
+		class DialogEvent : public QEvent {
+			public:
+				DialogEvent( int type ) :
+					QEvent( ( QEvent::Type ) type ) {}
+				DialogRethreadRequest* request;
+		};
+
+		template < class T > static ThreadCrossingDialog* createDialog() {
+			return new T();
+		}
+
+		static DialogRethreader* sInstance;
+		static int sRunDialogEventId;
 };
 
-class DialogEvent : public QEvent
-{
-public:
-DialogEvent( int type ) : QEvent( ( QEvent::Type ) type ) {}
-DialogRethreadRequest* request;
-};
-
-template < class T > static ThreadCrossingDialog* createDialog() {
-	return new T();
-}
-
-static DialogRethreader* sInstance;
-static int sRunDialogEventId;
-};
-
-#endif	// DIALOGRETHREADER_H
+#endif  // DIALOGRETHREADER_H

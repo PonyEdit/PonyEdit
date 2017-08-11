@@ -7,8 +7,10 @@
 #include "openfiletreeview.h"
 #include "unsavedchangesdialog.h"
 
-OpenFileTreeModel::OpenFileTreeModel( QObject* parent, int flags,
-                                      const QList< BaseFile* >* files ) : QAbstractItemModel( parent ) {
+OpenFileTreeModel::OpenFileTreeModel( QObject* parent,
+                                      int flags,
+                                      const QList< BaseFile* >* files ) :
+	QAbstractItemModel( parent ) {
 	mOptionFlags = flags;
 	mTopLevelNode = new Node( Root );
 	mParent = ( OpenFileTreeView * ) parent;

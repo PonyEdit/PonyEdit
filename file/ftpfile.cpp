@@ -4,7 +4,8 @@
 #include "ssh2/sshhost.h"
 #include "tools/callback.h"
 
-FtpFile::FtpFile( const Location& location ) : BaseFile( location ) {
+FtpFile::FtpFile( const Location& location ) :
+	BaseFile( location ) {
 	mHost = location.getRemoteHost();
 }
 
@@ -19,7 +20,8 @@ void FtpFile::open() {
 
 	SFTPRequest* request =
 		new SFTPRequest( SFTPRequest::ReadFile,
-		                 Callback( this, SLOT( sftpReadSuccess( QVariantMap ) ),
+		                 Callback( this,
+		                           SLOT( sftpReadSuccess( QVariantMap ) ),
 		                           SLOT( sftpReadFailure( QString, int ) ),
 		                           SLOT( sftpReadProgress( int ) ) ) );
 	request->setPath( mLocation.getRemotePath() );
@@ -46,7 +48,8 @@ void FtpFile::save() {
 
 	SFTPRequest* request =
 		new SFTPRequest( SFTPRequest::WriteFile,
-		                 Callback( this, SLOT( sftpWriteSuccess( QVariantMap ) ),
+		                 Callback( this,
+		                           SLOT( sftpWriteSuccess( QVariantMap ) ),
 		                           SLOT( sftpWriteFailure( QString, int ) ),
 		                           SLOT( sftpWriteProgress( int ) ) ) );
 	request->setPath( mLocation.getRemotePath() );

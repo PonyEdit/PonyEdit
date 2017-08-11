@@ -2,9 +2,13 @@
 
 #include "localfile.h"
 
-LocalFile::LocalFile( const Location& location ) : BaseFile( location ) {
-	connect( this, SIGNAL( localFileOpened( QString, QByteArray, bool ) ), this,
-	         SLOT( openSuccess( QString, QByteArray, bool ) ), Qt::QueuedConnection );
+LocalFile::LocalFile( const Location& location ) :
+	BaseFile( location ) {
+	connect( this,
+	         SIGNAL( localFileOpened( QString, QByteArray, bool ) ),
+	         this,
+	         SLOT( openSuccess( QString, QByteArray, bool ) ),
+	         Qt::QueuedConnection );
 }
 
 BaseFile* LocalFile::newFile( const QString& content ) {

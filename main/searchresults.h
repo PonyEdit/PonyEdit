@@ -8,29 +8,29 @@
 #include "searchresultmodel.h"
 class SearchResultDelegate;
 
-class SearchResults : public QWidget
-{
-Q_OBJECT
-public:
-explicit SearchResults( QWidget *parent = 0 );
-void clearResults();
-void showResults( const QList< SearchResultModel::Result >& results );
+class SearchResults : public QWidget {
+	Q_OBJECT
 
-void showReplaceOptions( bool replaceOptions );
+	public:
+		explicit SearchResults( QWidget *parent = 0 );
+		void clearResults();
+		void showResults( const QList< SearchResultModel::Result >& results );
 
-private slots:
-void itemClicked( QModelIndex index );
-void replaceClicked();
+		void showReplaceOptions( bool replaceOptions );
 
-private:
-QTreeView* mTreeView;
+	private slots:
+		void itemClicked( QModelIndex index );
+		void replaceClicked();
 
-QLabel* mReplaceLabel;
-QLineEdit* mReplaceWithText;
-QPushButton* mReplaceButton;
+	private:
+		QTreeView* mTreeView;
 
-SearchResultModel* mModel;
-SearchResultDelegate* mDelegate;
+		QLabel* mReplaceLabel;
+		QLineEdit* mReplaceWithText;
+		QPushButton* mReplaceButton;
+
+		SearchResultModel* mModel;
+		SearchResultDelegate* mDelegate;
 };
 
-#endif	// SEARCHRESULTS_H
+#endif  // SEARCHRESULTS_H

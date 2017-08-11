@@ -28,7 +28,8 @@ void NewFolderDialog::attempt( bool sudo ) {
 
 	Location loc = ( sudo ? mParentLocation.getSudoLocation() : mParentLocation );
 	loc.createNewDirectory( ui->folderName->text(),
-	                        Callback( this, SLOT( createSuccess( QVariantMap ) ),
+	                        Callback( this,
+	                                  SLOT( createSuccess( QVariantMap ) ),
 	                                  SLOT( createFailure( QString, int ) ) ) );
 }
 

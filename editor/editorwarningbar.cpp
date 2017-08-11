@@ -4,7 +4,8 @@
 
 #include "editorwarningbar.h"
 
-EditorWarningBar::EditorWarningBar( QWidget* parent, const QPixmap& icon, const QString& message ) : QWidget( parent ) {
+EditorWarningBar::EditorWarningBar( QWidget* parent, const QPixmap& icon, const QString& message ) :
+	QWidget( parent ) {
 	mLayout = new QHBoxLayout( this );
 
 	QPalette p( palette() );

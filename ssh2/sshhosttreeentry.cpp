@@ -11,7 +11,8 @@ QIcon SshHostTreeEntry::sLogIcon;
 
 #define GUTTER_LOG      1
 
-SshHostTreeEntry::SshHostTreeEntry( SshHost* host ) : CustomTreeEntry( QIcon(), QString() ) {
+SshHostTreeEntry::SshHostTreeEntry( SshHost* host ) :
+	CustomTreeEntry( QIcon(), QString() ) {
 	mHost = host;
 	setData< SshHost* >( mHost );
 	mAnimationFrame = 0;

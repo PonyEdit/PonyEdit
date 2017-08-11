@@ -12,33 +12,32 @@ namespace Ui {
 class SshServerOptionsWidget;
 }
 
-class SshServerOptionsWidget : public OptionsDialogPage
-{
-Q_OBJECT
+class SshServerOptionsWidget : public OptionsDialogPage {
+	Q_OBJECT
 
-public:
-explicit SshServerOptionsWidget( QWidget *parent = 0 );
-~SshServerOptionsWidget();
+	public:
+		explicit SshServerOptionsWidget( QWidget *parent = 0 );
+		~SshServerOptionsWidget();
 
-QListWidgetItem* populateServers();
+		QListWidgetItem* populateServers();
 
-signals:
-void accepted();
-void rejected();
+	signals:
+		void accepted();
+		void rejected();
 
-public slots:
-void accept();
-void reject();
-void serverClicked( QListWidgetItem *current, QListWidgetItem *previous = NULL );
-void serverNameUpdated( const QString& newName );
-void newServer();
-void deleteServer();
+	public slots:
+		void accept();
+		void reject();
+		void serverClicked( QListWidgetItem *current, QListWidgetItem *previous = NULL );
+		void serverNameUpdated( const QString& newName );
+		void newServer();
+		void deleteServer();
 
-private:
-Ui::SshServerOptionsWidget *ui;
+	private:
+		Ui::SshServerOptionsWidget *ui;
 
-OptionsDialog* mParent;
-QList< ServerConfigWidget* > mConfigWidgets;
+		OptionsDialog* mParent;
+		QList< ServerConfigWidget* > mConfigWidgets;
 };
 
-#endif	// SSHSERVEROPTIONSWIDGET_H
+#endif  // SSHSERVEROPTIONSWIDGET_H

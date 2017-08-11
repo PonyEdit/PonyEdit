@@ -6,7 +6,10 @@
 #include "syntaxdefxmlhandler.h"
 #include "syntaxrule.h"
 
-SyntaxDefinition::ContextDef::ContextDef() : fallthrough( false ), dynamic( false ), listIndex( 0 ),
+SyntaxDefinition::ContextDef::ContextDef() :
+	fallthrough( false ),
+	dynamic( false ),
+	listIndex( 0 ),
 	attributeLink( NULL ) {}
 SyntaxDefinition::ContextDef::~ContextDef() {}
 

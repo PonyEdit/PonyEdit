@@ -8,26 +8,25 @@ namespace Ui {
 class AdvancedOptionsWidget;
 }
 
-class AdvancedOptionsWidget : public OptionsDialogPage
-{
-Q_OBJECT
+class AdvancedOptionsWidget : public OptionsDialogPage {
+	Q_OBJECT
 
-public:
-explicit AdvancedOptionsWidget( QWidget *parent = 0 );
-~AdvancedOptionsWidget();
+	public:
+		explicit AdvancedOptionsWidget( QWidget *parent = 0 );
+		~AdvancedOptionsWidget();
 
-void apply();
+		void apply();
 
-private slots:
-void setTrace();
-void setDebug();
-void setInfo();
-void setWarn();
-void setError();
-void setFatal();
+	private slots:
+		void setTrace();
+		void setDebug();
+		void setInfo();
+		void setWarn();
+		void setError();
+		void setFatal();
 
-private:
-Ui::AdvancedOptionsWidget *ui;
+	private:
+		Ui::AdvancedOptionsWidget *ui;
 };
 
-#endif	// ADVANCEDOPTIONSWIDGET_H
+#endif  // ADVANCEDOPTIONSWIDGET_H

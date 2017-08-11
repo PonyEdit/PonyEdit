@@ -4,7 +4,8 @@
 DialogRethreader* DialogRethreader::sInstance;
 int DialogRethreader::sRunDialogEventId;
 
-DialogRethreader::DialogRethreader() : QObject( 0 ) {
+DialogRethreader::DialogRethreader() :
+	QObject( 0 ) {
 	sInstance = this;
 	sRunDialogEventId = QEvent::registerEventType();
 }

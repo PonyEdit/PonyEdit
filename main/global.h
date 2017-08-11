@@ -16,4 +16,4 @@
 // #define UNLOCK_MUTEX(x) { //qDebug() << "Unlocking mutex " #x " at line " << __LINE__ << " in file " << __FILE__ << "
 // in object " << (void*)this << ", thread " << (void*)QThread::currentThread(); x.unlock(); }
 
-#endif	// GLOBAL_H
+#endif  // GLOBAL_H
