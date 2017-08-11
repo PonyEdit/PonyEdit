@@ -1,23 +1,22 @@
 #ifndef EDITORWARNINGBAR_H
 #define EDITORWARNINGBAR_H
 
-#include <QWidget>
 #include <QHBoxLayout>
+#include <QWidget>
 
-class EditorWarningBar : public QWidget
-{
+class EditorWarningBar : public QWidget {
 	Q_OBJECT
 
-public:
-	EditorWarningBar(QWidget* parent, const QPixmap& icon, const QString& message);
-	void addButton(const QString& label, QObject* callbackTarget, const char* callbackMethod);
-	void addCloseButton();
+	public:
+		EditorWarningBar( QWidget* parent, const QPixmap& icon, const QString& message );
+		void addButton( const QString& label, QObject* callbackTarget, const char* callbackMethod );
+		void addCloseButton();
 
-public slots:
-	void closeAndDestroy();
+	public slots:
+		void closeAndDestroy();
 
-private:
-	QHBoxLayout* mLayout;
+	private:
+		QHBoxLayout* mLayout;
 };
 
-#endif // EDITORWARNINGBAR_H
+#endif  // EDITORWARNINGBAR_H

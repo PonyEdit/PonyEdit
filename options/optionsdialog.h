@@ -1,41 +1,40 @@
 #ifndef OPTIONSDIALOG_H
 #define OPTIONSDIALOG_H
 
-#include <QDialog>
 #include <QAbstractButton>
+#include <QDialog>
 #include <QList>
-#include "optionsdialogpage.h"
-#include <QToolButton>
 #include <QMap>
+#include <QToolButton>
+#include "optionsdialogpage.h"
 
 class FontOptionsWidget;
 
 namespace Ui {
-    class OptionsDialog;
+class OptionsDialog;
 }
 
-class OptionsDialog : public QDialog
-{
-    Q_OBJECT
+class OptionsDialog : public QDialog {
+	Q_OBJECT
 
-public:
-	enum Options { Editor, SshServers, FontsAndColors, Startup, Logging, NumOptions };
+	public:
+		enum Options { Editor, SshServers, FontsAndColors, Startup, Logging, NumOptions };
 
-	explicit OptionsDialog(QWidget *parent = 0);
-    ~OptionsDialog();
+		explicit OptionsDialog( QWidget *parent = 0 );
+		~OptionsDialog();
 
-private slots:
-	void buttonClicked(QAbstractButton *button);
-	void saveOptions();
-	void pageClicked();
-	void pageClicked(QToolButton* page);
+	private slots:
+		void buttonClicked( QAbstractButton *button );
+		void saveOptions();
+		void pageClicked();
+		void pageClicked( QToolButton* page );
 
-private:
-	void addPage(QToolButton* button, OptionsDialogPage* page);
+	private:
+		void addPage( QToolButton* button, OptionsDialogPage* page );
 
-	Ui::OptionsDialog* ui;
-	QList<OptionsDialogPage*> mPages;
-	QMap<QToolButton*, OptionsDialogPage*> mPageMap;
+		Ui::OptionsDialog* ui;
+		QList< OptionsDialogPage* > mPages;
+		QMap< QToolButton*, OptionsDialogPage* > mPageMap;
 };
 
-#endif // OPTIONSDIALOG_H
+#endif  // OPTIONSDIALOG_H

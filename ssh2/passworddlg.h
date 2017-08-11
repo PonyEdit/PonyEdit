@@ -4,22 +4,21 @@
 #include "threadcrossingdialog.h"
 
 namespace Ui {
-    class PasswordDlg;
+class PasswordDlg;
 }
 
-class PasswordDlg : public ThreadCrossingDialog
-{
-    Q_OBJECT
+class PasswordDlg : public ThreadCrossingDialog {
+	Q_OBJECT
 
-public:
-    explicit PasswordDlg(QWidget *parent = 0);
-    ~PasswordDlg();
+	public:
+		explicit PasswordDlg( QWidget *parent = 0 );
+		~PasswordDlg();
 
-	virtual void setOptions(const QVariantMap &options);
-	virtual QVariantMap getResult();
+		virtual void setOptions( const QVariantMap &options );
+		virtual QVariantMap getResult();
 
-private:
-    Ui::PasswordDlg *ui;
+	private:
+		Ui::PasswordDlg *ui;
 };
 
-#endif // PASSWORDDLG_H
+#endif  // PASSWORDDLG_H

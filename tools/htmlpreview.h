@@ -6,29 +6,28 @@
 #include "main/mainwindow.h"
 
 namespace Ui {
-    class HTMLPreview;
+class HTMLPreview;
 }
 
-class HTMLPreview : public QWidget
-{
-    Q_OBJECT
+class HTMLPreview : public QWidget {
+	Q_OBJECT
 
-public:
-	explicit HTMLPreview(MainWindow *parent = 0);
-    ~HTMLPreview();
+	public:
+		explicit HTMLPreview( MainWindow *parent = 0 );
+		~HTMLPreview();
 
-	void displayHTML(QString html);
-	void displayURL();
+		void displayHTML( QString html );
+		void displayURL();
 
-public slots:
-	void fileSaved();
-	void fileSelected(BaseFile *file);
-	void fileChanged();
-	void manualRefresh();
+	public slots:
+		void fileSaved();
+		void fileSelected( BaseFile *file );
+		void fileChanged();
+		void manualRefresh();
 
-private:
-    Ui::HTMLPreview *ui;
-	MainWindow *mParent;
+	private:
+		Ui::HTMLPreview *ui;
+		MainWindow *mParent;
 };
 
-#endif // HTMLPREVIEW_H
+#endif  // HTMLPREVIEW_H

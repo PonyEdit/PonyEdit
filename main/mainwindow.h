@@ -1,13 +1,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QtWidgets/QMainWindow>
-#include <QStatusBar>
-#include <QTextEdit>
-#include <QStatusBar>
-#include <QToolButton>
 #include <QLabel>
+#include <QStatusBar>
+#include <QStatusBar>
+#include <QtWidgets/QMainWindow>
+#include <QTextEdit>
 #include <QTimer>
+#include <QToolButton>
 
 #include "file/location.h"
 #include "windowmanager.h"
@@ -21,133 +21,137 @@ class UnsavedChangesDialog;
 class WindowManager;
 
 #ifdef Q_OS_MAC
-extern void qt_mac_set_dock_menu(QMenu *menu);
+extern void qt_mac_set_dock_menu( QMenu *menu );
 #endif
 
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
+class MainWindow : public QMainWindow {
+	Q_OBJECT
 
-public:
-    MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+	public:
+		MainWindow( QWidget *parent = 0 );
+		~MainWindow();
 
-public slots:
-	void newFile();
-	void openFile();
-	void openSingleFile();
-	void openSingleFile(const Location& loc);
-	void saveFile();
-	void saveFileAs();
-	void saveAllFiles();
-	void closeFile();
-	void closeAllFiles();
-	void closeAllExceptCurrentFile();
-	void fileSelected(BaseFile* file);
+	public slots:
+		void newFile();
+		void openFile();
+		void openSingleFile();
+		void openSingleFile( const Location& loc );
+		void saveFile();
+		void saveFileAs();
+		void saveAllFiles();
+		void closeFile();
+		void closeAllFiles();
+		void closeAllExceptCurrentFile();
+		void fileSelected( BaseFile* file );
 
-	void print();
+		void print();
 
-	void updateTitle();
-	void updateTitle(BaseFile* file);
+		void updateTitle();
+		void updateTitle( BaseFile* file );
 
-	void undo();
-	void redo();
-	void cut();
-	void copy();
-	void paste();
-	void selectAll();
+		void undo();
+		void redo();
+		void cut();
+		void copy();
+		void paste();
+		void selectAll();
 
-	void deleteLine();
+		void deleteLine();
 
-	void showGotoLine();
+		void showGotoLine();
 
-	void showAdvancedSearch();
+		void showAdvancedSearch();
 
-	void resetZoom();
-	void zoomIn();
-	void zoomOut();
+		void resetZoom();
+		void zoomIn();
+		void zoomOut();
 
-	void toggleFullScreen();
+		void toggleFullScreen();
 
-	void showHTMLPreview();
-	void closeHTMLPreview(bool visible);
-	void options();
+		void showHTMLPreview();
+		void closeHTMLPreview( bool visible );
+		void options();
 
-	void contextHelp();
-	void about();
-	void checkForUpdates();
+		void contextHelp();
+		void about();
+		void checkForUpdates();
 
-	void showErrorMessage(QString error);
-	void showStatusMessage(QString message);
+		void showErrorMessage( QString error );
+		void showStatusMessage( QString message );
 
-	void syntaxMenuOptionClicked();
+		void syntaxMenuOptionClicked();
 
-	void switchToQuickList();
-	void switchtoTabbedList();
+		void switchToQuickList();
+		void switchtoTabbedList();
 
-	void currentEditorChanged();
-	void updateSyntaxSelection();
+		void currentEditorChanged();
+		void updateSyntaxSelection();
 
-	Editor* getCurrentEditor();
+		Editor* getCurrentEditor();
 
-	void openFileListChanged();
-	void viewSplittingChanged();
+		void openFileListChanged();
+		void viewSplittingChanged();
 
-	void registerContextMenuItem(QDockWidget* widget) { mMenuControlledDockWidgets.append(widget); }
-	void registerContextMenuItem(QToolBar* toolbar) { mMenuControlledToolBar.append(toolbar); }
+		void registerContextMenuItem( QDockWidget* widget ) {
+			mMenuControlledDockWidgets.append( widget );
+		}
 
-protected:
-	void closeEvent(QCloseEvent* event);
-	void dragEnterEvent(QDragEnterEvent *);
-	void dropEvent(QDropEvent *);
+		void registerContextMenuItem( QToolBar* toolbar ) {
+			mMenuControlledToolBar.append( toolbar );
+		}
 
-	QMenu *createPopupMenu();
+	protected:
+		void closeEvent( QCloseEvent* event );
+		void dragEnterEvent( QDragEnterEvent * );
+		void dropEvent( QDropEvent * );
 
-private:
-	void createToolbar();
-	void createFileMenu();
-	void createViewMenu();
-	void createEditMenu();
-	void createToolsMenu();
-	void createWindowMenu();
-	void createHelpMenu();
+		QMenu *createPopupMenu();
 
-	void createShortcuts();
+	private:
+		void createToolbar();
+		void createFileMenu();
+		void createViewMenu();
+		void createEditMenu();
+		void createToolsMenu();
+		void createWindowMenu();
+		void createHelpMenu();
 
-	void createMacDockMenu();
+		void createShortcuts();
 
-	void restoreState();
+		void createMacDockMenu();
 
-	void updateRecentFilesMenu();
-	void addRecentFile(Location loc);
+		void restoreState();
 
-	void nextStartupPrompt();
+		void updateRecentFilesMenu();
+		void addRecentFile( Location loc );
 
-	FileList* mFileList;
-	TabbedFileList* mTabbedFileList;
-	QStatusBar* mStatusBar;
-	QLabel* mStatusLine;
+		void nextStartupPrompt();
 
-	QList<Location> mRecentFiles;
-	QMenu* mRecentFilesMenu;
+		FileList* mFileList;
+		TabbedFileList* mTabbedFileList;
+		QStatusBar* mStatusBar;
+		QLabel* mStatusLine;
 
-	QAction* mQuickListMenuItem;
-	QAction* mTabbedListMenuItem;
+		QList< Location > mRecentFiles;
+		QMenu* mRecentFilesMenu;
 
-	QList<QAction*> mActionsRequiringFiles;
-	QList<QAction*> mActionsRequiringSplitViews;
+		QAction* mQuickListMenuItem;
+		QAction* mTabbedListMenuItem;
 
-	QMap<QString, QAction*> mSyntaxMenuEntries;
-	QAction* mCurrentSyntaxMenuItem;
-	QMenu* mSyntaxMenu;
+		QList< QAction* > mActionsRequiringFiles;
+		QList< QAction* > mActionsRequiringSplitViews;
 
-	QList<QDockWidget*> mMenuControlledDockWidgets;
-	QList<QToolBar*> mMenuControlledToolBar;
-	UnsavedChangesDialog* mUnsavedChangesDialog;
+		QMap< QString, QAction* > mSyntaxMenuEntries;
+		QAction* mCurrentSyntaxMenuItem;
+		QMenu* mSyntaxMenu;
 
-	bool mWasMaximized;
+		QList< QDockWidget* > mMenuControlledDockWidgets;
+		QList< QToolBar* > mMenuControlledToolBar;
+		UnsavedChangesDialog* mUnsavedChangesDialog;
+
+		bool mWasMaximized;
 };
 
 extern MainWindow* gMainWindow;
 
-#endif // MAINWINDOW_H
+#endif  // MAINWINDOW_H

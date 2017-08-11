@@ -1,6 +1,4 @@
 #include "optionsdialogpage.h"
 
-OptionsDialogPage::OptionsDialogPage(QWidget *parent) :
-    QWidget(parent)
-{
-}
+OptionsDialogPage::OptionsDialogPage( QWidget *parent ) :
+	QWidget( parent ) {}

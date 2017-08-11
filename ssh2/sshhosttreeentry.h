@@ -1,36 +1,38 @@
 #ifndef SSHHOSTTREEENTRY_H
 #define SSHHOSTTREEENTRY_H
 
-#include "main/customtreeentry.h"
 #include <QTextOption>
+#include "main/customtreeentry.h"
 
 
 class SshHost;
-class SshHostTreeEntry : public CustomTreeEntry
-{
+class SshHostTreeEntry : public CustomTreeEntry {
 	Q_OBJECT
 
-public:
-	SshHostTreeEntry(SshHost* host);
+	public:
+		SshHostTreeEntry( SshHost* host );
 
-	//	Custom drawing stuff
-	virtual bool isCustomDrawn() const { return true; }
-	virtual void customDraw(QPainter* painter, const QStyleOptionViewItem& option);
+// Custom drawing stuff
+		virtual bool isCustomDrawn() const {
+			return true;
+		}
 
-private slots:
-	void handleGutterIconClick(int iconId);
+		virtual void customDraw( QPainter* painter, const QStyleOptionViewItem& option );
 
-private:
-	static void initializeCustomDrawKit();
-	static bool sCustomDrawKitInitialized;
-	static QTextOption sLabelTextOption;
-	static QIcon sDisconnectedIcon;
-	static QIcon sConnectingIcon[4];
-	static QIcon sConnectedIcon;
-	static QIcon sLogIcon;
+	private slots:
+		void handleGutterIconClick( int iconId );
 
-	SshHost* mHost;
-	int mAnimationFrame;
+	private:
+		static void initializeCustomDrawKit();
+		static bool sCustomDrawKitInitialized;
+		static QTextOption sLabelTextOption;
+		static QIcon sDisconnectedIcon;
+		static QIcon sConnectingIcon[4];
+		static QIcon sConnectedIcon;
+		static QIcon sLogIcon;
+
+		SshHost* mHost;
+		int mAnimationFrame;
 };
 
-#endif // SSHHOSTTREEENTRY_H
+#endif  // SSHHOSTTREEENTRY_H

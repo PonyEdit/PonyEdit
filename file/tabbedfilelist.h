@@ -6,29 +6,27 @@
 #include <QDockWidget>
 #include <QTabBar>
 
-class TabbedFileList : public QDockWidget
-{
-    Q_OBJECT
-public:
-	explicit TabbedFileList(QWidget *parent = 0);
+class TabbedFileList : public QDockWidget {
+	Q_OBJECT
 
-	int findTab(BaseFile* file);
+	public:
+		explicit TabbedFileList( QWidget *parent = 0 );
 
-signals:
+		int findTab( BaseFile* file );
 
-public slots:
+	signals:
+	public slots:
+	private slots:
+		void fileOpened( BaseFile* file );
+		void fileClosed( BaseFile* file );
+		void fileSelected( BaseFile* file );
+		void fileChanged();
 
-private slots:
-	void fileOpened(BaseFile* file);
-	void fileClosed(BaseFile* file);
-	void fileSelected(BaseFile* file);
-	void fileChanged();
+		void currentChanged( int index );
+		void tabCloseRequested( int index );
 
-	void currentChanged(int index);
-	void tabCloseRequested(int index);
-
-private:
-	QTabBar* mTabs;
+	private:
+		QTabBar* mTabs;
 };
 
-#endif // TABBEDFILELIST_H
+#endif  // TABBEDFILELIST_H

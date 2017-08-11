@@ -7,49 +7,50 @@
 struct _LIBSSH2_CHANNEL;
 typedef _LIBSSH2_CHANNEL LIBSSH2_CHANNEL;
 
-class ShellChannel : public SshChannel
-{
+class ShellChannel : public SshChannel {
 	Q_OBJECT
 
-public:
-	ShellChannel(SshHost* host, bool machineReadable = true, const QByteArray& ptyType = "vanilla");
-	//	Pty types = vanilla, vt102, ansi or xterm.
+	public:
+		ShellChannel( SshHost* host, bool machineReadable = true, const QByteArray& ptyType = "vanilla" );
 
-	bool update();
-	virtual int getConnectionScore();
-	virtual QString getConnectionDescription();
-	virtual Type getType() { return Shell; }
+// Pty types = vanilla, vt102, ansi or xterm.
 
-signals:
-	void connected();
-	void error(QString message);
+		bool update();
+		virtual int getConnectionScore();
+		virtual QString getConnectionDescription();
+		virtual Type getType() {
+			return Shell;
+		}
 
-protected:
-	struct ReadReply { bool readAgain; QByteArray data; };
-	enum SendResponse { SendAgain, SendFail, SendSucceed };
-	enum InternalStatus { _OpenSession = 30, _RequestPty = 31, _StartShell = 32, _SendInit = 33, _WaitForInitReply = 34 };
+	signals:
+		void connected();
+		void error( QString message );
 
-	virtual void shellReady();
-	bool handleOpening();
+	protected:
+		struct ReadReply { bool readAgain; QByteArray data; };
+		enum SendResponse { SendAgain, SendFail, SendSucceed };
+		enum InternalStatus { _OpenSession = 30, _RequestPty = 31, _StartShell = 32, _SendInit = 33, _WaitForInitReply = 34 };
 
-	SendResponse sendData(const QByteArray& data);
-	ReadReply readUntilPrompt();
-	ReadReply readUntil(const QByteArray& marker);
+		virtual void shellReady();
+		bool handleOpening();
 
-	bool mainUpdate();
+		SendResponse sendData( const QByteArray& data );
+		ReadReply readUntilPrompt();
+		ReadReply readUntil( const QByteArray& marker );
 
-	LIBSSH2_CHANNEL* mHandle;
+		bool mainUpdate();
 
-	QByteArray mReadBuffer;
-	char mScratchBuffer[SSH_SHELL_BUFFER_SIZE];
+		LIBSSH2_CHANNEL* mHandle;
 
-private:
-	void setInternalStatus(InternalStatus newStatus);
-	InternalStatus mInternalStatus;
+		QByteArray mReadBuffer;
+		char mScratchBuffer[SSH_SHELL_BUFFER_SIZE];
 
-	bool mMachineReadable;
-	QByteArray mPtyType;
+	private:
+		void setInternalStatus( InternalStatus newStatus );
+		InternalStatus mInternalStatus;
+
+		bool mMachineReadable;
+		QByteArray mPtyType;
 };
 
-#endif // SHELLCHANNEL_H
-
+#endif  // SHELLCHANNEL_H

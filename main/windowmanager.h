@@ -1,117 +1,129 @@
 #ifndef WINDOWMANAGER_H
 #define WINDOWMANAGER_H
 
-#include <QWidget>
-#include <QSplitter>
 #include <QList>
 #include <QMap>
+#include <QSplitter>
 #include <QVBoxLayout>
+#include <QWidget>
 
 #include "editor/editor.h"
 #include "file/basefile.h"
-#include "searchbar.h"
 #include "mainwindow.h"
 #include "regexptester.h"
-#include "searchresults.h"
+#include "searchbar.h"
 #include "searchresultmodel.h"
+#include "searchresults.h"
 
 class MainWindow;
 class EditorPanel;
 
-class WindowManager : public QWidget
-{
-    Q_OBJECT
-public:
-    explicit WindowManager(QWidget *parent = 0);
-	~WindowManager();
+class WindowManager : public QWidget {
+	Q_OBJECT
 
-	void displayFile(BaseFile *file);
-	void displayLocation(const Location& location);
+	public:
+		explicit WindowManager( QWidget *parent = 0 );
+		~WindowManager();
 
-	BaseFile* getCurrentFile();
-	Editor* currentEditor();
+		void displayFile( BaseFile *file );
+		void displayLocation( const Location& location );
 
-	void setCurrentEditorPanel(EditorPanel* stack);
-	void editorFocusSet(CodeEditor* newFocus);
+		BaseFile* getCurrentFile();
+		Editor* currentEditor();
 
-	inline EditorPanel* getCurrentPanel() const { return mCurrentEditorPanel; }
-	inline void lockEditorSelection() { mEditorSelectionLocked = true; }
-	inline void unlockEditorSelection() { mEditorSelectionLocked = false; }
-	EditorPanel* getFirstPanel();
-	EditorPanel* getLastPanel();
+		void setCurrentEditorPanel( EditorPanel* stack );
+		void editorFocusSet( CodeEditor* newFocus );
 
-	void showSearchResults(const QList<SearchResultModel::Result>& results, bool showReplaceOptions);
-	void showAndSelect(const Location& location, int lineNumber, int start, int length);
-	void hideSearchResults();
+		inline EditorPanel* getCurrentPanel() const {
+			return mCurrentEditorPanel;
+		}
 
-signals:
-	void currentChanged();
-	void splitChanged();
+		inline void lockEditorSelection() {
+			mEditorSelectionLocked = true;
+		}
 
-public slots:
-	void fileClosed(BaseFile* file);
+		inline void unlockEditorSelection() {
+			mEditorSelectionLocked = false;
+		}
 
-	void findNext();
-	void findPrevious();
+		EditorPanel* getFirstPanel();
+		EditorPanel* getLastPanel();
 
-	void findInCurrentEditor(const QString& text, bool backwards, bool caseSensitive = false, bool useRegExp = false);
-	void replaceInCurrentEditor(const QString& text, const QString& replaceText, bool all);
-	void searchInFiles(const QList<BaseFile*> files, const QString& text, bool caseSensitive, bool useRegExp, bool showReplaceOptions);
+		void showSearchResults( const QList< SearchResultModel::Result >& results, bool showReplaceOptions );
+		void showAndSelect( const Location& location, int lineNumber, int start, int length );
+		void hideSearchResults();
 
-	void showSearchBar();
-	void hideSearchBar();
-	void showRegExpTester();
+	signals:
+		void currentChanged();
+		void splitChanged();
 
-	void previousWindow();
-	void nextWindow();
+	public slots:
+		void fileClosed( BaseFile* file );
 
-	void notifyEditorChanged(EditorPanel* stack);	//	Called by EditorStacks, to notify the WindowManager when their current editor changes.
+		void findNext();
+		void findPrevious();
 
-	void splitVertically();
-	void splitHorizontally();
-	void removeSplit();
-	void removeAllSplits();
-	bool isSplit();
+		void findInCurrentEditor( const QString& text, bool backwards, bool caseSensitive = false, bool useRegExp = false );
+		void replaceInCurrentEditor( const QString& text, const QString& replaceText, bool all );
+		void searchInFiles( const QList< BaseFile* > files,
+		                    const QString& text,
+		                    bool caseSensitive,
+		                    bool useRegExp,
+		                    bool showReplaceOptions );
 
-	void nextSplit();
-	void previousSplit();
+		void showSearchBar();
+		void hideSearchBar();
+		void showRegExpTester();
 
-private:
-	int find(Editor* editor, const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true);
-	int replace(Editor* editor, const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegexp, bool all);
+		void previousWindow();
+		void nextWindow();
 
-	void createSearchBar();
-	void createRegExpTester();
-	void createSearchResults();
+		void notifyEditorChanged( EditorPanel* stack ); // Called by EditorStacks, to notify the WindowManager
+		                                                // when
+		                                                // their current editor changes.
 
-	MainWindow *mParent;
+		void splitVertically();
+		void splitHorizontally();
+		void removeSplit();
+		void removeAllSplits();
+		bool isSplit();
 
-	EditorPanel* mCurrentEditorPanel;
-	bool mEditorSelectionLocked;	//	While rearranging editors, it is a good idea to lock editor seleciton.
+		void nextSplit();
+		void previousSplit();
 
-	EditorPanel* mRootEditorPanel;
-	QLayout* mLayout;
+	private:
+		int find( Editor* editor, const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true );
+		int replace( Editor* editor,
+		             const QString& findText,
+		             const QString& replaceText,
+		             bool caseSensitive,
+		             bool useRegexp,
+		             bool all );
 
-	QDockWidget* mSearchBarWrapper;
-	SearchBar* mSearchBar;
+		void createSearchBar();
+		void createRegExpTester();
+		void createSearchResults();
 
-	QDockWidget* mRegExpTesterWrapper;
-	RegExpTester* mRegExpTester;
+		MainWindow *mParent;
 
-	QDockWidget* mSearchResultsWrapper;
-	SearchResults* mSearchResults;
+		EditorPanel* mCurrentEditorPanel;
+		bool mEditorSelectionLocked;    // While rearranging editors, it is a good idea to lock editor
+		                                // seleciton.
+
+		EditorPanel* mRootEditorPanel;
+		QLayout* mLayout;
+
+		QDockWidget* mSearchBarWrapper;
+		SearchBar* mSearchBar;
+
+		QDockWidget* mRegExpTesterWrapper;
+		RegExpTester* mRegExpTester;
+
+		QDockWidget* mSearchResultsWrapper;
+		SearchResults* mSearchResults;
 };
 
-//	One and only WindowManager object, created by MainWindow.
+// One and only WindowManager object, created by MainWindow.
 extern WindowManager* gWindowManager;
 
-#endif // WINDOWMANAGER_H
-
-
-
-
-
-
-
-
-
+#endif  // WINDOWMANAGER_H

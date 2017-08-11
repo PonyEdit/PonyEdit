@@ -8,18 +8,18 @@ class Editor;
 class BaseFile;
 class OpenFileTreeView;
 
-class FileList : public QDockWidget
-{
-    Q_OBJECT
-public:
-    explicit FileList(QWidget *parent = 0);
+class FileList : public QDockWidget {
+	Q_OBJECT
 
-private slots:
-	void selectFile(BaseFile* file);
-	void fileSelected();
+	public:
+		explicit FileList( QWidget *parent = 0 );
 
-private:
-	OpenFileTreeView* mTreeView;
+	private slots:
+		void selectFile( BaseFile* file );
+		void fileSelected();
+
+	private:
+		OpenFileTreeView* mTreeView;
 };
 
-#endif // FILELIST_H
+#endif  // FILELIST_H

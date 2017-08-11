@@ -1,66 +1,71 @@
 #ifndef SLAVECHANNEL_H
 #define SLAVECHANNEL_H
 
-#include "shellchannel.h"
 #include <QByteArray>
 #include <QMap>
 #include <QSet>
+#include "shellchannel.h"
 
 class SshHost;
 class SlaveFile;
 class SlaveRequest;
-class SlaveChannel : public ShellChannel
-{
-    Q_OBJECT
-public:
-	explicit SlaveChannel(SshHost* host, bool sudo);
-	~SlaveChannel();
-	bool update();
+class SlaveChannel : public ShellChannel {
+	Q_OBJECT
 
-	static void initialize();
-	virtual Type getType() { return mSudo ? SudoSlave : Slave; }
+	public:
+		explicit SlaveChannel( SshHost* host, bool sudo );
+		~SlaveChannel();
+		bool update();
 
-	inline bool handlesFileBuffer(SlaveFile* file) { return mBufferIds.contains(file); }
+		static void initialize();
+		virtual Type getType() {
+			return mSudo ? SudoSlave : Slave;
+		}
 
-signals:
-	void channelShutdown();	//	Used to signal associated SlaveFiles.
+		inline bool handlesFileBuffer( SlaveFile* file ) {
+			return mBufferIds.contains( file );
+		}
 
-protected:
-	void shellReady();
-	void finalizeSlaveInit(const QByteArray& initString);
+	signals:
+		void channelShutdown(); // Used to signal associated SlaveFiles.
 
-	virtual QByteArray getSlaveRun(bool sudo);
+	protected:
+		void shellReady();
+		void finalizeSlaveInit( const QByteArray& initString );
 
-	virtual bool mainUpdate();
+		virtual QByteArray getSlaveRun( bool sudo );
 
-	virtual int getConnectionScore();
-	virtual QString getConnectionDescription();
+		virtual bool mainUpdate();
 
-	void criticalError(const QString& error);
+		virtual int getConnectionScore();
+		virtual QString getConnectionDescription();
 
-protected:
-	enum InternalStatus { _WaitingForShell = 40, _CheckingSlave = 41, _CheckingSlaveResponse = 42,
-		_StartingSlaveUploader = 43, _WaitingForSlaveUploader = 44, _UploadingSlaveScript = 45, _WaitingForSlaveUploadResponse = 46,
-		_SendingSudoPassword = 47, _WaitingForRequests = 48, _SendingRequest = 49 };
+		void criticalError( const QString& error );
 
-	bool handleOpening();
-	void setInternalStatus(InternalStatus newStatus);
+	protected:
+		enum InternalStatus { _WaitingForShell = 40, _CheckingSlave = 41, _CheckingSlaveResponse = 42,
+			              _StartingSlaveUploader = 43, _WaitingForSlaveUploader = 44, _UploadingSlaveScript = 45,
+			              _WaitingForSlaveUploadResponse = 46,
+			              _SendingSudoPassword = 47, _WaitingForRequests = 48, _SendingRequest = 49 };
 
-	InternalStatus mInternalStatus;
-	SlaveRequest* mCurrentRequest;
-	int mNextMessageId;
+		bool handleOpening();
+		void setInternalStatus( InternalStatus newStatus );
 
-	bool mSudo;
-	QByteArray mSudoPasswordAttempt;
-	bool mTriedSudoPassword;
+		InternalStatus mInternalStatus;
+		SlaveRequest* mCurrentRequest;
+		int mNextMessageId;
 
-	QMap<int, SlaveRequest*> mRequestsAwaitingReplies;
-	QMap<SlaveFile*, int> mBufferIds;
+		bool mSudo;
+		QByteArray mSudoPasswordAttempt;
+		bool mTriedSudoPassword;
 
-	static QByteArray sSlaveScript;
+		QMap< int, SlaveRequest* > mRequestsAwaitingReplies;
+		QMap< SlaveFile*, int > mBufferIds;
 
-	static QByteArray sSlaveChannelInit;
-	static QByteArray sSlaveUpload;
+		static QByteArray sSlaveScript;
+
+		static QByteArray sSlaveChannelInit;
+		static QByteArray sSlaveUpload;
 };
 
-#endif // SLAVECHANNEL_H
+#endif  // SLAVECHANNEL_H

@@ -11,26 +11,32 @@
 
 class QTextDocument;
 
-class SyntaxHighlighter : public QSyntaxHighlighter
-{
+class SyntaxHighlighter : public QSyntaxHighlighter {
 	Q_OBJECT
 
-public:
-	SyntaxHighlighter(QTextDocument* parent, SyntaxDefinition* syntaxDef);
+	public:
+		SyntaxHighlighter( QTextDocument* parent, SyntaxDefinition* syntaxDef );
 
-	inline SyntaxDefinition* getSyntaxDefinition() const { return mSyntaxDefinition; }
-	void setSyntaxDefinition(SyntaxDefinition* definition);
+		inline SyntaxDefinition* getSyntaxDefinition() const {
+			return mSyntaxDefinition;
+		}
 
-protected:
-	void highlightBlock(const QString& text);
+		void setSyntaxDefinition( SyntaxDefinition* definition );
 
-private:
-	ContextDefLink duplicateDynamicContext(const ContextDefLink& source, const QStringList& captures) const;
-	void replaceDynamicRules(SyntaxRule* parent, QList<QSharedPointer<SyntaxRule> >* ruleList, const QStringList& captures) const;
-	void applyContextLink(const SyntaxDefinition::ContextLink* contextLink, QStack<ContextDefLink>* contextStack, QStringList* dynamicCaptures);
+	protected:
+		void highlightBlock( const QString& text );
 
-	SyntaxDefinition* mSyntaxDefinition;
-	QMap<QString, QColor> mDefaultColors;
+	private:
+		ContextDefLink duplicateDynamicContext( const ContextDefLink& source, const QStringList& captures ) const;
+		void replaceDynamicRules( SyntaxRule* parent,
+		                          QList< QSharedPointer< SyntaxRule > >* ruleList,
+		                          const QStringList& captures ) const;
+		void applyContextLink( const SyntaxDefinition::ContextLink* contextLink,
+		                       QStack< ContextDefLink >* contextStack,
+		                       QStringList* dynamicCaptures );
+
+		SyntaxDefinition* mSyntaxDefinition;
+		QMap< QString, QColor > mDefaultColors;
 };
 
-#endif // SYNTAXHIGHLIGHTER_H
+#endif  // SYNTAXHIGHLIGHTER_H

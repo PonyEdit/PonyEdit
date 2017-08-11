@@ -2,56 +2,56 @@
 #define CODEEDITOR_H
 
 #include <QPlainTextEdit>
-#include <QTextCursor>
 #include <QTextBlock>
+#include <QTextCursor>
 
 class LineNumberWidget;
 class SyntaxHighlighter;
 class BaseFile;
 class WindowManager;
 
-class CodeEditor : public QPlainTextEdit
-{
-    Q_OBJECT
-public:
-	CodeEditor(BaseFile* file, QWidget *parent = 0);
+class CodeEditor : public QPlainTextEdit {
+	Q_OBJECT
 
-	void lineNumberAreaPaintEvent(QPaintEvent *event);
-	int lineNumberAreaWidth();
+	public:
+		CodeEditor( BaseFile* file, QWidget *parent = 0 );
 
-	int firstNonWhiteSpace(const QTextBlock& block);
+		void lineNumberAreaPaintEvent( QPaintEvent *event );
+		int lineNumberAreaWidth();
 
-	void updateFont();
+		int firstNonWhiteSpace( const QTextBlock& block );
 
-	void zoomOut();
-	void zoomIn();
+		void updateFont();
 
-	void deleteLine();
+		void zoomOut();
+		void zoomIn();
 
-protected:
-	void resizeEvent(QResizeEvent *event);
-	void keyPressEvent(QKeyEvent* event);
-	void wheelEvent(QWheelEvent *e);
-	void applyIndent(QTextCursor& cursor, bool outdent);
-	void focusInEvent(QFocusEvent *e);
+		void deleteLine();
 
-public slots:
-	void undo();
-	void redo();
+	protected:
+		void resizeEvent( QResizeEvent *event );
+		void keyPressEvent( QKeyEvent* event );
+		void wheelEvent( QWheelEvent *e );
+		void applyIndent( QTextCursor& cursor, bool outdent );
+		void focusInEvent( QFocusEvent *e );
 
-private slots:
-	void updateLineNumberAreaWidth(int newBlockCount);
-	void updateLineNumberArea(const QRect &, int);
-	void highlightCurrentLine();
-	void highlightMatchingParenthesis();
+	public slots:
+		void undo();
+		void redo();
 
-private:
-	LineNumberWidget *mLineNumberWidget;
-	SyntaxHighlighter* mSyntaxHighlighter;
-	BaseFile* mFile;
+	private slots:
+		void updateLineNumberAreaWidth( int newBlockCount );
+		void updateLineNumberArea( const QRect &, int );
+		void highlightCurrentLine();
+		void highlightMatchingParenthesis();
 
-	QTextEdit::ExtraSelection mCurrentLine;
-	QList<QTextEdit::ExtraSelection> mMatchingParenthesis;
+	private:
+		LineNumberWidget *mLineNumberWidget;
+		SyntaxHighlighter* mSyntaxHighlighter;
+		BaseFile* mFile;
+
+		QTextEdit::ExtraSelection mCurrentLine;
+		QList< QTextEdit::ExtraSelection > mMatchingParenthesis;
 };
 
-#endif // CODEEDITOR_H
+#endif  // CODEEDITOR_H

@@ -4,15 +4,15 @@
 #include <QStyledItemDelegate>
 
 class CustomTreeModel;
-class CustomTreeDelegate : public QStyledItemDelegate
-{
-    Q_OBJECT
-public:
-	explicit CustomTreeDelegate(CustomTreeModel* model);
-	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+class CustomTreeDelegate : public QStyledItemDelegate {
+	Q_OBJECT
 
-private:
-	CustomTreeModel* mModel;
+	public:
+		explicit CustomTreeDelegate( CustomTreeModel* model );
+		void paint( QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index ) const;
+
+	private:
+		CustomTreeModel* mModel;
 };
 
-#endif // CUSTOMTREEDELEGATE_H
+#endif  // CUSTOMTREEDELEGATE_H

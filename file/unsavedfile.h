@@ -3,22 +3,20 @@
 
 #include "basefile.h"
 
-class UnsavedFile : public BaseFile
-{
-    Q_OBJECT
-public:
-	explicit UnsavedFile(const Location& location);
+class UnsavedFile : public BaseFile {
+	Q_OBJECT
 
-	BaseFile* newFile(const QString& content);
-	void open();
-	void save();
-	void close();
-	void refresh();
+	public:
+		explicit UnsavedFile( const Location& location );
 
-signals:
+		BaseFile* newFile( const QString& content );
+		void open();
+		void save();
+		void close();
+		void refresh();
 
-public slots:
-
+	signals:
+	public slots:
 };
 
-#endif // UNSAVEDFILE_H
+#endif  // UNSAVEDFILE_H

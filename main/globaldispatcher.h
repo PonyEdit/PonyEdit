@@ -6,45 +6,67 @@
 #include "file/location.h"
 
 //
-//	The global dispatch object (gDispatcher) is used to dispatch globally interesting signals
-//	eg; "SSH hosts list has been updated"
+// The global dispatch object (gDispatcher) is used to dispatch globally interesting signals
+// eg; "SSH hosts list has been updated"
 //
 
 class RemoteConnection;
-class GlobalDispatcher : public QObject
-{
+class GlobalDispatcher : public QObject {
 	Q_OBJECT
 
-public:
-	GlobalDispatcher() {}	//	Do not call outside of main(); just use gDispatcher instead.
-	void emitSshServersUpdated() { emit sshServersUpdated(); }
+	public:
+		GlobalDispatcher() {}   // Do not call outside of main(); just use gDispatcher instead.
+		void emitSshServersUpdated() {
+			emit sshServersUpdated();
+		}
 
-	void emitGeneralErrorMessage(QString error) { emit generalErrorMessage(error); }
-	void emitGeneralStatusMessage(QString message) { emit generalStatusMessage(message); }
+		void emitGeneralErrorMessage( QString error ) {
+			emit generalErrorMessage( error );
+		}
 
-	void emitLocationListSuccess(const QList<Location>& children, QString locationPath) { emit locationListSuccess(children, locationPath); }
-	void emitLocationListFailure(const QString& error, QString locationPath, bool permissionError) { emit locationListFailure(error, locationPath, permissionError); }
+		void emitGeneralStatusMessage( QString message ) {
+			emit generalStatusMessage( message );
+		}
 
-	void emitSelectFile(BaseFile* file) { emit selectFile(file); }
-	void emitSyntaxChanged(BaseFile* file) { emit syntaxChanged(file); }
-	void emitConnectionDropped(RemoteConnection* connection) { emit connectionDropped(connection); }
-	void emitOptionsChanged() { emit optionsChanged(); }
+		void emitLocationListSuccess( const QList< Location >& children, QString locationPath ) {
+			emit locationListSuccess( children, locationPath );
+		}
 
-signals:
-	void sshServersUpdated();
+		void emitLocationListFailure( const QString& error, QString locationPath, bool permissionError ) {
+			emit locationListFailure( error, locationPath, permissionError );
+		}
 
-	void generalErrorMessage(QString error);
-	void generalStatusMessage(QString message);
+		void emitSelectFile( BaseFile* file ) {
+			emit selectFile( file );
+		}
 
-	void locationListSuccess(const QList<Location>& children, QString locationPath);
-	void locationListFailure(const QString& error, QString locationPath, bool permissionError);
+		void emitSyntaxChanged( BaseFile* file ) {
+			emit syntaxChanged( file );
+		}
 
-	void selectFile(BaseFile* file);
-	void syntaxChanged(BaseFile* file);
-	void connectionDropped(RemoteConnection* connection);
-	void optionsChanged();
+		void emitConnectionDropped( RemoteConnection* connection ) {
+			emit connectionDropped( connection );
+		}
+
+		void emitOptionsChanged() {
+			emit optionsChanged();
+		}
+
+	signals:
+		void sshServersUpdated();
+
+		void generalErrorMessage( QString error );
+		void generalStatusMessage( QString message );
+
+		void locationListSuccess( const QList< Location >& children, QString locationPath );
+		void locationListFailure( const QString& error, QString locationPath, bool permissionError );
+
+		void selectFile( BaseFile* file );
+		void syntaxChanged( BaseFile* file );
+		void connectionDropped( RemoteConnection* connection );
+		void optionsChanged();
 };
 
 extern GlobalDispatcher* gDispatcher;
 
-#endif // GLOBALDISPATCHER_H
+#endif  // GLOBALDISPATCHER_H
