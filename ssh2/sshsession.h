@@ -107,8 +107,6 @@ class SshSession : public QObject {
 		                                     void** );
 
 		static void initializeLibrary();
-		static void manageSslMutex( int mode, int n, const char* file, int line );
-		static void sslThreadId( CRYPTO_THREADID* threadId );
 
 		void resetActivityCounter();
 
@@ -129,7 +127,6 @@ class SshSession : public QObject {
 		QSocketNotifier* mSocketExceptionNotifier;
 
 		static bool sLibsInitialized;
-		static QMap< int, QMutex* > sSslMutexes;
 
 		QList< SshChannel* > mChannels;
 		QMutex mChannelsLock;
