@@ -3,6 +3,7 @@
 
 #include <QByteArray>
 #include <QObject>
+
 #include "tools/callback.h"
 
 class XferRequest : public QObject {

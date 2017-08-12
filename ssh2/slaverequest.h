@@ -4,6 +4,7 @@
 #include <QByteArray>
 #include <QObject>
 #include <QVariant>
+
 #include "file/slavefile.h"
 #include "tools/callback.h"
 
@@ -34,9 +35,9 @@ class SlaveRequest : QObject {
 			return mRequest;
 		}
 
-// Requests to open files don't pass a file ptr in to the constructor; the attach this separate opening file pointer.
-// This is because slave channels use the mFile pointer to lock file-bound requests to the channels with corresponding
-// bufferIds.
+		// Requests to open files don't pass a file ptr in to the constructor; the attach this separate opening
+		// file pointer. This is because slave channels use the mFile pointer to lock file-bound requests to the
+		// channels with corresponding bufferIds.
 		inline SlaveFile* getOpeningFile() const {
 			return mOpeningFile;
 		}

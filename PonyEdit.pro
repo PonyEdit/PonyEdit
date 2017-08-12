@@ -49,25 +49,21 @@ macx {
     TARGET = PonyEdit
     LIBS += -lz
 
-    INCLUDEPATH += $$PWD/deps/include/ $$PWD/deps/include/libssh2/
-    LIBS        += -L$$PWD/deps/lib-osx
+    INCLUDEPATH += /usr/local/include
+    LIBS        += -L /usr/local/lib
 
     # Bundle dynamic libs in .app
     dylibs.path = Contents/MacOS
-    dylibs.files = $$PWD/deps/lib-osx/libssh2.1.dylib
-	dylibs.files += $$PWD/deps/lib-osx/libssl.1.0.0.dylib
-	dylibs.files += $$PWD/deps/lib-osx/libcrypto.1.0.0.dylib
+    dylibs.files = /usr/local/lib/libssh.dylib
     QMAKE_BUNDLE_DATA += dylibs
 
     # Post-build steps; configure executable to look in .app for dylibs.
-    QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/lib/libssh2.1.dylib @executable_path/libssh2.1.dylib $$OUT_PWD/PonyEdit.app/Contents/MacOS/PonyEdit;
-	QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/ssl/lib/libssl.1.0.0.dylib @executable_path/libssl.1.0.0.dylib $$OUT_PWD/PonyEdit.app/Contents/MacOS/PonyEdit;
-	QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/ssl/lib/libcrypto.1.0.0.dylib @executable_path/libcrypto.1.0.0.dylib $$OUT_PWD/PonyEdit.app/Contents/MacOS/PonyEdit;
+    QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/lib/libssh.dylib @executable_path/libssh.dylib $$OUT_PWD/PonyEdit.app/Contents/MacOS/PonyEdit;
 
 	QMAKE_CFLAGS += -Werror -Wunused-parameter
 	QMAKE_CXXFLAGS += -Werror -Wunused-parameter
 
-    LIBS	+= -lssh2 -lcrypto -lssl
+    LIBS += -lssh
 }
 
 QT		+= core widgets gui network xml script webengine webenginewidgets printsupport

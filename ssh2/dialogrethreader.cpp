@@ -1,4 +1,5 @@
 #include <QCoreApplication>
+
 #include "dialogrethreader.h"
 
 DialogRethreader* DialogRethreader::sInstance;

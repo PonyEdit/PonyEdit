@@ -1,7 +1,7 @@
-#include <libssh2.h>
 #include <QCryptographicHash>
 #include <QDebug>
 #include <QFile>
+
 #include "dialogrethreader.h"
 #include "file/slavefile.h"
 #include "main/tools.h"
@@ -26,7 +26,6 @@
 	"echo 'No Perl';" \
 	"fi\n"
 
-
 #define SLAVE_START_UPLOAD      " perl -e '" \
 	"mkdir \".ponyedit\" unless(-d \".ponyedit\");" \
 	"open F,\">.ponyedit/slave.pl\" or die \"Slave write error\\n\";" \
@@ -40,26 +39,6 @@
 	"close F;" \
 	"'&&" \
 	"[[SLAVE_RUN]]\n"
-
-/*
- #define SLAVE_START_UPLOAD	" perl -e '"\
- *                                                               "use List::Util qw(min);"\
- *                                                               "my $f=\".ponyedit/slave.pl\",$s=[[SLAVE_SIZE]],$d;"\
- *                                                               "mkdir \".ponyedit\" unless(-d \".ponyedit\");"\
- *                                                               "open F,\">$f\" or die \"Slave write error\\n\";"\
- *                                                               "print \"uploader ready\";"\
- *                                                               "while($s > 0)"\
- *                                                               "{"\
- *                                                                       "my $w=min $s,2048;"\
- *                                                                       "my $r=read STDIN,$d,$w;"\
- *                                                                       "die \"Slave upload error\\n\" if($r<$w);"\
- *                                                                       "$s-=$r;"\
- *                                                                       "print F $d;"\
- *                                                                       "}"\
- *                                                               "close F;"\
- *                                                       "'&&"\
- *                                                       "[[SLAVE_RUN]]\n"
- */
 
 QByteArray SlaveChannel::sSlaveChannelInit( SLAVE_INIT );
 QByteArray SlaveChannel::sSlaveScript;

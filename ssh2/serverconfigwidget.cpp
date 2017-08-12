@@ -1,9 +1,11 @@
 #include <QFileDialog>
 #include <QKeyEvent>
+
 #include "main/globaldispatcher.h"
 #include "main/tools.h"
 #include "serverconfigwidget.h"
 #include "sshhost.h"
+
 #include "ui_serverconfigwidget.h"
 
 ServerConfigWidget::ServerConfigWidget( QWidget *parent ) :

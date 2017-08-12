@@ -1,4 +1,5 @@
 #include <QDebug>
+
 #include "main/tools.h"
 #include "slaverequest.h"
 #include "tools/json.h"

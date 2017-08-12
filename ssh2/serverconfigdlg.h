@@ -2,6 +2,7 @@
 #define SERVERCONFIGDLG_H
 
 #include <QDialog>
+
 #include "serverconfigwidget.h"
 
 namespace Ui { class ServerConfigDlg; }

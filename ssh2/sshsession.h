@@ -7,19 +7,13 @@
 #include <QTime>
 #include <QWaitCondition>
 
+#include <libssh/callbacks.h>
+#include <libssh/libssh.h>
+
 //
 // Note: All SshSession objects should only be created or deleted in the main thread,
 // by SshHost..!
 //
-
-struct _LIBSSH2_SESSION;
-typedef struct _LIBSSH2_SESSION LIBSSH2_SESSION;
-struct _LIBSSH2_USERAUTH_KBDINT_PROMPT;
-typedef struct _LIBSSH2_USERAUTH_KBDINT_PROMPT LIBSSH2_USERAUTH_KBDINT_PROMPT;
-struct _LIBSSH2_USERAUTH_KBDINT_RESPONSE;
-typedef struct _LIBSSH2_USERAUTH_KBDINT_RESPONSE LIBSSH2_USERAUTH_KBDINT_RESPONSE;
-struct crypto_threadid_st;
-typedef struct crypto_threadid_st CRYPTO_THREADID;
 
 class SshHost;
 class SshChannel;
@@ -52,7 +46,7 @@ class SshSession : public QObject {
 
 		SshChannel* getMostConnectedChannel();  // Returns the SshChannel closest to completing its connection.
 
-		inline LIBSSH2_SESSION* sessionHandle() const {
+		inline ssh_session sessionHandle() const {
 			return mHandle;
 		}
 
@@ -67,7 +61,7 @@ class SshSession : public QObject {
 		void channelNeatlyClosed( SshChannel* channel );
 		void sessionClosed( SshSession* session );
 
-// Used interally:
+		// Used interally:
 		void killThread();
 
 	protected slots:
@@ -97,22 +91,38 @@ class SshSession : public QObject {
 		bool authenticatePublicKey();
 		bool authenticateAgent();
 		AuthMethods getAuthenticationMethods();
-		static void interactiveAuthCallback( const char*,
-		                                     int,
-		                                     const char*,
-		                                     int,
-		                                     int,
-		                                     const LIBSSH2_USERAUTH_KBDINT_PROMPT*,
-		                                     LIBSSH2_USERAUTH_KBDINT_RESPONSE*,
-		                                     void** );
+		/*static void interactiveAuthCallback( const char*,
+		 *                                    int,
+		 *                                    const char*,
+		 *                                    int,
+		 *                                    int,
+		 *                                    const LIBSSH2_USERAUTH_KBDINT_PROMPT*,
+		 *                                    LIBSSH2_USERAUTH_KBDINT_RESPONSE*,
+		 *                                    void** );
+		 */
 
 		static void initializeLibrary();
-		static void manageSslMutex( int mode, int n, const char* file, int line );
-		static void sslThreadId( CRYPTO_THREADID* threadId );
+
+		static int sshMutexInit( void ** ) {
+			return 0;
+		};
+		static int sshMutexDestroy( void ** ) {
+			return 0;
+		};
+
+		static int sshMutexLock( void ** );
+		static int sshMutexUnlock( void ** );
+		static unsigned long sshMutexThreadId();
+
+		struct ssh_threads_callbacks_struct* getSshCallbacks() {
+			return &sshThreadsCallbacks;
+		}
 
 		void resetActivityCounter();
 
 	private:
+		static struct ssh_threads_callbacks_struct sshThreadsCallbacks;
+
 		SshHost* mHost;
 		Status mStatus;
 		QString mErrorDetails;
@@ -124,7 +134,7 @@ class SshSession : public QObject {
 
 		SshSessionThread* mThread;
 		int mSocket;
-		LIBSSH2_SESSION* mHandle;
+		ssh_session mHandle;
 		QSocketNotifier* mSocketReadNotifier;
 		QSocketNotifier* mSocketExceptionNotifier;
 

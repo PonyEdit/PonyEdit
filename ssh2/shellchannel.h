@@ -1,11 +1,11 @@
 #ifndef SHELLCHANNEL_H
 #define SHELLCHANNEL_H
 
-#include "sshchannel.h"
-#define SSH_SHELL_BUFFER_SIZE 4096
+#include <libssh/libsshpp.hpp>
 
-struct _LIBSSH2_CHANNEL;
-typedef _LIBSSH2_CHANNEL LIBSSH2_CHANNEL;
+#include "sshchannel.h"
+
+#define SSH_SHELL_BUFFER_SIZE 4096
 
 class ShellChannel : public SshChannel {
 	Q_OBJECT
@@ -40,7 +40,7 @@ class ShellChannel : public SshChannel {
 
 		bool mainUpdate();
 
-		LIBSSH2_CHANNEL* mHandle;
+		ssh::Channel* mHandle;
 
 		QByteArray mReadBuffer;
 		char mScratchBuffer[SSH_SHELL_BUFFER_SIZE];

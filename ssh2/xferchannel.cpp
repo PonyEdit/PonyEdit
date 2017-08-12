@@ -1,6 +1,6 @@
-#include <libssh2.h>
 #include <QCryptographicHash>
 #include <QDebug>
+
 #include "main/tools.h"
 #include "sshhost.h"
 #include "xferchannel.h"
@@ -165,12 +165,10 @@ ShellChannel::ReadReply XferChannel::readBinaryData( int size ) {
 		}
 
 		// See if there's data waiting to be read, push it into the read buffer (raw)
-		int rc = libssh2_channel_read( mHandle, mScratchBuffer, SSH_SHELL_BUFFER_SIZE );
+		int rc = mHandle->read( mScratchBuffer, SSH_SHELL_BUFFER_SIZE );
 		if ( rc > 0 ) {
 			mReadBuffer.append( mScratchBuffer, rc );
-		} else if ( rc == LIBSSH2_ERROR_EAGAIN ||
-		            ( rc == -1 &&
-		              libssh2_session_last_errno( mSession->sessionHandle() ) == LIBSSH2_ERROR_EAGAIN ) ) {
+		} else if ( rc == SSH_AGAIN ) {
 			reply.readAgain = true;
 			return reply;
 		} else {

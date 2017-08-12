@@ -3,6 +3,7 @@
 
 #include <QByteArray>
 #include <QVariantMap>
+
 #include "tools/callback.h"
 
 class SFTPRequest {

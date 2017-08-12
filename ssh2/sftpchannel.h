@@ -2,6 +2,7 @@
 #define SFTPCHANNEL_H
 
 #include <QVariantMap>
+
 #include "sshchannel.h"
 
 struct _LIBSSH2_SFTP;
