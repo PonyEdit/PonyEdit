@@ -1,4 +1,5 @@
 #include <QStylePainter>
+
 #include "sshhost.h"
 #include "sshhosttreeentry.h"
 

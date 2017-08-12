@@ -1,5 +1,6 @@
 #include <QCryptographicHash>
 #include <QDebug>
+
 #include "xferrequest.h"
 
 XferRequest::XferRequest( bool sudo, const QByteArray& filename, const Callback& callback ) :

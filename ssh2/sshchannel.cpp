@@ -1,5 +1,5 @@
-#include <libssh2.h>
 #include <QDebug>
+
 #include "sshchannel.h"
 #include "sshhost.h"
 

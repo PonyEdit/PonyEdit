@@ -2,6 +2,7 @@
 #define HOSTKEYDLG_H
 
 #include <QDialog>
+
 #include "threadcrossingdialog.h"
 
 namespace Ui {

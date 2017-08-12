@@ -1,6 +1,5 @@
-#include <libssh2.h>
-#include <libssh2_sftp.h>
 #include <QDebug>
+
 #include "file/basefile.h"
 #include "sftpchannel.h"
 #include "sftprequest.h"

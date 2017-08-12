@@ -1,19 +1,21 @@
+#include <QDebug>
+#include <QSocketNotifier>
+
+#include <libssh/callbacks.h>
+#include <libssh/libssh.h>
+#include <libssh/server.h>
+#include <libssh/ssh2.h>
+
 #include "dialogrethreader.h"
 #include "hostkeydlg.h"
 #include "main/globaldispatcher.h"
 #include "main/ponyedit.h"
 #include "main/tools.h"
 #include "passworddlg.h"
+#include "QsLog.h"
 #include "sshchannel.h"
 #include "sshhost.h"
 #include "sshsession.h"
-
-#include <libssh2.h>
-#include <openssl/crypto.h>
-#include <openssl/opensslconf.h>
-#include <QDebug>
-#include <QSocketNotifier>
-#include "QsLog.h"
 
 #ifdef Q_OS_WIN
 	#include <windows.h>
@@ -30,9 +32,8 @@
 #define KEEPALIVE_MSEC ( 15 * 60 * 1000 )
 #define TIMEOUT_MSEC ( 20 * 60 * 1000 )
 
-// TODO: Check for an OpenSSL / LibSSH2 code that needs to be called on shutdown
-
 bool SshSession::sLibsInitialized;
+struct ssh_threads_callbacks_struct SshSession::sshThreadsCallbacks;
 QMap< int, QMutex* > SshSession::sSslMutexes;
 
 SshSession::SshSession( SshHost* host ) :
@@ -107,7 +108,7 @@ void SshSession::threadMain() {
 		holdingLock = false;
 
 		// Kick libssh2 over to non-blocking mode. QSocketNotifiers require non-blocking sockets.
-		libssh2_session_set_blocking( mHandle, false );
+		// libssh2_session_set_blocking( mHandle, false );
 
 		// Hook my socket to Qt's event loop, allowing me to receive signals on network events
 		mSocketReadNotifier = new QSocketNotifier( mSocket, QSocketNotifier::Read );
@@ -207,38 +208,52 @@ bool SshSession::openSocket() {
 bool SshSession::verifyHostFingerprint() {
 	setStatus( VerifyingHost );
 
-	QByteArray fingerprint = QByteArray( libssh2_hostkey_hash( mHandle, LIBSSH2_HOSTKEY_HASH_SHA1 ), 20 );
-	QByteArray knownFingerprint = mHost->getHostFingerprint();
-	if ( knownFingerprint != fingerprint ) {
-		QString title;
-		QString body;
-		if ( knownFingerprint.isEmpty() ) {
-			title = QObject::tr( "%1: Verify Host Fingerprint" ).arg( mHost->getName() );
-			body = QObject::tr(
-				"There is no fingerprint on file for this host. If this is the first time you are connecting to this server, "
-				"it is safe to ignore this warning.\n\nHost fingerprints provide extra security by verifying that you are "
-				"connecting to the server that you think you are. The first time you connect to a new server, there will be "
-				"no fingerprint on file. You will be warned whenever you connect to a server if the host fingerprint has "
-				"changed." );
-		} else {
-			title = QObject::tr( "%1: Host Fingerprint Changed!" ).arg( mHost->getName() );
-			body = QObject::tr(
-				"The host's fingerprint does not match the one on file! This may be caused by a security breach, or by "
-				"server reconfiguration. Please check with your host administrator before accepting the changed host key!" );
-		}
-		body += QObject::tr( "\n\nFingerprint: %1" ).arg( QString( fingerprint.toHex() ) );
+	QString title;
+	QString body;
 
-		QVariantMap options;
-		options.insert( "title", title );
-		options.insert( "body", body );
+	switch ( ssh_is_server_known( mHandle ) ) {
+	case SSH_SERVER_KNOWN_OK:
+		return true;
 
-		QVariantMap result = DialogRethreader::rethreadDialog< HostKeyDlg >( options );
-		if ( ! result.value( "accepted" ).toBool() ) {
-			return false;
-		}
+	case SSH_SERVER_KNOWN_CHANGED:
+	case SSH_SERVER_FOUND_OTHER:
+		title = QObject::tr( "%1: Host Fingerprint Changed!" ).arg( mHost->getName() );
+		body = QObject::tr(
+			"The host's fingerprint does not match the one on file! This may be caused by a security breach, or by "
+			"server reconfiguration. Please check with your host administrator before accepting the changed host key!" );
 
-		mHost->setNewFingerprint( fingerprint );
+	case SSH_SERVER_FILE_NOT_FOUND:
+	case SSH_SERVER_NOT_KNOWN:
+		title = QObject::tr( "%1: Verify Host Fingerprint" ).arg( mHost->getName() );
+		body = QObject::tr(
+			"There is no fingerprint on file for this host. If this is the first time you are connecting to this server, "
+			"it is safe to ignore this warning.\n\nHost fingerprints provide extra security by verifying that you are "
+			"connecting to the server that you think you are. The first time you connect to a new server, there will be "
+			"no fingerprint on file. You will be warned whenever you connect to a server if the host fingerprint has "
+			"changed." );
 	}
+
+	ssh_key key;
+	unsigned char* hash;
+	size_t hlen;
+
+	ssh_get_publickey( mHandle, &key );
+	ssh_get_publickey_hash( key, SSH_PUBLICKEY_HASH_SHA1, &hash, &hlen );
+
+	body += QObject::tr( "\n\nFingerprint: %1" ).arg( QString( ssh_get_hexa( hash, hlen ) ) );
+
+	ssh_clean_pubkey_hash( &hash );
+
+	QVariantMap options;
+	options.insert( "title", title );
+	options.insert( "body", body );
+
+	QVariantMap result = DialogRethreader::rethreadDialog< HostKeyDlg >( options );
+	if ( ! result.value( "accepted" ).toBool() ) {
+		return false;
+	}
+
+	ssh_write_knownhost( mHandle );
 
 	return true;
 }
@@ -256,6 +271,7 @@ bool SshSession::authenticatePassword( bool keyboardInteractive ) {
 		if ( ! mPasswordAttempt.isNull() ) {
 			int rc;
 			if ( keyboardInteractive ) {
+				rc = ssh_userauth_kbdint( mHandle, mHost->getUsername(), NULL );
 				rc = libssh2_userauth_keyboard_interactive_ex( mHandle,
 				                                               mHost->getUsername(),
 				                                               mHost->getUsername().length(),
@@ -571,42 +587,47 @@ void SshSession::initializeLibrary() {
 		throw( QObject::tr( "Failed to initialize WinSock!" ) );
 	}
 #endif
+	sshThreadsCallbacks = {
+		"qthread",
+		&sshMutexInit,
+		&sshMutexDestroy,
+		&sshMutexLock,
+		&sshMutexUnlock,
+		&sshMutexThreadId
+	};
 
-	// Prepare OpenSSL for multi-threaded work
-	CRYPTO_set_locking_callback( manageSslMutex );
-	CRYPTO_THREADID_set_callback( sslThreadId );
+	ssh_threads_set_callbacks( getSshCallbacks() );
 
-	// Initialize libssh2
-	if ( libssh2_init( 0 ) != 0 ) {
-		throw( QString( "Failed to initialize LibSSH2!" ) );
+	// Initialize libssh
+	if ( ssh_init() != 0 ) {
+		throw( QString( "Failed to initialize libssh!" ) );
 	}
 
 	sLibsInitialized = true;
 }
 
-void SshSession::manageSslMutex( int mode, int n, const char* /*file*/, int /*line*/ ) {        // Callback for OpenSSL
-	                                                                                        // threading support
-	if ( PonyEdit::isApplicationExiting() ) {
-		return;
-	}
-
-	// Mutexes are kept in a map, id->mutex. First time an id is requested, a new mutex is added to handle it.
+static int SshSession::sshMutexLock( void** ) {
 	QMutex* mutex = sSslMutexes.value( n, NULL );
 	if ( ! mutex ) {
 		mutex = new QMutex();
 		sSslMutexes.insert( n, mutex );
 	}
 
-	// Lock or unlock mutexes, depending on what OpenSSL is asking for.
-	if ( mode & CRYPTO_LOCK ) {
-		mutex->lock();
-	} else {
-		mutex->unlock();
-	}
+	mutex->lock();
 }
 
-void SshSession::sslThreadId( CRYPTO_THREADID* threadId ) {
-	CRYPTO_THREADID_set_pointer( threadId, QThread::currentThread() );
+static int SshSession::sshMutexUnlock( void** ) {
+	QMutex* mutex = sSslMutexes.value( n, NULL );
+	if ( ! mutex ) {
+		mutex = new QMutex();
+		sSslMutexes.insert( n, mutex );
+	}
+
+	mutex->unlock();
+}
+
+static unsigned long SshSession::sshMutexThreadId() {
+	return QThread::currentThreadId();
 }
 
 bool SshSession::isAtChannelLimit() {

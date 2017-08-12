@@ -6,6 +6,7 @@
 #include <QMutex>
 #include <QObject>
 #include <QVariantMap>
+
 #include "ssh2/passworddlg.h"
 #include "threadcrossingdialog.h"
 

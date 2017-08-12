@@ -1,4 +1,7 @@
 #include <QDebug>
+
+#include <libssh/libssh.h>
+
 #include "main/globaldispatcher.h"
 #include "main/ponyedit.h"
 #include "main/tools.h"
@@ -48,6 +51,8 @@ void SshHost::cleanup() {
 	foreach ( SshHost * host, sKnownHosts ) {
 		delete host;
 	}
+
+	ssh_finalize();
 }
 
 SshHost* SshHost::getHost( const QByteArray& hostname, const QByteArray& username ) {
