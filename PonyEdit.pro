@@ -247,6 +247,7 @@ HEADERS  += \
 
 OTHER_FILES += \
 	README.md \
+	COMMON-TASKS.md \
 	.gitignore \
 	.travis.yml \
 	uncrustify.cfg \
