@@ -161,6 +161,8 @@ bool SyntaxRule::link( SyntaxDefinition* def ) {
 
 	if ( mAttribute.isEmpty() ) {
 		mAttributeLink = NULL;
+	} else if ( mType == RegExpr && mAttribute == "String" ) {
+		mAttributeLink = NULL;
 	} else {
 		mAttributeLink = def->getItemData( mAttribute );
 		if ( ! mAttributeLink ) {
