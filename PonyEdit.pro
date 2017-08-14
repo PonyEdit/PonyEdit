@@ -155,7 +155,8 @@ SOURCES += \
 	ssh2/hostlog.cpp \
     file/serverfile.cpp \
     ssh2/serverchannel.cpp \
-    ssh2/serverrequest.cpp
+    ssh2/serverrequest.cpp \
+    ssh2/sshsettings.cpp
 
 HEADERS  += \
 	editor/linenumberwidget.h \
@@ -241,7 +242,8 @@ HEADERS  += \
 	ssh2/hostlog.h \
     file/serverfile.h \
     ssh2/serverchannel.h \
-    ssh2/serverrequest.h
+    ssh2/serverrequest.h \
+    ssh2/sshsettings.h
 
 OTHER_FILES += \
 	README.md \

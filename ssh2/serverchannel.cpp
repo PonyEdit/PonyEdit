@@ -10,6 +10,7 @@
 #include "serverchannel.h"
 #include "serverrequest.h"
 #include "sshhost.h"
+#include "sshsettings.h"
 
 #define SERVER_INIT      " cd ~;" \
 	"if type perl >/dev/null 2>&1;then " \
@@ -74,6 +75,8 @@ void ServerChannel::initialize() {
 		throw( tr( "Unable to find server script!" ) );
 	}
 	sServerScript = f.readAll();
+
+	SshSettings::init();
 
 	QCryptographicHash hash( QCryptographicHash::Md5 );
 	hash.addData( sServerScript );

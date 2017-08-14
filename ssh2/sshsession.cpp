@@ -15,6 +15,7 @@
 #include "sshchannel.h"
 #include "sshhost.h"
 #include "sshsession.h"
+#include "sshsettings.h"
 
 #ifdef Q_OS_WIN
 	#include <windows.h>
@@ -529,21 +530,21 @@ bool SshSession::authenticate() {
 }
 
 SshSession::AuthMethods SshSession::getAuthenticationMethods() {
-	AuthMethods methods = AuthNone;
+	AuthMethods methods = SshSettings::authMethods( mHost->getHostname() );
 
 	char *authlist = libssh2_userauth_list( mHandle, mHost->getUsername(), mHost->getUsername().length() );
 	if ( NULL == authlist ) {
-		return methods;
+		return AuthNone;
 	}
 
-	if ( strstr( authlist, "password" ) != NULL ) {
-		methods |= AuthPassword;
+	if ( strstr( authlist, "password" ) == NULL ) {
+		methods &= ~AuthPassword;
 	}
-	if ( strstr( authlist, "keyboard-interactive" ) != NULL ) {
-		methods |= AuthKeyboardInteractive;
+	if ( strstr( authlist, "keyboard-interactive" ) == NULL ) {
+		methods &= ~AuthKeyboardInteractive;
 	}
-	if ( strstr( authlist, "publickey" ) != NULL ) {
-		methods |= AuthPublicKey;
+	if ( strstr( authlist, "publickey" ) == NULL ) {
+		methods &= ~AuthPublicKey;
 	}
 
 	return methods;
