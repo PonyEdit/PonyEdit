@@ -9,6 +9,7 @@
 #include <QString>
 #include <QStringList>
 #include <QVariant>
+
 #include "file/location.h"
 #include "hostlog.h"
 #include "QsLog.h"
@@ -16,10 +17,16 @@
 #include "sshsession.h"
 
 // Configuration
-#define CHANNEL_LIMIT_GUESS 10          /* Guess at the max number of channels per connection */
-#define SLAVE_CHANNEL_QUEUE_MULTIPLIER 3        /* When slave-channel:slave-queue-length ratio is off by at least this
-	                                         * multiplier, think about opening additional slave channels */
-#define MAX_SLAVE_CHANNELS 3            /* Maximum number of slave channels per host */
+
+// Guess at the max number of channels per connection
+#define CHANNEL_LIMIT_GUESS 10
+
+// When server-channel:server-queue-length ratio is off by at least this multiplier, think about opening additional
+// server channels
+#define SERVER_CHANNEL_QUEUE_MULTIPLIER 3
+
+// Maximum number of server channels per host
+#define MAX_SERVER_CHANNELS 3
 #define XFER_CHANNEL_QUEUE_MULTIPLIER 2
 #define MAX_XFER_CHANNELS 7
 #define MAX_SFTP_CHANNELS 5
@@ -34,10 +41,10 @@
 #define SSHLOG_FATAL( h ) _SSHLOG_IF( h, QsLogging::FatalLevel )
 #define _SSHLOG_IF( h, l ) if ( QsLogging::Logger::instance().loggingLevel() > l ) {} else h->log( l ).stream()
 
-class SlaveFile;
-class SlaveRequest;
+class ServerFile;
+class ServerRequest;
 class SFTPRequest;
-class SlaveChannel;
+class ServerChannel;
 class XferRequest;
 class XferChannel;
 class SshHost : public QObject {
@@ -68,11 +75,11 @@ class SshHost : public QObject {
 			return mConnectionString;
 		}
 
-		void sendSlaveRequest( bool sudo,
-		                       SlaveFile* file,
-		                       const QByteArray& request,
-		                       const QVariant& parameters = QVariant(),
-		                       const Callback& callback = Callback() );
+		void sendServerRequest( bool sudo,
+		                        ServerFile* file,
+		                        const QByteArray& request,
+		                        const QVariant& parameters = QVariant(),
+		                        const Callback& callback = Callback() );
 		void sendSftpRequest( SFTPRequest* request );
 
 		void getFileContent( bool sudo, const QByteArray& filename, const Callback& callback = Callback() );
@@ -81,9 +88,9 @@ class SshHost : public QObject {
 		                     const QByteArray& content,
 		                     const Callback& callback = Callback() );
 
-//
-// Stuff for saving hosts
-//
+		//
+		// Stuff for saving hosts
+		//
 
 		static QList< SshHost* >& getKnownHosts() {
 			return sKnownHosts;
@@ -101,9 +108,9 @@ class SshHost : public QObject {
 			return sKnownHostFingerprints;
 		}
 
-//
-// Per host logging
-//
+		//
+		// Per host logging
+		//
 
 		class LogHelper {
 			public:
@@ -133,9 +140,9 @@ class SshHost : public QObject {
 
 		void showLog();
 
-//
-// Cooperation with partner classes
-//
+		//
+		// Cooperation with partner classes
+		//
 
 		void showStatus();
 
@@ -147,22 +154,22 @@ class SshHost : public QObject {
 			mNewSessionMutex.unlock();
 		}
 
-		bool waitBeforeCheckingSlave( SshChannel* channel );    // Returns true if the specified channel should
-		                                                        // wait
-		                                                        // before checking slave (first check only)
-		void firstSlaveCheckComplete();
+		bool waitBeforeCheckingServer( SshChannel* channel );    // Returns true if the specified channel should
+		                                                         // wait before checking server (first check
+		                                                         // only)
+		void firstServerCheckComplete();
 
-		SlaveRequest* getNextSlaveRequest( bool sudo, const QMap< SlaveFile*, int >& registeredBuffers );
+		ServerRequest* getNextServerRequest( bool sudo, const QMap< ServerFile*, int >& registeredBuffers );
 		XferRequest* getNextXferRequest( bool sudo );
 		SFTPRequest* getNextSftpRequest();
 
 		SshChannel* takeNextHomelessChannel();
 
-		void handleUnsolicitedSlaveMessage( const QVariantMap& message );
+		void handleUnsolicitedServerMessage( const QVariantMap& message );
 
-//
-// Getters & Setters for cached stuff.
-//
+		//
+		// Getters & Setters for cached stuff.
+		//
 
 		inline unsigned long getCachedIpAddress() const {
 			return mCachedIpAddress;
@@ -194,9 +201,9 @@ class SshHost : public QObject {
 			mHomeDirectory = homeDir;
 		}
 
-//
-// Getters & Setters for saved state.
-//
+		//
+		// Getters & Setters for saved state.
+		//
 
 		inline const QString& getName() const {
 			return mName;
@@ -310,7 +317,7 @@ class SshHost : public QObject {
 	signals:
 		void wakeAllSessions(); // Used to nudge all sessions out of their slumber. Useful when enqueuing jobs
 		                        // for them.
-		void overallStatusInvalidated();// see: invalidateOverallStatus
+		void overallStatusInvalidated(); // see: invalidateOverallStatus
 		void overallStatusChanged();
 		void newLogLine( QString line );
 
@@ -326,11 +333,11 @@ class SshHost : public QObject {
 		void assignSession( SshChannel* channel );
 		int countChannels( SshChannel::Type type );
 
-		void failSlaveRequests( const QString& error,
-		                        int flags,
-		                        QMutex& listLock,
-		                        QList< SlaveRequest* >& requestList,
-		                        SlaveChannel* channel );
+		void failServerRequests( const QString& error,
+		                         int flags,
+		                         QMutex& listLock,
+		                         QList< ServerRequest* >& requestList,
+		                         ServerChannel* channel );
 		void failXferRequests( const QString& error, int flags, QMutex& listLock, QList< XferRequest* >& requestList );
 		void failAllRequests( const QString& error, int flags );
 		void failAllHomelessChannels();
@@ -338,11 +345,11 @@ class SshHost : public QObject {
 		void appendToHostLog( const QString& line );
 
 	private:
-// Stored servers
+		// Stored servers
 		static QList< SshHost* > sKnownHosts;
 		static QMap< QString, QByteArray > sKnownHostFingerprints;
 
-// Server state
+		// Server state
 		Status mDesiredStatus;
 		Status mOverallStatus;  // This is updated as sessions connect and disconnect to reflect the current
 		                        // overall
@@ -366,30 +373,30 @@ class SshHost : public QObject {
 		QMutex mHomelessChannelsMutex;
 		QList< SshChannel* > mHomelessChannels;
 
-		QMutex mSlaveRequestQueueMutex;
-		QMutex mSudoSlaveRequestQueueMutex;
+		QMutex mServerRequestQueueMutex;
+		QMutex mSudoServerRequestQueueMutex;
 		QMutex mXferRequestQueueMutex;
 		QMutex mSudoXferRequestQueueMutex;
 		QMutex mSftpRequestQueueMutex;
 
-		QList< SlaveRequest* > mSlaveRequestQueue;
-		QList< SlaveRequest* > mSudoSlaveRequestQueue;
+		QList< ServerRequest* > mServerRequestQueue;
+		QList< ServerRequest* > mSudoServerRequestQueue;
 		QList< XferRequest* > mXferRequestQueue;
 		QList< XferRequest* > mSudoXferRequestQueue;
 		QList< SFTPRequest* > mSftpRequestQueue;
 
-// Stuff for ensuring no two channels check the slave script simultaneously on the first run
-		QMutex mFirstSlaveScriptCheckerLock;
-		SshChannel* mFirstSlaveScriptChecker;
-		bool mSlaveScriptChecked;
+		// Stuff for ensuring no two channels check the server script simultaneously on the first run
+		QMutex mFirstServerScriptCheckerLock;
+		SshChannel* mFirstServerScriptChecker;
+		bool mServerScriptChecked;
 
-// Cached stuff for fast reconnection
+		// Cached stuff for fast reconnection
 		unsigned long mCachedIpAddress; // TODO: Extend to support IPv6
 		SshSession::AuthMethod mCachedAuthMethod;
 		int mChannelLimitGuess;
 		QByteArray mHomeDirectory;
 
-// Saved server parameters
+		// Saved server parameters
 		QString mName;
 		bool mSaveHost;
 		bool mSavePassword;

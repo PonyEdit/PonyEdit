@@ -2,9 +2,9 @@
 #include <libssh2_sftp.h>
 #include <QDebug>
 #include "file/basefile.h"
+#include "serverrequest.h"
 #include "sftpchannel.h"
 #include "sftprequest.h"
-#include "slaverequest.h"
 #include "sshhost.h"
 #include "sshsession.h"
 
@@ -56,7 +56,7 @@ bool SFTPChannel::handleOpening() {
 void SFTPChannel::criticalError( const QString& error ) {
 	// Fail the current job (if there is one)
 	if ( mCurrentRequest ) {
-		mCurrentRequest->triggerFailure( error, SlaveRequest::ConnectionError );
+		mCurrentRequest->triggerFailure( error, ServerRequest::ConnectionError );
 		delete mCurrentRequest;
 		mCurrentRequest = NULL;
 	}

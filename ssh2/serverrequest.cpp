@@ -1,12 +1,12 @@
 #include <QDebug>
 #include "main/tools.h"
-#include "slaverequest.h"
+#include "serverrequest.h"
 #include "tools/json.h"
 
-SlaveRequest::SlaveRequest( SlaveFile* file,
-                            const QByteArray& request,
-                            const QVariant& parameters,
-                            const Callback& callback )
+ServerRequest::ServerRequest( ServerFile* file,
+                              const QByteArray& request,
+                              const QVariant& parameters,
+                              const Callback& callback )
 	: mFile( file ),
 	mOpeningFile( NULL ),
 	mRequest( request ),
@@ -25,7 +25,7 @@ SlaveRequest::SlaveRequest( SlaveFile* file,
 	}
 }
 
-const QByteArray& SlaveRequest::prepare( int bufferId ) {
+const QByteArray& ServerRequest::prepare( int bufferId ) {
 	QVariantMap requestRoot;
 	requestRoot.insert( "i", mMessageId );
 	requestRoot.insert( "c", mRequest );
@@ -45,11 +45,11 @@ const QByteArray& SlaveRequest::prepare( int bufferId ) {
 	return mPackedRequest;
 }
 
-void SlaveRequest::failRequest( const QString& error, int errorFlags ) {
+void ServerRequest::failRequest( const QString& error, int errorFlags ) {
 	emit requestFailure( error, errorFlags );
 }
 
-void SlaveRequest::handleReply( const QVariantMap& reply ) {
+void ServerRequest::handleReply( const QVariantMap& reply ) {
 	if ( ! reply.contains( "error" ) ) {
 		emit requestSuccess( reply );
 	} else {

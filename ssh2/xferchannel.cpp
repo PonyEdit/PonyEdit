@@ -7,7 +7,7 @@
 #include "xferrequest.h"
 
 XferChannel::XferChannel( SshHost* host, bool sudo ) :
-	SlaveChannel( host, sudo ),
+	ServerChannel( host, sudo ),
 	mInternalStatus( _WaitingForRequests ) {
 	mLeftoverEscape = false;
 }
@@ -188,9 +188,9 @@ ShellChannel::ReadReply XferChannel::readBinaryData( int size ) {
 	return reply;
 }
 
-QByteArray XferChannel::getSlaveRun( bool sudo ) {
+QByteArray XferChannel::getServerRun( bool sudo ) {
 	if ( sudo ) {
 		mSudoPasswordAttempt = mHost->getSudoPassword();
 	}
-	return sudo ? "sudo -p Sudo-prompt%-ponyedit-% perl .ponyedit/slave.pl xfer" : "perl .ponyedit/slave.pl xfer";
+	return sudo ? "sudo -p Sudo-prompt%-ponyedit-% perl .ponyedit/server.pl xfer" : "perl .ponyedit/server.pl xfer";
 }

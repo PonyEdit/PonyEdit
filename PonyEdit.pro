@@ -42,7 +42,7 @@ macx {
     CONFIG  += x86_64
     CONFIG  -= i386
 
-    data.files = syntaxdefs slave
+    data.files = syntaxdefs server
     data.path = Contents/Resources
     QMAKE_BUNDLE_DATA += data
     ICON = icons/ponyedit.icns
@@ -117,7 +117,6 @@ SOURCES += \
 	main/aboutdialog.cpp \
 	options/editoroptionswidget.cpp \
 	tools/htmlpreview.cpp \
-	file/slavefile.cpp \
 	main/ponyedit.cpp \
 	main/windowmanager.cpp \
 	main/statuswidget.cpp \
@@ -137,8 +136,6 @@ SOURCES += \
 	ssh2/sshsession.cpp \
 	ssh2/sshhost.cpp \
 	ssh2/sshchannel.cpp \
-	ssh2/slaverequest.cpp \
-	ssh2/slavechannel.cpp \
 	ssh2/shellchannel.cpp \
 	tools/json.cpp \
 	ssh2/serverconfigwidget.cpp \
@@ -156,7 +153,10 @@ SOURCES += \
 	ssh2/sftprequest.cpp \
 	ssh2/sftpchannel.cpp \
 	options/advancedoptionswidget.cpp \
-	ssh2/hostlog.cpp
+	ssh2/hostlog.cpp \
+    file/serverfile.cpp \
+    ssh2/serverchannel.cpp \
+    ssh2/serverrequest.cpp
 
 HEADERS  += \
 	editor/linenumberwidget.h \
@@ -204,7 +204,6 @@ HEADERS  += \
 	main/aboutdialog.h \
 	options/editoroptionswidget.h \
 	tools/htmlpreview.h \
-	file/slavefile.h \
 	main/ponyedit.h \
 	main/windowmanager.h \
 	main/statuswidget.h \
@@ -224,8 +223,6 @@ HEADERS  += \
 	ssh2/sshsession.h \
 	ssh2/sshhost.h \
 	ssh2/sshchannel.h \
-	ssh2/slaverequest.h \
-	ssh2/slavechannel.h \
 	ssh2/shellchannel.h \
 	tools/json.h \
 	ssh2/serverconfigwidget.h \
@@ -243,14 +240,16 @@ HEADERS  += \
 	ssh2/sftprequest.h \
 	ssh2/sftpchannel.h \
 	options/advancedoptionswidget.h \
-	ssh2/hostlog.h
+	ssh2/hostlog.h \
+    file/serverfile.h \
+    ssh2/serverchannel.h \
+    ssh2/serverrequest.h
 
 OTHER_FILES += \
 	README.md \
 	.gitignore \
 	.travis.yml \
 	uncrustify.cfg \
-	slave/slave.pl \
 	syntax/test.pl \
 	ponyedit.rc \
 	tools/QsLog/QsLog.pri \
@@ -555,3 +554,6 @@ RESOURCES += \
 	resources.qrc
 
 include($$PWD/tools/QsLog/QsLog.pri)
+
+DISTFILES += \
+    server/server.pl

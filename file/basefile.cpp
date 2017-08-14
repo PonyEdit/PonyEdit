@@ -11,7 +11,7 @@
 #include "main/statuswidget.h"
 #include "main/tools.h"
 #include "QsLog.h"
-#include "slavefile.h"
+#include "serverfile.h"
 #include "syntax/syntaxdefinition.h"
 #include "syntax/syntaxdefmanager.h"
 #include "syntax/syntaxhighlighter.h"
@@ -42,7 +42,7 @@ BaseFile* BaseFile::getFile( const Location& location ) {
 	Location::Protocol protocol = location.getProtocol();
 	switch ( protocol ) {
 	case Location::Ssh:
-		newFile = new SlaveFile( location );
+		newFile = new ServerFile( location );
 		break;
 
 	case Location::Local:

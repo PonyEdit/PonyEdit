@@ -2,10 +2,10 @@
 #include "main/globaldispatcher.h"
 #include "main/ponyedit.h"
 #include "main/tools.h"
+#include "serverchannel.h"
+#include "serverrequest.h"
 #include "sftpchannel.h"
 #include "sftprequest.h"
-#include "slavechannel.h"
-#include "slaverequest.h"
 #include "ssh2/serverconfigdlg.h"
 #include "sshhost.h"
 #include "sshsession.h"
@@ -17,8 +17,8 @@ QMap< QString, QByteArray > SshHost::sKnownHostFingerprints;
 
 SshHost::SshHost() :
 	mDesiredStatus( Disconnected ),
-	mFirstSlaveScriptChecker( 0 ),
-	mSlaveScriptChecked( false ),
+	mFirstServerScriptChecker( 0 ),
+	mServerScriptChecked( false ),
 	mCachedIpAddress( 0 ),
 	mCachedAuthMethod( SshSession::AuthNone ),
 	mChannelLimitGuess( CHANNEL_LIMIT_GUESS ),
@@ -146,20 +146,20 @@ void SshHost::channelNeatlyClosed( SshChannel* channel ) {
 
 void SshHost::removeChannel( SshChannel* channel ) {
 	switch ( channel->getType() ) {
-	case SshChannel::Slave:
-		failSlaveRequests( "Channel closed.",
-		                   0,
-		                   mSlaveRequestQueueMutex,
-		                   mSlaveRequestQueue,
-		                   static_cast< SlaveChannel* >( channel ) );
+	case SshChannel::Server:
+		failServerRequests( "Channel closed.",
+		                    0,
+		                    mServerRequestQueueMutex,
+		                    mServerRequestQueue,
+		                    static_cast< ServerChannel* >( channel ) );
 		break;
 
-	case SshChannel::SudoSlave:
-		failSlaveRequests( "Channel closed.",
-		                   0,
-		                   mSudoSlaveRequestQueueMutex,
-		                   mSudoSlaveRequestQueue,
-		                   static_cast< SlaveChannel* >( channel ) );
+	case SshChannel::SudoServer:
+		failServerRequests( "Channel closed.",
+		                    0,
+		                    mSudoServerRequestQueueMutex,
+		                    mSudoServerRequestQueue,
+		                    static_cast< ServerChannel* >( channel ) );
 		break;
 
 	case SshChannel::Xfer:
@@ -251,29 +251,28 @@ void SshHost::sendSftpRequest( SFTPRequest* request ) {
 	checkChannelCount();
 }
 
-void SshHost::sendSlaveRequest( bool sudo,
-                                SlaveFile* file,
-                                const QByteArray& request,
-                                const QVariant& parameters,
-                                const Callback& callback ) {
-	// Special case: If the request is "open", pass NULL as the file to the SlaveRequest constructor, and attach the
-	// file pointer with setOpeningFile.
-	// SlaveChannels use the file passed to the constructor to determine if a request must be handled by a
-	// particular channel.
+void SshHost::sendServerRequest( bool sudo,
+                                 ServerFile* file,
+                                 const QByteArray& request,
+                                 const QVariant& parameters,
+                                 const Callback& callback ) {
+	// Special case: If the request is "open", pass NULL as the file to the ServerRequest constructor, and attach
+	// the file pointer with setOpeningFile. ServerChannels use the file passed to the constructor to determine if a
+	// request must be handled by a particular channel.
 	bool openingFile = ( request == "open" );
-	SlaveRequest* newRequest = new SlaveRequest( openingFile ? NULL : file, request, parameters, callback );
+	ServerRequest* newRequest = new ServerRequest( openingFile ? NULL : file, request, parameters, callback );
 	if ( openingFile ) {
 		newRequest->setOpeningFile( file );
 	}
 
 	// Before even enqueing the request, autofail it if it belongs to a channel that's gone.
-	SlaveFile* relevantFile = newRequest->getFile();
+	ServerFile* relevantFile = newRequest->getFile();
 	if ( relevantFile != NULL ) {
 		bool ok = false;
 		foreach ( SshChannel * channel, mChannels ) {
-			if ( channel->is( SshChannel::Slave ) || channel->is( SshChannel::SudoSlave ) ) {
-				SlaveChannel* slaveChannel = static_cast< SlaveChannel* >( channel );
-				if ( slaveChannel->handlesFileBuffer( relevantFile ) ) {
+			if ( channel->is( SshChannel::Server ) || channel->is( SshChannel::SudoServer ) ) {
+				ServerChannel* serverChannel = static_cast< ServerChannel* >( channel );
+				if ( serverChannel->handlesFileBuffer( relevantFile ) ) {
 					ok = true;
 					break;
 				}
@@ -289,48 +288,48 @@ void SshHost::sendSlaveRequest( bool sudo,
 
 	// Add the new request to the queue.
 	if ( sudo ) {
-		mSudoSlaveRequestQueueMutex.lock();
-		mSudoSlaveRequestQueue.append( newRequest );
-		mSudoSlaveRequestQueueMutex.unlock();
+		mSudoServerRequestQueueMutex.lock();
+		mSudoServerRequestQueue.append( newRequest );
+		mSudoServerRequestQueueMutex.unlock();
 	} else {
-		mSlaveRequestQueueMutex.lock();
-		mSlaveRequestQueue.append( newRequest );
-		mSlaveRequestQueueMutex.unlock();
+		mServerRequestQueueMutex.lock();
+		mServerRequestQueue.append( newRequest );
+		mServerRequestQueueMutex.unlock();
 	}
 
 	// Nudge all sessions - if their threads are asleep they need to get this message
 	emit wakeAllSessions();
 
-	// Ensure there are enough slave channels to handle this.
+	// Ensure there are enough server channels to handle this.
 	checkChannelCount();
 }
 
 void SshHost::checkChannelCount() {
 	// For each type of channel, check their counts.
-	int slaveCount = countChannels( SshChannel::Slave );
-	int sudoSlaveCount = countChannels( SshChannel::SudoSlave );
+	int serverCount = countChannels( SshChannel::Server );
+	int sudoServerCount = countChannels( SshChannel::SudoServer );
 	int xferCount = countChannels( SshChannel::Xfer );
 	int sudoXferCount = countChannels( SshChannel::SudoXfer );
 	int sftpCount = countChannels( SshChannel::Sftp );
 
-	// Check if we need more slave channels.
-	if ( slaveCount < MAX_SLAVE_CHANNELS &&
-	     mSlaveRequestQueue.length() > slaveCount * SLAVE_CHANNEL_QUEUE_MULTIPLIER ) {
-		registerChannel( new SlaveChannel( this, false ) );
+	// Check if we need more server channels.
+	if ( serverCount < MAX_SERVER_CHANNELS &&
+	     mServerRequestQueue.length() > serverCount * SERVER_CHANNEL_QUEUE_MULTIPLIER ) {
+		registerChannel( new ServerChannel( this, false ) );
 	}
 
-	// Check if we need more slave channels.
-	if ( sudoSlaveCount < MAX_SLAVE_CHANNELS &&
-	     mSudoSlaveRequestQueue.length() > sudoSlaveCount * SLAVE_CHANNEL_QUEUE_MULTIPLIER ) {
-		registerChannel( new SlaveChannel( this, true ) );
+	// Check if we need more server channels.
+	if ( sudoServerCount < MAX_SERVER_CHANNELS &&
+	     mSudoServerRequestQueue.length() > sudoServerCount * SERVER_CHANNEL_QUEUE_MULTIPLIER ) {
+		registerChannel( new ServerChannel( this, true ) );
 	}
 
-	// Check if we need more slave channels.
+	// Check if we need more server channels.
 	if ( xferCount < MAX_XFER_CHANNELS && mXferRequestQueue.length() > xferCount * XFER_CHANNEL_QUEUE_MULTIPLIER ) {
 		registerChannel( new XferChannel( this, false ) );
 	}
 
-	// Check if we need more slave channels.
+	// Check if we need more server channels.
 	if ( sudoXferCount < MAX_XFER_CHANNELS &&
 	     mSudoXferRequestQueue.length() > sudoXferCount * XFER_CHANNEL_QUEUE_MULTIPLIER ) {
 		registerChannel( new XferChannel( this, true ) );
@@ -364,15 +363,15 @@ SFTPRequest* SshHost::getNextSftpRequest() {
 	return request;
 }
 
-SlaveRequest* SshHost::getNextSlaveRequest( bool sudo, const QMap< SlaveFile*, int >& registeredBuffers ) {
-	SlaveRequest* request = NULL;
+ServerRequest* SshHost::getNextServerRequest( bool sudo, const QMap< ServerFile*, int >& registeredBuffers ) {
+	ServerRequest* request = NULL;
 
-	QMutex& lock = sudo ? mSudoSlaveRequestQueueMutex : mSlaveRequestQueueMutex;
-	QList< SlaveRequest* >& list = sudo ? mSudoSlaveRequestQueue : mSlaveRequestQueue;
+	QMutex& lock = sudo ? mSudoServerRequestQueueMutex : mServerRequestQueueMutex;
+	QList< ServerRequest* >& list = sudo ? mSudoServerRequestQueue : mServerRequestQueue;
 
 	lock.lock();
 	for ( int i = 0; i < list.length(); i++ ) {
-		SlaveFile* file = list[i]->getFile();
+		ServerFile* file = list[i]->getFile();
 		if ( file == NULL || registeredBuffers.contains( file ) ) {
 			// TODO: Add some code to ensure no request gets lost in the queue permanently if its
 			// buffer-locked channel gets killed
@@ -385,35 +384,35 @@ SlaveRequest* SshHost::getNextSlaveRequest( bool sudo, const QMap< SlaveFile*, i
 	return request;
 }
 
-bool SshHost::waitBeforeCheckingSlave( SshChannel* channel ) {
-	// Only wait if the slave script hasn't been checked before.
-	if ( mSlaveScriptChecked ) {
+bool SshHost::waitBeforeCheckingServer( SshChannel* channel ) {
+	// Only wait if the server script hasn't been checked before.
+	if ( mServerScriptChecked ) {
 		return false;
 	}
 
 	// Don't need to wait if you *are* the very first channel through the gate
-	if ( mFirstSlaveScriptChecker == channel ) {
+	if ( mFirstServerScriptChecker == channel ) {
 		return false;
 	}
 
 	bool result = true;
-	mFirstSlaveScriptCheckerLock.lock();
-	if ( mFirstSlaveScriptChecker == NULL ) {
-		mFirstSlaveScriptChecker = channel;
+	mFirstServerScriptCheckerLock.lock();
+	if ( mFirstServerScriptChecker == NULL ) {
+		mFirstServerScriptChecker = channel;
 		result = false;
 	}
-	mFirstSlaveScriptCheckerLock.unlock();
+	mFirstServerScriptCheckerLock.unlock();
 
 	return result;
 }
 
-void SshHost::firstSlaveCheckComplete() {
-	mSlaveScriptChecked = true;
-	mFirstSlaveScriptChecker = NULL;
+void SshHost::firstServerCheckComplete() {
+	mServerScriptChecked = true;
+	mFirstServerScriptChecker = NULL;
 }
 
-void SshHost::handleUnsolicitedSlaveMessage( const QVariantMap& /*message*/ ) {
-	SSHLOG_INFO( this ) << "Unsolicited slave message received";
+void SshHost::handleUnsolicitedServerMessage( const QVariantMap& /*message*/ ) {
+	SSHLOG_INFO( this ) << "Unsolicited server message received";
 }
 
 void SshHost::getFileContent( bool sudo, const QByteArray& filename, const Callback& callback ) {
@@ -563,7 +562,7 @@ void SshHost::sessionEnded( SshSession* session ) {
 	// Something special to watch for: If this was the last session, fail all queued requests and channels
 	if ( mSessions.length() == 0 ) {
 		failAllHomelessChannels();
-		failAllRequests( tr( "Failed to (re)connect to remote host!" ), SlaveRequest::ConnectionError );
+		failAllRequests( tr( "Failed to (re)connect to remote host!" ), ServerRequest::ConnectionError );
 	}
 
 	// Delete all channels, and the session. This is a separate step from removing channels from my records,
@@ -589,24 +588,24 @@ void SshHost::failAllHomelessChannels() {
 }
 
 void SshHost::failAllRequests( const QString& error, int flags ) {
-	failSlaveRequests( error, flags, mSlaveRequestQueueMutex, mSlaveRequestQueue, NULL );
-	failSlaveRequests( error, flags, mSudoSlaveRequestQueueMutex, mSudoSlaveRequestQueue, NULL );
+	failServerRequests( error, flags, mServerRequestQueueMutex, mServerRequestQueue, NULL );
+	failServerRequests( error, flags, mSudoServerRequestQueueMutex, mSudoServerRequestQueue, NULL );
 	failXferRequests( error, flags, mXferRequestQueueMutex, mXferRequestQueue );
 	failXferRequests( error, flags, mSudoXferRequestQueueMutex, mSudoXferRequestQueue );
 }
 
-void SshHost::failSlaveRequests( const QString& error,
-                                 int flags,
-                                 QMutex& listLock,
-                                 QList< SlaveRequest* >& requestList,
-                                 SlaveChannel* channel ) {
+void SshHost::failServerRequests( const QString& error,
+                                  int flags,
+                                  QMutex& listLock,
+                                  QList< ServerRequest* >& requestList,
+                                  ServerChannel* channel ) {
 	listLock.lock();
-	QList< SlaveRequest* > listCopy = requestList;
+	QList< ServerRequest* > listCopy = requestList;
 	requestList.clear();
 	listLock.unlock();
 
-	foreach ( SlaveRequest * request, listCopy ) {
-		SlaveFile* relatedFile = request->getFile();
+	foreach ( ServerRequest * request, listCopy ) {
+		ServerFile* relatedFile = request->getFile();
 		if ( channel == NULL || channel->handlesFileBuffer( relatedFile ) ) {
 			request->failRequest( error, flags );
 			delete request;
