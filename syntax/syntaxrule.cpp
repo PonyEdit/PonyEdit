@@ -165,7 +165,7 @@ bool SyntaxRule::link( SyntaxDefinition* def ) {
 		mAttributeLink = NULL;
 	} else {
 		mAttributeLink = def->getItemData( mAttribute );
-		if ( ! mAttributeLink ) {
+		if ( ! mAttributeLink && ! mContext.isEmpty() ) {
 			QLOG_WARN() << "Failed to link attribute:" << mAttribute;
 		}
 	}
