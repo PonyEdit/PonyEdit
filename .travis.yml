@@ -32,7 +32,7 @@ install:
       source /opt/qt59/bin/qt59-env.sh;
       source deps/build-uncrustify.sh;
     else
-      brew install qt5 uncrustify;
+      brew install qt5 uncrustify libssh2 openssl@1.1;
       brew link --force qt5;
     fi
 

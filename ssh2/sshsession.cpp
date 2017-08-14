@@ -33,7 +33,6 @@
 // TODO: Check for an OpenSSL / LibSSH2 code that needs to be called on shutdown
 
 bool SshSession::sLibsInitialized;
-QMap< int, QMutex* > SshSession::sSslMutexes;
 
 SshSession::SshSession( SshHost* host ) :
 	mThreadEndedCalled( false ),
@@ -572,41 +571,12 @@ void SshSession::initializeLibrary() {
 	}
 #endif
 
-	// Prepare OpenSSL for multi-threaded work
-	CRYPTO_set_locking_callback( manageSslMutex );
-	CRYPTO_THREADID_set_callback( sslThreadId );
-
 	// Initialize libssh2
 	if ( libssh2_init( 0 ) != 0 ) {
 		throw( QString( "Failed to initialize LibSSH2!" ) );
 	}
 
 	sLibsInitialized = true;
-}
-
-void SshSession::manageSslMutex( int mode, int n, const char* /*file*/, int /*line*/ ) {        // Callback for OpenSSL
-	                                                                                        // threading support
-	if ( PonyEdit::isApplicationExiting() ) {
-		return;
-	}
-
-	// Mutexes are kept in a map, id->mutex. First time an id is requested, a new mutex is added to handle it.
-	QMutex* mutex = sSslMutexes.value( n, NULL );
-	if ( ! mutex ) {
-		mutex = new QMutex();
-		sSslMutexes.insert( n, mutex );
-	}
-
-	// Lock or unlock mutexes, depending on what OpenSSL is asking for.
-	if ( mode & CRYPTO_LOCK ) {
-		mutex->lock();
-	} else {
-		mutex->unlock();
-	}
-}
-
-void SshSession::sslThreadId( CRYPTO_THREADID* threadId ) {
-	CRYPTO_THREADID_set_pointer( threadId, QThread::currentThread() );
 }
 
 bool SshSession::isAtChannelLimit() {
