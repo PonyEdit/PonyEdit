@@ -313,6 +313,7 @@ OTHER_FILES += \
 	syntaxdefs/dockerfile.xml \
 	syntaxdefs/dosbat.xml \
 	syntaxdefs/dot.xml \
+	syntaxdefs/doxyfile.xml \
 	syntaxdefs/doxygen.xml \
 	syntaxdefs/doxygenlua.xml \
 	syntaxdefs/dtd.xml \
@@ -438,11 +439,13 @@ OTHER_FILES += \
 	syntaxdefs/ply.xml \
 	syntaxdefs/postscript.xml \
 	syntaxdefs/povray.xml \
+	syntaxdefs/powershell.xml \
 	syntaxdefs/ppd.xml \
 	syntaxdefs/praat.xml \
 	syntaxdefs/progress.xml \
 	syntaxdefs/prolog.xml \
 	syntaxdefs/protobuf.xml \
+	syntaxdefs/pug.xml \
 	syntaxdefs/puppet.xml \
 	syntaxdefs/purebasic.xml \
 	syntaxdefs/python.xml \
@@ -522,6 +525,7 @@ OTHER_FILES += \
 	syntaxdefs/yacas.xml \
 	syntaxdefs/yacc.xml \
 	syntaxdefs/yaml.xml \
+	syntaxdefs/yang.xml \
 	syntaxdefs/zonnon.xml \
 	syntaxdefs/zsh.xml
 
