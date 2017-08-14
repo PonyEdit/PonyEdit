@@ -64,6 +64,11 @@ SshSession::~SshSession() {
 		QLOG_WARN() << "SshSession timed out during shutdown";
 	}
 
+	mThread->terminate();
+	if ( ! mThread->wait( 2000 ) ) {
+		QLOG_WARN() << "SshSession was unable to terminate during shutdown";
+	}
+
 	delete mThread;
 	delete mSocketReadNotifier;
 	delete mSocketExceptionNotifier;

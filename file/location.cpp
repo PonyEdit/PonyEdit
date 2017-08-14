@@ -9,11 +9,11 @@
 #include "file/favoritelocationdialog.h"
 #include "file/location.h"
 #include "file/openfilemanager.h"
-#include "file/slavefile.h"
+#include "file/serverfile.h"
 #include "main/global.h"
 #include "main/globaldispatcher.h"
+#include "ssh2/serverrequest.h"
 #include "ssh2/sftprequest.h"
-#include "ssh2/slaverequest.h"
 #include "ssh2/sshhost.h"
 
 #ifdef Q_OS_WIN32
@@ -107,7 +107,7 @@ LocationShared::LocationShared() {
 	initIconProvider();
 
 	mHost = NULL;
-	mSlaveChannel = NULL;
+	mServerChannel = NULL;
 	mReferences = 1;
 	mType = Location::Unknown;
 	mSize = -1;
@@ -443,13 +443,13 @@ void LocationShared::sshLoadListing( bool includeHidden ) {
 	if ( includeHidden ) {
 		params.insert( "hidden", true );
 	}
-	getHost()->sendSlaveRequest( mSudo,
-	                             NULL,
-	                             "ls",
-	                             QVariant( params ),
-	                             Callback( this,
-	                                       SLOT( sshLsSuccess( QVariantMap ) ),
-	                                       SLOT( sshLsFailure( QString, int ) ) ) );
+	getHost()->sendServerRequest( mSudo,
+	                              NULL,
+	                              "ls",
+	                              QVariant( params ),
+	                              Callback( this,
+	                                        SLOT( sshLsSuccess( QVariantMap ) ),
+	                                        SLOT( sshLsFailure( QString, int ) ) ) );
 }
 
 void LocationShared::sshLsSuccess( QVariantMap results ) {
@@ -483,7 +483,7 @@ void LocationShared::sshLsSuccess( QVariantMap results ) {
 }
 
 void LocationShared::sshLsFailure( QString error, int flags ) {
-	gDispatcher->emitLocationListFailure( error, mPath, flags & SlaveRequest::PermissionError );
+	gDispatcher->emitLocationListFailure( error, mPath, flags & ServerRequest::PermissionError );
 }
 
 void LocationShared::sftpLsFailure( QString error, int /*flags*/ ) {
@@ -585,7 +585,7 @@ void Location::createNewDirectory( const QString& name, const Callback &callback
 	case Ssh: {
 		QVariantMap params;
 		params.insert( "dir", mData->mRemotePath + "/" + name );
-		mData->getHost()->sendSlaveRequest( mData->mSudo, NULL, "mkdir", QVariant( params ), callback );
+		mData->getHost()->sendServerRequest( mData->mSudo, NULL, "mkdir", QVariant( params ), callback );
 		break;
 	}
 

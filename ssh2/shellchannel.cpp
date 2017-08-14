@@ -180,7 +180,7 @@ ShellChannel::SendResponse ShellChannel::sendData( const QByteArray &data ) {
 		if ( rc == LIBSSH2_ERROR_EAGAIN ) {
 			return SendAgain;
 		}
-		criticalError( tr( "Failed to initialize send a slave request: %1" ).arg( rc ) );
+		criticalError( tr( "Failed to initialize send a server request: %1" ).arg( rc ) );
 		return SendFail;
 	}
 

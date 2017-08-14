@@ -1,10 +1,10 @@
 #ifndef XFERCHANNEL_H
 #define XFERCHANNEL_H
 
-#include "slavechannel.h"
+#include "serverchannel.h"
 
 class XferRequest;
-class XferChannel : public SlaveChannel {
+class XferChannel : public ServerChannel {
 	public:
 		XferChannel( SshHost* host, bool sudo );
 
@@ -13,7 +13,7 @@ class XferChannel : public SlaveChannel {
 		}
 
 	protected:
-		virtual QByteArray getSlaveRun( bool sudo );
+		virtual QByteArray getServerRun( bool sudo );
 
 		virtual bool mainUpdate();
 

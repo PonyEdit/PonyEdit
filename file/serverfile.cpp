@@ -3,30 +3,30 @@
 #include <QMessageBox>
 
 #include "file/openfilemanager.h"
-#include "file/slavefile.h"
+#include "file/serverfile.h"
 #include "filestatuswidget.h"
 #include "main/dialogwrapper.h"
 #include "main/globaldispatcher.h"
 #include "main/mainwindow.h"
 #include "main/tools.h"
-#include "ssh2/slaverequest.h"
+#include "ssh2/serverrequest.h"
 #include "ssh2/sshhost.h"
 
-SlaveFile::SlaveFile( const Location& location ) :
+ServerFile::ServerFile( const Location& location ) :
 	BaseFile( location ) {
 	mHost = location.getRemoteHost();
 	mChangePumpCursor = 0;
 }
 
-SlaveFile::~SlaveFile() {
+ServerFile::~ServerFile() {
 	foreach ( Change * change, mChangesSinceLastSave ) {
 		delete change;
 	}
 	mChangesSinceLastSave.clear();
 }
 
-BaseFile* SlaveFile::newFile( const QString& content ) {
-	SSHLOG_TRACE( mHost ) << "Creating a new slave file" << content.length() << "bytes long";
+BaseFile* ServerFile::newFile( const QString& content ) {
+	SSHLOG_TRACE( mHost ) << "Creating a new server file" << content.length() << "bytes long";
 
 	setOpenStatus( BaseFile::Loading );
 	clearTempOpenData();
@@ -43,27 +43,27 @@ BaseFile* SlaveFile::newFile( const QString& content ) {
 	return this;
 }
 
-void SlaveFile::createSuccess( QVariantMap /* response */ ) {
+void ServerFile::createSuccess( QVariantMap /* response */ ) {
 	SSHLOG_TRACE( mHost ) << "Remote file creation successful.";
 
 	open();
 	gMainWindow->openSingleFile( mLocation );
 }
 
-void SlaveFile::open() {
+void ServerFile::open() {
 	setOpenStatus( BaseFile::Loading );
 	clearTempOpenData();
 
-	// Tell the Slave script to open the file as a buffer
+	// Tell the Server script to open the file as a buffer
 	QMap< QString, QVariant > params;
 	params.insert( "file", mLocation.getRemotePath() );
-	mHost->sendSlaveRequest( mLocation.isSudo(),
-	                         this,
-	                         "open",
-	                         QVariant( params ),
-	                         Callback( this,
-	                                   SLOT( slaveOpenSuccess( QVariantMap ) ),
-	                                   SLOT( openFailure( QString, int ) ) ) );
+	mHost->sendServerRequest( mLocation.isSudo(),
+	                          this,
+	                          "open",
+	                          QVariant( params ),
+	                          Callback( this,
+	                                    SLOT( serverOpenSuccess( QVariantMap ) ),
+	                                    SLOT( openFailure( QString, int ) ) ) );
 
 	// Retrieve the file content on a separate SSH channel...
 	mHost->getFileContent( mLocation.isSudo(),
@@ -74,25 +74,25 @@ void SlaveFile::open() {
 	                                 SLOT( downloadProgress( int ) ) ) );
 }
 
-void SlaveFile::downloadProgress( int percent ) {
+void ServerFile::downloadProgress( int percent ) {
 	setProgress( percent );
 }
 
-void SlaveFile::slaveOpenSuccess( QVariantMap results ) {
+void ServerFile::serverOpenSuccess( QVariantMap results ) {
 	if ( getOpenStatus() != BaseFile::Loading ) {
-		// Something went wrong while d/ling the file content, but the slave open worked :-/
-		// TODO: Tell the slave to close this file; it's useless to me now.
+		// Something went wrong while d/ling the file content, but the server open worked :-/
+		// TODO: Tell the server to close this file; it's useless to me now.
 		clearTempOpenData();
 		return;
 	}
 
-	mSlaveOpenResults = results;
+	mServerOpenResults = results;
 	finalizeFileOpen();
 }
 
-void SlaveFile::downloadSuccess( QVariantMap result ) {
+void ServerFile::downloadSuccess( QVariantMap result ) {
 	if ( getOpenStatus() != BaseFile::Loading ) {
-		// Something went wrong while asking the slave to open the file, but d/l worked :-/
+		// Something went wrong while asking the server to open the file, but d/l worked :-/
 		clearTempOpenData();
 		return;
 	}
@@ -102,50 +102,50 @@ void SlaveFile::downloadSuccess( QVariantMap result ) {
 	finalizeFileOpen();
 }
 
-void SlaveFile::finalizeFileOpen() {
-	// Don't finalize file open until both the slave has opened it, and the file is downloaded.
+void ServerFile::finalizeFileOpen() {
+	// Don't finalize file open until both the server has opened it, and the file is downloaded.
 	// Check mDownloadedChecksum instead of mDownloadedData, as the latter will be null for an empty file.
-	if ( mSlaveOpenResults.isEmpty() || mDownloadedChecksum.isNull() ) {
+	if ( mServerOpenResults.isEmpty() || mDownloadedChecksum.isNull() ) {
 		return;
 	}
 
-	// Ensure the checksum from the slave matches the checksum from the download
-	if ( mSlaveOpenResults.value( "checksum" ).toByteArray() != mDownloadedChecksum ) {
-		openFailure( "Checksum error: Slave script disagrees with the downloaded copy", 0 );
+	// Ensure the checksum from the server matches the checksum from the download
+	if ( mServerOpenResults.value( "checksum" ).toByteArray() != mDownloadedChecksum ) {
+		openFailure( "Checksum error: Server script disagrees with the downloaded copy", 0 );
 		clearTempOpenData();
 		return;
 	}
 
-	bool readOnly = ! mSlaveOpenResults.value( "writable" ).toBool();
+	bool readOnly = ! mServerOpenResults.value( "writable" ).toBool();
 	BaseFile::openSuccess( QString::fromUtf8( mDownloadedData ), mDownloadedChecksum, readOnly );
 	mChangePumpCursor = 0;
 
 	clearTempOpenData();
 }
 
-void SlaveFile::slaveChannelFailure() {
+void ServerFile::serverChannelFailure() {
 	SSHLOG_ERROR( mHost ) << "File" << mLocation.getLabel() <<
-	        "is initiating a reconnection after slave channel failure";
+	        "is initiating a reconnection after server channel failure";
 	reconnect();
 }
 
-void SlaveFile::reconnect() {
+void ServerFile::reconnect() {
 	setOpenStatus( Reconnecting );
 	clearTempOpenData();
 
-	// Tell the slave to open the file as a buffer
+	// Tell the server to open the file as a buffer
 	QMap< QString, QVariant > params;
 	params.insert( "file", mLocation.getRemotePath() );
-	mHost->sendSlaveRequest( mLocation.isSudo(),
-	                         this,
-	                         "open",
-	                         QVariant( params ),
-	                         Callback( this,
-	                                   SLOT( slaveReconnectSuccess( QVariantMap ) ),
-	                                   SLOT( slaveReconnectFailure( QString, int ) ) ) );
+	mHost->sendServerRequest( mLocation.isSudo(),
+	                          this,
+	                          "open",
+	                          QVariant( params ),
+	                          Callback( this,
+	                                    SLOT( serverReconnectSuccess( QVariantMap ) ),
+	                                    SLOT( serverReconnectFailure( QString, int ) ) ) );
 }
 
-void SlaveFile::slaveReconnectSuccess( QVariantMap results ) {
+void ServerFile::serverReconnectSuccess( QVariantMap results ) {
 	// Great! Make sure the returned checksum matches what we expect the file to contain.
 	if ( results.value( "checksum" ).toByteArray() != mLastSaveChecksum ) {
 		// Going to have to fully re-upload the file.
@@ -157,12 +157,12 @@ void SlaveFile::slaveReconnectSuccess( QVariantMap results ) {
 	}
 }
 
-void SlaveFile::slaveReconnectFailure( QString error, int flags ) {
-	SSHLOG_ERROR( mHost ) << "Failed to reconnect to remote slave for file" << mLocation.getLabel();
+void ServerFile::serverReconnectFailure( QString error, int flags ) {
+	SSHLOG_ERROR( mHost ) << "Failed to reconnect to remote server for file" << mLocation.getLabel();
 
 	// TODO: Special case permission errors into SUDO system.
 	// If this is a connection issue, try again. Else, report the error to the user.
-	if ( flags & SlaveRequest::ConnectionError ) {
+	if ( flags & ServerRequest::ConnectionError ) {
 		reconnect();
 	} else {
 		gDispatcher->emitGeneralErrorMessage(
@@ -172,7 +172,7 @@ void SlaveFile::slaveReconnectFailure( QString error, int flags ) {
 	}
 }
 
-void SlaveFile::movePumpCursor( int revision ) {
+void ServerFile::movePumpCursor( int revision ) {
 	mChangePumpCursor = 0;
 	while ( mChangePumpCursor < mChangesSinceLastSave.length() &&
 	        mChangesSinceLastSave[mChangePumpCursor]->revision <= revision ) {
@@ -180,7 +180,7 @@ void SlaveFile::movePumpCursor( int revision ) {
 	}
 }
 
-void SlaveFile::handleDocumentChange( int position, int removeChars, const QString& insert ) {
+void ServerFile::handleDocumentChange( int position, int removeChars, const QString& insert ) {
 	if ( mIgnoreChanges ) {
 		return;
 	}
@@ -199,7 +199,7 @@ void SlaveFile::handleDocumentChange( int position, int removeChars, const QStri
 	}
 }
 
-void SlaveFile::pumpChangeQueue() {
+void ServerFile::pumpChangeQueue() {
 	while ( mChangePumpCursor < mChangesSinceLastSave.length() ) {
 		Change* change = mChangesSinceLastSave[mChangePumpCursor++];
 
@@ -213,19 +213,19 @@ void SlaveFile::pumpChangeQueue() {
 			params.insert( "a", change->insert );
 		}
 
-		mHost->sendSlaveRequest( mLocation.isSudo(),
-		                         this,
-		                         "change",
-		                         QVariant( params ),
-		                         Callback( this, NULL, SLOT( changePushFailure( QString, int ) ) ) );
+		mHost->sendServerRequest( mLocation.isSudo(),
+		                          this,
+		                          "change",
+		                          QVariant( params ),
+		                          Callback( this, NULL, SLOT( changePushFailure( QString, int ) ) ) );
 	}
 }
 
-void SlaveFile::changePushFailure( QString error, int /*flags*/ ) {
-	SSHLOG_ERROR( mHost ) << "Slave push error for file" << mLocation.getLabel() << ": " << error;
+void ServerFile::changePushFailure( QString error, int /*flags*/ ) {
+	SSHLOG_ERROR( mHost ) << "Server push error for file" << mLocation.getLabel() << ": " << error;
 }
 
-void SlaveFile::save() {
+void ServerFile::save() {
 	QMap< QString, QVariant > params;
 	QCryptographicHash hash( QCryptographicHash::Md5 );
 	hash.addData( mContent.toUtf8() );
@@ -233,16 +233,16 @@ void SlaveFile::save() {
 	params.insert( "revision", mRevision );
 	params.insert( "undoLength", mDocument->availableUndoSteps() );
 
-	mHost->sendSlaveRequest( mLocation.isSudo(),
-	                         this,
-	                         "save",
-	                         QVariant( params ),
-	                         Callback( this,
-	                                   SLOT( slaveSaveSuccess( QVariantMap ) ),
-	                                   SLOT( slaveSaveFailure( QString, int ) ) ) );
+	mHost->sendServerRequest( mLocation.isSudo(),
+	                          this,
+	                          "save",
+	                          QVariant( params ),
+	                          Callback( this,
+	                                    SLOT( serverSaveSuccess( QVariantMap ) ),
+	                                    SLOT( serverSaveFailure( QString, int ) ) ) );
 }
 
-void SlaveFile::slaveSaveSuccess( QVariantMap results ) {
+void ServerFile::serverSaveSuccess( QVariantMap results ) {
 	int revision = results.value( "revision" ).toInt();
 	int undoLength = results.value( "undoLength" ).toInt();
 	QByteArray checksum = results.value( "checksum" ).toByteArray();
@@ -250,11 +250,11 @@ void SlaveFile::slaveSaveSuccess( QVariantMap results ) {
 	savedRevision( revision, undoLength, checksum );
 }
 
-void SlaveFile::slaveSaveFailure( QString error, int flags ) {
-	saveFailure( error, flags & SlaveRequest::PermissionError );
+void ServerFile::serverSaveFailure( QString error, int flags ) {
+	saveFailure( error, flags & ServerRequest::PermissionError );
 }
 
-void SlaveFile::setLastSavedRevision( int lastSavedRevision ) {
+void ServerFile::setLastSavedRevision( int lastSavedRevision ) {
 	BaseFile::setLastSavedRevision( lastSavedRevision );
 
 	// Purge all stored changes up to that point...
@@ -269,22 +269,22 @@ void SlaveFile::setLastSavedRevision( int lastSavedRevision ) {
 	}
 }
 
-void SlaveFile::close() {
+void ServerFile::close() {
 	setOpenStatus( Closing );
 
 	// Just send and assume success.
-	mHost->sendSlaveRequest( mLocation.isSudo(), this, "close" );
+	mHost->sendServerRequest( mLocation.isSudo(), this, "close" );
 	closeCompleted();
 }
 
-void SlaveFile::refresh() {
-	mHost->sendSlaveRequest( mLocation.isSudo(), this, "close" );
+void ServerFile::refresh() {
+	mHost->sendServerRequest( mLocation.isSudo(), this, "close" );
 	open();
 }
 
-void SlaveFile::sudo() {
+void ServerFile::sudo() {
 	// Close the old buffer. Don't bother checking if it succeeds.
-	mHost->sendSlaveRequest( false, this, "close" );
+	mHost->sendServerRequest( false, this, "close" );
 	gOpenFileManager.deregisterFile( this );
 
 	// Change location

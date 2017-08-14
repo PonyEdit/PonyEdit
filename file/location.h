@@ -10,7 +10,7 @@ class OldSshHost;
 class BaseFile;
 class LocationShared;
 class SshConnection;
-class OldSlaveChannel;
+class OldServerChannel;
 class FTPChannel;
 class SshHost;
 
@@ -143,7 +143,7 @@ class LocationShared : public QObject {
 		QString mRemoteUserName;
 		QString mRemotePath;
 		OldSshHost* mRemoteHost;
-		OldSlaveChannel* mSlaveChannel;
+		OldServerChannel* mServerChannel;
 		FTPChannel* mFtpChannel;
 };
 

@@ -16,7 +16,7 @@
 #include "options/options.h"
 #include "ponyedit.h"
 #include "QsLog.h"
-#include "ssh2/slavechannel.h"
+#include "ssh2/serverchannel.h"
 #include "ssh2/sshhost.h"
 #include "ssh2/xferrequest.h"
 #include "syntax/syntaxdefmanager.h"
@@ -38,7 +38,7 @@ PonyEdit::PonyEdit( int argc, char** argv ) :
 	parser.addVersionOption();
 	QCommandLineOption resourceLocationParam = QCommandLineOption(
 		QStringList() << "r" << "resource-location",
-		        "Root directory of application resources. This directory should include syntaxdefs/ and slave/ subdirs.",
+		        "Root directory of application resources. This directory should include syntaxdefs/ and server/ subdirs.",
 		        "directory"
 		);
 	parser.addOption( resourceLocationParam );
@@ -61,7 +61,7 @@ PonyEdit::PonyEdit( int argc, char** argv ) :
 	qRegisterMetaType< Location >( "Location" );
 	qRegisterMetaType< QList< Location > >( "QList<Location>" );
 
-	SlaveChannel::initialize();
+	ServerChannel::initialize();
 	qRegisterMetaType< XferRequest* >( "XferRequest*" );
 
 	Tools::loadServers();

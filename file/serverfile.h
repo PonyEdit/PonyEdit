@@ -3,9 +3,9 @@
 
 #include "basefile.h"
 
-class OldSlaveChannel;
+class OldServerChannel;
 class RemoteConnection;
-class SlaveFile : public BaseFile {
+class ServerFile : public BaseFile {
 	Q_OBJECT
 
 	public:
@@ -15,31 +15,31 @@ class SlaveFile : public BaseFile {
 		void close();
 		void refresh();
 
-		SlaveFile( const Location& location );  // Do not call; use File::getFile instead
+		ServerFile( const Location& location );  // Do not call; use File::getFile instead
 
 		virtual void sudo();
 
 	public slots:
 		void createSuccess( QVariantMap result );
 
-		void slaveOpenSuccess( QVariantMap results );
+		void serverOpenSuccess( QVariantMap results );
 		void downloadProgress( int percent );
 		void downloadSuccess( QVariantMap result );
-		void slaveChannelFailure();
+		void serverChannelFailure();
 
 		void changePushFailure( QString error, int flags );
 
-		void slaveSaveSuccess( QVariantMap results );
-		void slaveSaveFailure( QString error, int flags );
+		void serverSaveSuccess( QVariantMap results );
+		void serverSaveFailure( QString error, int flags );
 
-		void slaveReconnectSuccess( QVariantMap results );
-		void slaveReconnectFailure( QString error, int flags );
+		void serverReconnectSuccess( QVariantMap results );
+		void serverReconnectFailure( QString error, int flags );
 
 	signals:
 		void resyncSuccessRethreadSignal( int );
 
 	protected:
-		virtual ~SlaveFile();
+		virtual ~ServerFile();
 
 		void finalizeFileOpen();
 		virtual void handleDocumentChange( int position, int removeChars, const QString& insert );
@@ -56,10 +56,10 @@ class SlaveFile : public BaseFile {
 
 // Temporary stuff used during opening
 		inline void clearTempOpenData() {
-			mSlaveOpenResults.clear(); mDownloadedData = QByteArray(); mDownloadedChecksum = QByteArray();
+			mServerOpenResults.clear(); mDownloadedData = QByteArray(); mDownloadedChecksum = QByteArray();
 		}
 
-		QVariantMap mSlaveOpenResults;
+		QVariantMap mServerOpenResults;
 		QByteArray mDownloadedData;
 		QByteArray mDownloadedChecksum;
 };

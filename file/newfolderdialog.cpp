@@ -2,7 +2,7 @@
 #include <QPushButton>
 
 #include "newfolderdialog.h"
-#include "ssh2/slaverequest.h"
+#include "ssh2/serverrequest.h"
 #include "tools/callback.h"
 #include "ui_newfolderdialog.h"
 
@@ -44,7 +44,7 @@ void NewFolderDialog::createFailure( QString error, int flags ) {
 	msgbox.setStandardButtons( QMessageBox::Cancel );
 
 	QPushButton* sudoButton = NULL;
-	if ( flags & SlaveRequest::PermissionError ) {
+	if ( flags & ServerRequest::PermissionError ) {
 		sudoButton = msgbox.addButton( "Sudo and Try Again", QMessageBox::ActionRole );
 	}
 

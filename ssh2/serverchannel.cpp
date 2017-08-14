@@ -3,103 +3,82 @@
 #include <QDebug>
 #include <QFile>
 #include "dialogrethreader.h"
-#include "file/slavefile.h"
+#include "file/serverfile.h"
 #include "main/tools.h"
-#include "slavechannel.h"
-#include "slaverequest.h"
+#include "serverchannel.h"
+#include "serverrequest.h"
 #include "sshhost.h"
 #include "tools/json.h"
 
-#define SLAVE_INIT      " cd ~;" \
+#define SERVER_INIT      " cd ~;" \
 	"if type perl >/dev/null 2>&1;then " \
 	"perl -e '" \
 	"use Digest::MD5;" \
-	"my $f=\".ponyedit/slave.pl\";" \
-	"die \"No Slave\\n\" if(!-e $f);" \
+	"my $f=\".ponyedit/server.pl\";" \
+	"die \"No Server\\n\" if(!-e $f);" \
 	"$d=Digest::MD5->new;" \
 	"open F,$f;" \
 	"$d->addfile(F);" \
-	"die \"Slave checksum fail\\n\" if($d->hexdigest ne \"[[CHECKSUM]]\");" \
-	"exec \"[[SLAVE_RUN]]\";" \
+	"die \"Server checksum fail\\n\" if($d->hexdigest ne \"[[CHECKSUM]]\");" \
+	"exec \"[[SERVER_RUN]]\";" \
 	"';" \
 	"else " \
 	"echo 'No Perl';" \
 	"fi\n"
 
 
-#define SLAVE_START_UPLOAD      " perl -e '" \
+#define SERVER_START_UPLOAD      " perl -e '" \
 	"mkdir \".ponyedit\" unless(-d \".ponyedit\");" \
-	"open F,\">.ponyedit/slave.pl\" or die \"Slave write error\\n\";" \
+	"open F,\">.ponyedit/server.pl\" or die \"Server write error\\n\";" \
 	"print \"uploader ready\";" \
 	"while(1)" \
 	"{" \
 	"my $line=<STDIN>;" \
-	"last if($line=~/^END_OF_SLAVE/);" \
+	"last if($line=~/^END_OF_SERVER/);" \
 	"print F $line;" \
 	"}" \
 	"close F;" \
 	"'&&" \
-	"[[SLAVE_RUN]]\n"
+	"[[SERVER_RUN]]\n"
 
-/*
- #define SLAVE_START_UPLOAD	" perl -e '"\
- *                                                               "use List::Util qw(min);"\
- *                                                               "my $f=\".ponyedit/slave.pl\",$s=[[SLAVE_SIZE]],$d;"\
- *                                                               "mkdir \".ponyedit\" unless(-d \".ponyedit\");"\
- *                                                               "open F,\">$f\" or die \"Slave write error\\n\";"\
- *                                                               "print \"uploader ready\";"\
- *                                                               "while($s > 0)"\
- *                                                               "{"\
- *                                                                       "my $w=min $s,2048;"\
- *                                                                       "my $r=read STDIN,$d,$w;"\
- *                                                                       "die \"Slave upload error\\n\" if($r<$w);"\
- *                                                                       "$s-=$r;"\
- *                                                                       "print F $d;"\
- *                                                                       "}"\
- *                                                               "close F;"\
- *                                                       "'&&"\
- *                                                       "[[SLAVE_RUN]]\n"
- */
+QByteArray ServerChannel::sServerChannelInit( SERVER_INIT );
+QByteArray ServerChannel::sServerScript;
+QByteArray ServerChannel::sServerUpload;
 
-QByteArray SlaveChannel::sSlaveChannelInit( SLAVE_INIT );
-QByteArray SlaveChannel::sSlaveScript;
-QByteArray SlaveChannel::sSlaveUpload;
-
-SlaveChannel::SlaveChannel( SshHost* host, bool sudo ) :
+ServerChannel::ServerChannel( SshHost* host, bool sudo ) :
 	ShellChannel( host ),
 	mInternalStatus( _WaitingForShell ),
 	mCurrentRequest( 0 ),
 	mNextMessageId( 1 ) {
 	mSudo = sudo;
-	SSHLOG_TRACE( host ) << "Creating a new slave channel";
+	SSHLOG_TRACE( host ) << "Creating a new server channel";
 }
 
-SlaveChannel::~SlaveChannel() {
-	SSHLOG_TRACE( mHost ) << "Slave channel deleted";
+ServerChannel::~ServerChannel() {
+	SSHLOG_TRACE( mHost ) << "Server channel deleted";
 
-	// Inform the files that depend on this slave channel before passing the critical error
+	// Inform the files that depend on this server channel before passing the critical error
 	emit channelShutdown();
 }
 
 #include <QTime>
 
-void SlaveChannel::initialize() {
-	// TODO: Use Tools::getResourcePath
-	QFile f( Tools::getResourcePath( "slave/slave.pl" ) );
+void ServerChannel::initialize() {
+	QFile f( Tools::getResourcePath( "server/server.pl" ) );
 	if ( ! f.open( QFile::ReadOnly ) ) {
-		throw( tr( "Unable to find slave script!" ) );
+		throw( tr( "Unable to find server script!" ) );
 	}
-	sSlaveScript = f.readAll();
+	sServerScript = f.readAll();
 
 	QCryptographicHash hash( QCryptographicHash::Md5 );
-	hash.addData( sSlaveScript );
+	hash.addData( sServerScript );
 	QByteArray checksum = hash.result().toHex().toLower();
 
-	sSlaveChannelInit.replace( "[[CHECKSUM]]", checksum );
-	sSlaveUpload = SLAVE_START_UPLOAD;      // + sSlaveScript;
+	sServerChannelInit.replace( "[[CHECKSUM]]", checksum );
+	sServerUpload = SERVER_START_UPLOAD;
 }
 
-bool SlaveChannel::update() {
+bool ServerChannel::update() {
 	switch ( mStatus ) {
 	case Opening:
 		return handleOpening();
@@ -116,36 +95,36 @@ bool SlaveChannel::update() {
 	return false;
 }
 
-void SlaveChannel::shellReady() {
-	setInternalStatus( _CheckingSlave );
+void ServerChannel::shellReady() {
+	setInternalStatus( _CheckingServer );
 }
 
-bool SlaveChannel::handleOpening() {
+bool ServerChannel::handleOpening() {
 	// Pass control to the shell channel until it's ready.
 	if ( mInternalStatus == _WaitingForShell ) {
 		return ShellChannel::handleOpening();
 	}
 
-	if ( mInternalStatus == _CheckingSlave ) {
-		if ( mHost->waitBeforeCheckingSlave( this ) ) {
+	if ( mInternalStatus == _CheckingServer ) {
+		if ( mHost->waitBeforeCheckingServer( this ) ) {
 			return true;
 		}
 
-		QByteArray slaveInit = sSlaveChannelInit;
-		slaveInit.replace( "[[SLAVE_RUN]]", getSlaveRun( mSudo ) );
+		QByteArray serverInit = sServerChannelInit;
+		serverInit.replace( "[[SERVER_RUN]]", getServerRun( mSudo ) );
 
-		SendResponse r = sendData( slaveInit );
+		SendResponse r = sendData( serverInit );
 		if ( r == SendAgain ) {
 			return true;
 		}
 		if ( r != SendSucceed ) {
-			criticalError( "Failed to send slave script initializer" );
+			criticalError( "Failed to send server script initializer" );
 		}
 
-		setInternalStatus( _CheckingSlaveResponse );
+		setInternalStatus( _CheckingServerResponse );
 	}
 
-	if ( mInternalStatus == _CheckingSlaveResponse ) {
+	if ( mInternalStatus == _CheckingServerResponse ) {
 		ReadReply reply = readUntilPrompt();
 		if ( reply.readAgain ) {
 			return true;
@@ -169,56 +148,56 @@ bool SlaveChannel::handleOpening() {
 			return false;
 		}
 
-		if ( response.startsWith( "Slave OK" ) || response.contains( "Sudo-prompt" ) ) {
-			finalizeSlaveInit( response );
+		if ( response.startsWith( "Server OK" ) || response.contains( "Sudo-prompt" ) ) {
+			finalizeServerInit( response );
 			return true;
 		}
 
-		if ( response.startsWith( "No Slave" ) || response.startsWith( "Slave checksum fail" ) ) {
-			setInternalStatus( _StartingSlaveUploader );
+		if ( response.startsWith( "No Server" ) || response.startsWith( "Server checksum fail" ) ) {
+			setInternalStatus( _StartingServerUploader );
 		} else {
-			criticalError( "Unexpected response to slave initialization" );
+			criticalError( "Unexpected response to server initialization" );
 			return false;
 		}
 	}
 
-	if ( mInternalStatus == _StartingSlaveUploader ) {
-		QByteArray slaveUpload = sSlaveUpload;
-		slaveUpload.replace( "[[SLAVE_RUN]]", getSlaveRun( false ) );
+	if ( mInternalStatus == _StartingServerUploader ) {
+		QByteArray serverUpload = sServerUpload;
+		serverUpload.replace( "[[SERVER_RUN]]", getServerRun( false ) );
 
-		SendResponse r = sendData( slaveUpload );
+		SendResponse r = sendData( serverUpload );
 		if ( r == SendAgain ) {
 			return true;
 		}
 		if ( r != SendSucceed ) {
-			criticalError( "Failed to start slave uploader" );
+			criticalError( "Failed to start server uploader" );
 		}
 
-		setInternalStatus( _WaitingForSlaveUploader );
+		setInternalStatus( _WaitingForServerUploader );
 	}
 
-	if ( mInternalStatus == _WaitingForSlaveUploader ) {
+	if ( mInternalStatus == _WaitingForServerUploader ) {
 		ReadReply rr = readUntil( "uploader ready" );
 		if ( rr.readAgain ) {
 			return true;
 		}
 
-		setInternalStatus( _UploadingSlaveScript );
+		setInternalStatus( _UploadingServerScript );
 	}
 
-	if ( mInternalStatus == _UploadingSlaveScript ) {
-		SendResponse r = sendData( sSlaveScript + QByteArray( "END_OF_SLAVE\n" ) );
+	if ( mInternalStatus == _UploadingServerScript ) {
+		SendResponse r = sendData( sServerScript + QByteArray( "END_OF_SERVER\n" ) );
 		if ( r == SendAgain ) {
 			return true;
 		}
 		if ( r != SendSucceed ) {
-			criticalError( "Failed to upload slave script" );
+			criticalError( "Failed to upload server script" );
 		}
 
-		setInternalStatus( _WaitingForSlaveUploadResponse );
+		setInternalStatus( _WaitingForServerUploadResponse );
 	}
 
-	if ( mInternalStatus == _WaitingForSlaveUploadResponse ) {
+	if ( mInternalStatus == _WaitingForServerUploadResponse ) {
 		ReadReply reply = readUntilPrompt();
 		if ( reply.readAgain ) {
 			return true;
@@ -237,11 +216,11 @@ bool SlaveChannel::handleOpening() {
 			return false;
 		}
 
-		if ( response.startsWith( "Slave OK" ) || response.contains( "Sudo-prompt" ) ) {
-			finalizeSlaveInit( response );
+		if ( response.startsWith( "Server OK" ) || response.contains( "Sudo-prompt" ) ) {
+			finalizeServerInit( response );
 			return true;
 		} else {
-			criticalError( "Unexpected response to slave initialization: " + response );
+			criticalError( "Unexpected response to server initialization: " + response );
 			return false;
 		}
 	}
@@ -277,16 +256,16 @@ bool SlaveChannel::handleOpening() {
 
 		mTriedSudoPassword = true;
 		mHost->setSudoPassword( mSudoPasswordAttempt );
-		setInternalStatus( _WaitingForSlaveUploadResponse );
+		setInternalStatus( _WaitingForServerUploadResponse );
 	}
 
 	return true;
 }
 
-void SlaveChannel::criticalError( const QString& error ) {
+void ServerChannel::criticalError( const QString& error ) {
 	// Fail the current job (if there is one)
 	if ( mCurrentRequest ) {
-		mCurrentRequest->failRequest( error, SlaveRequest::ConnectionError );
+		mCurrentRequest->failRequest( error, ServerRequest::ConnectionError );
 		delete mCurrentRequest;
 		mCurrentRequest = NULL;
 	}
@@ -294,7 +273,7 @@ void SlaveChannel::criticalError( const QString& error ) {
 	SshChannel::criticalError( error );
 }
 
-bool SlaveChannel::mainUpdate() {
+bool ServerChannel::mainUpdate() {
 	int rc;
 
 	// Read as much as there is to be read
@@ -310,7 +289,7 @@ bool SlaveChannel::mainUpdate() {
 				QVariantMap response = Json::parse( rr.data, ok ).toMap();
 				if ( int responseId = response.value( "i", 0 ).toInt() ) {
 					// Look up the request that this response relates to
-					SlaveRequest* request = mRequestsAwaitingReplies.value( responseId, NULL );
+					ServerRequest* request = mRequestsAwaitingReplies.value( responseId, NULL );
 					if ( request != NULL ) {
 						// If the request was opening a file, and a bufferId is returned, record
 						// the relationship
@@ -323,27 +302,27 @@ bool SlaveChannel::mainUpdate() {
 								connect( this,
 								         SIGNAL( channelShutdown() ),
 								         request->getOpeningFile(),
-								         SLOT( slaveChannelFailure() ),
+								         SLOT( serverChannelFailure() ),
 								         Qt::QueuedConnection );
 							}
 						}
 						BaseFile::deletionUnlock();
 
 						// Handle the response.
-						SlaveRequest* request =
+						ServerRequest* request =
 							mRequestsAwaitingReplies.value( responseId, NULL );
 						if ( request != NULL ) {
 							request->handleReply( response );
 						}
 					} else {
 						// This response has an id, but no related request. This should not
-						// happen. TODO: Log this.
+						// happen.
 						SSHLOG_ERROR( mHost ) <<
-						        "Received slave response, found no corresponding request";
+						        "Received server response, found no corresponding request";
 					}
 				} else {
 					// Got an unsolicted message. Tell the host.
-					mHost->handleUnsolicitedSlaveMessage( response );
+					mHost->handleUnsolicitedServerMessage( response );
 				}
 			}
 		}
@@ -356,7 +335,7 @@ bool SlaveChannel::mainUpdate() {
 
 	// Check if there's requests to be made
 	if ( mInternalStatus == _WaitingForRequests ) {
-		mCurrentRequest = mHost->getNextSlaveRequest( mSudo, mBufferIds );
+		mCurrentRequest = mHost->getNextServerRequest( mSudo, mBufferIds );
 		if ( mCurrentRequest ) {
 			mCurrentRequest->setMessageId( mNextMessageId++ );
 			mInternalStatus = _SendingRequest;
@@ -383,7 +362,7 @@ bool SlaveChannel::mainUpdate() {
 			if ( rc == LIBSSH2_ERROR_EAGAIN ) {
 				return true;
 			}
-			criticalError( tr( "Failed to initialize send a slave request: %1" ).arg( rc ) );
+			criticalError( tr( "Failed to initialize send a server request: %1" ).arg( rc ) );
 			return false;
 		}
 
@@ -397,7 +376,7 @@ bool SlaveChannel::mainUpdate() {
 	return true;
 }
 
-void SlaveChannel::finalizeSlaveInit( const QByteArray& initString ) {
+void ServerChannel::finalizeServerInit( const QByteArray& initString ) {
 	if ( initString.contains( "Sudo-prompt" ) ) {
 		mSudoPasswordAttempt = mHost->getSudoPassword();
 		mTriedSudoPassword = mSudoPasswordAttempt.isNull();
@@ -409,7 +388,7 @@ void SlaveChannel::finalizeSlaveInit( const QByteArray& initString ) {
 	QList< QByteArray > lines = initString.split( '\n' );
 
 	if ( lines.length() < 2 ) {
-		criticalError( "Invalid slave script init" );
+		criticalError( "Invalid server script init" );
 	}
 
 	bool ok;
@@ -424,11 +403,11 @@ void SlaveChannel::finalizeSlaveInit( const QByteArray& initString ) {
 
 	setInternalStatus( _WaitingForRequests );
 
-	mHost->firstSlaveCheckComplete();
+	mHost->firstServerCheckComplete();
 	setStatus( Open );
 }
 
-int SlaveChannel::getConnectionScore() {
+int ServerChannel::getConnectionScore() {
 	if ( mStatus == Opening ) {
 		return mInternalStatus;
 	} else {
@@ -436,18 +415,18 @@ int SlaveChannel::getConnectionScore() {
 	}
 }
 
-QString SlaveChannel::getConnectionDescription() {
+QString ServerChannel::getConnectionDescription() {
 	if ( mStatus == Opening ) {
 		switch ( mInternalStatus ) {
-		case _CheckingSlave:
-		case _CheckingSlaveResponse:
-			return tr( "Checking slave" );
+		case _CheckingServer:
+		case _CheckingServerResponse:
+			return tr( "Checking server" );
 
-		case _StartingSlaveUploader:
-		case _WaitingForSlaveUploader:
-		case _UploadingSlaveScript:
-		case _WaitingForSlaveUploadResponse:
-			return tr( "Updating slave" );
+		case _StartingServerUploader:
+		case _WaitingForServerUploader:
+		case _UploadingServerScript:
+		case _WaitingForServerUploadResponse:
+			return tr( "Updating server" );
 
 		case _SendingSudoPassword:
 			return tr( "Requesting sudo" );
@@ -459,16 +438,16 @@ QString SlaveChannel::getConnectionDescription() {
 	return ShellChannel::getConnectionDescription();
 }
 
-void SlaveChannel::setInternalStatus( InternalStatus newStatus ) {
+void ServerChannel::setInternalStatus( InternalStatus newStatus ) {
 	if ( newStatus != mInternalStatus ) {
 		mInternalStatus = newStatus;
 		mHost->invalidateOverallStatus();
 	}
 }
 
-QByteArray SlaveChannel::getSlaveRun( bool sudo ) {
+QByteArray ServerChannel::getServerRun( bool sudo ) {
 	if ( sudo ) {
 		mSudoPasswordAttempt = mHost->getSudoPassword();
 	}
-	return sudo ? "sudo -p Sudo-prompt%-ponyedit-% perl .ponyedit/slave.pl" : "perl .ponyedit/slave.pl";
+	return sudo ? "sudo -p Sudo-prompt%-ponyedit-% perl .ponyedit/server.pl" : "perl .ponyedit/server.pl";
 }
