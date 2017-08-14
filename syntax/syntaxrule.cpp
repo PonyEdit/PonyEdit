@@ -161,9 +161,11 @@ bool SyntaxRule::link( SyntaxDefinition* def ) {
 
 	if ( mAttribute.isEmpty() ) {
 		mAttributeLink = NULL;
+	} else if ( mType == RegExpr && mAttribute == "String" ) {
+		mAttributeLink = NULL;
 	} else {
 		mAttributeLink = def->getItemData( mAttribute );
-		if ( ! mAttributeLink ) {
+		if ( ! mAttributeLink && ! mContext.isEmpty() ) {
 			QLOG_WARN() << "Failed to link attribute:" << mAttribute;
 		}
 	}
@@ -302,7 +304,8 @@ int SyntaxRule::match( const QString &string, int position ) {
 	case WordDetect:
 		if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
 			if ( position == string.length() - mString.length() ||
-			     mDefinition->isDeliminator( string.at( position + mString.length() ) ) ) {
+			     ( string.length() > position + mString.length() &&
+			       mDefinition->isDeliminator( string.at( position + mString.length() ) ) ) ) {
 				if ( Tools::compareSubstring( string, mString, position, getCaseSensitivity() ) ) {
 					match = mString.length();
 				}
