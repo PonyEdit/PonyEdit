@@ -71,7 +71,7 @@ macx {
 	QMAKE_CXXFLAGS += -Werror -Wunused-parameter
 }
 
-QT		+= core widgets gui network xml script webengine webenginewidgets printsupport
+QT		+= core widgets gui network xml webengine webenginewidgets printsupport
 TEMPLATE = app
 
 SOURCES += \
