@@ -1,48 +1,63 @@
 language: cpp
 
+dist: trusty
+sudo: false
+
 matrix:
   include:
     - os: linux
-      dist: trusty
-      sudo: required
-      compiler: gcc
-      addons:
-        apt:
-          packages:
-            - libssh2-1-dev
-            - libssl-dev
       cache:
         directories:
           - $HOME/extras
+      env:
+        - TEST_SUITE=uncrustify
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - sourceline: 'ppa:beineri/opt-qt591-trusty'
+          packages:
+            - [ libssh2-1-dev, libssl-dev ]
+            - [ qt59base, qt59script, qt59webengine ]
+      env:
+        - TEST_SUITE=build
     - os: osx
       compiler: clang
-
+      env:
+        - TEST_SUITE=build
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then
-      sudo add-apt-repository ppa:beineri/opt-qt591-trusty -y;
-      sudo apt-get update -qq;
+  - |
+    if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+      PATH=/opt/qt59/bin:$PATH
     else
-      brew update;
+      brew update
     fi
 
 install:
-  - if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then
-      sudo apt-get install -qq qt59base qt59script qt59webengine;
-      source /opt/qt59/bin/qt59-env.sh;
-      source deps/build-uncrustify.sh;
-    else
-      brew install qt5 uncrustify libssh2 openssl@1.1;
-      brew link --force qt5;
+  - |
+    if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$TEST_SUITE" = "uncrustify" ]; then
+      source deps/build-uncrustify.sh
+    fi
+  - |
+    if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+      brew install qt5 libssh2 openssl@1.1
+      brew link --force qt5
     fi
 
 script:
-  - echo $PATH
-  - qmake -v
-  - uncrustify -v
-  - find . \( -name \*.h -o -name \*.cpp \) -not -path './tools/QsLog/*' -not -path './deps/*' | xargs uncrustify -c uncrustify.cfg --check
-  - qmake
-  - make
+  - |
+    if [ "$TEST_SUITE" = "uncrustify" ]; then
+      uncrustify -v
+      find . \( -name \*.h -o -name \*.cpp \) -not -path './tools/QsLog/*' -not -path './deps/*' | xargs uncrustify -c uncrustify.cfg --check
+    fi
+  - |
+    if [ "$TEST_SUITE" = "build" ]; then
+      qmake -v
+      qmake
+      make -j 2
+    fi
 
 notifications:
   email:
