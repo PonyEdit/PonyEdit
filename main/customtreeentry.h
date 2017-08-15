@@ -98,7 +98,6 @@ class CustomTreeEntry : public QObject {
 	private:
 		struct GutterIcon { int id; bool hover; QIcon icon; QString tooltip; QRect visibleArea; };
 
-		void init();
 		template < class T > static void deleteData( void* data ) {
 			delete static_cast< T >( data );
 		}

@@ -8,9 +8,9 @@
 #include "searchresultmodel.h"
 
 SearchResultModel::SearchResultModel( QObject *parent ) :
-	QAbstractItemModel( parent ) {
-	mRootNode = new InternalTreeNode();
-}
+	QAbstractItemModel( parent ),
+	mRootNode( new InternalTreeNode() ),
+	mCheckboxes( false ) {}
 
 SearchResultModel::~SearchResultModel() {
 	delete mRootNode;
