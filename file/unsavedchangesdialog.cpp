@@ -60,9 +60,9 @@ void UnsavedChangesDialog::buttonClicked( QAbstractButton* button ) {
 					loc.getFile()->newFile( file->getContent() );
 				}
 			} else {
-				try{
+				try {
 					file->save();
-				}catch ( QString & /*e*/ ) {
+				} catch ( QString & /*e*/ ) {
 					QLOG_ERROR() << "Unexpected throw while saving file" <<
 					        file->getLocation().getLabel();
 				}
@@ -71,7 +71,7 @@ void UnsavedChangesDialog::buttonClicked( QAbstractButton* button ) {
 	} else if ( button == ( QAbstractButton * ) mButtonBox->button( QDialogButtonBox::Discard ) ) {
 		// Discard
 		foreach ( BaseFile * file, selectedFiles ) {
-			try{
+			try {
 				if ( mCloseFilesOnDiscard ) {
 					if ( file->canClose() ) {
 						file->close();
@@ -79,7 +79,7 @@ void UnsavedChangesDialog::buttonClicked( QAbstractButton* button ) {
 				} else {
 					fileClosed( file );
 				}
-			}catch ( QString & /*e*/ ) {
+			} catch ( QString & /*e*/ ) {
 				QLOG_ERROR() << "Unexpected throw while discarding file" <<
 				        file->getLocation().getLabel();
 			}
@@ -99,11 +99,11 @@ void UnsavedChangesDialog::fileStateChanged() {
 		BaseFile::OpenStatus status = file->getOpenStatus();
 
 		if ( status != BaseFile::Closed && status != BaseFile::Closing ) {
-			try{
+			try {
 				if ( file->canClose() ) {
 					file->close();
 				}
-			}catch ( QString & /*e*/ ) {
+			} catch ( QString & /*e*/ ) {
 				QLOG_ERROR() << "Unexpected throw while closing saved file" <<
 				        file->getLocation().getLabel();
 			}

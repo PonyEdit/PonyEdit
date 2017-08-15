@@ -168,11 +168,11 @@ void PonyEdit::receiveMessage() {
 
 bool PonyEdit::notify( QObject *o, QEvent *e ) {
 	bool ret = false;
-	try{
+	try {
 		ret = QApplication::notify( o, e );
-	}catch ( QString err ) {
+	} catch ( QString err ) {
 		QLOG_ERROR() << "UNCAUGHT EXCEPTION:" << err;
-	}catch ( ... ) {
+	} catch ( ... ) {
 		QLOG_ERROR() << "UNKNOWN UNCAUGHT EXCEPTION";
 	}
 

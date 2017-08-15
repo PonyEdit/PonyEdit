@@ -229,9 +229,9 @@ void MainWindow::openSingleFile() {
 void MainWindow::openSingleFile( const Location& loc ) {
 	if ( ! loc.isDirectory() ) {
 		BaseFile* file;
-		try{
+		try {
 			file = Location( loc ).getFile();
-		}catch ( QString &e ) {
+		} catch ( QString &e ) {
 			QLOG_ERROR() << "Error opening a single file" << loc.getPath() << ": " << e;
 			return;
 		}
@@ -257,9 +257,9 @@ void MainWindow::saveFile() {
 		if ( current->getFile()->getLocation().getProtocol() == Location::Unsaved ) {
 			saveFileAs();
 		} else {
-			try{
+			try {
 				current->save();
-			}catch ( QString &e ) {
+			} catch ( QString &e ) {
 				QLOG_ERROR() << "Error saving the curent file: " << e;
 			}
 		}
@@ -275,11 +275,11 @@ void MainWindow::saveFileAs() {
 	FileDialog dlg( this, true );
 	if ( dlg.exec() ) {
 		Location loc = dlg.getNewLocation();
-		try{
+		try {
 			if ( ! loc.isNull() ) {
 				loc.getFile()->newFile( current->getFile()->getContent() );
 			}
-		}catch ( QString &e ) {
+		} catch ( QString &e ) {
 			QLOG_ERROR() << "Error saving file as: " << e;
 			return;
 		}

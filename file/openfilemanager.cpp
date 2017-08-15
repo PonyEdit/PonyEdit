@@ -67,9 +67,9 @@ bool OpenFileManager::closeFiles( const QList< BaseFile* >& files, bool force ) 
 
 	foreach ( BaseFile * file, files ) {
 		if ( mOpenFiles.contains( file ) ) {
-			try{
+			try {
 				file->close();
-			}catch ( QString &e ) {
+			} catch ( QString &e ) {
 				QLOG_TRACE() << "Unexpected throw while closing" << file->getLocation().getLabel() <<
 				        ": " << e;
 			}
@@ -113,9 +113,9 @@ bool OpenFileManager::refreshFiles( const QList< BaseFile* >& files, bool force 
 
 	foreach ( BaseFile * file, files ) {
 		if ( mOpenFiles.contains( file ) ) {
-			try{
+			try {
 				file->refresh();
-			}catch ( QString &e ) {
+			} catch ( QString &e ) {
 				QLOG_TRACE() << "Unexpected throw while refreshing" << file->getLocation().getLabel() <<
 				        ": " << e;
 			}

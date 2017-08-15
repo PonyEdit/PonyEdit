@@ -52,7 +52,7 @@ void SiteManager::handleReply( QNetworkReply *reply ) {
 	}
 	Messages message = mReplies.value( reply );
 
-	try{
+	try {
 		if ( reply->error() != QNetworkReply::NoError ) {
 			throw( reply->errorString() );
 		}
@@ -71,7 +71,7 @@ void SiteManager::handleReply( QNetworkReply *reply ) {
 			handleUpdateCheckReply( data.toList(), message == UpdateCheckForcedNotification );
 			break;
 		}
-	}catch ( QString error ) {
+	} catch ( QString error ) {
 		switch ( message ) {
 		case UpdateCheck:
 		case UpdateCheckForcedNotification:

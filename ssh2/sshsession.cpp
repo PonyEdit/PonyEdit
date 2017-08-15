@@ -98,7 +98,7 @@ void SshSession::threadMain() {
 	QObject::connect( &heartbeatTimer, SIGNAL( timeout() ), this, SLOT( heartbeat() ) );
 	heartbeatTimer.start();
 
-	try{
+	try {
 		// In the interests of UI sanity, only let 1 session per host connect at any given time. That way,
 		// passwords and confirmation dialogs won't duplicate.
 		mHost->lockNewSessions();
@@ -136,7 +136,7 @@ void SshSession::threadMain() {
 
 		// Enter Qt's event loop for this thread.
 		mThread->exec();
-	}catch ( QString error ) {
+	} catch ( QString error ) {
 		SSHLOG_ERROR( mHost ) << "Unexpected throw in main session loop: " << error;
 		setErrorStatus( "Thrown error: " + error );
 		if ( holdingLock ) {
@@ -395,7 +395,7 @@ bool SshSession::authenticateAgent() {
 
 	SSHLOG_TRACE( mHost ) << "Looking for an SSH key agent";
 
-	try{
+	try {
 		// Initialize SSH agent code
 		agent = libssh2_agent_init( mHandle );
 		if ( ! agent ) {
@@ -437,7 +437,7 @@ bool SshSession::authenticateAgent() {
 
 			prevIdentity = identity;
 		}
-	}catch ( const QString& error ) {
+	} catch ( const QString& error ) {
 		SSHLOG_ERROR( mHost ) << "Failed to authenticate via SSH agent: " << error;
 	}
 
@@ -616,9 +616,9 @@ void SshSession::updateAllChannels() {
 			}
 
 			bool doMore;
-			try{
+			try {
 				doMore = channel->updateChannel();
-			}catch ( QString err ) {
+			} catch ( QString err ) {
 				QLOG_ERROR() << "Critical channel failure:" << err;
 				setErrorStatus( QObject::tr( "Critical channel failure: " ) + err );
 				mThread->quit();                // Abort QThread::exec, fall back to threadMain for
