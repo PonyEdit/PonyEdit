@@ -1,0 +1,25 @@
+
+name: ponyedit
+version: '0.91.11'
+summary: Coding at the speed of thought
+description: |
+  PonyEdit is a remote SSH text editor like none you've ever seen before.
+  Editing your files feels as fast and slick as editing local files, and
+  your changes are saved nearly instantly to the remote server at the
+  press of a button.
+
+grade: devel
+confinement: devmode
+
+apps:
+  ponyedit:
+    command: desktop-launch $SNAP/opt/ponyedit/ponyedit
+
+parts:
+  ponyedit:
+    plugin: qmake
+    qt-version: qt5
+    project-files: PonyEdit.pro
+    source: .
+    stage-packages: [ libssh2-1-dev libssl-dev qt5base-dev qt5script-dev qt5webengine-dev ]
+    after: [ desktop/qt5 ]
