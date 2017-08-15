@@ -71,7 +71,7 @@ void SiteManager::handleReply( QNetworkReply *reply ) {
 			handleUpdateCheckReply( data.toList(), message == UpdateCheckForcedNotification );
 			break;
 		}
-	} catch ( QString error ) {
+	} catch ( QString* error ) {
 		switch ( message ) {
 		case UpdateCheck:
 		case UpdateCheckForcedNotification:
