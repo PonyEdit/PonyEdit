@@ -6,12 +6,19 @@ sudo: false
 matrix:
   include:
     - os: linux
-      compiler: gcc
       cache:
         directories:
           - $HOME/extras
+      env:
+        - TEST_SUITE=uncrustify
+    - os: linux
+      compiler: gcc
+      env:
+        - TEST_SUITE=build
     - os: osx
       compiler: clang
+      env:
+        - TEST_SUITE=build
 
 addons:
   apt:
@@ -31,20 +38,25 @@ before_install:
 
 install:
   - |
-    if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then
+    if [[ "$TRAVIS_OS_NAME" = "linux" -a "$TEST_SUITE" = "uncrustify" ]]; then
       source deps/build-uncrustify.sh
     else
-      brew install qt5 uncrustify libssh2 openssl@1.1
+      brew install qt5 libssh2 openssl@1.1
       brew link --force qt5
     fi
 
 script:
-  - echo $PATH
-  - qmake -v
-  - uncrustify -v
-  - find . \( -name \*.h -o -name \*.cpp \) -not -path './tools/QsLog/*' -not -path './deps/*' | xargs uncrustify -c uncrustify.cfg --check
-  - qmake
-  - make
+  - |
+    if [[ "$TEST_SUITE" = "uncrustify" ]]; then
+      uncrustify -v
+      find . \( -name \*.h -o -name \*.cpp \) -not -path './tools/QsLog/*' -not -path './deps/*' | xargs uncrustify -c uncrustify.cfg --check
+    fi
+  - |
+    if [[ "$TEST_SUITE" = "build" ]]; then
+      qmake -v
+      qmake
+      make -j 2
+    fi
 
 notifications:
   email:
