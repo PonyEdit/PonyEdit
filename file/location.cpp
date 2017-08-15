@@ -163,7 +163,7 @@ bool Location::isHidden() const {
 		WCHAR* wchar = ( WCHAR * ) malloc( ( mData->mPath.length() + 1 ) * sizeof( WCHAR ) );
 		wchar[mData->mPath.toWCharArray( wchar )] = 0;
 		DWORD result = GetFileAttributes( wchar );
-		delete wchar;
+		free( wchar );
 
 		return result & FILE_ATTRIBUTE_HIDDEN;
 	} else
