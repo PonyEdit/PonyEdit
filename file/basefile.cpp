@@ -75,24 +75,26 @@ BaseFile::~BaseFile() {
 	}
 }
 
-BaseFile::BaseFile( const Location& location ) {
-	mInRedoBlock = 0;
-	mInUndoBlock = 0;
-	mReadOnly = false;
-	mHighlighter = NULL;
-	mProgress = -1;
-	mOpenStatus = BaseFile::Closed;
-	mLocation = location;
-
-	mIgnoreChanges = 0;
-
-	mChanged = false;
-	mRevision = 0;
-	mLastSavedRevision = 0;
-	mLastSavedUndoLength = 0;
-
-	mDocument = new QTextDocument( this );
-	mDocumentLayout = new QPlainTextDocumentLayout( mDocument );
+BaseFile::BaseFile( const Location& location ) :
+	mLocation( location ),
+	mContent( "" ),
+	mError( "" ),
+	mDocument( new QTextDocument( this ) ),
+	mDocumentLayout( new QPlainTextDocumentLayout( mDocument ) ),
+	mChanged( false ),
+	mDosLineEndings( false ),
+	mReadOnly( false ),
+	mIgnoreChanges( 0 ),
+	mInUndoBlock( 0 ),
+	mInRedoBlock( 0 ),
+	mRevision( 0 ),
+	mLastSavedRevision( 0 ),
+	mLastSavedUndoLength( 0 ),
+	mLastSaveChecksum( NULL ),
+	mProgress( -1 ),
+	mOpenStatus( BaseFile::Closed ),
+	mAttachedEditors(),
+	mHighlighter( NULL ) {
 	mDocument->setDocumentLayout( mDocumentLayout );
 
 	connect( mDocument, SIGNAL( contentsChange( int, int, int ) ), this, SLOT( documentChanged( int, int, int ) ) );
