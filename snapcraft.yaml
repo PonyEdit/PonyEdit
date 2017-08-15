@@ -17,10 +17,9 @@ apps:
 
 parts:
   ponyedit:
-    after: [ qt57 ]
+    after: [ qt57, desktop-qt5 ]
     plugin: qmake
     qt-version: qt5
     project-files: [ PonyEdit.pro ]
     source: .
     stage-packages: [ libssh2-1-dev, libssl-dev ]
-    after: [ desktop-qt5 ]
