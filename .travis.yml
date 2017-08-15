@@ -13,6 +13,13 @@ matrix:
         - TEST_SUITE=uncrustify
     - os: linux
       compiler: gcc
+      addons:
+        apt:
+          sources:
+            - sourceline: 'ppa:beineri/opt-qt591-trusty'
+          packages:
+            - [ libssh2-1-dev, libssl-dev ]
+            - [ qt59base, qt59script, qt59webengine ]
       env:
         - TEST_SUITE=build
     - os: osx
@@ -20,17 +27,9 @@ matrix:
       env:
         - TEST_SUITE=build
 
-addons:
-  apt:
-    sources:
-      - sourceline: 'ppa:beineri/opt-qt591-trusty'
-    packages:
-      - [libssh2-1-dev, libssl-dev]
-      - [qt59base, qt59script, qt59webengine]
-
 before_install:
   - |
-    if [[ "$TRAVIS_OS_NAME" = "linux" ]]; then
+    if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       PATH=/opt/qt59/bin:$PATH
     else
       brew update
@@ -38,21 +37,23 @@ before_install:
 
 install:
   - |
-    if [[ "$TRAVIS_OS_NAME" = "linux" -a "$TEST_SUITE" = "uncrustify" ]]; then
+    if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$TEST_SUITE" = "uncrustify" ]; then
       source deps/build-uncrustify.sh
-    else
+    fi
+  - |
+    if [ "$TRAVIS_OS_NAME" = "osx" ]; then
       brew install qt5 libssh2 openssl@1.1
       brew link --force qt5
     fi
 
 script:
   - |
-    if [[ "$TEST_SUITE" = "uncrustify" ]]; then
+    if [ "$TEST_SUITE" = "uncrustify" ]; then
       uncrustify -v
       find . \( -name \*.h -o -name \*.cpp \) -not -path './tools/QsLog/*' -not -path './deps/*' | xargs uncrustify -c uncrustify.cfg --check
     fi
   - |
-    if [[ "$TEST_SUITE" = "build" ]]; then
+    if [ "$TEST_SUITE" = "build" ]; then
       qmake -v
       qmake
       make -j 2
