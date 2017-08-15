@@ -3,8 +3,6 @@
 #include <QDebug>
 #include <QDesktopServices>
 #include <QNetworkReply>
-#include <QtScript/QScriptEngine>
-#include <QtScript/QScriptValue>
 #include <QUrl>
 #include <QUrlQuery>
 #include <QVariantMap>

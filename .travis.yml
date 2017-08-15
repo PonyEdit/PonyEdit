@@ -19,7 +19,7 @@ matrix:
             - sourceline: 'ppa:beineri/opt-qt591-trusty'
           packages:
             - [ libssh2-1-dev, libssl-dev ]
-            - [ qt59base, qt59script, qt59webengine ]
+            - [ qt59base, qt59webengine ]
       env:
         - TEST_SUITE=build
     - os: osx
