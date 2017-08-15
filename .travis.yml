@@ -45,8 +45,7 @@ addons:
 
 before_install:
   # Only run Coverity on the Linux build
-  - if [ "$TRAVIS_BRANCH" = "$coverity_branch" ] && ! [ "$TRAVIS_OS_NAME" = "linux" ]; then exit; fi
-  - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+  - if [ "$TRAVIS_BRANCH" = "$coverity_branch" ] && ! [ "$TRAVIS_OS_NAME" = "linux" -a "$TEST_SUITE" = "build" ]; then exit; fi
   - |
     if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       PATH=/opt/qt59/bin:$PATH
