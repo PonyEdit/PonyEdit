@@ -68,7 +68,7 @@ void TabbedFileList::fileSelected( BaseFile *file ) {
 }
 
 void TabbedFileList::fileChanged() {
-	BaseFile* file = ( BaseFile * ) QObject::sender();
+	BaseFile* file = reinterpret_cast< BaseFile * >( QObject::sender() );
 	int idx = findTab( file );
 	if ( file->hasUnsavedChanges() ) {
 		mTabs->setTabText( idx, file->getLocation().getLabel() + " *" );

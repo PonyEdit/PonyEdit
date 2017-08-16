@@ -12,7 +12,7 @@ WindowManager* gWindowManager = NULL;
 WindowManager::WindowManager( QWidget *parent ) :
 	QWidget( parent ) {
 	mEditorSelectionLocked = false;
-	mParent = ( MainWindow * ) parent;
+	mParent = reinterpret_cast< MainWindow * >( parent );
 	mCurrentEditorPanel = NULL;
 	gWindowManager = this;
 
