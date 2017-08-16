@@ -160,7 +160,10 @@ bool SshSession::openSocket( unsigned long ipAddress ) {
 	resetActivityCounter();
 
 	setStatus( OpeningConnection );
-	struct sockaddr_in sin = { 0 };
+
+	struct sockaddr_in sin;
+	memset( &sin, 0, sizeof( sockaddr_in ) );
+
 	sin.sin_family = AF_INET;
 	sin.sin_port = htons( mHost->getPort() );
 	sin.sin_addr.s_addr = ipAddress;
