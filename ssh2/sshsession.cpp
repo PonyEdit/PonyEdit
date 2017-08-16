@@ -136,9 +136,9 @@ void SshSession::threadMain() {
 
 		// Enter Qt's event loop for this thread.
 		mThread->exec();
-	} catch ( QString* error ) {
+	} catch ( QString& error ) {
 		SSHLOG_ERROR( mHost ) << "Unexpected throw in main session loop: " << error;
-		setErrorStatus( error->prepend( "Thrown error: " ) );
+		setErrorStatus( "Thrown error: " + error );
 		if ( holdingLock ) {
 			mHost->unlockNewSessions();
 		}
@@ -620,7 +620,7 @@ void SshSession::updateAllChannels() {
 			bool doMore;
 			try {
 				doMore = channel->updateChannel();
-			} catch ( QString* err ) {
+			} catch ( QString& err ) {
 				QLOG_ERROR() << "Critical channel failure:" << err;
 				setErrorStatus( QObject::tr( "Critical channel failure: " ) + err );
 				mThread->quit();                // Abort QThread::exec, fall back to threadMain for
