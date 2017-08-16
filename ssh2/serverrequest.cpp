@@ -1,7 +1,8 @@
 #include <QDebug>
+#include <QJsonDocument>
+
 #include "main/tools.h"
 #include "serverrequest.h"
-#include "tools/json.h"
 
 ServerRequest::ServerRequest( ServerFile* file,
                               const QByteArray& request,
@@ -35,7 +36,7 @@ const QByteArray& ServerRequest::prepare( int bufferId ) {
 		requestRoot.insert( "b", bufferId );
 	}
 
-	mPackedRequest = Json::serialize( QVariant( requestRoot ) );
+	mPackedRequest = QJsonDocument::fromVariant( QVariant( requestRoot ) ).toJson();
 	mPackedRequest = Tools::bin( mPackedRequest );
 	mPackedRequest += "\n";
 

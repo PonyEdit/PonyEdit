@@ -2,13 +2,14 @@
 #include <QCryptographicHash>
 #include <QDebug>
 #include <QFile>
+#include <QJsonDocument>
+
 #include "dialogrethreader.h"
 #include "file/serverfile.h"
 #include "main/tools.h"
 #include "serverchannel.h"
 #include "serverrequest.h"
 #include "sshhost.h"
-#include "tools/json.h"
 
 #define SERVER_INIT      " cd ~;" \
 	"if type perl >/dev/null 2>&1;then " \
@@ -285,8 +286,7 @@ bool ServerChannel::mainUpdate() {
 				SSHLOG_TRACE( mHost ) << "Received: " << rr.data;
 
 				// We have a message! Decode it.
-				bool ok;
-				QVariantMap response = Json::parse( rr.data, ok ).toMap();
+				QVariantMap response = QJsonDocument::fromJson( rr.data ).object().toVariantMap();
 				if ( int responseId = response.value( "i", 0 ).toInt() ) {
 					// Look up the request that this response relates to
 					ServerRequest* request = mRequestsAwaitingReplies.value( responseId, NULL );
@@ -391,9 +391,9 @@ void ServerChannel::finalizeServerInit( const QByteArray& initString ) {
 		criticalError( "Invalid server script init" );
 	}
 
-	bool ok;
-	QVariantMap initBlob = Json::parse( QString( lines[1] ), ok ).toMap();
-	if ( ! ok ) {
+	QJsonParseError error;
+	QVariantMap initBlob = QJsonDocument::fromJson( lines[1], &error ).object().toVariantMap();
+	if ( error.error ) {
 		criticalError( "JSON initialization blob invalid" );
 	}
 

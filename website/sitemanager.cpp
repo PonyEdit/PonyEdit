@@ -2,13 +2,13 @@
 #include <QDate>
 #include <QDebug>
 #include <QDesktopServices>
+#include <QJsonDocument>
 #include <QNetworkReply>
 #include <QUrl>
 #include <QUrlQuery>
 #include <QVariantMap>
 
 #include "sitemanager.h"
-#include "tools/json.h"
 #include "updatemanager.h"
 
 #ifdef Q_OS_WIN
@@ -59,9 +59,9 @@ void SiteManager::handleReply( QNetworkReply *reply ) {
 
 		QByteArray result = reply->readAll();
 
-		bool ok;
-		QVariant data = Json::parse( result, ok ).toList();
-		if ( ! ok ) {
+		QJsonParseError error;
+		QVariant data = QJsonDocument::fromJson( result, &error ).toVariant();
+		if ( error.error ) {
 			throw( tr( "Failed to parse reply from website" ) );
 		}
 
