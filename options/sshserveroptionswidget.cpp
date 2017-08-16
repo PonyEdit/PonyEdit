@@ -160,12 +160,11 @@ void SshServerOptionsWidget::deleteServer() {
 }
 
 void SshServerOptionsWidget::serverNameUpdated( const QString &newName ) {
-	QListWidgetItem *item;
 	ServerConfigWidget *widget = dynamic_cast< ServerConfigWidget* >( sender() );
 	SshHost *host = widget->getEditHost();
 
 	for ( int ii = 0; ii < ui->serversList->count(); ii++ ) {
-		item = ui->serversList->item( ii );
+		QListWidgetItem* item = ui->serversList->item( ii );
 		SshHost* testHost = ( SshHost * ) item->data( Qt::UserRole ).value< void* >();
 		if ( testHost == host ) {
 			item->setText( newName );
