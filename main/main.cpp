@@ -71,7 +71,7 @@ int main( int argc, char *argv[] ) {
 		QTimer::singleShot( 1000, gSiteManager, SLOT( checkForUpdates() ) );
 
 		result = a.exec();
-	} catch ( QString err ) {
+	} catch ( QString* err ) {
 		QLOG_ERROR() << "FATAL ERROR: " << err;
 	}
 

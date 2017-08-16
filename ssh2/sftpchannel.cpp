@@ -8,10 +8,15 @@
 #include "sshhost.h"
 #include "sshsession.h"
 
-SFTPChannel::SFTPChannel( SshHost *host )
-	: SshChannel( host ) {
-	mCurrentRequest = NULL;
-}
+SFTPChannel::SFTPChannel( SshHost *host ) :
+	SshChannel( host ),
+	mHandle( NULL ),
+	mOperationHandle( NULL ),
+	mCurrentRequest( NULL ),
+	mRequestState(),
+	mResult(),
+	mOperationSize( 0 ),
+	mOperationCursor( 0 ) {}
 
 bool SFTPChannel::update() {
 	switch ( mStatus ) {

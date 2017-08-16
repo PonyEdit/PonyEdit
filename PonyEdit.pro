@@ -137,7 +137,6 @@ SOURCES += \
 	ssh2/sshhost.cpp \
 	ssh2/sshchannel.cpp \
 	ssh2/shellchannel.cpp \
-	tools/json.cpp \
 	ssh2/serverconfigwidget.cpp \
 	ssh2/serverconfigdlg.cpp \
 	ssh2/dialogrethreader.cpp \
@@ -224,7 +223,6 @@ HEADERS  += \
 	ssh2/sshhost.h \
 	ssh2/sshchannel.h \
 	ssh2/shellchannel.h \
-	tools/json.h \
 	ssh2/serverconfigwidget.h \
 	ssh2/serverconfigdlg.h \
 	ssh2/dialogrethreader.h \

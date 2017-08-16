@@ -13,7 +13,7 @@ OpenFileTreeModel::OpenFileTreeModel( QObject* parent,
 	QAbstractItemModel( parent ) {
 	mOptionFlags = flags;
 	mTopLevelNode = new Node( Root );
-	mParent = ( OpenFileTreeView * ) parent;
+	mParent = reinterpret_cast< OpenFileTreeView * >( parent );
 
 	mExplicitFiles = ( files != NULL );
 	if ( mExplicitFiles ) {
@@ -167,7 +167,7 @@ void OpenFileTreeModel::fileClosed( BaseFile* file ) {
 }
 
 void OpenFileTreeModel::fileChanged() {
-	BaseFile* file = ( BaseFile * ) QObject::sender();
+	BaseFile* file = reinterpret_cast< BaseFile * >( QObject::sender() );
 	Node* fileNode = mFileLookup.value( file );
 	if ( fileNode ) {
 		QModelIndex index = getNodeIndex( fileNode );
@@ -277,7 +277,7 @@ void OpenFileTreeModel::removeNode( const QModelIndex &index ) {
 		return;
 	}
 
-	Node* node = ( Node * ) index.internalPointer();
+	Node* node = reinterpret_cast< Node * >( index.internalPointer() );
 	if ( ! node ) {
 		return;
 	}

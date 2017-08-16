@@ -14,7 +14,7 @@ bool DialogRethreader::event( QEvent* event ) {
 	if ( event->type() == sRunDialogEventId ) {
 		event->accept();
 
-		DialogEvent* e = ( DialogEvent * ) event;
+		DialogEvent* e = reinterpret_cast< DialogEvent * >( event );
 		DialogRethreadRequest* rq = e->request;
 
 		ThreadCrossingDialog* dialog = rq->factoryMethod();

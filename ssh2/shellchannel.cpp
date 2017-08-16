@@ -9,6 +9,9 @@
 
 ShellChannel::ShellChannel( SshHost* host, bool machineReadable, const QByteArray& ptyType ) :
 	SshChannel( host ),
+	mHandle( NULL ),
+	mReadBuffer(),
+	mScratchBuffer(),
 	mInternalStatus( _OpenSession ),
 	mMachineReadable( machineReadable ),
 	mPtyType( ptyType ) {}

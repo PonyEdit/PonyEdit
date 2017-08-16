@@ -5,26 +5,29 @@
 #include "customtreemodel.h"
 #include "customtreewidget.h"
 
-CustomTreeEntry::CustomTreeEntry( const QIcon& icon, const QString& label ) {
-	init();
-	mStaticIcon = icon;
-	mStaticLabel = label;
-}
+CustomTreeEntry::CustomTreeEntry( const QIcon& icon, const QString& label ) :
+	mModel( NULL ),
+	mParent( NULL ),
+	mIndex( 0 ),
+	mExpandable( false ),
+	mDelayedLoad( false ),
+	mStaticIcon( icon ),
+	mStaticLabel( label ),
+	mDataDeleteProc( NULL ),
+	mData( NULL ),
+	mHover( false ) {}
 
-CustomTreeEntry::CustomTreeEntry( CustomTreeModel* model ) {
-	init();
-	mModel = model;
-}
-
-void CustomTreeEntry::init() {
-	mIndex = 0;
-	mParent = NULL;
-	mModel = NULL;
-	mExpandable = false;
-	mData = NULL;
-	mDataDeleteProc = NULL;
-	mDelayedLoad = false;
-}
+CustomTreeEntry::CustomTreeEntry( CustomTreeModel* model ) :
+	mModel( model ),
+	mParent( NULL ),
+	mIndex( 0 ),
+	mExpandable( false ),
+	mDelayedLoad( false ),
+	mStaticIcon( NULL ),
+	mStaticLabel( "" ),
+	mDataDeleteProc( NULL ),
+	mData( NULL ),
+	mHover( false ) {}
 
 CustomTreeEntry::~CustomTreeEntry() {
 	if ( mModel && mParent ) {

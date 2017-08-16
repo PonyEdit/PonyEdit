@@ -2,13 +2,14 @@
 #include <QCryptographicHash>
 #include <QDebug>
 #include <QFile>
+#include <QJsonDocument>
+
 #include "dialogrethreader.h"
 #include "file/serverfile.h"
 #include "main/tools.h"
 #include "serverchannel.h"
 #include "serverrequest.h"
 #include "sshhost.h"
-#include "tools/json.h"
 
 #define SERVER_INIT      " cd ~;" \
 	"if type perl >/dev/null 2>&1;then " \
@@ -49,8 +50,12 @@ ServerChannel::ServerChannel( SshHost* host, bool sudo ) :
 	ShellChannel( host ),
 	mInternalStatus( _WaitingForShell ),
 	mCurrentRequest( 0 ),
-	mNextMessageId( 1 ) {
-	mSudo = sudo;
+	mNextMessageId( 1 ),
+	mSudo( sudo ),
+	mSudoPasswordAttempt(),
+	mTriedSudoPassword( false ),
+	mRequestsAwaitingReplies(),
+	mBufferIds() {
 	SSHLOG_TRACE( host ) << "Creating a new server channel";
 }
 
@@ -274,8 +279,6 @@ void ServerChannel::criticalError( const QString& error ) {
 }
 
 bool ServerChannel::mainUpdate() {
-	int rc;
-
 	// Read as much as there is to be read
 	ReadReply rr;
 	do {
@@ -285,8 +288,7 @@ bool ServerChannel::mainUpdate() {
 				SSHLOG_TRACE( mHost ) << "Received: " << rr.data;
 
 				// We have a message! Decode it.
-				bool ok;
-				QVariantMap response = Json::parse( rr.data, ok ).toMap();
+				QVariantMap response = QJsonDocument::fromJson( rr.data ).object().toVariantMap();
 				if ( int responseId = response.value( "i", 0 ).toInt() ) {
 					// Look up the request that this response relates to
 					ServerRequest* request = mRequestsAwaitingReplies.value( responseId, NULL );
@@ -354,7 +356,7 @@ bool ServerChannel::mainUpdate() {
 	if ( mInternalStatus == _SendingRequest ) {
 		const QByteArray& packedRequest =
 			mCurrentRequest->getPackedRequest( mBufferIds.value( mCurrentRequest->getFile(), -1 ) );
-		rc = libssh2_channel_write( mHandle, packedRequest, packedRequest.length() );
+		int rc = libssh2_channel_write( mHandle, packedRequest, packedRequest.length() );
 		if ( rc < 0 ) {
 			if ( rc == -1 ) {
 				rc = libssh2_session_last_errno( mSession->sessionHandle() );
@@ -391,9 +393,9 @@ void ServerChannel::finalizeServerInit( const QByteArray& initString ) {
 		criticalError( "Invalid server script init" );
 	}
 
-	bool ok;
-	QVariantMap initBlob = Json::parse( QString( lines[1] ), ok ).toMap();
-	if ( ! ok ) {
+	QJsonParseError error;
+	QVariantMap initBlob = QJsonDocument::fromJson( lines[1], &error ).object().toVariantMap();
+	if ( error.error ) {
 		criticalError( "JSON initialization blob invalid" );
 	}
 

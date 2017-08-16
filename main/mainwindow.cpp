@@ -397,10 +397,10 @@ void MainWindow::contextHelp() {
 	QString text = editor->getCodeEditor()->textCursor().selectedText();
 	QString ext = editor->getFile()->getLocation().getPath().split( '.' ).last();
 
-	bool dashInstalled = false;
-
 #ifdef Q_OS_MAC
-	dashInstalled = QDir( "/Applications/Dash.app" ).exists();
+	bool dashInstalled = QDir( "/Applications/Dash.app" ).exists();
+#else
+	bool dashInstalled = false;
 #endif
 
 	if ( dashInstalled ) {

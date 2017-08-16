@@ -136,9 +136,9 @@ void SshSession::threadMain() {
 
 		// Enter Qt's event loop for this thread.
 		mThread->exec();
-	} catch ( QString error ) {
+	} catch ( QString* error ) {
 		SSHLOG_ERROR( mHost ) << "Unexpected throw in main session loop: " << error;
-		setErrorStatus( "Thrown error: " + error );
+		setErrorStatus( error->prepend( "Thrown error: " ) );
 		if ( holdingLock ) {
 			mHost->unlockNewSessions();
 		}
@@ -390,7 +390,6 @@ bool SshSession::authenticatePublicKey() {
 bool SshSession::authenticateAgent() {
 	struct libssh2_agent_publickey *identity, *prevIdentity = NULL;
 	LIBSSH2_AGENT* agent = NULL;
-	int rc;
 	bool success = false;
 
 	SSHLOG_TRACE( mHost ) << "Looking for an SSH key agent";
@@ -403,7 +402,7 @@ bool SshSession::authenticateAgent() {
 		}
 
 		// Connect to the SSH agent
-		rc = libssh2_agent_connect( agent );
+		int rc = libssh2_agent_connect( agent );
 		if ( rc ) {
 			throw( QObject::tr( "No SSH agent found." ) );
 		}
@@ -618,7 +617,7 @@ void SshSession::updateAllChannels() {
 			bool doMore;
 			try {
 				doMore = channel->updateChannel();
-			} catch ( QString err ) {
+			} catch ( QString* err ) {
 				QLOG_ERROR() << "Critical channel failure:" << err;
 				setErrorStatus( QObject::tr( "Critical channel failure: " ) + err );
 				mThread->quit();                // Abort QThread::exec, fall back to threadMain for

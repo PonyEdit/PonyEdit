@@ -26,7 +26,7 @@ OpenFileTreeView::OpenFileTreeView( QWidget *parent, int optionFlags, const QLis
 	viewport()->setAttribute( Qt::WA_Hover );
 	header()->setSectionResizeMode( 0, QHeaderView::Stretch );
 	setSelectionMode(
-		optionFlags & MultiSelect ? QAbstractItemView::ExtendedSelection : QAbstractItemView::SingleSelection );
+		( optionFlags & MultiSelect ) ? QAbstractItemView::ExtendedSelection : QAbstractItemView::SingleSelection );
 	header()->setStretchLastSection( false );
 
 	if ( optionFlags & RefreshButtons ) {

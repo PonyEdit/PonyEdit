@@ -16,9 +16,13 @@
 UpdateManager* UpdateManager::sInstance;
 
 UpdateManager::UpdateManager( QObject *parent ) :
-	QObject( parent ) {
+	QObject( parent ),
+	mNotificationDlg( NULL ),
+	mNetManager(),
+	mDownload( NULL ),
+	mRedirectCount( 0 ),
+	mTempFile() {
 	sInstance = this;
-	mRedirectCount = 0;
 }
 
 void UpdateManager::updateFound( const QString& version,
@@ -149,7 +153,7 @@ void UpdateManager::downloadFinished() {
 	QString cmd;
 	QStringList args;
 
-#ifndef Q_OS_LINUX
+#if defined Q_OS_WIN32 || defined Q_OS_MAC
 	QLabel* progressLabel = mNotificationDlg->getProgressLabel();
 
 	QFileInfo info( mTempFile );

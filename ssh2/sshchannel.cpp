@@ -4,9 +4,10 @@
 #include "sshhost.h"
 
 SshChannel::SshChannel( SshHost* host ) :
-	mStatus( Sessionless ) {
-	mHost = host;
-}
+	mHost( host ),
+	mSession( NULL ),
+	mStatus( Sessionless ),
+	mErrorDetails( "" ) {}
 
 SshChannel::~SshChannel() {}
 
