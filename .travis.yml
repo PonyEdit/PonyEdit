@@ -20,6 +20,14 @@ matrix:
           packages:
             - [ libssh2-1-dev, libssl-dev ]
             - [ qt59base, qt59webengine ]
+        coverity_scan:
+          project:
+            name: "PonyEdit/PonyEdit"
+            description: "Build submitted via Travis CI"
+          build_command_prepend: "qmake"
+          build_command: "make -j 2"
+          branch_pattern: $coverity_branch
+          notification_email: gary@pento.net
       env:
         - TEST_SUITE=build
     - os: osx
@@ -27,7 +35,15 @@ matrix:
       env:
         - TEST_SUITE=build
 
+env:
+  global:
+    # COVERITY_SCAN_TOKEN
+    - secure: "PXLqsWnG/8raugpaGs3n/2huHfjuOcNuopsqRiHRChMzlY9laR0pE/bpeawHj2oxiPP5CXA3+YKkAppxX0ObuUFMLYivomVRjcrQChC7GOclFg1G4TaSBGeePP4QtqUDC3crPqLWdprQgDTESMBm98/mou1XfHGymFeyiPYn4b0="
+    - coverity_branch: coverity_scan
+
 before_install:
+  # Only run Coverity on the Linux build
+  - if [ "$TRAVIS_BRANCH" = "$coverity_branch" ] && ! [ "$TRAVIS_OS_NAME" = "linux" -a "$TEST_SUITE" = "build" ]; then exit; fi
   - |
     if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       PATH=/opt/qt59/bin:$PATH
@@ -47,6 +63,8 @@ install:
     fi
 
 script:
+  # No need to run the usual build for the coverity scan
+  - if [ "$TRAVIS_BRANCH" = "$coverity_branch" ]; then exit ; fi
   - |
     if [ "$TEST_SUITE" = "uncrustify" ]; then
       uncrustify -v
