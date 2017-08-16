@@ -149,7 +149,7 @@ void UpdateManager::downloadFinished() {
 	QString cmd;
 	QStringList args;
 
-#ifndef Q_OS_LINUX
+#if defined Q_OS_WIN32 || defined Q_OS_MAC
 	QLabel* progressLabel = mNotificationDlg->getProgressLabel();
 
 	QFileInfo info( mTempFile );
