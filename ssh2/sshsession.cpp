@@ -390,7 +390,6 @@ bool SshSession::authenticatePublicKey() {
 bool SshSession::authenticateAgent() {
 	struct libssh2_agent_publickey *identity, *prevIdentity = NULL;
 	LIBSSH2_AGENT* agent = NULL;
-	int rc;
 	bool success = false;
 
 	SSHLOG_TRACE( mHost ) << "Looking for an SSH key agent";
@@ -403,7 +402,7 @@ bool SshSession::authenticateAgent() {
 		}
 
 		// Connect to the SSH agent
-		rc = libssh2_agent_connect( agent );
+		int rc = libssh2_agent_connect( agent );
 		if ( rc ) {
 			throw( QObject::tr( "No SSH agent found." ) );
 		}

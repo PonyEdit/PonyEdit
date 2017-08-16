@@ -35,9 +35,8 @@ SshServerOptionsWidget::~SshServerOptionsWidget() {
 }
 
 void SshServerOptionsWidget::accept() {
-	QListWidgetItem* item;
 	for ( int ii = 0; ii < ui->serversList->count(); ii++ ) {
-		item = ui->serversList->item( ii );
+		QListWidgetItem* item = ui->serversList->item( ii );
 		SshHost* host = ( SshHost * ) item->data( Qt::UserRole ).value< void* >();
 		if ( item->isHidden() ) {
 			for ( int jj = 0; jj < mConfigWidgets.length(); jj++ ) {

@@ -275,8 +275,6 @@ void ServerChannel::criticalError( const QString& error ) {
 }
 
 bool ServerChannel::mainUpdate() {
-	int rc;
-
 	// Read as much as there is to be read
 	ReadReply rr;
 	do {
@@ -354,7 +352,7 @@ bool ServerChannel::mainUpdate() {
 	if ( mInternalStatus == _SendingRequest ) {
 		const QByteArray& packedRequest =
 			mCurrentRequest->getPackedRequest( mBufferIds.value( mCurrentRequest->getFile(), -1 ) );
-		rc = libssh2_channel_write( mHandle, packedRequest, packedRequest.length() );
+		int rc = libssh2_channel_write( mHandle, packedRequest, packedRequest.length() );
 		if ( rc < 0 ) {
 			if ( rc == -1 ) {
 				rc = libssh2_session_last_errno( mSession->sessionHandle() );
