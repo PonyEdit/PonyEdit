@@ -50,8 +50,12 @@ ServerChannel::ServerChannel( SshHost* host, bool sudo ) :
 	ShellChannel( host ),
 	mInternalStatus( _WaitingForShell ),
 	mCurrentRequest( 0 ),
-	mNextMessageId( 1 ) {
-	mSudo = sudo;
+	mNextMessageId( 1 ),
+	mSudo( sudo ),
+	mSudoPasswordAttempt(),
+	mTriedSudoPassword( false ),
+	mRequestsAwaitingReplies(),
+	mBufferIds() {
 	SSHLOG_TRACE( host ) << "Creating a new server channel";
 }
 

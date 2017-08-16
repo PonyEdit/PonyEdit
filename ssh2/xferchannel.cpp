@@ -8,9 +8,10 @@
 
 XferChannel::XferChannel( SshHost* host, bool sudo ) :
 	ServerChannel( host, sudo ),
-	mInternalStatus( _WaitingForRequests ) {
-	mLeftoverEscape = false;
-}
+	mInternalStatus( _WaitingForRequests ),
+	mCurrentRequest( NULL ),
+	mBinaryReadBuffer(),
+	mLeftoverEscape( false ) {}
 
 bool XferChannel::mainUpdate() {
 	if ( mInternalStatus == _WaitingForRequests ) {

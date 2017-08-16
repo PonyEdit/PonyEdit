@@ -16,9 +16,13 @@
 UpdateManager* UpdateManager::sInstance;
 
 UpdateManager::UpdateManager( QObject *parent ) :
-	QObject( parent ) {
+	QObject( parent ),
+	mNotificationDlg( NULL ),
+	mNetManager(),
+	mDownload( NULL ),
+	mRedirectCount( 0 ),
+	mTempFile() {
 	sInstance = this;
-	mRedirectCount = 0;
 }
 
 void UpdateManager::updateFound( const QString& version,

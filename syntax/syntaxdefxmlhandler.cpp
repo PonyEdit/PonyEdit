@@ -3,15 +3,13 @@
 #include "syntaxdefxmlhandler.h"
 #include "syntaxrule.h"
 
-SyntaxDefXmlHandler::SyntaxDefXmlHandler( SyntaxDefinition* definition ) {
-	mRecord = NULL;
-	mDefinition = definition;
-	mCurrentBlocks = None;
-
-	mKeywordList = NULL;
-	mContext = NULL;
-	mRule = NULL;
-}
+SyntaxDefXmlHandler::SyntaxDefXmlHandler( SyntaxDefinition* definition ) :
+	mDefinition( definition ),
+	mRecord( NULL ),
+	mCurrentBlocks( None ),
+	mKeywordList( NULL ),
+	mContext( NULL ),
+	mRule( NULL ) {}
 
 SyntaxDefXmlHandler::SyntaxDefXmlHandler( SyntaxDefManager::Record* record ) {
 	mRecord = record;
