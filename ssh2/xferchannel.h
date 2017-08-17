@@ -6,7 +6,7 @@
 class XferRequest;
 class XferChannel : public ServerChannel {
 	public:
-		XferChannel( SshHost* host, bool sudo );
+		XferChannel( SshHost *host, bool sudo );
 
 		virtual Type getType() {
 			return mSudo ? SudoXfer : Xfer;
@@ -23,7 +23,7 @@ class XferChannel : public ServerChannel {
 		enum InternalStatus { _WaitingForRequests, _SendingRequestHeader, _WaitingForReady,
 			              _ReadingDownloadHeader, _DownloadingBody, _UploadingBody, _WaitingForOk };
 		InternalStatus mInternalStatus;
-		XferRequest* mCurrentRequest;
+		XferRequest *mCurrentRequest;
 
 		QByteArray mBinaryReadBuffer;
 		bool mLeftoverEscape;

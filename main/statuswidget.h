@@ -28,13 +28,13 @@ class StatusWidget : public QWidget {
 		explicit StatusWidget( bool dialogChild, QWidget *parent = 0 );
 		~StatusWidget();
 
-		void setStatus( const QPixmap& pixmap, const QString& message );
+		void setStatus( const QPixmap &pixmap, const QString &message );
 		void close( Result result );
 		void close( bool result ) {
 			close( result ? SuccessResult : FailureResult );
 		}
 
-		void setInputWidget( QWidget* widget );
+		void setInputWidget( QWidget *widget );
 		void clearInputWidget();
 
 		void setButtons( Buttons buttons );
@@ -52,7 +52,7 @@ class StatusWidget : public QWidget {
 			return mResult;
 		}
 
-		QLayout* getLogArea();
+		QLayout *getLogArea();
 
 	signals:
 		void signalUpdateLayouts();
@@ -61,14 +61,14 @@ class StatusWidget : public QWidget {
 
 	private slots:
 		void updateLayouts();
-		void buttonClicked( QAbstractButton* button );
+		void buttonClicked( QAbstractButton *button );
 
 	private:
-		Ui::StatusWidget* ui;
-		QWidget* mCurrentInputWidget;
+		Ui::StatusWidget *ui;
+		QWidget *mCurrentInputWidget;
 		bool mDialogChild;
 		bool mCloseOnButton;
-		QMap< QAbstractButton*, Button > mButtons;
+		QMap< QAbstractButton *, Button > mButtons;
 		Button mResult;
 };
 

@@ -7,7 +7,7 @@
 #include "globaldispatcher.h"
 #include "windowmanager.h"
 
-WindowManager* gWindowManager = NULL;
+WindowManager *gWindowManager = NULL;
 
 WindowManager::WindowManager( QWidget *parent ) :
 	QWidget( parent ) {
@@ -28,9 +28,9 @@ WindowManager::WindowManager( QWidget *parent ) :
 	createSearchResults();
 
 	connect( &gOpenFileManager,
-	         SIGNAL( fileClosed( BaseFile* ) ),
+	         SIGNAL( fileClosed( BaseFile * ) ),
 	         this,
-	         SLOT( fileClosed( BaseFile* ) ),
+	         SLOT( fileClosed( BaseFile * ) ),
 	         Qt::DirectConnection );
 }
 
@@ -45,7 +45,7 @@ void WindowManager::displayFile( BaseFile *file ) {
 	if ( mCurrentEditorPanel != NULL ) {
 		mCurrentEditorPanel->displayFile( file );
 
-		Editor* e = currentEditor();
+		Editor *e = currentEditor();
 		if ( e != NULL ) {
 			e->setFocus();
 		}
@@ -57,7 +57,7 @@ void WindowManager::fileClosed( BaseFile *file ) {
 	mRootEditorPanel->fileClosed( file );
 }
 
-void WindowManager::setCurrentEditorPanel( EditorPanel* stack ) {
+void WindowManager::setCurrentEditorPanel( EditorPanel *stack ) {
 	if ( mEditorSelectionLocked ) {
 		return;
 	}
@@ -77,13 +77,13 @@ void WindowManager::setCurrentEditorPanel( EditorPanel* stack ) {
 	}
 }
 
-BaseFile* WindowManager::getCurrentFile() {
-	EditorPanel* currentPanel = getCurrentPanel();
+BaseFile *WindowManager::getCurrentFile() {
+	EditorPanel *currentPanel = getCurrentPanel();
 	if ( ! currentPanel ) {
 		return NULL;
 	}
 
-	Editor* currentEditor = currentPanel->getCurrentEditor();
+	Editor *currentEditor = currentPanel->getCurrentEditor();
 	if ( ! currentEditor ) {
 		return NULL;
 	}
@@ -92,21 +92,21 @@ BaseFile* WindowManager::getCurrentFile() {
 }
 
 void WindowManager::nextWindow() {
-	BaseFile* file = gOpenFileManager.getNextFile( getCurrentFile() );
+	BaseFile *file = gOpenFileManager.getNextFile( getCurrentFile() );
 	if ( file ) {
 		gDispatcher->emitSelectFile( file );
 	}
 }
 
 void WindowManager::previousWindow() {
-	BaseFile* file = gOpenFileManager.getPreviousFile( getCurrentFile() );
+	BaseFile *file = gOpenFileManager.getPreviousFile( getCurrentFile() );
 	if ( file ) {
 		gDispatcher->emitSelectFile( file );
 	}
 }
 
 void WindowManager::findInCurrentEditor( const QString &text, bool backwards, bool caseSensitive, bool useRegexp ) {
-	Editor* current = currentEditor();
+	Editor *current = currentEditor();
 	if ( current ) {
 		current->find( text, backwards, caseSensitive, useRegexp );
 	}
@@ -122,7 +122,7 @@ int WindowManager::find( Editor *editor,
 }
 
 void WindowManager::replaceInCurrentEditor( const QString &text, const QString &replaceText, bool all ) {
-	Editor* current = currentEditor();
+	Editor *current = currentEditor();
 	if ( current ) {
 		current->replace( text, replaceText, false, false, all );
 	}
@@ -174,7 +174,7 @@ void WindowManager::showSearchBar() {
 
 void WindowManager::hideSearchBar() {
 	mSearchBarWrapper->hide();
-	Editor* editor = currentEditor();
+	Editor *editor = currentEditor();
 	if ( editor ) {
 		editor->getCodeEditor()->setFocus();
 	}
@@ -195,24 +195,24 @@ void WindowManager::createRegExpTester() {
 void WindowManager::showRegExpTester() {
 	mRegExpTesterWrapper->show();
 
-	Editor* editor = currentEditor();
+	Editor *editor = currentEditor();
 	QString selectedText;
 	if ( editor ) {
-		CodeEditor* codeEditor = editor->getCodeEditor();
+		CodeEditor *codeEditor = editor->getCodeEditor();
 		selectedText = codeEditor->textCursor().selectedText();
 	}
 
 	mRegExpTester->takeFocus( selectedText );
 }
 
-void WindowManager::notifyEditorChanged( EditorPanel* stack ) {
+void WindowManager::notifyEditorChanged( EditorPanel *stack ) {
 	if ( stack == mCurrentEditorPanel ) {
 		emit currentChanged();
 	}
 }
 
 void WindowManager::splitVertically() {
-	EditorPanel* panel = mCurrentEditorPanel;
+	EditorPanel *panel = mCurrentEditorPanel;
 	if ( ! panel ) {
 		return;
 	}
@@ -223,7 +223,7 @@ void WindowManager::splitVertically() {
 }
 
 void WindowManager::splitHorizontally() {
-	EditorPanel* panel = mCurrentEditorPanel;
+	EditorPanel *panel = mCurrentEditorPanel;
 	if ( ! panel ) {
 		return;
 	}
@@ -233,7 +233,7 @@ void WindowManager::splitHorizontally() {
 	emit splitChanged();
 }
 
-Editor* WindowManager::currentEditor() {
+Editor *WindowManager::currentEditor() {
 	if ( mCurrentEditorPanel == NULL ) {
 		return NULL;
 	}
@@ -263,7 +263,7 @@ void WindowManager::nextSplit() {
 	if ( mCurrentEditorPanel == NULL ) {
 		return;
 	}
-	EditorPanel* nextPanel = mCurrentEditorPanel->findNextPanel();
+	EditorPanel *nextPanel = mCurrentEditorPanel->findNextPanel();
 	if ( nextPanel ) {
 		setCurrentEditorPanel( nextPanel );
 	}
@@ -273,37 +273,37 @@ void WindowManager::previousSplit() {
 	if ( mCurrentEditorPanel == NULL ) {
 		return;
 	}
-	EditorPanel* nextPanel = mCurrentEditorPanel->findPreviousPanel();
+	EditorPanel *nextPanel = mCurrentEditorPanel->findPreviousPanel();
 	if ( nextPanel ) {
 		setCurrentEditorPanel( nextPanel );
 	}
 }
 
-EditorPanel* WindowManager::getFirstPanel() {
-	EditorPanel* panel = mRootEditorPanel;
+EditorPanel *WindowManager::getFirstPanel() {
+	EditorPanel *panel = mRootEditorPanel;
 	while ( panel->isSplit() ) {
 		panel = panel->getFirstChild();
 	}
 	return panel;
 }
 
-EditorPanel* WindowManager::getLastPanel() {
-	EditorPanel* panel = mRootEditorPanel;
+EditorPanel *WindowManager::getLastPanel() {
+	EditorPanel *panel = mRootEditorPanel;
 	while ( panel->isSplit() ) {
 		panel = panel->getSecondChild();
 	}
 	return panel;
 }
 
-void WindowManager::searchInFiles( const QList< BaseFile* > files,
-                                   const QString& text,
+void WindowManager::searchInFiles( const QList< BaseFile * > files,
+                                   const QString &text,
                                    bool caseSensitive,
                                    bool useRegExp,
                                    bool showReplaceOptions ) {
 	QList< SearchResultModel::Result > results;
 
-	foreach ( BaseFile * file, files ) {
-		QTextDocument* doc = file->getTextDocument();
+	foreach ( BaseFile *file, files ) {
+		QTextDocument *doc = file->getTextDocument();
 		QTextCursor cursor( doc );
 		while ( ! ( cursor =
 				    Editor::find( doc,
@@ -324,22 +324,22 @@ void WindowManager::searchInFiles( const QList< BaseFile* > files,
 	showSearchResults( results, showReplaceOptions );
 }
 
-void WindowManager::showSearchResults( const QList< SearchResultModel::Result >& results, bool showReplaceOptions ) {
+void WindowManager::showSearchResults( const QList< SearchResultModel::Result > &results, bool showReplaceOptions ) {
 	mSearchResults->showResults( results );
 	mSearchResults->showReplaceOptions( showReplaceOptions );
 	mSearchResultsWrapper->show();
 }
 
-void WindowManager::showAndSelect( const Location& location, int lineNumber, int start, int length ) {
+void WindowManager::showAndSelect( const Location &location, int lineNumber, int start, int length ) {
 	displayLocation( location );
-	Editor* editor = currentEditor();
+	Editor *editor = currentEditor();
 	if ( editor != NULL ) {
 		editor->selectText( lineNumber, start, length );
 	}
 }
 
-void WindowManager::displayLocation( const Location& location ) {
-	BaseFile* file = gOpenFileManager.getFile( location );
+void WindowManager::displayLocation( const Location &location ) {
+	BaseFile *file = gOpenFileManager.getFile( location );
 	if ( file != NULL ) {
 		displayFile( file );
 	}

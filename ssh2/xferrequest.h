@@ -9,17 +9,17 @@ class XferRequest : public QObject {
 	Q_OBJECT
 
 	public:
-		XferRequest( bool sudo, const QByteArray& filename, const Callback &callback );
+		XferRequest( bool sudo, const QByteArray &filename, const Callback &callback );
 
 		inline bool isUploadRequest() const {
 			return mUpload;
 		}
 
-		inline const QByteArray& getRequestHeader() {
+		inline const QByteArray &getRequestHeader() {
 			return ( mRequestHeader.isNull() ? prepareHeader() : mRequestHeader );
 		}
 
-		inline void setChecksum( const QByteArray& checksum ) {
+		inline void setChecksum( const QByteArray &checksum ) {
 			mChecksum = checksum;
 		}
 
@@ -27,7 +27,7 @@ class XferRequest : public QObject {
 			mSize = size;
 		}
 
-		inline void setData( const QByteArray& data ) {
+		inline void setData( const QByteArray &data ) {
 			mData = data;
 		}
 
@@ -35,11 +35,11 @@ class XferRequest : public QObject {
 			mUpload = upload;
 		}
 
-		inline void setEncodedData( const QByteArray& encoded ) {
+		inline void setEncodedData( const QByteArray &encoded ) {
 			mEncodedData = encoded;
 		}
 
-		inline const QByteArray& getChecksum() const {
+		inline const QByteArray &getChecksum() const {
 			return mChecksum;
 		}
 
@@ -47,15 +47,15 @@ class XferRequest : public QObject {
 			return mSize;
 		}
 
-		inline const QByteArray& getData() const {
+		inline const QByteArray &getData() const {
 			return mData;
 		}
 
-		inline const QByteArray& getEncodedData() const {
+		inline const QByteArray &getEncodedData() const {
 			return mEncodedData;
 		}
 
-		inline const QByteArray& getFilename() const {
+		inline const QByteArray &getFilename() const {
 			return mFilename;
 		}
 
@@ -64,7 +64,7 @@ class XferRequest : public QObject {
 		}
 
 		void handleSuccess();
-		void handleFailure( const QString& error, int errorFlags );
+		void handleFailure( const QString &error, int errorFlags );
 		void handleProgress( int percent );
 
 	signals:
@@ -73,7 +73,7 @@ class XferRequest : public QObject {
 		void transferProgress( int percent );
 
 	protected:
-		const QByteArray& prepareHeader();
+		const QByteArray &prepareHeader();
 
 	private:
 		bool mSudo;

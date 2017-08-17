@@ -4,7 +4,7 @@
 #include "syntaxdefmanager.h"
 #include "syntaxdefxmlhandler.h"
 
-void SyntaxDefManager::Record::pack( const QXmlAttributes& atts ) {
+void SyntaxDefManager::Record::pack( const QXmlAttributes &atts ) {
 	syntaxName = Tools::getStringXmlAttribute( atts, "name" );
 	category = Tools::getStringXmlAttribute( atts, "section" );
 	priority = Tools::getIntXmlAttribute( atts, "priority", 0 );
@@ -23,7 +23,7 @@ void SyntaxDefManager::Record::pack( const QXmlAttributes& atts ) {
 	}
 }
 
-SyntaxDefManager::FilePattern::FilePattern( const QString& pattern ) {
+SyntaxDefManager::FilePattern::FilePattern( const QString &pattern ) {
 	rawPattern = pattern;
 	if ( ( isSimpleExtension = ( pattern.startsWith( "*." ) && pattern.indexOf( '*', 2 ) == -1 ) ) ) {
 		extension = pattern.mid( 1 );
@@ -34,7 +34,7 @@ SyntaxDefManager::FilePattern::FilePattern( const QString& pattern ) {
 	}
 }
 
-bool SyntaxDefManager::FilePattern::matches( const QString& filename ) {
+bool SyntaxDefManager::FilePattern::matches( const QString &filename ) {
 	if ( isSimpleExtension ) {
 		return filename.endsWith( extension );
 	} else {
@@ -47,10 +47,10 @@ SyntaxDefManager::SyntaxDefManager() {
 }
 
 SyntaxDefManager::~SyntaxDefManager() {
-	foreach ( Record * r, mRecordList ) {
+	foreach ( Record *r, mRecordList ) {
 		delete r;
 	}
-	foreach ( SyntaxDefinition * d, mOpenDefinitionList ) {
+	foreach ( SyntaxDefinition *d, mOpenDefinitionList ) {
 		delete d;
 	}
 }
@@ -63,9 +63,9 @@ void SyntaxDefManager::updateIndex() {
 	}
 }
 
-void SyntaxDefManager::indexFile( const QFileInfo& fileinfo ) {
+void SyntaxDefManager::indexFile( const QFileInfo &fileinfo ) {
 	if ( fileinfo.isFile() ) {
-		Record* record = new Record();
+		Record *record = new Record();
 		record->lastUpdated = QDateTime::currentDateTime();
 		record->filename = fileinfo.filePath();
 
@@ -107,7 +107,7 @@ void SyntaxDefManager::addRecord( Record *record ) {
 	}
 }
 
-QStringList SyntaxDefManager::getFiltersForCategory( const QString& category ) const {
+QStringList SyntaxDefManager::getFiltersForCategory( const QString &category ) const {
 	return mFiltersByCategory.values( category );
 }
 
@@ -115,12 +115,12 @@ QStringList SyntaxDefManager::getDefinitionCategories() const {
 	return mSyntaxesByCategory.uniqueKeys();
 }
 
-QStringList SyntaxDefManager::getSyntaxesInCategory( const QString& category ) const {
+QStringList SyntaxDefManager::getSyntaxesInCategory( const QString &category ) const {
 	return mSyntaxesByCategory.values( category );
 }
 
-SyntaxDefinition* SyntaxDefManager::getDefinitionForFile( const QString& filename ) {
-	Record* record = getRecordFor( filename );
+SyntaxDefinition *SyntaxDefManager::getDefinitionForFile( const QString &filename ) {
+	Record *record = getRecordFor( filename );
 	if ( record == NULL ) {
 		return NULL;
 	}
@@ -128,8 +128,8 @@ SyntaxDefinition* SyntaxDefManager::getDefinitionForFile( const QString& filenam
 	return getDefinition( record );
 }
 
-SyntaxDefinition* SyntaxDefManager::getDefinitionForSyntax( const QString& syntax ) {
-	Record* record = ( mRecordsByName.contains( syntax ) ? mRecordsByName.value( syntax ) : NULL );
+SyntaxDefinition *SyntaxDefManager::getDefinitionForSyntax( const QString &syntax ) {
+	Record *record = ( mRecordsByName.contains( syntax ) ? mRecordsByName.value( syntax ) : NULL );
 	if ( record == NULL ) {
 		return NULL;
 	}
@@ -137,12 +137,12 @@ SyntaxDefinition* SyntaxDefManager::getDefinitionForSyntax( const QString& synta
 	return getDefinition( record );
 }
 
-SyntaxDefinition* SyntaxDefManager::getDefinition( const Record* record ) {
+SyntaxDefinition *SyntaxDefManager::getDefinition( const Record *record ) {
 	if ( mOpenDefinitionsByName.contains( record->syntaxName ) ) {
 		return mOpenDefinitionsByName.value( record->syntaxName );
 	}
 
-	SyntaxDefinition* newDefinition = new SyntaxDefinition( record->filename );
+	SyntaxDefinition *newDefinition = new SyntaxDefinition( record->filename );
 	if ( ! newDefinition->isValid() ) {
 		delete newDefinition;
 		QLOG_WARN() << "Attempted to use an invalid syntax definition: " << record->filename;
@@ -154,8 +154,8 @@ SyntaxDefinition* SyntaxDefManager::getDefinition( const Record* record ) {
 	return newDefinition;
 }
 
-SyntaxDefManager::Record* SyntaxDefManager::getRecordFor( const QString& filename ) {
-	foreach ( Record * record, mRecordList ) {
+SyntaxDefManager::Record *SyntaxDefManager::getRecordFor( const QString &filename ) {
+	foreach ( Record *record, mRecordList ) {
 		foreach ( FilePattern pattern, record->patterns ) {
 			if ( pattern.matches( filename ) ) {
 				return record;

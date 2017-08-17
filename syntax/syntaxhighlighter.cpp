@@ -6,7 +6,7 @@
 #include "syntaxhighlighter.h"
 #include "syntaxrule.h"
 
-SyntaxHighlighter::SyntaxHighlighter( QTextDocument* parent, SyntaxDefinition* syntaxDef )
+SyntaxHighlighter::SyntaxHighlighter( QTextDocument *parent, SyntaxDefinition *syntaxDef )
 	: QSyntaxHighlighter( parent ) {
 	mSyntaxDefinition = syntaxDef;
 
@@ -61,14 +61,14 @@ void SyntaxHighlighter::highlightBlock( const QString &fullText ) {
 	if ( isTruncated ) {
 		truncated = fullText.mid( 0, MAX_HIGHLIGHT_LENGTH );
 	}
-	const QString& text = ( isTruncated ? truncated : fullText );
+	const QString &text = ( isTruncated ? truncated : fullText );
 
 	QColor attributeColor;
 
 	// Get a copy of the context stack leftover from the last block
 	QTextBlock previousBlock = currentBlock().previous();
-	SyntaxBlockData* previousBlockData =
-		( previousBlock.isValid() ? static_cast< SyntaxBlockData* >( previousBlock.userData() ) : NULL );
+	SyntaxBlockData *previousBlockData =
+		( previousBlock.isValid() ? static_cast< SyntaxBlockData * >( previousBlock.userData() ) : NULL );
 	if ( previousBlockData ) {
 		contextStack = previousBlockData->mStack;
 	}
@@ -78,8 +78,8 @@ void SyntaxHighlighter::highlightBlock( const QString &fullText ) {
 
 	int position = 0;
 	bool firstIteration = true;
-	const SyntaxDefinition::ContextLink* lineEndOverrideContextLink = NULL;
-	QSharedPointer< SyntaxRule >* rule;
+	const SyntaxDefinition::ContextLink *lineEndOverrideContextLink = NULL;
+	QSharedPointer< SyntaxRule > *rule;
 	while ( position < text.length() ) {
 		if ( contextStack.size() < shortestStackWatermark ) {
 			shortestStackWatermark = contextStack.size();
@@ -102,8 +102,8 @@ void SyntaxHighlighter::highlightBlock( const QString &fullText ) {
 
 		// Cycle through all the rules in the context, looking for a match...
 		int matchLength = 0;
-		SyntaxDefinition::ItemData* attributeLink = NULL;
-		const SyntaxDefinition::ContextLink* contextLink = NULL;
+		SyntaxDefinition::ItemData *attributeLink = NULL;
+		const SyntaxDefinition::ContextLink *contextLink = NULL;
 		bool isLookAhead = false;
 		QStringList dynamicCaptures;
 		for ( int idx = 0; idx < context->rules.length(); idx++ ) {
@@ -144,7 +144,7 @@ void SyntaxHighlighter::highlightBlock( const QString &fullText ) {
 			QStack< ContextDefLink >::iterator it = contextStack.end();
 			while ( it != contextStack.begin() ) {
 				--it;
-				const ContextDefLink& scanContext = *it;
+				const ContextDefLink &scanContext = *it;
 				if ( ( attributeLink = scanContext->attributeLink ) != NULL ) {
 					break;
 				}
@@ -197,7 +197,7 @@ void SyntaxHighlighter::highlightBlock( const QString &fullText ) {
 	}
 
 	// Check if this highlight block is ending on a different stack to the last time
-	SyntaxBlockData* oldBlockData = static_cast< SyntaxBlockData* >( currentBlock().userData() );
+	SyntaxBlockData *oldBlockData = static_cast< SyntaxBlockData * >( currentBlock().userData() );
 	bool changed = true;
 	if ( oldBlockData ) {
 		changed = ( contextStack != oldBlockData->mStack );
@@ -208,9 +208,9 @@ void SyntaxHighlighter::highlightBlock( const QString &fullText ) {
 	}
 }
 
-void SyntaxHighlighter::applyContextLink( const SyntaxDefinition::ContextLink* contextLink,
-                                          QStack< ContextDefLink >* contextStack,
-                                          QStringList* dynamicCaptures ) {
+void SyntaxHighlighter::applyContextLink( const SyntaxDefinition::ContextLink *contextLink,
+                                          QStack< ContextDefLink > *contextStack,
+                                          QStringList *dynamicCaptures ) {
 	if ( contextLink->contextDef ) {
 		if ( contextLink->contextDef->dynamic && dynamicCaptures && dynamicCaptures->length() ) {
 			contextStack->push( duplicateDynamicContext( contextLink->contextDef, *dynamicCaptures ) );
@@ -224,21 +224,21 @@ void SyntaxHighlighter::applyContextLink( const SyntaxDefinition::ContextLink* c
 	}
 }
 
-ContextDefLink SyntaxHighlighter::duplicateDynamicContext( const ContextDefLink& source,
-                                                           const QStringList& captures ) const {
-	SyntaxDefinition::ContextDef* newContext = new SyntaxDefinition::ContextDef( *source.data() );
+ContextDefLink SyntaxHighlighter::duplicateDynamicContext( const ContextDefLink &source,
+                                                           const QStringList &captures ) const {
+	SyntaxDefinition::ContextDef *newContext = new SyntaxDefinition::ContextDef( *source.data() );
 	replaceDynamicRules( NULL, &newContext->rules, captures );
 	return ContextDefLink( newContext );
 }
 
-void SyntaxHighlighter::replaceDynamicRules( SyntaxRule* parent,
-                                             QList< QSharedPointer< SyntaxRule > >* ruleList,
-                                             const QStringList& captures ) const {
+void SyntaxHighlighter::replaceDynamicRules( SyntaxRule *parent,
+                                             QList< QSharedPointer< SyntaxRule > > *ruleList,
+                                             const QStringList &captures ) const {
 	for ( int i = 0; i < ruleList->length(); i++ ) {
 		QSharedPointer< SyntaxRule > rule = ruleList->at( i );
 
 		if ( rule->isDynamic() ) {
-			SyntaxRule* newRule = new SyntaxRule( parent, rule, false, true );
+			SyntaxRule *newRule = new SyntaxRule( parent, rule, false, true );
 			newRule->applyDynamicCaptures( captures );
 			rule = QSharedPointer< SyntaxRule >( newRule );
 			ruleList->replace( i, rule );
@@ -248,7 +248,7 @@ void SyntaxHighlighter::replaceDynamicRules( SyntaxRule* parent,
 	}
 }
 
-void SyntaxHighlighter::setSyntaxDefinition( SyntaxDefinition* definition ) {
+void SyntaxHighlighter::setSyntaxDefinition( SyntaxDefinition *definition ) {
 	mSyntaxDefinition = definition;
 	rehighlight();
 }

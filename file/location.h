@@ -23,11 +23,11 @@ class Location {
 
 	public:
 		Location();
-		Location( const Location& other );
-		Location& operator=( const Location& other );
-		Location( const QString& path );
-		Location( const Location& parent,
-		          const QString& path,
+		Location( const Location &other );
+		Location &operator=( const Location &other );
+		Location( const QString &path );
+		Location( const Location &parent,
+		          const QString &path,
 		          Type type,
 		          int size,
 		          QDateTime lastModified,
@@ -36,22 +36,22 @@ class Location {
 		~Location();
 
 		QString getDisplayPath() const;
-		const QString& getPath() const;
-		const QString& getLabel() const;
+		const QString &getPath() const;
+		const QString &getLabel() const;
 		QIcon getIcon() const;
 		Type getType() const;
 		int getSize() const;
-		const QDateTime& getLastModified() const;
+		const QDateTime &getLastModified() const;
 		Protocol getProtocol() const;
 		QString getHostName() const;    // Regardless of protocol. Returns "Local Computer" for local files.
 		QString getHostlessPath() const;// Gets the path without the host specifier. Same as getRemotePath for
 		                                // remote files.
 
-		const Location& getParent() const;
-		const Location& getDirectory() const;   // Returns self if is directory, or parent if is file.
+		const Location &getParent() const;
+		const Location &getDirectory() const;   // Returns self if is directory, or parent if is file.
 		QString getParentPath() const;
 		QString getRemotePath() const;
-		SshHost* getRemoteHost() const;
+		SshHost *getRemoteHost() const;
 
 		Location getSudoLocation() const;
 
@@ -63,37 +63,37 @@ class Location {
 		bool isSudo() const;
 		bool canSudo() const;
 
-		BaseFile* getFile();
+		BaseFile *getFile();
 
 		void asyncGetChildren( bool includeHidden );    // Results are returned via the global dispatcher
 		                                                // (locationListSuccess, locationListFailure)
 
-		bool operator==( const Location& other ) const;
+		bool operator==( const Location &other ) const;
 
 		struct Favorite { QString path; QString name; };
 		void addToFavorites();
 		QString getDefaultFavoriteName();
-		static void deleteFavorite( const QString& path );
+		static void deleteFavorite( const QString &path );
 		static void saveFavorites();
 		static void loadFavorites();
-		static inline QList< Favorite >& getFavorites() {
+		static inline QList< Favorite > &getFavorites() {
 			return sFavorites;
 		}
 
-		void createNewDirectory( const QString& name, const Callback& callback );
+		void createNewDirectory( const QString &name, const Callback &callback );
 
-		void sshChildLoadResponse( const QList< Location >& children );
-		void childLoadError( const QString& error, bool permissionError );
+		void sshChildLoadResponse( const QList< Location > &children );
+		void childLoadError( const QString &error, bool permissionError );
 
 	private:
-		Location( LocationShared* data );
+		Location( LocationShared *data );
 
-		void sshFileOpenResponse( SshConnection* controller, quint32 bufferId, const QByteArray& data );
-		void fileOpenError( const QString& error );
+		void sshFileOpenResponse( SshConnection *controller, quint32 bufferId, const QByteArray &data );
+		void fileOpenError( const QString &error );
 
-		LocationShared* mData;
+		LocationShared *mData;
 
-		static void addSortedFavorite( const Favorite& favorite );
+		static void addSortedFavorite( const Favorite &favorite );
 		static QList< Favorite > sFavorites;
 };
 
@@ -113,14 +113,14 @@ class LocationShared : public QObject {
 		LocationShared();
 		static void initIconProvider();
 
-		void setPath( const QString& path );
+		void setPath( const QString &path );
 
 		void localLoadSelf();
 		void localLoadListing( bool includeHidden );
 		void sshLoadListing( bool includeHidden );
 		void sftpLoadListing( bool includeHidden );
 
-		SshHost* getHost();
+		SshHost *getHost();
 
 		int mReferences;
 		QString mPath;
@@ -136,15 +136,15 @@ class LocationShared : public QObject {
 		bool mCanWrite;
 		bool mSudo;
 
-		SshHost* mHost;
+		SshHost *mHost;
 
 // Todo: Remote hostname and login should be QByteArrays
 		QString mRemoteHostName;
 		QString mRemoteUserName;
 		QString mRemotePath;
-		OldSshHost* mRemoteHost;
-		OldServerChannel* mServerChannel;
-		FTPChannel* mFtpChannel;
+		OldSshHost *mRemoteHost;
+		OldServerChannel *mServerChannel;
+		FTPChannel *mFtpChannel;
 };
 
 Q_DECLARE_METATYPE( Location );

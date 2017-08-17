@@ -23,13 +23,13 @@
 #include "syntax/syntaxrule.h"
 #include "website/sitemanager.h"
 
-GlobalDispatcher* gDispatcher = NULL;
-SiteManager* gSiteManager = NULL;
-SyntaxDefManager* gSyntaxDefManager = NULL;
-MainWindow* gMainWindow = NULL;
+GlobalDispatcher *gDispatcher = NULL;
+SiteManager *gSiteManager = NULL;
+SyntaxDefManager *gSyntaxDefManager = NULL;
+MainWindow *gMainWindow = NULL;
 bool PonyEdit::sApplicationExiting = false;
 
-PonyEdit::PonyEdit( int argc, char** argv ) :
+PonyEdit::PonyEdit( int argc, char **argv ) :
 	QApplication( argc, argv ),
 	mIsRunning( false ),
 	mMemoryLock(),
@@ -67,7 +67,7 @@ PonyEdit::PonyEdit( int argc, char** argv ) :
 	qRegisterMetaType< QList< Location > >( "QList<Location>" );
 
 	ServerChannel::initialize();
-	qRegisterMetaType< XferRequest* >( "XferRequest*" );
+	qRegisterMetaType< XferRequest * >( "XferRequest*" );
 
 	Tools::loadServers();
 	Location::loadFavorites();
@@ -139,7 +139,7 @@ bool PonyEdit::event( QEvent *e ) {
 			return false;
 		}
 
-		QFileOpenEvent *event = static_cast< QFileOpenEvent* >( e );
+		QFileOpenEvent *event = static_cast< QFileOpenEvent * >( e );
 
 		QString name = event->file();
 		if ( name.trimmed().isNull() ) {
@@ -175,7 +175,7 @@ bool PonyEdit::notify( QObject *o, QEvent *e ) {
 	bool ret = false;
 	try {
 		ret = QApplication::notify( o, e );
-	} catch ( QString& err ) {
+	} catch ( QString &err ) {
 		QLOG_ERROR() << "UNCAUGHT EXCEPTION:" << err;
 	} catch ( ... ) {
 		QLOG_ERROR() << "UNKNOWN UNCAUGHT EXCEPTION";

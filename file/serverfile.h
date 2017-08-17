@@ -9,13 +9,13 @@ class ServerFile : public BaseFile {
 	Q_OBJECT
 
 	public:
-		BaseFile* newFile( const QString& content );
+		BaseFile *newFile( const QString &content );
 		void open();
 		void save();
 		void close();
 		void refresh();
 
-		ServerFile( const Location& location );  // Do not call; use File::getFile instead
+		ServerFile( const Location &location );  // Do not call; use File::getFile instead
 
 		virtual void sudo();
 
@@ -42,16 +42,16 @@ class ServerFile : public BaseFile {
 		virtual ~ServerFile();
 
 		void finalizeFileOpen();
-		virtual void handleDocumentChange( int position, int removeChars, const QString& insert );
+		virtual void handleDocumentChange( int position, int removeChars, const QString &insert );
 		virtual void setLastSavedRevision( int lastSavedRevision );
 		void pumpChangeQueue();
 		void movePumpCursor( int revision );
 		void reconnect();
 
 	private:
-		SshHost* mHost;
+		SshHost *mHost;
 
-		QList< Change* > mChangesSinceLastSave;
+		QList< Change * > mChangesSinceLastSave;
 		int mChangePumpCursor;
 
 // Temporary stuff used during opening

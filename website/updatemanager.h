@@ -17,11 +17,11 @@ class UpdateManager : public QObject {
 	public:
 		explicit UpdateManager( QObject *parent = 0 );
 
-		static UpdateManager* instance() {
+		static UpdateManager *instance() {
 			return sInstance;
 		}
 
-		void updateFound( const QString& version, const QString& url, const QStringList& alerts, const QStringList& changes );
+		void updateFound( const QString &version, const QString &url, const QStringList &alerts, const QStringList &changes );
 		void noUpdateFound();
 
 	signals:
@@ -30,12 +30,12 @@ class UpdateManager : public QObject {
 		void downloadProgress( qint64 bytesReceived, qint64 bytesTotal );
 		void downloadFinished();
 		void downloadReadyRead();
-		void downloadAuth( QNetworkReply * reply, QAuthenticator * authenticator );
+		void downloadAuth( QNetworkReply *reply, QAuthenticator *authenticator );
 
 	private:
-		static UpdateManager* sInstance;
+		static UpdateManager *sInstance;
 
-		UpdateNotificationDialog* mNotificationDlg;
+		UpdateNotificationDialog *mNotificationDlg;
 
 		QNetworkAccessManager mNetManager;
 		QNetworkReply *mDownload;

@@ -11,7 +11,7 @@ class ShellChannel : public SshChannel {
 	Q_OBJECT
 
 	public:
-		ShellChannel( SshHost* host, bool machineReadable = true, const QByteArray& ptyType = "vanilla" );
+		ShellChannel( SshHost *host, bool machineReadable = true, const QByteArray &ptyType = "vanilla" );
 
 // Pty types = vanilla, vt102, ansi or xterm.
 
@@ -34,13 +34,13 @@ class ShellChannel : public SshChannel {
 		virtual void shellReady();
 		bool handleOpening();
 
-		SendResponse sendData( const QByteArray& data );
+		SendResponse sendData( const QByteArray &data );
 		ReadReply readUntilPrompt();
-		ReadReply readUntil( const QByteArray& marker );
+		ReadReply readUntil( const QByteArray &marker );
 
 		bool mainUpdate();
 
-		LIBSSH2_CHANNEL* mHandle;
+		LIBSSH2_CHANNEL *mHandle;
 
 		QByteArray mReadBuffer;
 		char mScratchBuffer[SSH_SHELL_BUFFER_SIZE];

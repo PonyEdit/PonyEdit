@@ -23,9 +23,9 @@ OptionsDialog::OptionsDialog( QWidget *parent ) :
 	connect( ui->buttonBox, SIGNAL( accepted() ), this, SLOT( accept() ) );
 	connect( ui->buttonBox, SIGNAL( rejected() ), this, SLOT( reject() ) );
 	connect( ui->buttonBox,
-	         SIGNAL( clicked( QAbstractButton* ) ),
+	         SIGNAL( clicked( QAbstractButton * ) ),
 	         this,
-	         SLOT( buttonClicked( QAbstractButton* ) ) );
+	         SLOT( buttonClicked( QAbstractButton * ) ) );
 	connect( this, SIGNAL( accepted() ), this, SLOT( saveOptions() ) );
 
 	addPage( ui->editorButton, new EditorOptionsWidget( this ) );
@@ -49,7 +49,7 @@ void OptionsDialog::buttonClicked( QAbstractButton *button ) {
 }
 
 void OptionsDialog::saveOptions() {
-	foreach ( OptionsDialogPage * page, mPages ) {
+	foreach ( OptionsDialogPage *page, mPages ) {
 		page->apply();
 	}
 
@@ -59,19 +59,19 @@ void OptionsDialog::saveOptions() {
 }
 
 void OptionsDialog::pageClicked() {
-	QToolButton* button = ( QToolButton * ) QObject::sender();
+	QToolButton *button = ( QToolButton * ) QObject::sender();
 	pageClicked( button );
 }
 
 void OptionsDialog::pageClicked( QToolButton *button ) {
-	OptionsDialogPage* page = mPageMap.value( button, NULL );
+	OptionsDialogPage *page = mPageMap.value( button, NULL );
 	if ( page ) {
 		ui->stackedWidget->setCurrentWidget( page );
 		ui->optionLabel->setText( button->text() );
 	}
 }
 
-void OptionsDialog::addPage( QToolButton* button, OptionsDialogPage *page ) {
+void OptionsDialog::addPage( QToolButton *button, OptionsDialogPage *page ) {
 	mPageMap.insert( button, page );
 	connect( button, SIGNAL( clicked() ), this, SLOT( pageClicked() ) );
 	mPages.append( page );

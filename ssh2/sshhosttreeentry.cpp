@@ -11,10 +11,10 @@ QIcon SshHostTreeEntry::sLogIcon;
 
 #define GUTTER_LOG      1
 
-SshHostTreeEntry::SshHostTreeEntry( SshHost* host ) :
+SshHostTreeEntry::SshHostTreeEntry( SshHost *host ) :
 	CustomTreeEntry( QIcon(), QString() ) {
 	mHost = host;
-	setData< SshHost* >( mHost );
+	setData< SshHost * >( mHost );
 	mAnimationFrame = 0;
 
 	initializeCustomDrawKit();
@@ -37,7 +37,7 @@ void SshHostTreeEntry::initializeCustomDrawKit() {
 	sLogIcon = QIcon( ":/icons/log.png" );
 }
 
-void SshHostTreeEntry::customDraw( QPainter* painter, const QStyleOptionViewItem& option ) {
+void SshHostTreeEntry::customDraw( QPainter *painter, const QStyleOptionViewItem &option ) {
 	initializeCustomDrawKit();
 	QRect remainingArea = option.rect;
 

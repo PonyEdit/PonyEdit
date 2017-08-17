@@ -36,15 +36,15 @@ class SyntaxRule {
 			}
 		}
 
-		SyntaxRule( SyntaxRule* parent, const QString& name, const QXmlAttributes& attributes );
-		SyntaxRule( SyntaxRule* parent, QSharedPointer< SyntaxRule > other, bool duplicateChildren, bool maintainLinks );
+		SyntaxRule( SyntaxRule *parent, const QString &name, const QXmlAttributes &attributes );
+		SyntaxRule( SyntaxRule *parent, QSharedPointer< SyntaxRule > other, bool duplicateChildren, bool maintainLinks );
 		~SyntaxRule();
 
-		SyntaxRule* getParent() const {
+		SyntaxRule *getParent() const {
 			return mParent;
 		}
 
-		const QString& getName() const {
+		const QString &getName() const {
 			return mName;
 		}
 
@@ -56,7 +56,7 @@ class SyntaxRule {
 			return mType;
 		}
 
-		inline const QString& getStringAttribute() const {
+		inline const QString &getStringAttribute() const {
 			return mString;
 		}
 
@@ -64,11 +64,11 @@ class SyntaxRule {
 			return mIncludeAttrib;
 		}
 
-		inline const QString& getContext() const {
+		inline const QString &getContext() const {
 			return mContext;
 		}
 
-		inline SyntaxDefinition::ItemData* getAttributeLink() const {
+		inline SyntaxDefinition::ItemData *getAttributeLink() const {
 			return mAttributeLink;
 		}
 
@@ -76,7 +76,7 @@ class SyntaxRule {
 			return mLookAhead;
 		}
 
-		inline const SyntaxDefinition::ContextLink& getContextLink() const {
+		inline const SyntaxDefinition::ContextLink &getContextLink() const {
 			return mContextLink;
 		}
 
@@ -88,16 +88,16 @@ class SyntaxRule {
 			return mDynamic;
 		}
 
-		inline QList< QSharedPointer< SyntaxRule > >* getChildRules() {
+		inline QList< QSharedPointer< SyntaxRule > > *getChildRules() {
 			return &mChildRules;
 		}
 
-		int match( const QString& string, int position );
+		int match( const QString &string, int position );
 		void addChildRule( QSharedPointer< SyntaxRule > rule );
-		bool link( SyntaxDefinition* def );
+		bool link( SyntaxDefinition *def );
 		void unlink();
 
-		void applyDynamicCaptures( const QStringList& captures );
+		void applyDynamicCaptures( const QStringList &captures );
 		void prepareRegExp();
 
 	private:
@@ -109,16 +109,16 @@ class SyntaxRule {
 			int pos; int id;
 		};
 
-		void copyBaseProperties( const SyntaxRule* other );
-		int detectStringChar( const QString& string, int position );
+		void copyBaseProperties( const SyntaxRule *other );
+		int detectStringChar( const QString &string, int position );
 		Qt::CaseSensitivity getCaseSensitivity() {
 			return ( mType == Keyword &&
 			         mCaseSensitivity <
 			         0 ? mDefinition->getKeywordCaseSensitivity() : ( Qt::CaseSensitivity ) mCaseSensitivity );
 		}
 
-		SyntaxDefinition* mDefinition;
-		SyntaxRule* mParent;
+		SyntaxDefinition *mDefinition;
+		SyntaxRule *mParent;
 		QString mName;
 		Type mType;
 		bool mValid;
@@ -143,10 +143,10 @@ class SyntaxRule {
 		QList< QSharedPointer< SyntaxRule > > mChildRules;
 
 // Duplicate information prepared for faster lookups and the like
-		SyntaxDefinition::ItemData* mAttributeLink;
+		SyntaxDefinition::ItemData *mAttributeLink;
 		QRegExp mRegExp;
 		bool mRegExpLineStart;
-		SyntaxDefinition::KeywordList* mKeywordLink;
+		SyntaxDefinition::KeywordList *mKeywordLink;
 		SyntaxDefinition::ContextLink mContextLink;
 		int mDynamicCharIndex;
 		QList< DynamicSlot > mDynamicStringSlots;

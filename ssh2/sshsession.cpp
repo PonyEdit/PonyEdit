@@ -35,7 +35,7 @@
 
 bool SshSession::sLibsInitialized;
 
-SshSession::SshSession( SshHost* host ) :
+SshSession::SshSession( SshHost *host ) :
 	mHost( host ),
 	mStatus( Disconnected ),
 	mErrorDetails(),
@@ -144,7 +144,7 @@ void SshSession::threadMain() {
 
 		// Enter Qt's event loop for this thread.
 		mThread->exec();
-	} catch ( QString& error ) {
+	} catch ( QString &error ) {
 		SSHLOG_ERROR( mHost ) << "Unexpected throw in main session loop: " << error;
 		setErrorStatus( "Thrown error: " + error );
 		if ( holdingLock ) {
@@ -177,7 +177,7 @@ bool SshSession::openSocket( unsigned long ipAddress ) {
 	sin.sin_addr.s_addr = ipAddress;
 
 	SSHLOG_INFO( mHost ) << "Connecting to" << Tools::stringifyIpAddress( ipAddress );
-	int rc = ::connect( mSocket, ( struct sockaddr* ) &sin, sizeof( struct sockaddr_in ) );
+	int rc = ::connect( mSocket, ( struct sockaddr * ) &sin, sizeof( struct sockaddr_in ) );
 	if ( rc == 0 ) {
 		SSHLOG_INFO( mHost ) << "Connection established";
 		mHost->setCachedIpAddress( ipAddress );
@@ -209,7 +209,7 @@ bool SshSession::openSocket() {
 	if ( ! connected ) {
 		// DNS lookup, cycle through the results until we find a working IP address
 		SSHLOG_TRACE( mHost ) << "Performing DNS lookup on" << mHost->getHostname();
-		struct hostent* server = gethostbyname( mHost->getHostname() );
+		struct hostent *server = gethostbyname( mHost->getHostname() );
 		int tryAddress = 0;
 
 		if ( ! server ) {
@@ -330,16 +330,16 @@ void SshSession::resetActivityCounter() {
 	mLastActivityTimer.restart();
 }
 
-void SshSession::interactiveAuthCallback( const char*,
+void SshSession::interactiveAuthCallback( const char *,
                                           int,
-                                          const char*,
+                                          const char *,
                                           int,
                                           int num_prompts,
-                                          const LIBSSH2_USERAUTH_KBDINT_PROMPT*,
-                                          LIBSSH2_USERAUTH_KBDINT_RESPONSE* responses,
-                                          void** abstract ) {
+                                          const LIBSSH2_USERAUTH_KBDINT_PROMPT *,
+                                          LIBSSH2_USERAUTH_KBDINT_RESPONSE *responses,
+                                          void **abstract ) {
 	if ( num_prompts == 1 ) {
-		SshSession* connection = ( SshSession * ) ( *abstract );
+		SshSession *connection = ( SshSession * ) ( *abstract );
 #ifdef Q_OS_WIN32
 		responses[0].text = _strdup( connection->mPasswordAttempt );
 #else
@@ -405,7 +405,7 @@ bool SshSession::authenticatePublicKey() {
 
 bool SshSession::authenticateAgent() {
 	struct libssh2_agent_publickey *identity, *prevIdentity = NULL;
-	LIBSSH2_AGENT* agent = NULL;
+	LIBSSH2_AGENT *agent = NULL;
 	bool success = false;
 
 	SSHLOG_TRACE( mHost ) << "Looking for an SSH key agent";
@@ -452,7 +452,7 @@ bool SshSession::authenticateAgent() {
 
 			prevIdentity = identity;
 		}
-	} catch ( const QString& error ) {
+	} catch ( const QString &error ) {
 		SSHLOG_ERROR( mHost ) << "Failed to authenticate via SSH agent: " << error;
 	}
 
@@ -531,7 +531,7 @@ bool SshSession::authenticate() {
 SshSession::AuthMethods SshSession::getAuthenticationMethods() {
 	AuthMethods methods = AuthNone;
 
-	char* authlist = libssh2_userauth_list( mHandle, mHost->getUsername(), mHost->getUsername().length() );
+	char *authlist = libssh2_userauth_list( mHandle, mHost->getUsername(), mHost->getUsername().length() );
 	if ( NULL == authlist ) {
 		return methods;
 	}
@@ -625,7 +625,7 @@ void SshSession::updateAllChannels() {
 		mChannelsLock.lock();
 		for ( int i = 0; i < mChannels.length(); i++ ) {
 			// Update the channel
-			SshChannel* channel = mChannels[i];
+			SshChannel *channel = mChannels[i];
 			if ( NULL == channel ) {
 				continue;
 			}
@@ -633,7 +633,7 @@ void SshSession::updateAllChannels() {
 			bool doMore;
 			try {
 				doMore = channel->updateChannel();
-			} catch ( QString& err ) {
+			} catch ( QString &err ) {
 				QLOG_ERROR() << "Critical channel failure:" << err;
 				setErrorStatus( QObject::tr( "Critical channel failure: " ) + err );
 				mThread->quit();                // Abort QThread::exec, fall back to threadMain for
@@ -677,14 +677,14 @@ void SshSession::updateAllChannels() {
 
 		// If this update cycle went by without incident and I have headroom, see if there are homeless channels
 		// to adopt.
-		SshChannel* homelessChannel;
+		SshChannel *homelessChannel;
 		while ( ! isAtChannelLimit() && ( homelessChannel = mHost->takeNextHomelessChannel() ) != NULL ) {
 			adoptChannel( homelessChannel );
 		}
 	}
 }
 
-void SshSession::setErrorStatus( const QString& error ) {
+void SshSession::setErrorStatus( const QString &error ) {
 	mErrorDetails = error;
 	setStatus( Error );
 }
@@ -696,15 +696,15 @@ void SshSession::setStatus( Status newStatus ) {
 	}
 }
 
-SshChannel* SshSession::getMostConnectedChannel() {
-	SshChannel* result = NULL;
+SshChannel *SshSession::getMostConnectedChannel() {
+	SshChannel *result = NULL;
 
 	mChannelsLock.lock();
 	if ( mStatus < Connected ) {
 		result = ( mChannels.length() ? mChannels.at( 0 ) : NULL );
 	} else {
 		int mostConnectedScore = 0;
-		foreach ( SshChannel * channel, mChannels ) {
+		foreach ( SshChannel *channel, mChannels ) {
 			int connectionScore = channel->getConnectionScore();
 			if ( connectionScore > mostConnectedScore ) {
 				mostConnectedScore = connectionScore;

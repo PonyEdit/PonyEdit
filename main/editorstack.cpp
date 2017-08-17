@@ -8,8 +8,8 @@ EditorStack::EditorStack( EditorPanel *parent ) :
 	mParentPanel = parent;
 }
 
-Editor* EditorStack::getCurrentEditor() const {
-	return static_cast< Editor* >( currentWidget() );
+Editor *EditorStack::getCurrentEditor() const {
+	return static_cast< Editor * >( currentWidget() );
 }
 
 void EditorStack::displayEditor( Editor *editor ) {
@@ -22,9 +22,9 @@ void EditorStack::displayEditor( Editor *editor ) {
 	gWindowManager->notifyEditorChanged( mParentPanel );
 }
 
-void EditorStack::displayFile( BaseFile* file ) {
+void EditorStack::displayFile( BaseFile *file ) {
 	// First, see if there is already an editor in this stack for the file...
-	foreach ( Editor * editor, mEditors ) {
+	foreach ( Editor *editor, mEditors ) {
 		if ( file->getLocation().getProtocol() == Location::Unsaved ) {
 			if ( editor->getLocation().getLabel() == file->getLocation().getLabel() ) {
 				displayEditor( editor );
@@ -40,8 +40,8 @@ void EditorStack::displayFile( BaseFile* file ) {
 	createEditor( file );
 }
 
-void EditorStack::createEditor( BaseFile* file ) {
-	Editor* newEditor = new Editor( file );
+void EditorStack::createEditor( BaseFile *file ) {
+	Editor *newEditor = new Editor( file );
 	mEditors.append( newEditor );
 	addWidget( newEditor );
 

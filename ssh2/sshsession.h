@@ -35,7 +35,7 @@ class SshSession : public QObject {
 		enum AuthMethod { AuthNone = 0, AuthPassword = 1, AuthKeyboardInteractive = 2, AuthPublicKey = 4 };
 		Q_DECLARE_FLAGS( AuthMethods, AuthMethod )
 
-		SshSession( SshHost* host );
+		SshSession( SshHost *host );
 		~SshSession();
 
 		void start();
@@ -46,13 +46,13 @@ class SshSession : public QObject {
 			return mChannels.length();
 		}
 
-		inline const QList< SshChannel* >& getChannels() const {
+		inline const QList< SshChannel * > &getChannels() const {
 			return mChannels;
 		}
 
-		SshChannel* getMostConnectedChannel();  // Returns the SshChannel closest to completing its connection.
+		SshChannel *getMostConnectedChannel();  // Returns the SshChannel closest to completing its connection.
 
-		inline LIBSSH2_SESSION* sessionHandle() const {
+		inline LIBSSH2_SESSION *sessionHandle() const {
 			return mHandle;
 		}
 
@@ -63,9 +63,9 @@ class SshSession : public QObject {
 		QString getConnectionDescription();
 
 	signals:
-		void hitChannelLimit( SshChannel* rejectedChannel );
-		void channelNeatlyClosed( SshChannel* channel );
-		void sessionClosed( SshSession* session );
+		void hitChannelLimit( SshChannel *rejectedChannel );
+		void channelNeatlyClosed( SshChannel *channel );
+		void sessionClosed( SshSession *session );
 
 // Used interally:
 		void killThread();
@@ -77,14 +77,14 @@ class SshSession : public QObject {
 		void heartbeat();
 
 	protected:
-		void adoptChannel( SshChannel* channel );
+		void adoptChannel( SshChannel *channel );
 		void threadMain();
 
 		void queueChannelUpdate();
 
 		void connect();
 		void setStatus( Status newStatus );
-		void setErrorStatus( const QString& error );
+		void setErrorStatus( const QString &error );
 
 		bool openSocket();
 		bool openSocket( unsigned long ipAddress );
@@ -97,21 +97,21 @@ class SshSession : public QObject {
 		bool authenticatePublicKey();
 		bool authenticateAgent();
 		AuthMethods getAuthenticationMethods();
-		static void interactiveAuthCallback( const char*,
+		static void interactiveAuthCallback( const char *,
 		                                     int,
-		                                     const char*,
+		                                     const char *,
 		                                     int,
 		                                     int,
-		                                     const LIBSSH2_USERAUTH_KBDINT_PROMPT*,
-		                                     LIBSSH2_USERAUTH_KBDINT_RESPONSE*,
-		                                     void** );
+		                                     const LIBSSH2_USERAUTH_KBDINT_PROMPT *,
+		                                     LIBSSH2_USERAUTH_KBDINT_RESPONSE *,
+		                                     void ** );
 
 		static void initializeLibrary();
 
 		void resetActivityCounter();
 
 	private:
-		SshHost* mHost;
+		SshHost *mHost;
 		Status mStatus;
 		QString mErrorDetails;
 
@@ -120,15 +120,15 @@ class SshSession : public QObject {
 		bool mKeepaliveSent;
 		QTime mLastActivityTimer;
 
-		SshSessionThread* mThread;
+		SshSessionThread *mThread;
 		int mSocket;
-		LIBSSH2_SESSION* mHandle;
-		QSocketNotifier* mSocketReadNotifier;
-		QSocketNotifier* mSocketExceptionNotifier;
+		LIBSSH2_SESSION *mHandle;
+		QSocketNotifier *mSocketReadNotifier;
+		QSocketNotifier *mSocketExceptionNotifier;
 
 		static bool sLibsInitialized;
 
-		QList< SshChannel* > mChannels;
+		QList< SshChannel * > mChannels;
 		QMutex mChannelsLock;
 		bool mAtChannelLimit;
 
@@ -140,7 +140,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS( SshSession::AuthMethods )
 
 class SshSessionThread : public QThread {
 	public:
-		SshSessionThread( SshSession* session ) :
+		SshSessionThread( SshSession *session ) :
 			mSession( session ) {}
 		void run() {
 			mSession->threadMain();
@@ -151,7 +151,7 @@ class SshSessionThread : public QThread {
 		}
 
 	private:
-		SshSession* mSession;
+		SshSession *mSession;
 };
 
 #endif  // SSHSESSION_H

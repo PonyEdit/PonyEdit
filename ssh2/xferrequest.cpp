@@ -2,7 +2,7 @@
 #include <QDebug>
 #include "xferrequest.h"
 
-XferRequest::XferRequest( bool sudo, const QByteArray& filename, const Callback& callback ) :
+XferRequest::XferRequest( bool sudo, const QByteArray &filename, const Callback &callback ) :
 	mSudo( sudo ),
 	mUpload( false ),
 	mFilename( filename ),
@@ -20,7 +20,7 @@ XferRequest::XferRequest( bool sudo, const QByteArray& filename, const Callback&
 	}
 }
 
-const QByteArray& XferRequest::prepareHeader() {
+const QByteArray &XferRequest::prepareHeader() {
 	mRequestHeader = mFilename + ( isUploadRequest() ? "u" : "d" ) + "\n";
 	if ( isUploadRequest() ) {
 		QCryptographicHash hash( QCryptographicHash::Md5 );
@@ -43,7 +43,7 @@ void XferRequest::handleSuccess() {
 	emit transferSuccess( result );
 }
 
-void XferRequest::handleFailure( const QString& error, int errorFlags ) {
+void XferRequest::handleFailure( const QString &error, int errorFlags ) {
 	emit transferFailure( error, errorFlags );
 }
 

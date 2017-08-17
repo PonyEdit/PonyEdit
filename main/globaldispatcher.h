@@ -28,23 +28,23 @@ class GlobalDispatcher : public QObject {
 			emit generalStatusMessage( message );
 		}
 
-		void emitLocationListSuccess( const QList< Location >& children, QString locationPath ) {
+		void emitLocationListSuccess( const QList< Location > &children, QString locationPath ) {
 			emit locationListSuccess( children, locationPath );
 		}
 
-		void emitLocationListFailure( const QString& error, QString locationPath, bool permissionError ) {
+		void emitLocationListFailure( const QString &error, QString locationPath, bool permissionError ) {
 			emit locationListFailure( error, locationPath, permissionError );
 		}
 
-		void emitSelectFile( BaseFile* file ) {
+		void emitSelectFile( BaseFile *file ) {
 			emit selectFile( file );
 		}
 
-		void emitSyntaxChanged( BaseFile* file ) {
+		void emitSyntaxChanged( BaseFile *file ) {
 			emit syntaxChanged( file );
 		}
 
-		void emitConnectionDropped( RemoteConnection* connection ) {
+		void emitConnectionDropped( RemoteConnection *connection ) {
 			emit connectionDropped( connection );
 		}
 
@@ -58,15 +58,15 @@ class GlobalDispatcher : public QObject {
 		void generalErrorMessage( QString error );
 		void generalStatusMessage( QString message );
 
-		void locationListSuccess( const QList< Location >& children, QString locationPath );
-		void locationListFailure( const QString& error, QString locationPath, bool permissionError );
+		void locationListSuccess( const QList< Location > &children, QString locationPath );
+		void locationListFailure( const QString &error, QString locationPath, bool permissionError );
 
-		void selectFile( BaseFile* file );
-		void syntaxChanged( BaseFile* file );
-		void connectionDropped( RemoteConnection* connection );
+		void selectFile( BaseFile *file );
+		void syntaxChanged( BaseFile *file );
+		void connectionDropped( RemoteConnection *connection );
 		void optionsChanged();
 };
 
-extern GlobalDispatcher* gDispatcher;
+extern GlobalDispatcher *gDispatcher;
 
 #endif  // GLOBALDISPATCHER_H

@@ -18,9 +18,9 @@
 int main( int argc, char *argv[] ) {
 	int result = 1;
 
-	UpdateManager* updateManager = NULL;
+	UpdateManager *updateManager = NULL;
 
-	QsLogging::Logger& logger = QsLogging::Logger::instance();
+	QsLogging::Logger &logger = QsLogging::Logger::instance();
 	logger.setLoggingLevel( QsLogging::TraceLevel );
 
 	try {
@@ -46,7 +46,7 @@ int main( int argc, char *argv[] ) {
 
 		PonyEdit a( argc, argv );
 
-		const QStringList& positionalArguments = a.getPositionalArguments();
+		const QStringList &positionalArguments = a.getPositionalArguments();
 		if ( a.isRunning() ) {
 			// App is already running; just send it messages, to open given files (if any)
 			foreach ( QString arg, positionalArguments ) {
@@ -66,7 +66,7 @@ int main( int argc, char *argv[] ) {
 		QTimer::singleShot( 1000, gSiteManager, SLOT( checkForUpdates() ) );
 
 		result = a.exec();
-	} catch ( QString& err ) {
+	} catch ( QString &err ) {
 		QLOG_ERROR() << "FATAL ERROR: " << err;
 	}
 

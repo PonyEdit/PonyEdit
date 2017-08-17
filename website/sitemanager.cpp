@@ -23,12 +23,12 @@
 
 SiteManager::SiteManager() {
 	mManager = new QNetworkAccessManager( this );
-	connect( mManager, SIGNAL( finished( QNetworkReply* ) ), this, SLOT( handleReply( QNetworkReply* ) ) );
+	connect( mManager, SIGNAL( finished( QNetworkReply * ) ), this, SLOT( handleReply( QNetworkReply * ) ) );
 }
 
 SiteManager::~SiteManager() {
 	// Clean out any leftover replies
-	foreach ( QNetworkReply * reply, mReplies.keys() ) {
+	foreach ( QNetworkReply *reply, mReplies.keys() ) {
 		delete reply;
 	}
 
@@ -41,7 +41,7 @@ SiteManager::~SiteManager() {
 
 void SiteManager::checkForUpdates( bool forceNotification ) {
 	QUrl url( "https://api.github.com/repos/PonyEdit/PonyEdit/releases" );
-	QNetworkReply* reply = mManager->get( QNetworkRequest( url ) );
+	QNetworkReply *reply = mManager->get( QNetworkRequest( url ) );
 
 	mReplies.insert( reply, forceNotification ? UpdateCheckForcedNotification : UpdateCheck );
 }
@@ -71,7 +71,7 @@ void SiteManager::handleReply( QNetworkReply *reply ) {
 			handleUpdateCheckReply( data.toList(), message == UpdateCheckForcedNotification );
 			break;
 		}
-	} catch ( QString& error ) {
+	} catch ( QString &error ) {
 		switch ( message ) {
 		case UpdateCheck:
 		case UpdateCheckForcedNotification:

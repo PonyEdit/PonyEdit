@@ -4,7 +4,7 @@
 
 #include "editorwarningbar.h"
 
-EditorWarningBar::EditorWarningBar( QWidget* parent, const QPixmap& icon, const QString& message ) :
+EditorWarningBar::EditorWarningBar( QWidget *parent, const QPixmap &icon, const QString &message ) :
 	QWidget( parent ) {
 	mLayout = new QHBoxLayout( this );
 
@@ -14,11 +14,11 @@ EditorWarningBar::EditorWarningBar( QWidget* parent, const QPixmap& icon, const 
 	setAutoFillBackground( true );
 
 
-	QLabel* iconLabel = new QLabel( this );
+	QLabel *iconLabel = new QLabel( this );
 	iconLabel->setPixmap( icon );
 	mLayout->addWidget( iconLabel );
 
-	QLabel* textLabel = new QLabel( this );
+	QLabel *textLabel = new QLabel( this );
 	textLabel->setText( message );
 	mLayout->addWidget( textLabel );
 	mLayout->setMargin( 3 );
@@ -27,7 +27,7 @@ EditorWarningBar::EditorWarningBar( QWidget* parent, const QPixmap& icon, const 
 }
 
 void EditorWarningBar::addButton( const QString &label, QObject *callbackTarget, const char *callbackMethod ) {
-	QPushButton* button = new QPushButton( this );
+	QPushButton *button = new QPushButton( this );
 	button->setText( label );
 	mLayout->addWidget( button );
 
@@ -35,7 +35,7 @@ void EditorWarningBar::addButton( const QString &label, QObject *callbackTarget,
 }
 
 void EditorWarningBar::addCloseButton() {
-	QToolButton* closeButton = new QToolButton( this );
+	QToolButton *closeButton = new QToolButton( this );
 	closeButton->setIcon( QIcon( ":/icons/cross.png" ) );
 	mLayout->addWidget( closeButton );
 

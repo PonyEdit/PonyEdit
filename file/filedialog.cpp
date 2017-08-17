@@ -85,9 +85,9 @@ FileDialog::FileDialog( QWidget *parent, bool saveAs ) :
 	connect( ui->mainButtonBox, SIGNAL( accepted() ), this, SLOT( accept() ) );
 	connect( ui->mainButtonBox, SIGNAL( rejected() ), this, SLOT( reject() ) );
 	connect( ui->fileList->selectionModel(),
-	         SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ),
+	         SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection & ) ),
 	         this,
-	         SLOT( fileListSelectionChanged( const QItemSelection&, const QItemSelection& ) ) );
+	         SLOT( fileListSelectionChanged( const QItemSelection &, const QItemSelection & ) ) );
 	connect( gDispatcher,
 	         SIGNAL( locationListSuccess( QList< Location >, QString ) ),
 	         this,
@@ -115,7 +115,7 @@ FileDialog::FileDialog( QWidget *parent, bool saveAs ) :
 	         SLOT( columnHeaderClicked( int ) ) );
 
 	// Install an event filter on all children, to catch some keyboard events
-	foreach ( QObject * child, children() ) {
+	foreach ( QObject *child, children() ) {
 		child->installEventFilter( this );
 	}
 
@@ -124,7 +124,7 @@ FileDialog::FileDialog( QWidget *parent, bool saveAs ) :
 	restoreState();
 
 	Location homeLocation( QDir::homePath() );
-	Editor* editor = gMainWindow->getCurrentEditor();
+	Editor *editor = gMainWindow->getCurrentEditor();
 
 	if ( NULL != editor ) {
 		Location currentLoc = editor->getLocation();
@@ -157,7 +157,7 @@ void FileDialog::populateFolderTree() {
 	// Local computer; contains home dir and root path(s)
 	//
 
-	CustomTreeEntry* localComputer =
+	CustomTreeEntry *localComputer =
 		new CustomTreeEntry( mIconProvider.icon( QFileIconProvider::Computer ), tr( "Local Computer" ) );
 	ui->directoryTree->addTopLevelEntry( localComputer );
 
@@ -188,7 +188,7 @@ void FileDialog::populateFolderTree() {
 #ifdef Q_OS_WIN
 	mLocalNetworkBranch = new CustomTreeEntry( mIconProvider.icon( QFileIconProvider::Network ),
 	                                           tr( "Local Network" ) );
-	mLocalNetworkBranch->setDelayedLoad( this, SLOT( populateWindowsShares( CustomTreeEntry* ) ) );
+	mLocalNetworkBranch->setDelayedLoad( this, SLOT( populateWindowsShares( CustomTreeEntry * ) ) );
 	ui->directoryTree->addTopLevelEntry( mLocalNetworkBranch );
 #endif
 
@@ -199,8 +199,8 @@ void FileDialog::populateFolderTree() {
 	mFavoriteLocationsBranch = new CustomTreeEntry( QIcon( "icons/favorite.png" ), tr( "Favorite Locations" ) );
 	ui->directoryTree->addTopLevelEntry( mFavoriteLocationsBranch );
 
-	CustomTreeEntry* addFavorite = new CustomTreeEntry( QIcon( ":icons/add.png" ), tr( "Add Favorite..." ) );
-	connect( addFavorite, SIGNAL( leftClicked( CustomTreeEntry*, QPoint ) ), this, SLOT( addToFavorites() ) );
+	CustomTreeEntry *addFavorite = new CustomTreeEntry( QIcon( ":icons/add.png" ), tr( "Add Favorite..." ) );
+	connect( addFavorite, SIGNAL( leftClicked( CustomTreeEntry *, QPoint ) ), this, SLOT( addToFavorites() ) );
 	mFavoriteLocationsBranch->addChild( addFavorite );
 
 	updateFavorites();
@@ -214,8 +214,8 @@ void FileDialog::populateFolderTree() {
 		new CustomTreeEntry( mIconProvider.icon( QFileIconProvider::Network ), tr( "Remote Servers" ) );
 	ui->directoryTree->addTopLevelEntry( mRemoteServersBranch );
 
-	CustomTreeEntry* addServer = new CustomTreeEntry( QIcon( ":/icons/add.png" ), tr( "Add Server..." ) );
-	connect( addServer, SIGNAL( leftClicked( CustomTreeEntry*, QPoint ) ), this, SLOT( addNewServer() ) );
+	CustomTreeEntry *addServer = new CustomTreeEntry( QIcon( ":/icons/add.png" ), tr( "Add Server..." ) );
+	connect( addServer, SIGNAL( leftClicked( CustomTreeEntry *, QPoint ) ), this, SLOT( addNewServer() ) );
 	mRemoteServersBranch->addChild( addServer );
 
 	populateRemoteServers();
@@ -228,44 +228,44 @@ void FileDialog::populateFolderTree() {
 
 void FileDialog::populateRemoteServers() {
 	// Take an inventory of the servers in the list now...
-	QMap< SshHost*, bool > currentList;
+	QMap< SshHost *, bool > currentList;
 	for ( int i = 0; i < mRemoteServersBranch->childCount(); i++ ) {
-		currentList.insert( mRemoteServersBranch->child( i )->getData< SshHost* >(), false );
+		currentList.insert( mRemoteServersBranch->child( i )->getData< SshHost * >(), false );
 	}
 
 	// Go through the list of servers that should be there. Add new entries, mark existing ones as "ok to keep"
-	QList< SshHost* > knownHosts = SshHost::getKnownHosts();
-	foreach ( SshHost * host, knownHosts ) {
+	QList< SshHost * > knownHosts = SshHost::getKnownHosts();
+	foreach ( SshHost *host, knownHosts ) {
 		if ( currentList.contains( host ) ) {
 			currentList.insert( host, true );
 		} else {
-			CustomTreeEntry* entry = new SshHostTreeEntry( host );
+			CustomTreeEntry *entry = new SshHostTreeEntry( host );
 			mRemoteServersBranch->addChild( entry );
 
 			connect( entry,
-			         SIGNAL( leftClicked( CustomTreeEntry*, QPoint ) ),
+			         SIGNAL( leftClicked( CustomTreeEntry *, QPoint ) ),
 			         this,
-			         SLOT( serverClicked( CustomTreeEntry* ) ) );
+			         SLOT( serverClicked( CustomTreeEntry * ) ) );
 		}
 	}
 
 	// Remove the list entries that have not been marked as "ok to keep"
 	for ( int i = 1; i < mRemoteServersBranch->childCount(); i++ ) {
-		CustomTreeEntry* child = mRemoteServersBranch->child( i );
-		if ( ! currentList.value( child->getData< SshHost* >(), true ) ) {
+		CustomTreeEntry *child = mRemoteServersBranch->child( i );
+		if ( ! currentList.value( child->getData< SshHost * >(), true ) ) {
 			i--;
 			delete child;
 		}
 	}
 }
 
-void FileDialog::serverClicked( CustomTreeEntry* entry ) {
-	SshHost* host = entry->getData< SshHost* >();
+void FileDialog::serverClicked( CustomTreeEntry *entry ) {
+	SshHost *host = entry->getData< SshHost * >();
 	showLocation( host->getDefaultLocation() );
 }
 
 #ifdef Q_OS_WIN
-void FileDialog::populateWindowsShares( CustomTreeEntry* entry ) {
+void FileDialog::populateWindowsShares( CustomTreeEntry *entry ) {
 	DWORD dwResult, dwResultEnum;
 	HANDLE hEnum;
 	DWORD cbBuffer = 16384;
@@ -289,7 +289,7 @@ void FileDialog::populateWindowsShares( CustomTreeEntry* entry ) {
 		dwResultEnum = WNetEnumResource( hEnum, &cEntries, lpnrLocal, &cbBuffer );
 		if ( dwResultEnum == NO_ERROR ) {
 			for ( i = 0; i < cEntries; i++ ) {
-				CustomTreeEntry* childEntry;
+				CustomTreeEntry *childEntry;
 				QString name( ( QChar * ) lpnrLocal[i].lpRemoteName );
 				if ( lpnrLocal[i].dwDisplayType == RESOURCEDISPLAYTYPE_SHARE ) {
 					// Folder; add as a clickable location
@@ -320,36 +320,36 @@ void FileDialog::populateWindowsShares( CustomTreeEntry* entry ) {
 
 #endif
 
-CustomTreeEntry* FileDialog::addLocationToTree( CustomTreeEntry* parent, const Location& location ) {
-	CustomTreeEntry* newEntry = new CustomTreeEntry( location.getIcon(), location.getLabel() );
-	newEntry->setAutoDeleteData< Location* >( new Location( location ) );
+CustomTreeEntry *FileDialog::addLocationToTree( CustomTreeEntry *parent, const Location &location ) {
+	CustomTreeEntry *newEntry = new CustomTreeEntry( location.getIcon(), location.getLabel() );
+	newEntry->setAutoDeleteData< Location * >( new Location( location ) );
 	connect( newEntry,
-	         SIGNAL( leftClicked( CustomTreeEntry*, QPoint ) ),
+	         SIGNAL( leftClicked( CustomTreeEntry *, QPoint ) ),
 	         this,
-	         SLOT( locationClicked( CustomTreeEntry* ) ) );
+	         SLOT( locationClicked( CustomTreeEntry * ) ) );
 
 	if ( location.isDirectory() ) {
-		newEntry->setDelayedLoad( this, SLOT( locationExpanded( CustomTreeEntry* ) ) );
+		newEntry->setDelayedLoad( this, SLOT( locationExpanded( CustomTreeEntry * ) ) );
 	}
 
 	parent->addChild( newEntry );
 	return newEntry;
 }
 
-void FileDialog::locationClicked( CustomTreeEntry* entry ) {
-	showLocation( *entry->getData< Location* >() );
+void FileDialog::locationClicked( CustomTreeEntry *entry ) {
+	showLocation( *entry->getData< Location * >() );
 }
 
-void FileDialog::locationExpanded( CustomTreeEntry* entry ) {
-	Location* location = entry->getData< Location* >();
+void FileDialog::locationExpanded( CustomTreeEntry *entry ) {
+	Location *location = entry->getData< Location * >();
 
 	mLoadingLocations.insert( location->getPath(), entry );
 	location->asyncGetChildren( false );
 }
 
-void FileDialog::folderChildrenLoaded( const QList< Location >& children, const QString& locationPath ) {
+void FileDialog::folderChildrenLoaded( const QList< Location > &children, const QString &locationPath ) {
 	// Update the folder tree if appropriate
-	CustomTreeEntry* entry = mLoadingLocations.value( locationPath, NULL );
+	CustomTreeEntry *entry = mLoadingLocations.value( locationPath, NULL );
 	if ( entry ) {
 		mLoadingLocations.remove( locationPath );
 		entry->removeAllChildren();
@@ -382,7 +382,7 @@ void FileDialog::folderChildrenLoaded( const QList< Location >& children, const 
 				  QVariant >() );
 
 		foreach ( Location childLocation, children ) {
-			const QString& name = childLocation.getLabel();
+			const QString &name = childLocation.getLabel();
 			if ( ! childLocation.isDirectory() && filters.length() ) {
 				bool match = false;
 				foreach ( QVariant filter, filters ) {
@@ -401,9 +401,9 @@ void FileDialog::folderChildrenLoaded( const QList< Location >& children, const 
 				ui->fileName->addItem( name );
 			}
 
-			QList< QStandardItem* > row;
+			QList< QStandardItem * > row;
 
-			QStandardItem* item = new QStandardItem();
+			QStandardItem *item = new QStandardItem();
 			item->setIcon( childLocation.getIcon() );
 			item->setText( name );
 			item->setData( QVariant::fromValue< Location >( childLocation ), DATA_ROLE );
@@ -445,7 +445,7 @@ void FileDialog::folderChildrenLoaded( const QList< Location >& children, const 
 			QItemSelectionModel *mdl = ui->fileList->selectionModel();
 			mdl->clearSelection();
 
-			foreach ( QStandardItem * item, items ) {
+			foreach ( QStandardItem *item, items ) {
 				mdl->select( item->index(), QItemSelectionModel::Select );
 			}
 
@@ -454,7 +454,7 @@ void FileDialog::folderChildrenLoaded( const QList< Location >& children, const 
 	}
 }
 
-void FileDialog::folderChildrenFailed( const QString& error, const QString& /*locationPath*/, bool permissionError ) {
+void FileDialog::folderChildrenFailed( const QString &error, const QString & /*locationPath*/, bool permissionError ) {
 	mFileListModel->clear();
 
 	showStatus( QPixmap( ":/icons/error.png" ), QString( "Error: " + error ) );
@@ -496,7 +496,7 @@ void FileDialog::statusButtonClicked( StatusWidget::Button button ) {
 		break;
 
 	case StatusWidget::ShowLog: {
-		SshHost* host = mCurrentLocation.getRemoteHost();
+		SshHost *host = mCurrentLocation.getRemoteHost();
 		if ( host != NULL ) {
 			host->showLog();
 		}
@@ -507,7 +507,7 @@ void FileDialog::statusButtonClicked( StatusWidget::Button button ) {
 	}
 }
 
-void FileDialog::showLocation( const Location& location ) {
+void FileDialog::showLocation( const Location &location ) {
 	if ( location.isNull() ) {
 		return;
 	}
@@ -529,7 +529,7 @@ void FileDialog::showLocation( const Location& location ) {
 	}
 }
 
-void FileDialog::showStatus( const QPixmap& icon, const QString& text ) {
+void FileDialog::showStatus( const QPixmap &icon, const QString &text ) {
 	ui->statusWidget->setStatus( icon, text );
 	ui->fileListStack->setCurrentWidget( ui->loaderLayer );
 	ui->statusWidget->setButtons( StatusWidget::None );
@@ -569,9 +569,9 @@ void FileDialog::upLevel() {
 }
 
 void FileDialog::fileDoubleClicked( QModelIndex index ) {
-	QStandardItem* item = mFileListModel->itemFromIndex( index );
+	QStandardItem *item = mFileListModel->itemFromIndex( index );
 	int row = item->row();
-	QStandardItem* primaryItem = mFileListModel->item( row, 0 );
+	QStandardItem *primaryItem = mFileListModel->item( row, 0 );
 	Location location = primaryItem->data( DATA_ROLE ).value< Location >();
 
 	if ( location.isDirectory() ) {
@@ -581,7 +581,7 @@ void FileDialog::fileDoubleClicked( QModelIndex index ) {
 	}
 }
 
-void FileDialog::fileListSelectionChanged( const QItemSelection& selected, const QItemSelection& ) {
+void FileDialog::fileListSelectionChanged( const QItemSelection &selected, const QItemSelection & ) {
 	if ( mInEditHandler ) {
 		return;
 	}
@@ -670,15 +670,15 @@ void FileDialog::addToFavorites() {
 }
 
 void FileDialog::favoriteClicked( CustomTreeEntry *entry ) {
-	showLocation( Location( *( entry->getData< QString* >() ) ) );
+	showLocation( Location( *( entry->getData< QString * >() ) ) );
 }
 
 void FileDialog::updateFavorites() {
 	// take inventory of the favorites in the list now...
 	QMap< QString, bool > currentList;
 	for ( int i = 0; i < mFavoriteLocationsBranch->childCount(); i++ ) {
-		CustomTreeEntry* child = mFavoriteLocationsBranch->child( i );
-		QString* path = child->getData< QString* >();
+		CustomTreeEntry *child = mFavoriteLocationsBranch->child( i );
+		QString *path = child->getData< QString * >();
 		if ( ! path ) {
 			continue;
 		}
@@ -687,29 +687,29 @@ void FileDialog::updateFavorites() {
 
 	// Go through the list of favorites. Add new entries, mark existing ones as keepers
 	QList< Location::Favorite > favorites = Location::getFavorites();
-	foreach ( const Location::Favorite& f, favorites ) {
+	foreach ( const Location::Favorite &f, favorites ) {
 		if ( currentList.contains( f.path ) ) {
 			currentList.insert( f.path, true );
 		} else {
-			CustomTreeEntry* entry = new CustomTreeEntry( QIcon(), f.name );
-			entry->setAutoDeleteData< QString* >( new QString( f.path ) );
+			CustomTreeEntry *entry = new CustomTreeEntry( QIcon(), f.name );
+			entry->setAutoDeleteData< QString * >( new QString( f.path ) );
 			mFavoriteLocationsBranch->addChild( entry );
 
 			connect( entry,
-			         SIGNAL( leftClicked( CustomTreeEntry*, QPoint ) ),
+			         SIGNAL( leftClicked( CustomTreeEntry *, QPoint ) ),
 			         this,
-			         SLOT( favoriteClicked( CustomTreeEntry* ) ) );
+			         SLOT( favoriteClicked( CustomTreeEntry * ) ) );
 			connect( entry,
-			         SIGNAL( rightClicked( CustomTreeEntry*, QPoint ) ),
+			         SIGNAL( rightClicked( CustomTreeEntry *, QPoint ) ),
 			         this,
-			         SLOT( favoriteMenu( CustomTreeEntry*, QPoint ) ) );
+			         SLOT( favoriteMenu( CustomTreeEntry *, QPoint ) ) );
 		}
 	}
 
 	// Remove list entries that don't belong
 	for ( int i = 1; i < mFavoriteLocationsBranch->childCount(); i++ ) {
-		CustomTreeEntry* child = mFavoriteLocationsBranch->child( i );
-		QString* path = child->getData< QString* >();
+		CustomTreeEntry *child = mFavoriteLocationsBranch->child( i );
+		QString *path = child->getData< QString * >();
 		if ( ! path ) {
 			continue;
 		}
@@ -723,10 +723,10 @@ void FileDialog::updateFavorites() {
 void FileDialog::favoriteMenu( CustomTreeEntry *entry, QPoint pos ) {
 	pos = entry->mapToGlobal( pos );
 
-	QString path = *( entry->getData< QString* >() );
-	QMenu* contextMenu = new QMenu( this );
-	QAction* deleteAction = contextMenu->addAction( tr( "Delete Favorite" ) );
-	QAction* selectedAction = contextMenu->exec( pos );
+	QString path = *( entry->getData< QString * >() );
+	QMenu *contextMenu = new QMenu( this );
+	QAction *deleteAction = contextMenu->addAction( tr( "Delete Favorite" ) );
+	QAction *selectedAction = contextMenu->exec( pos );
 
 	if ( selectedAction == deleteAction ) {
 		Location::deleteFavorite( path );
@@ -787,9 +787,9 @@ void FileDialog::populateFilterList() {
 	}
 }
 
-bool FileDialog::eventFilter( QObject* target, QEvent* event ) {
+bool FileDialog::eventFilter( QObject *target, QEvent *event ) {
 	if ( event->type() == QEvent::KeyPress ) {
-		QKeyEvent* keyEvent = static_cast< QKeyEvent* >( event );
+		QKeyEvent *keyEvent = static_cast< QKeyEvent * >( event );
 		if ( keyEvent->key() == Qt::Key_Up && ( keyEvent->modifiers() & UPDIR_MODIFIER ) ) {
 			upLevel();
 			return true;
@@ -811,7 +811,7 @@ void FileDialog::fileNameIndexChanged() {
 	if ( text.length() ) {
 		QStringList filenames = Tools::splitQuotedList( text, ',' );
 
-		QAbstractItemModel* model = ui->fileList->model();
+		QAbstractItemModel *model = ui->fileList->model();
 		int rows = model->rowCount();
 		for ( int row = 0; row < rows; row++ ) {
 			if ( filenames.contains( model->data( model->index( row, 0 ) ).toString(),

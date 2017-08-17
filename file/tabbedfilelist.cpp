@@ -8,7 +8,7 @@
 TabbedFileList::TabbedFileList( QWidget *parent ) :
 	QDockWidget( parent ) {
 	setWindowTitle( tr( "Tabbed File List" ) );
-	QWidget* titleWidget = new QWidget( this );
+	QWidget *titleWidget = new QWidget( this );
 	setTitleBarWidget( titleWidget );
 
 	mTabs = new QTabBar( this );
@@ -20,16 +20,16 @@ TabbedFileList::TabbedFileList( QWidget *parent ) :
 	setFeatures( QDockWidget::NoDockWidgetFeatures );
 	setWidget( mTabs );
 
-	connect( &gOpenFileManager, SIGNAL( fileOpened( BaseFile* ) ), this, SLOT( fileOpened( BaseFile* ) ) );
+	connect( &gOpenFileManager, SIGNAL( fileOpened( BaseFile * ) ), this, SLOT( fileOpened( BaseFile * ) ) );
 	connect( &gOpenFileManager,
-	         SIGNAL( fileClosed( BaseFile* ) ),
+	         SIGNAL( fileClosed( BaseFile * ) ),
 	         this,
-	         SLOT( fileClosed( BaseFile* ) ),
+	         SLOT( fileClosed( BaseFile * ) ),
 	         Qt::DirectConnection );
-	connect( gDispatcher, SIGNAL( selectFile( BaseFile* ) ), this, SLOT( fileSelected( BaseFile* ) ) );
+	connect( gDispatcher, SIGNAL( selectFile( BaseFile * ) ), this, SLOT( fileSelected( BaseFile * ) ) );
 
 	// Add any already-open files
-	foreach ( BaseFile * file, gOpenFileManager.getOpenFiles() ) {
+	foreach ( BaseFile *file, gOpenFileManager.getOpenFiles() ) {
 		fileOpened( file );
 	}
 }
@@ -48,7 +48,7 @@ int TabbedFileList::findTab( BaseFile *file ) {
 	return -1;
 }
 
-void TabbedFileList::fileOpened( BaseFile* file ) {
+void TabbedFileList::fileOpened( BaseFile *file ) {
 	int idx = mTabs->addTab( file->getLocation().getLabel() );
 	mTabs->setTabData( idx, QVariant::fromValue< Location >( file->getLocation() ) );
 
@@ -57,7 +57,7 @@ void TabbedFileList::fileOpened( BaseFile* file ) {
 	connect( file, SIGNAL( unsavedStatusChanged() ), this, SLOT( fileChanged() ) );
 }
 
-void TabbedFileList::fileClosed( BaseFile* file ) {
+void TabbedFileList::fileClosed( BaseFile *file ) {
 	int idx = findTab( file );
 	mTabs->removeTab( idx );
 }
@@ -68,7 +68,7 @@ void TabbedFileList::fileSelected( BaseFile *file ) {
 }
 
 void TabbedFileList::fileChanged() {
-	BaseFile* file = reinterpret_cast< BaseFile * >( QObject::sender() );
+	BaseFile *file = reinterpret_cast< BaseFile * >( QObject::sender() );
 	int idx = findTab( file );
 	if ( file->hasUnsavedChanges() ) {
 		mTabs->setTabText( idx, file->getLocation().getLabel() + " *" );
@@ -86,7 +86,7 @@ void TabbedFileList::currentChanged( int index ) {
 }
 
 void TabbedFileList::tabCloseRequested( int index ) {
-	QList< BaseFile* > closingFiles;
+	QList< BaseFile * > closingFiles;
 	Location loc = mTabs->tabData( index ).value< Location >();
 	if ( loc.isNull() ) {
 		return;

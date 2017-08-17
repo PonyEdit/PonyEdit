@@ -6,7 +6,7 @@
 #include "main/statuswidget.h"
 #include "ui_statuswidget.h"
 
-FileStatusWidget::FileStatusWidget( BaseFile* file, QWidget* parent ) :
+FileStatusWidget::FileStatusWidget( BaseFile *file, QWidget *parent ) :
 	StatusWidget( true, parent ) {
 	mFile = file;
 	setButtons( Cancel );
@@ -15,7 +15,7 @@ FileStatusWidget::FileStatusWidget( BaseFile* file, QWidget* parent ) :
 
 FileStatusWidget::~FileStatusWidget() {}
 
-void FileStatusWidget::showEvent( QShowEvent* ) {
+void FileStatusWidget::showEvent( QShowEvent * ) {
 	openStatusChanged();
 }
 

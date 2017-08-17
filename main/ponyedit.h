@@ -13,13 +13,13 @@ class PonyEdit : public QApplication {
 	Q_OBJECT
 
 	public:
-		PonyEdit( int argc, char** argv );
+		PonyEdit( int argc, char **argv );
 		~PonyEdit();
 
 		bool isRunning();
 		bool sendMessage( const QString &message );
 
-		const QStringList& getPositionalArguments() {
+		const QStringList &getPositionalArguments() {
 			return mPositionalArguments;
 		}
 
@@ -42,8 +42,8 @@ class PonyEdit : public QApplication {
 		bool mIsRunning;
 		QString mKey;
 		QSharedMemory mMemoryLock;
-		QLocalServer* mLocalServer;
-		DialogRethreader* mDialogRethreader;
+		QLocalServer *mLocalServer;
+		DialogRethreader *mDialogRethreader;
 
 		QStringList mPositionalArguments;
 

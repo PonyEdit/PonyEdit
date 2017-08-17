@@ -17,7 +17,7 @@
 #define MEGABYTE_MULTIPLIER 1048576
 #define KILOBYTE_MULTIPLIER 1024
 
-QThread* sMainThread = NULL;
+QThread *sMainThread = NULL;
 QString Tools::sResourcePath;
 
 QString Tools::humanReadableBytes( quint64 bytes ) {
@@ -36,11 +36,11 @@ QString Tools::humanReadableBytes( quint64 bytes ) {
 
 void Tools::saveServers() {
 	QSettings settings;
-	QList< SshHost* > knownHosts = SshHost::getKnownHosts();
+	QList< SshHost * > knownHosts = SshHost::getKnownHosts();
 
 	int index = 0;
 	settings.beginWriteArray( "servers" );
-	foreach ( SshHost * host, knownHosts ) {
+	foreach ( SshHost *host, knownHosts ) {
 		if ( host->getSaveHost() ) {
 			settings.setArrayIndex( index++ );
 			settings.setValue( "hostname", host->getHostname() );
@@ -66,7 +66,7 @@ void Tools::loadServers() {
 	int count = settings.beginReadArray( "servers" );
 	for ( int i = 0; i < count; i++ ) {
 		settings.setArrayIndex( i );
-		SshHost* host = new SshHost();
+		SshHost *host = new SshHost();
 
 		host->setHostname( settings.value( "hostname" ).toByteArray() );
 		host->setPort( settings.value( "port", 22 ).toInt() );
@@ -112,7 +112,7 @@ void Tools::loadServers() {
 void Tools::saveHostFingerprints() {
 	QSettings settings;
 
-	const QMap< QString, QByteArray >& fingerprints = SshHost::getKnownFingerprints();
+	const QMap< QString, QByteArray > &fingerprints = SshHost::getKnownFingerprints();
 
 	int index = 0;
 	settings.beginWriteArray( "hostkeys" );
@@ -159,7 +159,7 @@ void Tools::initialize() {
 	sMainThread = QThread::currentThread();
 }
 
-QString Tools::squashLabel( const QString& label, const QFontMetrics& metrics, int availableWidth ) {
+QString Tools::squashLabel( const QString &label, const QFontMetrics &metrics, int availableWidth ) {
 	QRegExp separators( "[\\/\\\\@\\:\\.]" );
 	#ifdef Q_OS_MAC
 	availableWidth -= 2;
@@ -188,7 +188,7 @@ QString Tools::squashLabel( const QString& label, const QFontMetrics& metrics, i
 	return result;
 }
 
-QString Tools::getStringXmlAttribute( const QXmlAttributes& attribs, const QString& key ) {
+QString Tools::getStringXmlAttribute( const QXmlAttributes &attribs, const QString &key ) {
 	for ( int i = 0; i < attribs.length(); i++ ) {
 		if ( attribs.localName( i ).compare( key, Qt::CaseInsensitive ) == 0 ) {
 			return attribs.value( i );
@@ -197,7 +197,7 @@ QString Tools::getStringXmlAttribute( const QXmlAttributes& attribs, const QStri
 	return QString();
 }
 
-QChar Tools::getCharXmlAttribute( const QXmlAttributes& attribs, const QString& key ) {
+QChar Tools::getCharXmlAttribute( const QXmlAttributes &attribs, const QString &key ) {
 	QString value = getStringXmlAttribute( attribs, key );
 	if ( value.isEmpty() ) {
 		return QChar();
@@ -205,7 +205,7 @@ QChar Tools::getCharXmlAttribute( const QXmlAttributes& attribs, const QString& 
 	return value.at( 0 );
 }
 
-int Tools::getIntXmlAttribute( const QXmlAttributes& attribs, const QString& key, int defaulVal ) {
+int Tools::getIntXmlAttribute( const QXmlAttributes &attribs, const QString &key, int defaulVal ) {
 	bool ok;
 	QString stringValue = getStringXmlAttribute( attribs, key );
 	int value = stringValue.toInt( &ok );
@@ -220,8 +220,8 @@ int Tools::getIntXmlAttribute( const QXmlAttributes& attribs, const QString& key
 	return defaulVal;
 }
 
-bool Tools::compareSubstring( const QString& superstring,
-                              const QString& substring,
+bool Tools::compareSubstring( const QString &superstring,
+                              const QString &substring,
                               int superstringIndex,
                               Qt::CaseSensitivity caseSensitivity ) {
 	int l = substring.length();
@@ -229,8 +229,8 @@ bool Tools::compareSubstring( const QString& superstring,
 		return false;
 	}
 
-	const QChar* a = superstring.constData() + superstringIndex;
-	const QChar* b = substring.constData();
+	const QChar *a = superstring.constData() + superstringIndex;
+	const QChar *b = substring.constData();
 
 	if ( caseSensitivity == Qt::CaseInsensitive ) {
 		while ( l-- && a->toLower() == b->toLower() ) {
@@ -245,14 +245,14 @@ bool Tools::compareSubstring( const QString& superstring,
 	return ( l == -1 );
 }
 
-void Tools::setResourcePath( const QString& path ) {
+void Tools::setResourcePath( const QString &path ) {
 	sResourcePath = path;
 	if ( ! sResourcePath.endsWith( "/" ) ) {
 		sResourcePath = sResourcePath + "/";
 	}
 }
 
-QString Tools::getResourcePath( const QString& subpath ) {
+QString Tools::getResourcePath( const QString &subpath ) {
 	if ( ! sResourcePath.isEmpty() ) {
 		return sResourcePath + subpath;
 	}
@@ -285,7 +285,7 @@ void Tools::loadStartupFiles() {
 
 			gMainWindow->openSingleFile( Location( name ) );
 
-			Editor* current = gMainWindow->getCurrentEditor();
+			Editor *current = gMainWindow->getCurrentEditor();
 			if ( current ) {
 				current->gotoLine( Options::StartupFilesLineNo[ii] );
 			}
@@ -306,9 +306,9 @@ void Tools::saveCurrentFiles() {
 	Options::StartupFiles.clear();
 	Options::StartupFilesLineNo.clear();
 
-	QList< BaseFile* > files = gOpenFileManager.getOpenFiles();
+	QList< BaseFile * > files = gOpenFileManager.getOpenFiles();
 
-	foreach ( BaseFile * file, files ) {
+	foreach ( BaseFile *file, files ) {
 		Location loc = file->getLocation();
 		if ( loc.getProtocol() == Location::Unsaved ) {
 			continue;
@@ -323,13 +323,13 @@ void Tools::saveCurrentFiles() {
 	Options::save();
 }
 
-QStringList Tools::splitQuotedList( const QString& quotedList, QChar separator ) {
+QStringList Tools::splitQuotedList( const QString &quotedList, QChar separator ) {
 	bool inQuotes = false;
 	QStringList result;
 	QString current;
 
 	for ( int i = 0; i < quotedList.length(); i++ ) {
-		const QChar& c = quotedList.at( i );
+		const QChar &c = quotedList.at( i );
 		if ( ! inQuotes && c == separator ) {           // Separator; push current to list
 			if ( current.length() > 0 ) {
 				result.append( current );
@@ -358,9 +358,9 @@ QString Tools::stringifyIpAddress( unsigned long ipAddress ) {
 	       .arg( ( ipAddress >> 24 ) & 0xFF );
 }
 
-QByteArray Tools::bin( const QByteArray& source ) {
-	const unsigned char* c = ( const unsigned char * ) source.constData();
-	const unsigned char* end = c + source.length();
+QByteArray Tools::bin( const QByteArray &source ) {
+	const unsigned char *c = ( const unsigned char * ) source.constData();
+	const unsigned char *end = c + source.length();
 	QByteArray result;
 
 	while ( c < end ) {
@@ -391,10 +391,10 @@ unsigned char Tools::unbinEscape( unsigned char c ) {
 	return ( c < 128 ? c + 188 : c - 128 );
 }
 
-int Tools::unbin( QByteArray& target, const char* source, int maxTarget, int maxSource, bool* leftoverEscape ) {
-	const unsigned char* unsignedSource = ( const unsigned char * ) source;
-	const unsigned char* sourceEnd = unsignedSource + maxSource;
-	const unsigned char* c = unsignedSource;
+int Tools::unbin( QByteArray &target, const char *source, int maxTarget, int maxSource, bool *leftoverEscape ) {
+	const unsigned char *unsignedSource = ( const unsigned char * ) source;
+	const unsigned char *sourceEnd = unsignedSource + maxSource;
+	const unsigned char *c = unsignedSource;
 
 	if ( leftoverEscape && *leftoverEscape && c < sourceEnd ) {
 		target.append( unbinEscape( *c ) );

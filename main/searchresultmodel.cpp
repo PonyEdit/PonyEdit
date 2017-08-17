@@ -28,8 +28,8 @@ void SearchResultModel::clear() {
 	endResetModel();
 }
 
-SearchResultModel::InternalTreeNode* SearchResultModel::createFileNode( const Location& location ) {
-	InternalTreeNode* newNode = new InternalTreeNode();
+SearchResultModel::InternalTreeNode *SearchResultModel::createFileNode( const Location &location ) {
+	InternalTreeNode *newNode = new InternalTreeNode();
 	newNode->parent = mRootNode;
 	newNode->result.location = location;
 
@@ -50,15 +50,15 @@ SearchResultModel::InternalTreeNode* SearchResultModel::createFileNode( const Lo
 	return newNode;
 }
 
-void SearchResultModel::addResult( const Result& result ) {
+void SearchResultModel::addResult( const Result &result ) {
 	// Find or create a filename node for the result to appear within
-	InternalTreeNode* fileNode = mFileNodeMap.value( result.location.getPath() );
+	InternalTreeNode *fileNode = mFileNodeMap.value( result.location.getPath() );
 	if ( fileNode == NULL ) {
 		fileNode = createFileNode( result.location );
 	}
 
 	// Create a new node...
-	InternalTreeNode* newNode = new InternalTreeNode();
+	InternalTreeNode *newNode = new InternalTreeNode();
 	newNode->parent = fileNode;
 	newNode->result = result;
 
@@ -69,18 +69,18 @@ void SearchResultModel::addResult( const Result& result ) {
 	endInsertRows();
 }
 
-void SearchResultModel::addResults( const QList< Result >& results ) {
+void SearchResultModel::addResults( const QList< Result > &results ) {
 	foreach ( const Result &r, results ) {
 		addResult( r );
 	}
 }
 
-SearchResultModel::InternalTreeNode* SearchResultModel::getNodeForIndex( const QModelIndex& index ) const {
+SearchResultModel::InternalTreeNode *SearchResultModel::getNodeForIndex( const QModelIndex &index ) const {
 	if ( ! index.isValid() ) {
 		return mRootNode;
 	}
 
-	InternalTreeNode* node = static_cast< InternalTreeNode* >( index.internalPointer() );
+	InternalTreeNode *node = static_cast< InternalTreeNode * >( index.internalPointer() );
 	if ( node == NULL ) {
 		return mRootNode;
 	}
@@ -88,8 +88,8 @@ SearchResultModel::InternalTreeNode* SearchResultModel::getNodeForIndex( const Q
 	return node;
 }
 
-SearchResultModel::Result* SearchResultModel::getResultForIndex( const QModelIndex& index ) {
-	InternalTreeNode* node = getNodeForIndex( index );
+SearchResultModel::Result *SearchResultModel::getResultForIndex( const QModelIndex &index ) {
+	InternalTreeNode *node = getNodeForIndex( index );
 	if ( node->result.lineNumber > -1 ) {
 		return &( node->result );
 	} else {
@@ -97,8 +97,8 @@ SearchResultModel::Result* SearchResultModel::getResultForIndex( const QModelInd
 	}
 }
 
-QModelIndex SearchResultModel::index( int row, int column, const QModelIndex& parent ) const {
-	InternalTreeNode* parentNode = getNodeForIndex( parent );
+QModelIndex SearchResultModel::index( int row, int column, const QModelIndex &parent ) const {
+	InternalTreeNode *parentNode = getNodeForIndex( parent );
 
 	if ( row < 0 || row >= parentNode->children.count() ) {
 		return QModelIndex();
@@ -107,14 +107,14 @@ QModelIndex SearchResultModel::index( int row, int column, const QModelIndex& pa
 	return createIndex( row, column, parentNode->children[row] );
 }
 
-QModelIndex SearchResultModel::parent( const QModelIndex& child ) const {
-	InternalTreeNode* thisNode = getNodeForIndex( child );
-	InternalTreeNode* parentNode = thisNode->parent;
+QModelIndex SearchResultModel::parent( const QModelIndex &child ) const {
+	InternalTreeNode *thisNode = getNodeForIndex( child );
+	InternalTreeNode *parentNode = thisNode->parent;
 	if ( parentNode == NULL ) {
 		return QModelIndex();
 	}
 
-	InternalTreeNode* grandparentNode = parentNode->parent;
+	InternalTreeNode *grandparentNode = parentNode->parent;
 
 	int parentRow = 0;
 	if ( grandparentNode != NULL ) {
@@ -124,21 +124,21 @@ QModelIndex SearchResultModel::parent( const QModelIndex& child ) const {
 	return createIndex( parentRow, 0, parentNode );
 }
 
-int SearchResultModel::rowCount( const QModelIndex& parent ) const {
-	InternalTreeNode* parentNode = getNodeForIndex( parent );
+int SearchResultModel::rowCount( const QModelIndex &parent ) const {
+	InternalTreeNode *parentNode = getNodeForIndex( parent );
 	return parentNode->children.count();
 }
 
-int SearchResultModel::columnCount( const QModelIndex& /*parent*/ ) const {
+int SearchResultModel::columnCount( const QModelIndex & /*parent*/ ) const {
 	return 1;
 }
 
-QVariant SearchResultModel::data( const QModelIndex& index, int role ) const {
+QVariant SearchResultModel::data( const QModelIndex &index, int role ) const {
 	if ( ! index.isValid() ) {
 		return QVariant();
 	}
 
-	InternalTreeNode* node = getNodeForIndex( index );
+	InternalTreeNode *node = getNodeForIndex( index );
 
 	if ( role == Qt::DisplayRole ) {
 		if ( node->parent == mRootNode ) {
@@ -161,7 +161,7 @@ Qt::ItemFlags SearchResultModel::flags( const QModelIndex &index ) const {
 	Qt::ItemFlags flags = QAbstractItemModel::flags( index );
 	if ( mCheckboxes ) {
 		flags |= Qt::ItemIsUserCheckable;
-		InternalTreeNode* node = getNodeForIndex( index );
+		InternalTreeNode *node = getNodeForIndex( index );
 		if ( node->children.length() ) {
 			flags |= Qt::ItemIsTristate;
 		}
@@ -180,7 +180,7 @@ void SearchResultModel::setShowCheckboxes( bool checkboxes ) {
 
 bool SearchResultModel::setData( const QModelIndex &index, const QVariant &value, int /*role*/ ) {
 	Qt::CheckState checked = value.toBool() ? Qt::Checked : Qt::Unchecked;
-	InternalTreeNode* node = getNodeForIndex( index );
+	InternalTreeNode *node = getNodeForIndex( index );
 	if ( node->parent == NULL ) {
 		return false;
 	}
@@ -188,7 +188,7 @@ bool SearchResultModel::setData( const QModelIndex &index, const QVariant &value
 	if ( node->children.length() ) {
 		// Apply change to self & all children
 		node->checked = checked;
-		foreach ( InternalTreeNode * child, node->children ) {
+		foreach ( InternalTreeNode *child, node->children ) {
 			child->checked = checked;
 		}
 
@@ -201,7 +201,7 @@ bool SearchResultModel::setData( const QModelIndex &index, const QVariant &value
 		// Update the parent state to reflect the children.
 		bool childrenUnchecked = false;
 		bool childrenChecked = false;
-		foreach ( InternalTreeNode * child, node->parent->children ) {
+		foreach ( InternalTreeNode *child, node->parent->children ) {
 			if ( child->checked == Qt::Checked ) {
 				childrenChecked = true;
 			} else if ( child->checked == Qt::Unchecked ) {
@@ -226,28 +226,28 @@ bool SearchResultModel::setData( const QModelIndex &index, const QVariant &value
 	return true;
 }
 
-void SearchResultModel::replaceSelectedResults( const QString& replacement ) {
+void SearchResultModel::replaceSelectedResults( const QString &replacement ) {
 	// go through each file
-	foreach ( InternalTreeNode * locationNode, mRootNode->children ) {
+	foreach ( InternalTreeNode *locationNode, mRootNode->children ) {
 		if ( locationNode->checked == Qt::Unchecked ) {
 			continue;
 		}
 
-		BaseFile* file = gOpenFileManager.getFile( locationNode->result.location );
+		BaseFile *file = gOpenFileManager.getFile( locationNode->result.location );
 		if ( file == NULL ) {
 			continue;
 		}
 
-		QTextDocument* doc = file->getTextDocument();
+		QTextDocument *doc = file->getTextDocument();
 		QTextCursor cursor( doc );
 		cursor.beginEditBlock();
 
 		// go through each result in each file -- backwards, to avoid changes to each entry mucking up other
 		// result locations
-		QList< InternalTreeNode* >::Iterator it = locationNode->children.end();
+		QList< InternalTreeNode * >::Iterator it = locationNode->children.end();
 		while ( it != locationNode->children.begin() ) {
 			--it;
-			InternalTreeNode* resultNode = *it;
+			InternalTreeNode *resultNode = *it;
 			if ( resultNode->checked == Qt::Unchecked ) {
 				continue;
 			}

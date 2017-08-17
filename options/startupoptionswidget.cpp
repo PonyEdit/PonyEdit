@@ -84,10 +84,10 @@ void StartupOptionsWidget::SetFilesToCurrent() {
 		return;
 	}
 
-	QList< BaseFile* > files = gOpenFileManager.getOpenFiles();
+	QList< BaseFile * > files = gOpenFileManager.getOpenFiles();
 
 	ui->fileList->clear();
-	foreach ( BaseFile * file, files ) {
+	foreach ( BaseFile *file, files ) {
 		Location loc = file->getLocation();
 		ui->fileList->appendPlainText( loc.getDisplayPath() );
 	}

@@ -12,7 +12,7 @@ class NewFolderDialog : public QDialog {
 	Q_OBJECT
 
 	public:
-		explicit NewFolderDialog( QWidget *parent, const Location& parentLocation );
+		explicit NewFolderDialog( QWidget *parent, const Location &parentLocation );
 		~NewFolderDialog();
 
 		virtual void accept();

@@ -6,7 +6,7 @@
 #include "openfiletreemodel.h"
 #include "openfiletreeview.h"
 
-OpenFileTreeView::OpenFileTreeView( QWidget *parent, int optionFlags, const QList< BaseFile* >* files ) :
+OpenFileTreeView::OpenFileTreeView( QWidget *parent, int optionFlags, const QList< BaseFile * > *files ) :
 	QTreeView( parent ) {
 	mExtraColumns = 0;
 	mRefreshColumn = 0;
@@ -50,18 +50,18 @@ OpenFileTreeView::OpenFileTreeView( QWidget *parent, int optionFlags, const QLis
 	}
 }
 
-void OpenFileTreeView::dataChanged( const QModelIndex& /*topLeft*/,
-                                    const QModelIndex& /*bottomRight*/,
-                                    const QVector< int >& /*roles*/ ) {
+void OpenFileTreeView::dataChanged( const QModelIndex & /*topLeft*/,
+                                    const QModelIndex & /*bottomRight*/,
+                                    const QVector< int > & /*roles*/ ) {
 	this->expandAll();
 }
 
-BaseFile* OpenFileTreeView::getSelectedFile() const {
+BaseFile *OpenFileTreeView::getSelectedFile() const {
 	QModelIndex i = this->selectionModel()->currentIndex();
 	return mModel->getFileAtIndex( i );
 }
 
-void OpenFileTreeView::selectFile( BaseFile* file ) {
+void OpenFileTreeView::selectFile( BaseFile *file ) {
 	if ( ! file ) {
 		return;
 	}
@@ -78,22 +78,22 @@ void OpenFileTreeView::itemClicked( QModelIndex index ) {
 
 	if ( mRefreshColumn && index.column() == mRefreshColumn ) {
 		// Refresh button clicked.
-		QList< BaseFile* > refreshingFiles = mModel->getIndexAndChildFiles( index );
+		QList< BaseFile * > refreshingFiles = mModel->getIndexAndChildFiles( index );
 		gOpenFileManager.refreshFiles( refreshingFiles );
 	}
 
 	if ( mCloseColumn && index.column() == mCloseColumn ) {
 		// Close button clicked.
-		QList< BaseFile* > closingFiles = mModel->getIndexAndChildFiles( index );
+		QList< BaseFile * > closingFiles = mModel->getIndexAndChildFiles( index );
 		gOpenFileManager.closeFiles( closingFiles );
 	}
 }
 
-QList< BaseFile* > OpenFileTreeView::getSelectedFiles() const {
+QList< BaseFile * > OpenFileTreeView::getSelectedFiles() const {
 	QModelIndexList selectedIndices = selectionModel()->selectedIndexes();
-	QList< BaseFile* > selectedFiles;
+	QList< BaseFile * > selectedFiles;
 	foreach ( QModelIndex index, selectedIndices ) {
-		BaseFile* file = mModel->getFileAtIndex( index );
+		BaseFile *file = mModel->getFileAtIndex( index );
 		if ( file != NULL ) {
 			selectedFiles.append( file );
 		}
@@ -102,6 +102,6 @@ QList< BaseFile* > OpenFileTreeView::getSelectedFiles() const {
 	return selectedFiles;
 }
 
-void OpenFileTreeView::removeFile( BaseFile* file ) {
+void OpenFileTreeView::removeFile( BaseFile *file ) {
 	mModel->removeFile( file );
 }

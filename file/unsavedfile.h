@@ -7,9 +7,9 @@ class UnsavedFile : public BaseFile {
 	Q_OBJECT
 
 	public:
-		explicit UnsavedFile( const Location& location );
+		explicit UnsavedFile( const Location &location );
 
-		BaseFile* newFile( const QString& content );
+		BaseFile *newFile( const QString &content );
 		void open();
 		void save();
 		void close();

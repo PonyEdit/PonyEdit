@@ -13,7 +13,7 @@ class ServerChannel : public ShellChannel {
 	Q_OBJECT
 
 	public:
-		explicit ServerChannel( SshHost* host, bool sudo );
+		explicit ServerChannel( SshHost *host, bool sudo );
 		~ServerChannel();
 		bool update();
 
@@ -22,7 +22,7 @@ class ServerChannel : public ShellChannel {
 			return mSudo ? SudoServer : Server;
 		}
 
-		inline bool handlesFileBuffer( ServerFile* file ) {
+		inline bool handlesFileBuffer( ServerFile *file ) {
 			return mBufferIds.contains( file );
 		}
 
@@ -31,7 +31,7 @@ class ServerChannel : public ShellChannel {
 
 	protected:
 		void shellReady();
-		void finalizeServerInit( const QByteArray& initString );
+		void finalizeServerInit( const QByteArray &initString );
 
 		virtual QByteArray getServerRun( bool sudo );
 
@@ -40,7 +40,7 @@ class ServerChannel : public ShellChannel {
 		virtual int getConnectionScore();
 		virtual QString getConnectionDescription();
 
-		void criticalError( const QString& error );
+		void criticalError( const QString &error );
 
 	protected:
 		enum InternalStatus {
@@ -60,15 +60,15 @@ class ServerChannel : public ShellChannel {
 		void setInternalStatus( InternalStatus newStatus );
 
 		InternalStatus mInternalStatus;
-		ServerRequest* mCurrentRequest;
+		ServerRequest *mCurrentRequest;
 		int mNextMessageId;
 
 		bool mSudo;
 		QByteArray mSudoPasswordAttempt;
 		bool mTriedSudoPassword;
 
-		QMap< int, ServerRequest* > mRequestsAwaitingReplies;
-		QMap< ServerFile*, int > mBufferIds;
+		QMap< int, ServerRequest * > mRequestsAwaitingReplies;
+		QMap< ServerFile *, int > mBufferIds;
 
 		static QByteArray sServerScript;
 

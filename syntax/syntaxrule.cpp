@@ -5,10 +5,10 @@
 #include "syntax/syntaxrule.h"
 #include "syntaxdefmanager.h"
 
-QMap< QString, SyntaxRule::Type >* SyntaxRule::sTypeMap;
+QMap< QString, SyntaxRule::Type > *SyntaxRule::sTypeMap;
 bool SyntaxRule::sTypeMapInitialized = false;
 
-SyntaxRule::SyntaxRule( SyntaxRule* parent, const QString& name, const QXmlAttributes& attributes ) :
+SyntaxRule::SyntaxRule( SyntaxRule *parent, const QString &name, const QXmlAttributes &attributes ) :
 	mDefinition( NULL ),
 	mParent( parent ),
 	mName( name ),
@@ -94,7 +94,7 @@ SyntaxRule::SyntaxRule( SyntaxRule* parent, const QString& name, const QXmlAttri
 	}
 }
 
-SyntaxRule::SyntaxRule( SyntaxRule* parent,
+SyntaxRule::SyntaxRule( SyntaxRule *parent,
                         QSharedPointer< SyntaxRule > other,
                         bool duplicateChildren,
                         bool maintainLinks ) :
@@ -156,7 +156,7 @@ void SyntaxRule::addChildRule( QSharedPointer< SyntaxRule > rule ) {
 	mChildRules.append( rule );
 }
 
-void SyntaxRule::applyDynamicCaptures( const QStringList& captures ) {
+void SyntaxRule::applyDynamicCaptures( const QStringList &captures ) {
 	if ( mType == DetectChar || mType == Detect2Chars ) {
 		if ( captures.length() > mDynamicCharIndex ) {
 			mCharacterA = captures[mDynamicCharIndex][0];
@@ -184,7 +184,7 @@ void SyntaxRule::unlink() {
 	mContextLink = SyntaxDefinition::ContextLink();
 }
 
-bool SyntaxRule::link( SyntaxDefinition* def ) {
+bool SyntaxRule::link( SyntaxDefinition *def ) {
 	if ( mLinked ) {
 		return true;
 	}
@@ -364,8 +364,8 @@ int SyntaxRule::match( const QString &string, int position ) {
 	case Keyword:
 		if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
 			bool caseSensitive = mDefinition->getKeywordCaseSensitivity();
-			const QChar* s = string.constData() + position;
-			const StringTrie::Node* scan =
+			const QChar *s = string.constData() + position;
+			const StringTrie::Node *scan =
 				( caseSensitive ? mKeywordLink->items : mKeywordLink->lcItems ).startScan();
 			int length = 0;
 
@@ -399,7 +399,7 @@ int SyntaxRule::match( const QString &string, int position ) {
 			// Octals start with 0, but have no x like hex. eg; 01562 is octal.
 			if ( string.at( position ) == '0' ) {
 				int lookahead = 1;
-				const QChar* s = string.constData() + position + 1;
+				const QChar *s = string.constData() + position + 1;
 				while ( position + lookahead < string.length() && ( *s >= '0' ) && ( *s <= '7' ) ) {
 					s++, lookahead++;
 				}
@@ -414,7 +414,7 @@ int SyntaxRule::match( const QString &string, int position ) {
 	case Int:
 		if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
 			// Ints are any numbers 0-9
-			const QChar* s = string.constData() + position;
+			const QChar *s = string.constData() + position;
 
 			int extra = 0;
 			if ( *s == '-' ) {
@@ -431,7 +431,7 @@ int SyntaxRule::match( const QString &string, int position ) {
 
 	case DetectIdentifier: {
 		// [a-zA-Z_][a-zA-Z0-9_]*
-		const QChar* s = string.constData() + position;
+		const QChar *s = string.constData() + position;
 		if ( ( *s >= 'a' && *s <= 'z' ) || ( *s >= 'A' && *s <= 'Z' ) || *s == '_' ) {
 			s++;
 			match = 1;
@@ -447,7 +447,7 @@ int SyntaxRule::match( const QString &string, int position ) {
 	case Float:
 		if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
 			// [-][0-9]+.[0-9]#+e[0-9]+
-			const QChar* s = string.constData() + position;
+			const QChar *s = string.constData() + position;
 			int extra = 0;
 			bool seenDecimal = false;
 			if ( *s == '-' ) {
@@ -472,7 +472,7 @@ int SyntaxRule::match( const QString &string, int position ) {
 	case HlCHex:
 		if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
 			// [-]0x[0-9]+
-			const QChar* s = string.constData() + position;
+			const QChar *s = string.constData() + position;
 			int extra = 0;
 			if ( *s == '-' ) {
 				extra++, s++;
@@ -497,7 +497,7 @@ int SyntaxRule::match( const QString &string, int position ) {
 		break;
 
 	case HlCChar: {
-		const QChar* s = string.constData() + position;
+		const QChar *s = string.constData() + position;
 		if ( *s == '\'' ) {
 			s++;
 			if ( s->isNull() ) {
@@ -549,8 +549,8 @@ int SyntaxRule::match( const QString &string, int position ) {
 	return match;
 }
 
-int SyntaxRule::detectStringChar( const QString& string, int position ) {
-	const QChar* s = string.constData() + position;
+int SyntaxRule::detectStringChar( const QString &string, int position ) {
+	const QChar *s = string.constData() + position;
 	if ( *s == '\\' ) {
 		s++;
 		if ( s->isNull() ) {

@@ -10,14 +10,14 @@ class SshHostTreeEntry : public CustomTreeEntry {
 	Q_OBJECT
 
 	public:
-		SshHostTreeEntry( SshHost* host );
+		SshHostTreeEntry( SshHost *host );
 
 // Custom drawing stuff
 		virtual bool isCustomDrawn() const {
 			return true;
 		}
 
-		virtual void customDraw( QPainter* painter, const QStyleOptionViewItem& option );
+		virtual void customDraw( QPainter *painter, const QStyleOptionViewItem &option );
 
 	private slots:
 		void handleGutterIconClick( int iconId );
@@ -31,7 +31,7 @@ class SshHostTreeEntry : public CustomTreeEntry {
 		static QIcon sConnectedIcon;
 		static QIcon sLogIcon;
 
-		SshHost* mHost;
+		SshHost *mHost;
 		int mAnimationFrame;
 };
 

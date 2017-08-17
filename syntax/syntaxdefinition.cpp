@@ -13,7 +13,7 @@ SyntaxDefinition::ContextDef::ContextDef() :
 	attributeLink( NULL ) {}
 SyntaxDefinition::ContextDef::~ContextDef() {}
 
-SyntaxDefinition::SyntaxDefinition( const QString& filename ) :
+SyntaxDefinition::SyntaxDefinition( const QString &filename ) :
 	mValid( false ),
 	mSyntaxName(),
 	mKeywordLists(),
@@ -49,11 +49,11 @@ SyntaxDefinition::SyntaxDefinition( const QString& filename ) :
 }
 
 void SyntaxDefinition::unlink() {
-	foreach ( KeywordList * list, mKeywordLists ) {
+	foreach ( KeywordList *list, mKeywordLists ) {
 		delete list;
 	}
 
-	foreach ( ItemData * itemData, mItemDatas ) {
+	foreach ( ItemData *itemData, mItemDatas ) {
 		delete itemData;
 	}
 
@@ -101,13 +101,13 @@ bool SyntaxDefinition::link() {
 				QSharedPointer< ContextDef > sourceContext;
 				int pos;
 				if ( source.startsWith( "##" ) ) {
-					SyntaxDefinition* includedDefinition =
+					SyntaxDefinition *includedDefinition =
 						gSyntaxDefManager->getDefinitionForSyntax( source.mid( 2 ) );
 					if ( includedDefinition ) {
 						sourceContext = includedDefinition->getDefaultContext();
 					}
 				} else if ( ( pos = source.indexOf( "##" ) ) != -1 ) {
-					SyntaxDefinition* includedDefinition =
+					SyntaxDefinition *includedDefinition =
 						gSyntaxDefManager->getDefinitionForSyntax( source.mid( pos + 2 ) );
 					if ( includedDefinition ) {
 						sourceContext = includedDefinition->getContext( source.left( pos ) );
@@ -140,10 +140,10 @@ bool SyntaxDefinition::link() {
 	return true;
 }
 
-bool SyntaxDefinition::linkContext( const QString& context, ContextLink* link ) {
+bool SyntaxDefinition::linkContext( const QString &context, ContextLink *link ) {
 	if ( context.startsWith( '#' ) || context.isEmpty() ) {
 		if ( context.startsWith( "##" ) ) {
-			SyntaxDefinition* includedDefinition = gSyntaxDefManager->getDefinitionForSyntax( context.mid(
+			SyntaxDefinition *includedDefinition = gSyntaxDefManager->getDefinitionForSyntax( context.mid(
 														  2 ) );
 			if ( includedDefinition ) {
 				link->contextDef = includedDefinition->getDefaultContext();
@@ -166,11 +166,11 @@ bool SyntaxDefinition::linkContext( const QString& context, ContextLink* link ) 
 	return true;
 }
 
-void SyntaxDefinition::addKeywordList( KeywordList* list ) {
+void SyntaxDefinition::addKeywordList( KeywordList *list ) {
 	mKeywordLists.insert( list->name.toLower(), list );
 }
 
-void SyntaxDefinition::addContext( ContextDef* context ) {
+void SyntaxDefinition::addContext( ContextDef *context ) {
 	QSharedPointer< ContextDef > wrappedContext = QSharedPointer< ContextDef >( context );
 
 	if ( mDefaultContext.isNull() ) {
@@ -180,11 +180,11 @@ void SyntaxDefinition::addContext( ContextDef* context ) {
 	mContextList.append( wrappedContext );
 }
 
-void SyntaxDefinition::addItemData( ItemData* itemData ) {
+void SyntaxDefinition::addItemData( ItemData *itemData ) {
 	mItemDatas.insert( itemData->name.toLower(), itemData );
 }
 
-void SyntaxDefinition::setWeakDeliminators( const QString& v ) {
+void SyntaxDefinition::setWeakDeliminators( const QString &v ) {
 	mWeakDeliminators = v;
 	for ( int i = 0; i < v.length(); i++ ) {
 		mDeliminators.remove( v[i] );

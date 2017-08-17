@@ -3,7 +3,7 @@
 #include "syntaxdefxmlhandler.h"
 #include "syntaxrule.h"
 
-SyntaxDefXmlHandler::SyntaxDefXmlHandler( SyntaxDefinition* definition ) :
+SyntaxDefXmlHandler::SyntaxDefXmlHandler( SyntaxDefinition *definition ) :
 	mDefinition( definition ),
 	mRecord( NULL ),
 	mCurrentBlocks( None ),
@@ -11,7 +11,7 @@ SyntaxDefXmlHandler::SyntaxDefXmlHandler( SyntaxDefinition* definition ) :
 	mContext( NULL ),
 	mRule( NULL ) {}
 
-SyntaxDefXmlHandler::SyntaxDefXmlHandler( SyntaxDefManager::Record* record ) :
+SyntaxDefXmlHandler::SyntaxDefXmlHandler( SyntaxDefManager::Record *record ) :
 	mDefinition( NULL ),
 	mRecord( record ),
 	mCurrentBlocks( None ),
@@ -96,7 +96,7 @@ bool SyntaxDefXmlHandler::startElement( const QString & /* namespaceURI */,
 	case Language | Highlighting | Contexts | Context:
 	case Language | Highlighting | Contexts | Context | Rule: {
 		// Inside a <context> or a <rule>. Should be a big pile of rules.
-		SyntaxRule* rule = new SyntaxRule( mRule, localName, atts );
+		SyntaxRule *rule = new SyntaxRule( mRule, localName, atts );
 		if ( rule->isValid() ) {
 			if ( mRule == NULL ) {
 				mContext->rules.append( QSharedPointer< SyntaxRule >( rule ) );
@@ -116,7 +116,7 @@ bool SyntaxDefXmlHandler::startElement( const QString & /* namespaceURI */,
 
 		// Inside an <ItemDatas> block. Just expect a bunch of <itemdata> entries
 		if ( localName.compare( "itemdata", Qt::CaseInsensitive ) == 0 ) {
-			SyntaxDefinition::ItemData* itemData = new SyntaxDefinition::ItemData();
+			SyntaxDefinition::ItemData *itemData = new SyntaxDefinition::ItemData();
 			itemData->name = Tools::getStringXmlAttribute( atts, "name" );
 			itemData->styleName = Tools::getStringXmlAttribute( atts, "defStyleNum" );
 			itemData->styleNameLower = itemData->styleName.toLower();

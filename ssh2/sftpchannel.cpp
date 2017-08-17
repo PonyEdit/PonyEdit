@@ -58,7 +58,7 @@ bool SFTPChannel::handleOpening() {
 	return true;
 }
 
-void SFTPChannel::criticalError( const QString& error ) {
+void SFTPChannel::criticalError( const QString &error ) {
 	// Fail the current job (if there is one)
 	if ( mCurrentRequest ) {
 		mCurrentRequest->triggerFailure( error, ServerRequest::ConnectionError );
@@ -290,7 +290,7 @@ bool SFTPChannel::updateWriteFile() {
 	}
 
 	if ( mRequestState == Writing ) {
-		const QByteArray& content = mCurrentRequest->getContent();
+		const QByteArray &content = mCurrentRequest->getContent();
 		rc = libssh2_sftp_write( mOperationHandle,
 		                         content.constData() + mOperationCursor,
 		                         content.length() - mOperationCursor );

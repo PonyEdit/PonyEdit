@@ -14,7 +14,7 @@ class SearchResults : public QWidget {
 	public:
 		explicit SearchResults( QWidget *parent = 0 );
 		void clearResults();
-		void showResults( const QList< SearchResultModel::Result >& results );
+		void showResults( const QList< SearchResultModel::Result > &results );
 
 		void showReplaceOptions( bool replaceOptions );
 
@@ -23,14 +23,14 @@ class SearchResults : public QWidget {
 		void replaceClicked();
 
 	private:
-		QTreeView* mTreeView;
+		QTreeView *mTreeView;
 
-		QLabel* mReplaceLabel;
-		QLineEdit* mReplaceWithText;
-		QPushButton* mReplaceButton;
+		QLabel *mReplaceLabel;
+		QLineEdit *mReplaceWithText;
+		QPushButton *mReplaceButton;
 
-		SearchResultModel* mModel;
-		SearchResultDelegate* mDelegate;
+		SearchResultModel *mModel;
+		SearchResultDelegate *mDelegate;
 };
 
 #endif  // SEARCHRESULTS_H

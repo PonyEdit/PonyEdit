@@ -3,7 +3,7 @@
 #include "sshchannel.h"
 #include "sshhost.h"
 
-SshChannel::SshChannel( SshHost* host ) :
+SshChannel::SshChannel( SshHost *host ) :
 	mHost( host ),
 	mSession( NULL ),
 	mStatus( Sessionless ),
@@ -11,7 +11,7 @@ SshChannel::SshChannel( SshHost* host ) :
 
 SshChannel::~SshChannel() {}
 
-void SshChannel::setSession( SshSession* session ) {
+void SshChannel::setSession( SshSession *session ) {
 	if ( mSession != session ) {
 		mSession = session;
 		setStatus( mSession == NULL ? Sessionless : WaitingForSession );
@@ -27,7 +27,7 @@ bool SshChannel::updateChannel() {
 	return update();
 }
 
-void SshChannel::criticalError( const QString& error ) {
+void SshChannel::criticalError( const QString &error ) {
 	SSHLOG_ERROR( mHost ) << "SshChannel has hit a critical error: " << error;
 
 	// Note: Error will wind up being logged by SshSession::threadMain's catch block.

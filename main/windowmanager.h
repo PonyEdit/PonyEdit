@@ -26,15 +26,15 @@ class WindowManager : public QWidget {
 		~WindowManager();
 
 		void displayFile( BaseFile *file );
-		void displayLocation( const Location& location );
+		void displayLocation( const Location &location );
 
-		BaseFile* getCurrentFile();
-		Editor* currentEditor();
+		BaseFile *getCurrentFile();
+		Editor *currentEditor();
 
-		void setCurrentEditorPanel( EditorPanel* stack );
-		void editorFocusSet( CodeEditor* newFocus );
+		void setCurrentEditorPanel( EditorPanel *stack );
+		void editorFocusSet( CodeEditor *newFocus );
 
-		inline EditorPanel* getCurrentPanel() const {
+		inline EditorPanel *getCurrentPanel() const {
 			return mCurrentEditorPanel;
 		}
 
@@ -46,11 +46,11 @@ class WindowManager : public QWidget {
 			mEditorSelectionLocked = false;
 		}
 
-		EditorPanel* getFirstPanel();
-		EditorPanel* getLastPanel();
+		EditorPanel *getFirstPanel();
+		EditorPanel *getLastPanel();
 
-		void showSearchResults( const QList< SearchResultModel::Result >& results, bool showReplaceOptions );
-		void showAndSelect( const Location& location, int lineNumber, int start, int length );
+		void showSearchResults( const QList< SearchResultModel::Result > &results, bool showReplaceOptions );
+		void showAndSelect( const Location &location, int lineNumber, int start, int length );
 		void hideSearchResults();
 
 	signals:
@@ -58,15 +58,15 @@ class WindowManager : public QWidget {
 		void splitChanged();
 
 	public slots:
-		void fileClosed( BaseFile* file );
+		void fileClosed( BaseFile *file );
 
 		void findNext();
 		void findPrevious();
 
-		void findInCurrentEditor( const QString& text, bool backwards, bool caseSensitive = false, bool useRegExp = false );
-		void replaceInCurrentEditor( const QString& text, const QString& replaceText, bool all );
-		void searchInFiles( const QList< BaseFile* > files,
-		                    const QString& text,
+		void findInCurrentEditor( const QString &text, bool backwards, bool caseSensitive = false, bool useRegExp = false );
+		void replaceInCurrentEditor( const QString &text, const QString &replaceText, bool all );
+		void searchInFiles( const QList< BaseFile * > files,
+		                    const QString &text,
 		                    bool caseSensitive,
 		                    bool useRegExp,
 		                    bool showReplaceOptions );
@@ -78,7 +78,7 @@ class WindowManager : public QWidget {
 		void previousWindow();
 		void nextWindow();
 
-		void notifyEditorChanged( EditorPanel* stack ); // Called by EditorStacks, to notify the WindowManager
+		void notifyEditorChanged( EditorPanel *stack ); // Called by EditorStacks, to notify the WindowManager
 		                                                // when
 		                                                // their current editor changes.
 
@@ -92,10 +92,10 @@ class WindowManager : public QWidget {
 		void previousSplit();
 
 	private:
-		int find( Editor* editor, const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true );
-		int replace( Editor* editor,
-		             const QString& findText,
-		             const QString& replaceText,
+		int find( Editor *editor, const QString &text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true );
+		int replace( Editor *editor,
+		             const QString &findText,
+		             const QString &replaceText,
 		             bool caseSensitive,
 		             bool useRegexp,
 		             bool all );
@@ -106,24 +106,24 @@ class WindowManager : public QWidget {
 
 		MainWindow *mParent;
 
-		EditorPanel* mCurrentEditorPanel;
+		EditorPanel *mCurrentEditorPanel;
 		bool mEditorSelectionLocked;    // While rearranging editors, it is a good idea to lock editor
 		                                // seleciton.
 
-		EditorPanel* mRootEditorPanel;
-		QLayout* mLayout;
+		EditorPanel *mRootEditorPanel;
+		QLayout *mLayout;
 
-		QDockWidget* mSearchBarWrapper;
-		SearchBar* mSearchBar;
+		QDockWidget *mSearchBarWrapper;
+		SearchBar *mSearchBar;
 
-		QDockWidget* mRegExpTesterWrapper;
-		RegExpTester* mRegExpTester;
+		QDockWidget *mRegExpTesterWrapper;
+		RegExpTester *mRegExpTester;
 
-		QDockWidget* mSearchResultsWrapper;
-		SearchResults* mSearchResults;
+		QDockWidget *mSearchResultsWrapper;
+		SearchResults *mSearchResults;
 };
 
 // One and only WindowManager object, created by MainWindow.
-extern WindowManager* gWindowManager;
+extern WindowManager *gWindowManager;
 
 #endif  // WINDOWMANAGER_H

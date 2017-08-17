@@ -62,7 +62,7 @@ class SshHost : public QObject {
 		~SshHost();
 		static void cleanup();
 
-		static SshHost* getHost( const QByteArray& hostname, const QByteArray& username );
+		static SshHost *getHost( const QByteArray &hostname, const QByteArray &username );
 
 		void connect();
 		void disconnect();
@@ -76,35 +76,35 @@ class SshHost : public QObject {
 		}
 
 		void sendServerRequest( bool sudo,
-		                        ServerFile* file,
-		                        const QByteArray& request,
-		                        const QVariant& parameters = QVariant(),
-		                        const Callback& callback = Callback() );
-		void sendSftpRequest( SFTPRequest* request );
+		                        ServerFile *file,
+		                        const QByteArray &request,
+		                        const QVariant &parameters = QVariant(),
+		                        const Callback &callback = Callback() );
+		void sendSftpRequest( SFTPRequest *request );
 
-		void getFileContent( bool sudo, const QByteArray& filename, const Callback& callback = Callback() );
+		void getFileContent( bool sudo, const QByteArray &filename, const Callback &callback = Callback() );
 		void setFileContent( bool sudo,
-		                     const QByteArray& filename,
-		                     const QByteArray& content,
-		                     const Callback& callback = Callback() );
+		                     const QByteArray &filename,
+		                     const QByteArray &content,
+		                     const Callback &callback = Callback() );
 
 		//
 		// Stuff for saving hosts
 		//
 
-		static QList< SshHost* >& getKnownHosts() {
+		static QList< SshHost * > &getKnownHosts() {
 			return sKnownHosts;
 		}
 
-		static SshHost* getBlankHost( bool save );
-		static void recordKnownHost( SshHost* host ) {
+		static SshHost *getBlankHost( bool save );
+		static void recordKnownHost( SshHost *host ) {
 			sKnownHosts.append( host );
 		}
 
 		QByteArray getHostFingerprint();
-		void setNewFingerprint( const QByteArray& fingerprint );
-		static void registerKnownFingerprint( const QString& hostname, const QByteArray& fingerprint );
-		static const QMap< QString, QByteArray >& getKnownFingerprints() {
+		void setNewFingerprint( const QByteArray &fingerprint );
+		static void registerKnownFingerprint( const QString &hostname, const QByteArray &fingerprint );
+		static const QMap< QString, QByteArray > &getKnownFingerprints() {
 			return sKnownHostFingerprints;
 		}
 
@@ -114,17 +114,17 @@ class SshHost : public QObject {
 
 		class LogHelper {
 			public:
-				LogHelper( SshHost* host, QsLogging::Level level ) :
+				LogHelper( SshHost *host, QsLogging::Level level ) :
 					mHost( host ),
 					mLevel( level ),
 					mDebug( &mBuffer ) {}
 				~LogHelper();
-				inline QDebug& stream() {
+				inline QDebug &stream() {
 					return mDebug;
 				}
 
 			private:
-				SshHost* mHost;
+				SshHost *mHost;
 				QsLogging::Level mLevel;
 				QString mBuffer;
 				QDebug mDebug;
@@ -134,7 +134,7 @@ class SshHost : public QObject {
 			return LogHelper( this, level );
 		}
 
-		inline const QStringList& getLog() {
+		inline const QStringList &getLog() {
 			return mHostLog;
 		}
 
@@ -154,18 +154,18 @@ class SshHost : public QObject {
 			mNewSessionMutex.unlock();
 		}
 
-		bool waitBeforeCheckingServer( SshChannel* channel );    // Returns true if the specified channel should
+		bool waitBeforeCheckingServer( SshChannel *channel );    // Returns true if the specified channel should
 		                                                         // wait before checking server (first check
 		                                                         // only)
 		void firstServerCheckComplete();
 
-		ServerRequest* getNextServerRequest( bool sudo, const QMap< ServerFile*, int >& registeredBuffers );
-		XferRequest* getNextXferRequest( bool sudo );
-		SFTPRequest* getNextSftpRequest();
+		ServerRequest *getNextServerRequest( bool sudo, const QMap< ServerFile *, int > &registeredBuffers );
+		XferRequest *getNextXferRequest( bool sudo );
+		SFTPRequest *getNextSftpRequest();
 
-		SshChannel* takeNextHomelessChannel();
+		SshChannel *takeNextHomelessChannel();
 
-		void handleUnsolicitedServerMessage( const QVariantMap& message );
+		void handleUnsolicitedServerMessage( const QVariantMap &message );
 
 		//
 		// Getters & Setters for cached stuff.
@@ -183,7 +183,7 @@ class SshHost : public QObject {
 			return mChannelLimitGuess;
 		}
 
-		const QByteArray& getHomeDirectory();   // Will make a guess if no home directory specified.
+		const QByteArray &getHomeDirectory();   // Will make a guess if no home directory specified.
 
 		inline void setCachedIpAddress( unsigned long ipAddress ) {
 			mCachedIpAddress = ipAddress;
@@ -197,7 +197,7 @@ class SshHost : public QObject {
 			mChannelLimitGuess = guess;
 		}
 
-		inline void setHomeDirectory( const QByteArray& homeDir ) {
+		inline void setHomeDirectory( const QByteArray &homeDir ) {
 			mHomeDirectory = homeDir;
 		}
 
@@ -205,11 +205,11 @@ class SshHost : public QObject {
 		// Getters & Setters for saved state.
 		//
 
-		inline const QString& getName() const {
+		inline const QString &getName() const {
 			return mName;
 		}
 
-		inline const QByteArray& getHostname() const {
+		inline const QByteArray &getHostname() const {
 			return mHostname;
 		}
 
@@ -217,27 +217,27 @@ class SshHost : public QObject {
 			return mPort;
 		}
 
-		inline const QByteArray& getUsername() const {
+		inline const QByteArray &getUsername() const {
 			return mUsername;
 		}
 
-		inline const QByteArray& getPassword() const {
+		inline const QByteArray &getPassword() const {
 			return mPassword;
 		}
 
-		inline const QByteArray& getKeyFile() const {
+		inline const QByteArray &getKeyFile() const {
 			return mKeyFile;
 		}
 
-		inline const QByteArray& getKeyPassphrase() const {
+		inline const QByteArray &getKeyPassphrase() const {
 			return mKeyPassphrase;
 		}
 
-		inline const QByteArray& getSudoPassword() const {
+		inline const QByteArray &getSudoPassword() const {
 			return mSudoPassword;
 		}
 
-		inline const QByteArray& getDefaultDirectory() const {
+		inline const QByteArray &getDefaultDirectory() const {
 			return mDefaultDirectory;
 		}
 
@@ -248,11 +248,11 @@ class SshHost : public QObject {
 		QString getDefaultPath();
 		Location getDefaultLocation();
 
-		inline void setName( const QString& name ) {
+		inline void setName( const QString &name ) {
 			mName = name;
 		}
 
-		inline void setHostname( const QByteArray& hostname ) {
+		inline void setHostname( const QByteArray &hostname ) {
 			mHostname = hostname;
 		}
 
@@ -260,27 +260,27 @@ class SshHost : public QObject {
 			mPort = port;
 		}
 
-		inline void setUsername( const QByteArray& username ) {
+		inline void setUsername( const QByteArray &username ) {
 			mUsername = username;
 		}
 
-		inline void setPassword( const QByteArray& password ) {
+		inline void setPassword( const QByteArray &password ) {
 			mPassword = password;
 		}
 
-		inline void setKeyFile( const QByteArray& keyFile ) {
+		inline void setKeyFile( const QByteArray &keyFile ) {
 			mKeyFile = keyFile;
 		}
 
-		inline void setKeyPassphrase( const QByteArray& keyPassphrase ) {
+		inline void setKeyPassphrase( const QByteArray &keyPassphrase ) {
 			mKeyPassphrase = keyPassphrase;
 		}
 
-		inline void setSudoPassword( const QByteArray& sudoPassword ) {
+		inline void setSudoPassword( const QByteArray &sudoPassword ) {
 			mSudoPassword = sudoPassword;
 		}
 
-		inline void setDefaultDirectory( const QByteArray& defaultDirectory ) {
+		inline void setDefaultDirectory( const QByteArray &defaultDirectory ) {
 			mDefaultDirectory = defaultDirectory;
 		}
 
@@ -308,11 +308,11 @@ class SshHost : public QObject {
 		                                // lazily update.
 
 	public slots:
-		void channelRejected( SshChannel* channel );    // Called when an SshSession couldn't handle a new
+		void channelRejected( SshChannel *channel );    // Called when an SshSession couldn't handle a new
 		                                                // SshChannel.
-		void channelNeatlyClosed( SshChannel* channel );// Called when an SshChannel closes voluntarily.
+		void channelNeatlyClosed( SshChannel *channel );// Called when an SshChannel closes voluntarily.
 		void updateOverallStatus();
-		void sessionEnded( SshSession* session );
+		void sessionEnded( SshSession *session );
 
 	signals:
 		void wakeAllSessions(); // Used to nudge all sessions out of their slumber. Useful when enqueuing jobs
@@ -324,29 +324,29 @@ class SshHost : public QObject {
 	protected:
 		void checkHeadroom();
 		void checkChannelCount();
-		SshSession* openSession();
-		void enqueueXferRequest( XferRequest* request );
-		void setOverallStatus( Status newStatus, const QString& connectionString );
+		SshSession *openSession();
+		void enqueueXferRequest( XferRequest *request );
+		void setOverallStatus( Status newStatus, const QString &connectionString );
 
-		void registerChannel( SshChannel* channel );
-		void removeChannel( SshChannel* channel );
-		void assignSession( SshChannel* channel );
+		void registerChannel( SshChannel *channel );
+		void removeChannel( SshChannel *channel );
+		void assignSession( SshChannel *channel );
 		int countChannels( SshChannel::Type type );
 
-		void failServerRequests( const QString& error,
+		void failServerRequests( const QString &error,
 		                         int flags,
-		                         QMutex& listLock,
-		                         QList< ServerRequest* >& requestList,
-		                         ServerChannel* channel );
-		void failXferRequests( const QString& error, int flags, QMutex& listLock, QList< XferRequest* >& requestList );
-		void failAllRequests( const QString& error, int flags );
+		                         QMutex &listLock,
+		                         QList< ServerRequest * > &requestList,
+		                         ServerChannel *channel );
+		void failXferRequests( const QString &error, int flags, QMutex &listLock, QList< XferRequest * > &requestList );
+		void failAllRequests( const QString &error, int flags );
 		void failAllHomelessChannels();
 
-		void appendToHostLog( const QString& line );
+		void appendToHostLog( const QString &line );
 
 	private:
 		// Stored servers
-		static QList< SshHost* > sKnownHosts;
+		static QList< SshHost * > sKnownHosts;
 		static QMap< QString, QByteArray > sKnownHostFingerprints;
 
 		// Server state
@@ -367,11 +367,11 @@ class SshHost : public QObject {
 		QPointer< HostLog > mLogWindow;
 		QMutex mModifyingLogMutex;
 
-		QList< SshSession* > mSessions;
-		QList< SshChannel* > mChannels;
+		QList< SshSession * > mSessions;
+		QList< SshChannel * > mChannels;
 
 		QMutex mHomelessChannelsMutex;
-		QList< SshChannel* > mHomelessChannels;
+		QList< SshChannel * > mHomelessChannels;
 
 		QMutex mServerRequestQueueMutex;
 		QMutex mSudoServerRequestQueueMutex;
@@ -379,15 +379,15 @@ class SshHost : public QObject {
 		QMutex mSudoXferRequestQueueMutex;
 		QMutex mSftpRequestQueueMutex;
 
-		QList< ServerRequest* > mServerRequestQueue;
-		QList< ServerRequest* > mSudoServerRequestQueue;
-		QList< XferRequest* > mXferRequestQueue;
-		QList< XferRequest* > mSudoXferRequestQueue;
-		QList< SFTPRequest* > mSftpRequestQueue;
+		QList< ServerRequest * > mServerRequestQueue;
+		QList< ServerRequest * > mSudoServerRequestQueue;
+		QList< XferRequest * > mXferRequestQueue;
+		QList< XferRequest * > mSudoXferRequestQueue;
+		QList< SFTPRequest * > mSftpRequestQueue;
 
 		// Stuff for ensuring no two channels check the server script simultaneously on the first run
 		QMutex mFirstServerScriptCheckerLock;
-		SshChannel* mFirstServerScriptChecker;
+		SshChannel *mFirstServerScriptChecker;
 		bool mServerScriptChecked;
 
 		// Cached stuff for fast reconnection

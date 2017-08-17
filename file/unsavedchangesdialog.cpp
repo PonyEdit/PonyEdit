@@ -11,13 +11,13 @@
 #include "QsLog.h"
 #include "unsavedchangesdialog.h"
 
-UnsavedChangesDialog::UnsavedChangesDialog( const QList< BaseFile* >& files, bool closeFilesOnDiscard ) :
+UnsavedChangesDialog::UnsavedChangesDialog( const QList< BaseFile * > &files, bool closeFilesOnDiscard ) :
 	QDialog( 0 ),
 	mCloseFilesOnDiscard( closeFilesOnDiscard ) {
-	QVBoxLayout* layout = new QVBoxLayout( this );
+	QVBoxLayout *layout = new QVBoxLayout( this );
 	setLayout( layout );
 
-	QLabel* label = new QLabel( this );
+	QLabel *label = new QLabel( this );
 	label->setText( "The following files have unsaved changes: " );
 	layout->addWidget( label );
 
@@ -33,7 +33,7 @@ UnsavedChangesDialog::UnsavedChangesDialog( const QList< BaseFile* >& files, boo
 	mButtonBox->button( QDialogButtonBox::Save )->setDefault( true );
 	layout->addWidget( mButtonBox );
 
-	foreach ( BaseFile * file, files ) {
+	foreach ( BaseFile *file, files ) {
 		connect( file, SIGNAL( unsavedStatusChanged() ), this, SLOT( fileStateChanged() ) );
 	}
 
@@ -42,17 +42,17 @@ UnsavedChangesDialog::UnsavedChangesDialog( const QList< BaseFile* >& files, boo
 	         this,
 	         SLOT( selectionChanged( QItemSelection, QItemSelection ) ) );
 	connect( mButtonBox, SIGNAL( rejected() ), this, SLOT( reject() ) );
-	connect( mButtonBox, SIGNAL( clicked( QAbstractButton* ) ), this, SLOT( buttonClicked( QAbstractButton* ) ) );
-	connect( &gOpenFileManager, SIGNAL( fileClosed( BaseFile* ) ), this, SLOT( fileClosed( BaseFile* ) ) );
+	connect( mButtonBox, SIGNAL( clicked( QAbstractButton * ) ), this, SLOT( buttonClicked( QAbstractButton * ) ) );
+	connect( &gOpenFileManager, SIGNAL( fileClosed( BaseFile * ) ), this, SLOT( fileClosed( BaseFile * ) ) );
 }
 
 UnsavedChangesDialog::~UnsavedChangesDialog() {}
 
-void UnsavedChangesDialog::buttonClicked( QAbstractButton* button ) {
-	QList< BaseFile* > selectedFiles = mTreeView->getSelectedFiles();
+void UnsavedChangesDialog::buttonClicked( QAbstractButton *button ) {
+	QList< BaseFile * > selectedFiles = mTreeView->getSelectedFiles();
 	if ( button == ( QAbstractButton * ) mButtonBox->button( QDialogButtonBox::Save ) ) {
 		// Save
-		foreach ( BaseFile * file, selectedFiles ) {
+		foreach ( BaseFile *file, selectedFiles ) {
 			if ( file->getLocation().getProtocol() == Location::Unsaved ) {
 				FileDialog dlg( this, true );
 				if ( dlg.exec() ) {
@@ -70,7 +70,7 @@ void UnsavedChangesDialog::buttonClicked( QAbstractButton* button ) {
 		}
 	} else if ( button == ( QAbstractButton * ) mButtonBox->button( QDialogButtonBox::Discard ) ) {
 		// Discard
-		foreach ( BaseFile * file, selectedFiles ) {
+		foreach ( BaseFile *file, selectedFiles ) {
 			try {
 				if ( mCloseFilesOnDiscard ) {
 					if ( file->canClose() ) {
@@ -94,7 +94,7 @@ void UnsavedChangesDialog::selectionChanged( QItemSelection /* before */, QItemS
 }
 
 void UnsavedChangesDialog::fileStateChanged() {
-	BaseFile* file = static_cast< BaseFile* >( QObject::sender() );
+	BaseFile *file = static_cast< BaseFile * >( QObject::sender() );
 	if ( ! file->hasUnsavedChanges() ) {
 		BaseFile::OpenStatus status = file->getOpenStatus();
 
@@ -111,7 +111,7 @@ void UnsavedChangesDialog::fileStateChanged() {
 	}
 }
 
-void UnsavedChangesDialog::fileClosed( BaseFile* file ) {
+void UnsavedChangesDialog::fileClosed( BaseFile *file ) {
 	mTreeView->removeFile( file );
 	if ( mTreeView->model()->rowCount() == 0 ) {
 		accept();

@@ -9,26 +9,26 @@ class SFTPRequest {
 	public:
 		enum Type { Ls, MkDir, ReadFile, WriteFile };
 
-		SFTPRequest( Type type, const Callback& callback );
+		SFTPRequest( Type type, const Callback &callback );
 
 		inline Type getType() const {
 			return mType;
 		}
 
-		void setPath( const QString& path );
-		inline const QString& getPath() const {
+		void setPath( const QString &path );
+		inline const QString &getPath() const {
 			return mPath;
 		}
 
-		inline void setContent( const QByteArray& content ) {
+		inline void setContent( const QByteArray &content ) {
 			mContent = content;
 		}
 
-		inline void addContent( const char* data, int length ) {
+		inline void addContent( const char *data, int length ) {
 			mContent.append( data, length );
 		}
 
-		inline const QByteArray& getContent() const {
+		inline const QByteArray &getContent() const {
 			return mContent;
 		}
 
@@ -56,11 +56,11 @@ class SFTPRequest {
 			return mIncludeHidden;
 		}
 
-		inline void triggerSuccess( const QVariantMap& result ) {
+		inline void triggerSuccess( const QVariantMap &result ) {
 			mCallback.triggerSuccess( result );
 		}
 
-		inline void triggerFailure( const QString& error, int flags = 0 ) {
+		inline void triggerFailure( const QString &error, int flags = 0 ) {
 			mCallback.triggerFailure( error, flags );
 		}
 

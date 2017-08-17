@@ -9,9 +9,9 @@ class FtpFile : public BaseFile {
 	Q_OBJECT
 
 	public:
-		FtpFile( const Location& location );
+		FtpFile( const Location &location );
 
-		BaseFile* newFile( const QString& content );
+		BaseFile *newFile( const QString &content );
 		void open();
 		void save();
 		void close();
@@ -28,7 +28,7 @@ class FtpFile : public BaseFile {
 		void sftpWriteProgress( int progress );
 
 	private:
-		SshHost* mHost;
+		SshHost *mHost;
 };
 
 #endif  // FTPFILE_H

@@ -6,7 +6,7 @@
 #include "tools/callback.h"
 #include "ui_newfolderdialog.h"
 
-NewFolderDialog::NewFolderDialog( QWidget *parent, const Location& parentLocation ) :
+NewFolderDialog::NewFolderDialog( QWidget *parent, const Location &parentLocation ) :
 	QDialog( parent ),
 	ui( new Ui::NewFolderDialog ) {
 	mParentLocation = parentLocation;
@@ -43,7 +43,7 @@ void NewFolderDialog::createFailure( QString error, int flags ) {
 	msgbox.setText( error );
 	msgbox.setStandardButtons( QMessageBox::Cancel );
 
-	QPushButton* sudoButton = NULL;
+	QPushButton *sudoButton = NULL;
 	if ( flags & ServerRequest::PermissionError ) {
 		sudoButton = msgbox.addButton( "Sudo and Try Again", QMessageBox::ActionRole );
 	}

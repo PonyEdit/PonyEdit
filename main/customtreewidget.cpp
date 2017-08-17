@@ -27,14 +27,14 @@ CustomTreeWidget::~CustomTreeWidget() {
 	delete mDelegate;
 }
 
-void CustomTreeWidget::addTopLevelEntry( CustomTreeEntry* entry ) {
+void CustomTreeWidget::addTopLevelEntry( CustomTreeEntry *entry ) {
 	mModel->addTopLevelEntry( entry );
 }
 
 void CustomTreeWidget::mousePressEvent( QMouseEvent *event ) {
 	// Work out what was clicked.
 	QModelIndex index = indexAt( event->pos() );
-	CustomTreeEntry* entry = mModel->getEntry( index );
+	CustomTreeEntry *entry = mModel->getEntry( index );
 	mLastClickedPoint = event->pos() - visualRect( index ).topLeft();
 
 	// Pass right clicks though to entry, stop there.
@@ -59,7 +59,7 @@ void CustomTreeWidget::mousePressEvent( QMouseEvent *event ) {
 }
 
 void CustomTreeWidget::entryClicked( QModelIndex index ) {
-	CustomTreeEntry* entry = mModel->getEntry( index );
+	CustomTreeEntry *entry = mModel->getEntry( index );
 	if ( entry ) {
 		entry->handleLeftClick( mLastClickedPoint );
 	}
@@ -78,11 +78,11 @@ void CustomTreeWidget::paintEvent( QPaintEvent *event ) {
 	}
 }
 
-void CustomTreeWidget::registerAnimation( const QModelIndex& index ) {
+void CustomTreeWidget::registerAnimation( const QModelIndex &index ) {
 	mAnimatingIndices.append( index );
 }
 
-void CustomTreeWidget::timerEvent( QTimerEvent* event ) {
+void CustomTreeWidget::timerEvent( QTimerEvent *event ) {
 	if ( event->timerId() == mAnimationTimerId ) {
 		foreach ( const QModelIndex &index, mAnimatingIndices ) {
 			update( index );

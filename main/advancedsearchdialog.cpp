@@ -48,8 +48,8 @@ void AdvancedSearchDialog::searchAndReplace() {
 	close();
 }
 
-QList< BaseFile* > AdvancedSearchDialog::getLocalHaystackFiles() {
-	QList< BaseFile* > result;
+QList< BaseFile * > AdvancedSearchDialog::getLocalHaystackFiles() {
+	QList< BaseFile * > result;
 	Scope scope = static_cast< Scope >( ui->context->itemData( ui->context->currentIndex() ).toInt() );
 
 	if ( scope == CurrentFile ) {
@@ -58,8 +58,8 @@ QList< BaseFile* > AdvancedSearchDialog::getLocalHaystackFiles() {
 		}
 	} else if ( scope == OpenFiles ) {
 		QRegExp namePattern( ui->filePattern->text(), Qt::CaseInsensitive, QRegExp::WildcardUnix );
-		QList< BaseFile* > files = gOpenFileManager.getOpenFiles();
-		foreach ( BaseFile * file, files ) {
+		QList< BaseFile * > files = gOpenFileManager.getOpenFiles();
+		foreach ( BaseFile *file, files ) {
 			if ( namePattern.exactMatch( file->getLocation().getPath() ) ) {
 				result.append( file );
 			}

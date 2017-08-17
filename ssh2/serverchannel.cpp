@@ -46,7 +46,7 @@ QByteArray ServerChannel::sServerChannelInit( SERVER_INIT );
 QByteArray ServerChannel::sServerScript;
 QByteArray ServerChannel::sServerUpload;
 
-ServerChannel::ServerChannel( SshHost* host, bool sudo ) :
+ServerChannel::ServerChannel( SshHost *host, bool sudo ) :
 	ShellChannel( host ),
 	mInternalStatus( _WaitingForShell ),
 	mCurrentRequest( 0 ),
@@ -267,7 +267,7 @@ bool ServerChannel::handleOpening() {
 	return true;
 }
 
-void ServerChannel::criticalError( const QString& error ) {
+void ServerChannel::criticalError( const QString &error ) {
 	// Fail the current job (if there is one)
 	if ( mCurrentRequest ) {
 		mCurrentRequest->failRequest( error, ServerRequest::ConnectionError );
@@ -291,7 +291,7 @@ bool ServerChannel::mainUpdate() {
 				QVariantMap response = QJsonDocument::fromJson( rr.data ).object().toVariantMap();
 				if ( int responseId = response.value( "i", 0 ).toInt() ) {
 					// Look up the request that this response relates to
-					ServerRequest* request = mRequestsAwaitingReplies.value( responseId, NULL );
+					ServerRequest *request = mRequestsAwaitingReplies.value( responseId, NULL );
 					if ( request != NULL ) {
 						// If the request was opening a file, and a bufferId is returned, record
 						// the relationship
@@ -311,7 +311,7 @@ bool ServerChannel::mainUpdate() {
 						BaseFile::deletionUnlock();
 
 						// Handle the response.
-						ServerRequest* request =
+						ServerRequest *request =
 							mRequestsAwaitingReplies.value( responseId, NULL );
 						if ( request != NULL ) {
 							request->handleReply( response );
@@ -354,7 +354,7 @@ bool ServerChannel::mainUpdate() {
 
 	// Make requests if there are any to make.
 	if ( mInternalStatus == _SendingRequest ) {
-		const QByteArray& packedRequest =
+		const QByteArray &packedRequest =
 			mCurrentRequest->getPackedRequest( mBufferIds.value( mCurrentRequest->getFile(), -1 ) );
 		int rc = libssh2_channel_write( mHandle, packedRequest, packedRequest.length() );
 		if ( rc < 0 ) {
@@ -378,7 +378,7 @@ bool ServerChannel::mainUpdate() {
 	return true;
 }
 
-void ServerChannel::finalizeServerInit( const QByteArray& initString ) {
+void ServerChannel::finalizeServerInit( const QByteArray &initString ) {
 	if ( initString.contains( "Sudo-prompt" ) ) {
 		mSudoPasswordAttempt = mHost->getSudoPassword();
 		mTriedSudoPassword = mSudoPasswordAttempt.isNull();

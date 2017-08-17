@@ -7,7 +7,7 @@
 #define MACHINE_READABLE_INIT " stty -echo; export PS1=\\%-ponyedit-\\%\n"
 #define MACHINE_READABLE_PROMPT "%-ponyedit-%"
 
-ShellChannel::ShellChannel( SshHost* host, bool machineReadable, const QByteArray& ptyType ) :
+ShellChannel::ShellChannel( SshHost *host, bool machineReadable, const QByteArray &ptyType ) :
 	SshChannel( host ),
 	mHandle( NULL ),
 	mReadBuffer(),
@@ -135,7 +135,7 @@ ShellChannel::ReadReply ShellChannel::readUntilPrompt() {
 	return readUntil( MACHINE_READABLE_PROMPT );
 }
 
-ShellChannel::ReadReply ShellChannel::readUntil( const QByteArray& marker ) {
+ShellChannel::ReadReply ShellChannel::readUntil( const QByteArray &marker ) {
 	ReadReply result;
 	result.readAgain = false;
 

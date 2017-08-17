@@ -31,7 +31,7 @@ QList< Location::Favorite > Location::sFavorites;
 // Icon Provider stuff  //
 ///////////////////////////
 
-QFileIconProvider* sIconProvider = NULL;
+QFileIconProvider *sIconProvider = NULL;
 
 void LocationShared::initIconProvider() {
 	if ( ! sIconProvider ) {
@@ -54,14 +54,14 @@ Location::Location() {
 	mData = NULL;
 }
 
-Location::Location( const Location& other ) {
+Location::Location( const Location &other ) {
 	mData = other.mData;
 	if ( mData ) {
 		mData->mReferences++;
 	}
 }
 
-Location& Location::operator=( const Location& other ) {
+Location &Location::operator=( const Location &other ) {
 	if ( mData != other.mData && mData != NULL ) {
 		mData->mReferences--;
 		if ( mData->mReferences <= 0 ) {
@@ -75,18 +75,18 @@ Location& Location::operator=( const Location& other ) {
 	return *this;
 }
 
-Location::Location( LocationShared* data ) {
+Location::Location( LocationShared *data ) {
 	mData = data;
 	mData->mReferences++;
 }
 
-Location::Location( const QString& path ) {
+Location::Location( const QString &path ) {
 	mData = new LocationShared();
 	mData->setPath( path );
 }
 
-Location::Location( const Location& parent,
-                    const QString& path,
+Location::Location( const Location &parent,
+                    const QString &path,
                     Type type,
                     int size,
                     QDateTime lastModified,
@@ -139,11 +139,11 @@ Location::~Location() {
 // Method Implementation   //
 /////////////////////////////
 
-const QString& Location::getPath() const {
+const QString &Location::getPath() const {
 	return mData->mPath;
 }
 
-const QString& Location::getLabel() const {
+const QString &Location::getLabel() const {
 	return mData->mLabel;
 }
 
@@ -155,7 +155,7 @@ int Location::getSize() const {
 	return mData->mSize;
 }
 
-const QDateTime& Location::getLastModified() const {
+const QDateTime &Location::getLastModified() const {
 	return mData->mLastModified;
 }
 
@@ -170,7 +170,7 @@ bool Location::canWrite() const {
 bool Location::isHidden() const {
 #ifdef Q_OS_WIN32
 	if ( mData->mProtocol == Local ) {
-		WCHAR* wchar = ( WCHAR * ) malloc( ( mData->mPath.length() + 1 ) * sizeof( WCHAR ) );
+		WCHAR *wchar = ( WCHAR * ) malloc( ( mData->mPath.length() + 1 ) * sizeof( WCHAR ) );
 		wchar[mData->mPath.toWCharArray( wchar )] = 0;
 		DWORD result = GetFileAttributes( wchar );
 		free( wchar );
@@ -214,11 +214,11 @@ QString Location::getHostlessPath() const {
 	}
 }
 
-bool Location::operator==( const Location& other ) const {
+bool Location::operator==( const Location &other ) const {
 	return mData->mPath == other.mData->mPath;
 }
 
-const Location& Location::getDirectory() const {
+const Location &Location::getDirectory() const {
 	if ( isDirectory() ) {
 		return *this;
 	} else {
@@ -226,7 +226,7 @@ const Location& Location::getDirectory() const {
 	}
 }
 
-const Location& Location::getParent() const {
+const Location &Location::getParent() const {
 	if ( mData->mParent.isNull() ) {
 		QString path = getParentPath();
 
@@ -420,7 +420,7 @@ void Location::asyncGetChildren( bool includeHidden ) {
 	}
 }
 
-BaseFile* Location::getFile() {
+BaseFile *Location::getFile() {
 	return BaseFile::getFile( *this );
 }
 
@@ -432,12 +432,12 @@ Location::Protocol Location::getProtocol() const {
 	return mData->mProtocol;
 }
 
-SshHost* Location::getRemoteHost() const {
+SshHost *Location::getRemoteHost() const {
 	return mData->getHost();
 }
 
 void LocationShared::sftpLoadListing( bool includeHidden ) {
-	SFTPRequest* request =
+	SFTPRequest *request =
 		new SFTPRequest( SFTPRequest::Ls,
 		                 Callback( this,
 		                           SLOT( sshLsSuccess( QVariantMap ) ),
@@ -500,7 +500,7 @@ void LocationShared::sftpLsFailure( QString error, int /*flags*/ ) {
 	gDispatcher->emitLocationListFailure( error, mPath, false );
 }
 
-SshHost* LocationShared::getHost() {
+SshHost *LocationShared::getHost() {
 	if ( mHost == NULL ) {
 		mHost = SshHost::getHost( mRemoteHostName.toLatin1(), mRemoteUserName.toLatin1() );
 	}
@@ -528,7 +528,7 @@ void Location::addToFavorites() {
 	}
 }
 
-void Location::deleteFavorite( const QString& path ) {
+void Location::deleteFavorite( const QString &path ) {
 	for ( int i = 0; i < sFavorites.length(); i++ ) {
 		if ( sFavorites[i].path == path ) {
 			sFavorites.removeAt( i );
@@ -565,7 +565,7 @@ void Location::loadFavorites() {
 	}
 }
 
-void Location::addSortedFavorite( const Favorite& favorite ) {
+void Location::addSortedFavorite( const Favorite &favorite ) {
 	int i;
 	for ( i = 0; i < sFavorites.length(); i++ ) {
 		if ( favorite.name.compare( sFavorites[i].name, Qt::CaseInsensitive ) > 0 ) {
@@ -590,7 +590,7 @@ QString Location::getDefaultFavoriteName() {
 	}
 }
 
-void Location::createNewDirectory( const QString& name, const Callback &callback ) {
+void Location::createNewDirectory( const QString &name, const Callback &callback ) {
 	switch ( mData->mProtocol ) {
 	case Ssh: {
 		QVariantMap params;
@@ -600,7 +600,7 @@ void Location::createNewDirectory( const QString& name, const Callback &callback
 	}
 
 	case Sftp: {
-		SFTPRequest* request = new SFTPRequest( SFTPRequest::MkDir, callback );
+		SFTPRequest *request = new SFTPRequest( SFTPRequest::MkDir, callback );
 		request->setPath( mData->mRemotePath + "/" + name );
 		mData->getHost()->sendSftpRequest( request );
 		break;
