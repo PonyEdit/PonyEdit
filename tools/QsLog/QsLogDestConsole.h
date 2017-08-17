@@ -44,9 +44,9 @@ class QSLOG_SHARED_OBJECT DebugOutputDestination : public Destination
 public:
     static const char* const Type;
 
-    virtual void write(const LogMessage& message);
-    virtual bool isValid();
-    virtual QString type() const;
+    void write(const LogMessage& message) override;
+    bool isValid() override;
+    QString type() const override;
 };
 
 }

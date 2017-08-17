@@ -4,14 +4,6 @@ INCLUDEPATH += $$PWD
 #DEFINES += QS_LOG_SEPARATE_THREAD    # messages are queued and written from a separate thread
 #DEFINES += QS_LOG_WIN_PRINTF_CONSOLE # Use fprintf instead of OutputDebugString on Windows
 
-contains(DEFINES, QS_LOG_WINDOW) {
-    message("Will include log window destination")
-    QT += gui
-    greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-    SOURCES += $$PWD/QsLogDestModel.cpp
-    HEADERS += $$PWD/QsLogDestModel.h
-}
-
 SOURCES += $$PWD/QsLogDest.cpp \
     $$PWD/QsLog.cpp \
     $$PWD/QsLogDestConsole.cpp \
@@ -27,9 +19,9 @@ HEADERS += $$PWD/QsLogDest.h \
     $$PWD/QsLogDestFile.h \
     $$PWD/QsLogDisableForThisFile.h \
     $$PWD/QsLogDestFunctor.h \
-    $$PWD/QsLogMessage.h
+    $$PWD/QsLogMessage.h \
+    $$PWD/QsLogSharedLibrary.h
 
 OTHER_FILES += \
-    $$PWD/QsLogChanges.txt \
     $$PWD/README.md \
     $$PWD/LICENSE.txt

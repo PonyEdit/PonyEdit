@@ -36,8 +36,7 @@ namespace QsLogging
 
 struct LogMessage
 {
-    LogMessage() { } // Needs to be accessible for qRegisterMetaType
-
+    LogMessage() = default; // Needs to be accessible for qRegisterMetaType
     LogMessage(const QString& m, const QDateTime& t, const Level l); // Construct and format message
 
     //! Log message

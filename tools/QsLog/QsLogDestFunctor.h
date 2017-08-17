@@ -44,15 +44,15 @@ public:
     static const char* const Type;
 
     explicit FunctorDestination(LogFunction f);
-    FunctorDestination(QObject *receiver, const char *member);
+    FunctorDestination(QObject* receiver, const char* member);
 
-    virtual void write(const LogMessage& message);
-    virtual bool isValid();
-    virtual QString type() const;
+    void write(const LogMessage& message) override;
+    bool isValid() override;
+    QString type() const override;
 
 protected:
     // int used to avoid registering a new enum type
-    Q_SIGNAL void logMessageReady(const LogMessage& message);
+    Q_SIGNAL void logMessageReady(const QsLogging::LogMessage& message);
 
 private:
     LogFunction mLogFunction;
