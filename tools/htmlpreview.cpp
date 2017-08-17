@@ -62,7 +62,7 @@ void HTMLPreview::fileSaved() {
 		return;
 	}
 
-	BaseFile *file = dynamic_cast< BaseFile* >( sender() );
+	BaseFile *file = static_cast< BaseFile* >( sender() );
 
 	if ( file->hasUnsavedChanges() ) {
 		return;
@@ -84,7 +84,7 @@ void HTMLPreview::fileChanged() {
 		return;
 	}
 
-	QTextDocument *doc = dynamic_cast< QTextDocument* >( sender() );
+	QTextDocument *doc = static_cast< QTextDocument* >( sender() );
 
 	if ( ui->refreshFrom->currentIndex() == 0 ) {
 		displayHTML( doc->toPlainText() );
