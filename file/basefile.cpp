@@ -41,20 +41,20 @@ BaseFile *BaseFile::getFile( const Location &location ) {
 	BaseFile *newFile = NULL;
 	Location::Protocol protocol = location.getProtocol();
 	switch ( protocol ) {
-	case Location::Ssh:
-		newFile = new ServerFile( location );
-		break;
+		case Location::Ssh:
+			newFile = new ServerFile( location );
+			break;
 
-	case Location::Local:
-		newFile = new LocalFile( location );
-		break;
+		case Location::Local:
+			newFile = new LocalFile( location );
+			break;
 
-	case Location::Sftp:
-		newFile = new FtpFile( location );
-		break;
+		case Location::Sftp:
+			newFile = new FtpFile( location );
+			break;
 
-	default:
-		newFile = new UnsavedFile( location );
+		default:
+			newFile = new UnsavedFile( location );
 	}
 
 	if ( newFile ) {
@@ -304,16 +304,16 @@ void BaseFile::saveFailure( const QString &errorMessage, bool permissionError ) 
 
 	StatusWidget::Button button = errorWidget->getResult();
 	switch ( button ) {
-	case StatusWidget::Retry:
-		save();
-		break;
+		case StatusWidget::Retry:
+			save();
+			break;
 
-	case StatusWidget::SudoRetry:
-		sudo();
-		save();
-		break;
+		case StatusWidget::SudoRetry:
+			sudo();
+			save();
+			break;
 
-	default: break;
+		default: break;
 	}
 }
 

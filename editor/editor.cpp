@@ -67,42 +67,42 @@ void Editor::fileOpenProgress( int percent ) {
 
 void Editor::openStatusChanged( int openStatus ) {
 	switch ( openStatus ) {
-	case BaseFile::Closed:
-		break;
+		case BaseFile::Closed:
+			break;
 
-	case BaseFile::Loading:
-		showLoading();
-		break;
+		case BaseFile::Loading:
+			showLoading();
+			break;
 
-	case BaseFile::LoadError:
-		showError( mFile->getError() );
-		break;
+		case BaseFile::LoadError:
+			showError( mFile->getError() );
+			break;
 
-	case BaseFile::Ready:
-		if ( mFirstOpen ) {
-			mFirstOpen = false;
-			mEditor->moveCursor( QTextCursor::Start, QTextCursor::MoveAnchor );
+		case BaseFile::Ready:
+			if ( mFirstOpen ) {
+				mFirstOpen = false;
+				mEditor->moveCursor( QTextCursor::Start, QTextCursor::MoveAnchor );
 
-			if ( mFile->isReadOnly() ) {
-				setReadOnly( true );
-				showReadOnlyWarning();
+				if ( mFile->isReadOnly() ) {
+					setReadOnly( true );
+					showReadOnlyWarning();
+				}
 			}
-		}
 
-	// Intentional fallthrough
+		// Intentional fallthrough
 
-	case BaseFile::Disconnected:
-	case BaseFile::Reconnecting:
-	case BaseFile::Repairing:
-		setCurrentWidget( mEditorPane );
-		if ( hasFocus() ) {
-			mEditor->setFocus();
-		}
-		break;
+		case BaseFile::Disconnected:
+		case BaseFile::Reconnecting:
+		case BaseFile::Repairing:
+			setCurrentWidget( mEditorPane );
+			if ( hasFocus() ) {
+				mEditor->setFocus();
+			}
+			break;
 
-	case BaseFile::Closing:
-		showError( "Closing file..." );
-		break;
+		case BaseFile::Closing:
+			showError( "Closing file..." );
+			break;
 	}
 }
 

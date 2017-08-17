@@ -469,19 +469,19 @@ bool SshSession::authenticate( AuthMethod method ) {
 
 	bool authenticated = false;
 	switch ( method ) {
-	case AuthPassword:
-		authenticated = authenticatePassword( false );
-		break;
+		case AuthPassword:
+			authenticated = authenticatePassword( false );
+			break;
 
-	case AuthKeyboardInteractive:
-		authenticated = authenticatePassword( true );
-		break;
+		case AuthKeyboardInteractive:
+			authenticated = authenticatePassword( true );
+			break;
 
-	case AuthPublicKey:
-		authenticated = authenticatePublicKey();
-		break;
+		case AuthPublicKey:
+			authenticated = authenticatePublicKey();
+			break;
 
-	default: break;
+		default: break;
 	}
 
 	if ( authenticated ) {
@@ -648,29 +648,32 @@ void SshSession::updateAllChannels() {
 			// Deal with any of the possible failure states
 			SshChannel::Status status = channel->getStatus();
 			switch ( status ) {
-			case SshChannel::Sessionless:   // Server refused to create another channel on this session;
-				                        // pass back to SshHost to find a new home.
-				mChannels.removeAt( i-- );
-				mAtChannelLimit = true;
-				mHost->setChannelLimitGuess( mChannels.count() );
-				emit hitChannelLimit( channel );
-				break;
+				case SshChannel::Sessionless: // Server refused to create another channel on this
+				                              // session;
+					                      // pass back to SshHost to find a new home.
+					mChannels.removeAt( i-- );
+					mAtChannelLimit = true;
+					mHost->setChannelLimitGuess( mChannels.count() );
+					emit hitChannelLimit( channel );
+					break;
 
-			case SshChannel::Error: // Serious read/write error occurred. Assume the whole session is dead.
-				setErrorStatus( QObject::tr( "Critical channel failure: " ) +
-				                channel->getErrorDetails() );
-				mThread->quit();                // Abort QThread::exec, fall back to threadMain for
-				                                // cleanup.
-				break;
+				case SshChannel::Error: // Serious read/write error occurred. Assume the whole session
+				                        // is dead.
+					setErrorStatus( QObject::tr( "Critical channel failure: " ) +
+					                channel->getErrorDetails() );
+					mThread->quit();        // Abort QThread::exec, fall back to threadMain for
+					                        // cleanup.
+					break;
 
-			case SshChannel::Disconnected:  // Neatly disconnected. Just take it out of the roster, notify
-				                        // the host.
-				mChannels.removeAt( i-- );
-				emit channelNeatlyClosed( channel );
-				break;
+				case SshChannel::Disconnected: // Neatly disconnected. Just take it out of the roster,
+				                               // notify
+					                       // the host.
+					mChannels.removeAt( i-- );
+					emit channelNeatlyClosed( channel );
+					break;
 
-			default:        // All was ok :)
-				break;
+				default: // All was ok :)
+					break;
 			}
 		}
 		mChannelsLock.unlock();
@@ -722,20 +725,20 @@ SshChannel *SshSession::getMostConnectedChannel() {
 
 QString SshSession::getConnectionDescription() {
 	switch ( mStatus ) {
-	case NsLookup:
-		return tr( "Finding host" );
+		case NsLookup:
+			return tr( "Finding host" );
 
-	case OpeningConnection:
-		return tr( "Connecting" );
+		case OpeningConnection:
+			return tr( "Connecting" );
 
-	case VerifyingHost:
-		return tr( "Checking host" );
+		case VerifyingHost:
+			return tr( "Checking host" );
 
-	case Authenticating:
-		return tr( "Authenticating" );
+		case Authenticating:
+			return tr( "Authenticating" );
 
-	default:
-		return "";
+		default:
+			return "";
 	}
 }
 

@@ -20,16 +20,16 @@ SFTPChannel::SFTPChannel( SshHost *host ) :
 
 bool SFTPChannel::update() {
 	switch ( mStatus ) {
-	case Opening:
-		return handleOpening();
+		case Opening:
+			return handleOpening();
 
-	case Open:
-		return mainUpdate();
+		case Open:
+			return mainUpdate();
 
-	case Disconnected:
-		return false;
+		case Disconnected:
+			return false;
 
-	default:;
+		default:;
 	}
 
 	return false;
@@ -82,24 +82,24 @@ bool SFTPChannel::mainUpdate() {
 	// Handle the current request...
 	bool continueRequest;
 	switch ( mCurrentRequest->getType() ) {
-	case SFTPRequest::Ls:
-		continueRequest = updateLs();
-		break;
+		case SFTPRequest::Ls:
+			continueRequest = updateLs();
+			break;
 
-	case SFTPRequest::ReadFile:
-		continueRequest = updateReadFile();
-		break;
+		case SFTPRequest::ReadFile:
+			continueRequest = updateReadFile();
+			break;
 
-	case SFTPRequest::WriteFile:
-		continueRequest = updateWriteFile();
-		break;
+		case SFTPRequest::WriteFile:
+			continueRequest = updateWriteFile();
+			break;
 
-	case SFTPRequest::MkDir:
-		continueRequest = updateMkDir();
-		break;
+		case SFTPRequest::MkDir:
+			continueRequest = updateMkDir();
+			break;
 
-	default:
-		continueRequest = false;
+		default:
+			continueRequest = false;
 	}
 
 	// If the request is finished, delete it.

@@ -69,13 +69,13 @@ void HTMLPreview::fileSaved() {
 	}
 
 	switch ( ui->refreshFrom->currentIndex() ) {
-	case 0:
-		displayHTML( file->getTextDocument()->toPlainText() );
-		break;
+		case 0:
+			displayHTML( file->getTextDocument()->toPlainText() );
+			break;
 
-	case 1:
-		displayURL();
-		break;
+		case 1:
+			displayURL();
+			break;
 	}
 }
 
@@ -100,15 +100,15 @@ void HTMLPreview::manualRefresh() {
 	}
 
 	switch ( ui->refreshFrom->currentIndex() ) {
-	case 0:
-		if ( file ) {
-			displayHTML( file->getTextDocument()->toPlainText() );
-		}
-		break;
+		case 0:
+			if ( file ) {
+				displayHTML( file->getTextDocument()->toPlainText() );
+			}
+			break;
 
-	case 1:
-		displayURL();
-		break;
+		case 1:
+			displayURL();
+			break;
 	}
 }
 

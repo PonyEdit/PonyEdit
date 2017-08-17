@@ -18,13 +18,13 @@ ShellChannel::ShellChannel( SshHost *host, bool machineReadable, const QByteArra
 
 bool ShellChannel::update() {
 	switch ( mStatus ) {
-	case Opening:
-		return handleOpening();
+		case Opening:
+			return handleOpening();
 
-	case Open:
-		return mainUpdate();
+		case Open:
+			return mainUpdate();
 
-	default:;
+		default:;
 	}
 
 	return false;
@@ -201,16 +201,16 @@ int ShellChannel::getConnectionScore() {
 QString ShellChannel::getConnectionDescription() {
 	if ( mStatus == Opening ) {
 		switch ( mInternalStatus ) {
-		case _OpenSession:
-			return tr( "Opening channel" );
+			case _OpenSession:
+				return tr( "Opening channel" );
 
-		case _RequestPty:
-			return tr( "Requesting PTY" );
+			case _RequestPty:
+				return tr( "Requesting PTY" );
 
-		case _StartShell:
-		case _SendInit:
-		case _WaitForInitReply:
-			return tr( "Preparing shell" );
+			case _StartShell:
+			case _SendInit:
+			case _WaitForInitReply:
+				return tr( "Preparing shell" );
 		}
 	}
 

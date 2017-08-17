@@ -487,23 +487,23 @@ void FileDialog::applySort() {
 
 void FileDialog::statusButtonClicked( StatusWidget::Button button ) {
 	switch ( button ) {
-	case StatusWidget::SudoRetry:
-		showLocation( mCurrentLocation.getSudoLocation() );
-		break;
+		case StatusWidget::SudoRetry:
+			showLocation( mCurrentLocation.getSudoLocation() );
+			break;
 
-	case StatusWidget::Retry:
-		showLocation( mCurrentLocation );
-		break;
+		case StatusWidget::Retry:
+			showLocation( mCurrentLocation );
+			break;
 
-	case StatusWidget::ShowLog: {
-		SshHost *host = mCurrentLocation.getRemoteHost();
-		if ( host != NULL ) {
-			host->showLog();
+		case StatusWidget::ShowLog: {
+			SshHost *host = mCurrentLocation.getRemoteHost();
+			if ( host != NULL ) {
+				host->showLog();
+			}
+			break;
 		}
-		break;
-	}
 
-	default: break;
+		default: break;
 	}
 }
 

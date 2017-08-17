@@ -270,31 +270,31 @@ QString Tools::getResourcePath( const QString &subpath ) {
 
 void Tools::loadStartupFiles() {
 	switch ( Options::StartupAction ) {
-	case Options::BlankFile:
-		gMainWindow->openSingleFile( Location( "" ) );
-		break;
+		case Options::BlankFile:
+			gMainWindow->openSingleFile( Location( "" ) );
+			break;
 
-	case Options::SetFiles:
-	case Options::ReopenFiles:
-		for ( int ii = 0; ii < Options::StartupFiles.length(); ii++ ) {
-			QString name = Options::StartupFiles[ii].trimmed();
+		case Options::SetFiles:
+		case Options::ReopenFiles:
+			for ( int ii = 0; ii < Options::StartupFiles.length(); ii++ ) {
+				QString name = Options::StartupFiles[ii].trimmed();
 
-			if ( name.isNull() ) {
-				continue;
+				if ( name.isNull() ) {
+					continue;
+				}
+
+				gMainWindow->openSingleFile( Location( name ) );
+
+				Editor *current = gMainWindow->getCurrentEditor();
+				if ( current ) {
+					current->gotoLine( Options::StartupFilesLineNo[ii] );
+				}
 			}
+			break;
 
-			gMainWindow->openSingleFile( Location( name ) );
-
-			Editor *current = gMainWindow->getCurrentEditor();
-			if ( current ) {
-				current->gotoLine( Options::StartupFilesLineNo[ii] );
-			}
-		}
-		break;
-
-	case Options::NoFiles:
-	default:
-		return;
+		case Options::NoFiles:
+		default:
+			return;
 	}
 }
 

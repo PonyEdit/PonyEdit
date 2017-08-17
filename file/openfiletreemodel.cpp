@@ -43,17 +43,17 @@ OpenFileTreeModel::~OpenFileTreeModel() {
 
 QString OpenFileTreeModel::Node::getLabel() {
 	switch ( level ) {
-	case Host:
-		return location.getHostName();
+		case Host:
+			return location.getHostName();
 
-	case Directory:
-		return location.getHostlessPath();
+		case Directory:
+			return location.getHostlessPath();
 
-	case File:
-		return location.getLabel();
+		case File:
+			return location.getLabel();
 
-	default:
-		return "";
+		default:
+			return "";
 	}
 }
 
@@ -235,17 +235,17 @@ QVariant OpenFileTreeModel::data( const QModelIndex &index, int role ) const {
 	}
 
 	switch ( role ) {
-	case LocationRole:
-		return QVariant::fromValue< Location >( node->location );
+		case LocationRole:
+			return QVariant::fromValue< Location >( node->location );
 
-	case FileRole:
-		return QVariant::fromValue< void * >( node->file );
+		case FileRole:
+			return QVariant::fromValue< void * >( node->file );
 
-	case TypeRole:
-		return QVariant( static_cast< int >( node->level ) );
+		case TypeRole:
+			return QVariant( static_cast< int >( node->level ) );
 
-	case LabelRole:
-		return node->getLabel();
+		case LabelRole:
+			return node->getLabel();
 	}
 
 	return QVariant();

@@ -33,14 +33,14 @@ void SearchBar::takeFocus() {
 
 void SearchBar::keyPressEvent( QKeyEvent *event ) {
 	switch ( event->key() ) {
-	case Qt::Key_Enter:
-	case Qt::Key_Return:
-		findNext();
-		break;
+		case Qt::Key_Enter:
+		case Qt::Key_Return:
+			findNext();
+			break;
 
-	case Qt::Key_Escape:
-		emit closeRequested();
-		break;
+		case Qt::Key_Escape:
+			emit closeRequested();
+			break;
 	}
 }
 

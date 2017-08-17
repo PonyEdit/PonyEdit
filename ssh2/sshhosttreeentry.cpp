@@ -47,21 +47,21 @@ void SshHostTreeEntry::customDraw( QPainter *painter, const QStyleOptionViewItem
 
 	// Draw the status
 	switch ( hostStatus ) {
-	case SshHost::Disconnected:
-		drawIcon( painter, &remainingArea, sDisconnectedIcon );
-		break;
+		case SshHost::Disconnected:
+			drawIcon( painter, &remainingArea, sDisconnectedIcon );
+			break;
 
-	case SshHost::Connecting:
-		drawIcon( painter, &remainingArea, sConnectingIcon[mAnimationFrame++], true );
-		if ( mAnimationFrame > 3 ) {
-			mAnimationFrame = 0;
-		}
-		drawGutterText( painter, &remainingArea, mHost->getConnectionString() );
-		break;
+		case SshHost::Connecting:
+			drawIcon( painter, &remainingArea, sConnectingIcon[mAnimationFrame++], true );
+			if ( mAnimationFrame > 3 ) {
+				mAnimationFrame = 0;
+			}
+			drawGutterText( painter, &remainingArea, mHost->getConnectionString() );
+			break;
 
-	case SshHost::Connected:
-		drawIcon( painter, &remainingArea, sConnectedIcon );
-		break;
+		case SshHost::Connected:
+			drawIcon( painter, &remainingArea, sConnectedIcon );
+			break;
 	}
 
 	// Draw the text

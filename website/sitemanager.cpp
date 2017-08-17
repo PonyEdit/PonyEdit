@@ -66,18 +66,18 @@ void SiteManager::handleReply( QNetworkReply *reply ) {
 		}
 
 		switch ( message ) {
-		case UpdateCheck:
-		case UpdateCheckForcedNotification:
-			handleUpdateCheckReply( data.toList(), message == UpdateCheckForcedNotification );
-			break;
+			case UpdateCheck:
+			case UpdateCheckForcedNotification:
+				handleUpdateCheckReply( data.toList(), message == UpdateCheckForcedNotification );
+				break;
 		}
 	} catch ( QString &error ) {
 		switch ( message ) {
-		case UpdateCheck:
-		case UpdateCheckForcedNotification:
+			case UpdateCheck:
+			case UpdateCheckForcedNotification:
 
-			// Do nothing
-			break;
+				// Do nothing
+				break;
 		}
 	}
 

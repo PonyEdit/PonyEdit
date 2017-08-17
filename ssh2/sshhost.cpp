@@ -146,32 +146,32 @@ void SshHost::channelNeatlyClosed( SshChannel *channel ) {
 
 void SshHost::removeChannel( SshChannel *channel ) {
 	switch ( channel->getType() ) {
-	case SshChannel::Server:
-		failServerRequests( "Channel closed.",
-		                    0,
-		                    mServerRequestQueueMutex,
-		                    mServerRequestQueue,
-		                    static_cast< ServerChannel * >( channel ) );
-		break;
+		case SshChannel::Server:
+			failServerRequests( "Channel closed.",
+			                    0,
+			                    mServerRequestQueueMutex,
+			                    mServerRequestQueue,
+			                    static_cast< ServerChannel * >( channel ) );
+			break;
 
-	case SshChannel::SudoServer:
-		failServerRequests( "Channel closed.",
-		                    0,
-		                    mSudoServerRequestQueueMutex,
-		                    mSudoServerRequestQueue,
-		                    static_cast< ServerChannel * >( channel ) );
-		break;
+		case SshChannel::SudoServer:
+			failServerRequests( "Channel closed.",
+			                    0,
+			                    mSudoServerRequestQueueMutex,
+			                    mSudoServerRequestQueue,
+			                    static_cast< ServerChannel * >( channel ) );
+			break;
 
-	case SshChannel::Xfer:
-		failXferRequests( "Channel closed.", 0, mXferRequestQueueMutex, mXferRequestQueue );
-		break;
+		case SshChannel::Xfer:
+			failXferRequests( "Channel closed.", 0, mXferRequestQueueMutex, mXferRequestQueue );
+			break;
 
-	case SshChannel::SudoXfer:
-		failXferRequests( "Channel closed.", 0, mSudoXferRequestQueueMutex, mSudoXferRequestQueue );
-		break;
+		case SshChannel::SudoXfer:
+			failXferRequests( "Channel closed.", 0, mSudoXferRequestQueueMutex, mSudoXferRequestQueue );
+			break;
 
-	default:
-		SSHLOG_WARN( this ) << "RemoveChannel is not handling type " << channel->getType();
+		default:
+			SSHLOG_WARN( this ) << "RemoveChannel is not handling type " << channel->getType();
 	}
 
 	mChannels.removeAll( channel );

@@ -183,34 +183,34 @@ bool Location::isHidden() const {
 
 QString Location::getHostName() const {
 	switch ( mData->mProtocol ) {
-	case Local:
-		return QObject::tr( "Local Computer" );
+		case Local:
+			return QObject::tr( "Local Computer" );
 
-	case Ssh:
-		return mData->mRemoteUserName + ( mData->mSudo ? "*@" : "@" ) + mData->mRemoteHostName;
+		case Ssh:
+			return mData->mRemoteUserName + ( mData->mSudo ? "*@" : "@" ) + mData->mRemoteHostName;
 
-	case Sftp:
-		return "sftp://" + mData->mRemoteUserName + "@" + mData->mRemoteHostName;
+		case Sftp:
+			return "sftp://" + mData->mRemoteUserName + "@" + mData->mRemoteHostName;
 
-	case Unsaved:
-		return QObject::tr( "New Files" );
+		case Unsaved:
+			return QObject::tr( "New Files" );
 
-	default:
-		throw( QObject::tr( "Unknown protocol" ) );
+		default:
+			throw( QObject::tr( "Unknown protocol" ) );
 	}
 }
 
 QString Location::getHostlessPath() const {
 	switch ( mData->mProtocol ) {
-	case Local:
-		return mData->mPath;
+		case Local:
+			return mData->mPath;
 
-	case Ssh:
-	case Sftp:
-		return mData->mRemotePath;
+		case Ssh:
+		case Sftp:
+			return mData->mRemotePath;
 
-	default:
-		throw( QObject::tr( "Unknown protocol" ) );
+		default:
+			throw( QObject::tr( "Unknown protocol" ) );
 	}
 }
 
@@ -274,19 +274,19 @@ QIcon Location::getIcon() const {
 	// TODO: So far only Linux can provide icons for remote files without pooping its pants.
 	// do something nicer for Windows.
 	switch ( mData->mProtocol ) {
-	case Local:
-		return sIconProvider->icon( QFileInfo( mData->mPath ) );
+		case Local:
+			return sIconProvider->icon( QFileInfo( mData->mPath ) );
 
-	case Ssh:
-	case Sftp:
-		if ( isDirectory() ) {
-			return sIconProvider->icon( QFileIconProvider::Folder );
-		} else {
-			return sIconProvider->icon( QFileIconProvider::File );
-		}
+		case Ssh:
+		case Sftp:
+			if ( isDirectory() ) {
+				return sIconProvider->icon( QFileIconProvider::Folder );
+			} else {
+				return sIconProvider->icon( QFileIconProvider::File );
+			}
 
-	default:
-		return QIcon();
+		default:
+			return QIcon();
 	}
 }
 
@@ -403,20 +403,20 @@ void LocationShared::localLoadListing( bool includeHidden ) {
 
 void Location::asyncGetChildren( bool includeHidden ) {
 	switch ( mData->mProtocol ) {
-	case Local:
-		mData->localLoadListing( includeHidden );
-		break;
+		case Local:
+			mData->localLoadListing( includeHidden );
+			break;
 
-	case Ssh:
-		mData->sshLoadListing( includeHidden );
-		break;
+		case Ssh:
+			mData->sshLoadListing( includeHidden );
+			break;
 
-	case Sftp:
-		mData->sftpLoadListing( includeHidden );
-		break;
+		case Sftp:
+			mData->sftpLoadListing( includeHidden );
+			break;
 
-	default:
-		throw( QString( "Invalid file protocol!" ) );
+		default:
+			throw( QString( "Invalid file protocol!" ) );
 	}
 }
 
@@ -577,44 +577,44 @@ void Location::addSortedFavorite( const Favorite &favorite ) {
 
 QString Location::getDefaultFavoriteName() {
 	switch ( mData->mProtocol ) {
-	case Ssh:
-	case Sftp:
-		return QObject::tr( "%1 on %2", "eg: ~ on Server X" ).arg( getLabel() ).arg( mData->mRemoteHostName );
+		case Ssh:
+		case Sftp:
+			return QObject::tr( "%1 on %2", "eg: ~ on Server X" ).arg( getLabel() ).arg( mData->mRemoteHostName );
 
-	case Unsaved:
-		return QObject::tr( "Unsaved" );
+		case Unsaved:
+			return QObject::tr( "Unsaved" );
 
-	case Local:
-	default:
-		return QObject::tr( "%1 (local)" ).arg( getLabel() );
+		case Local:
+		default:
+			return QObject::tr( "%1 (local)" ).arg( getLabel() );
 	}
 }
 
 void Location::createNewDirectory( const QString &name, const Callback &callback ) {
 	switch ( mData->mProtocol ) {
-	case Ssh: {
-		QVariantMap params;
-		params.insert( "dir", mData->mRemotePath + "/" + name );
-		mData->getHost()->sendServerRequest( mData->mSudo, NULL, "mkdir", QVariant( params ), callback );
-		break;
-	}
-
-	case Sftp: {
-		SFTPRequest *request = new SFTPRequest( SFTPRequest::MkDir, callback );
-		request->setPath( mData->mRemotePath + "/" + name );
-		mData->getHost()->sendSftpRequest( request );
-		break;
-	}
-
-	case Local:
-		if ( QDir( getPath() ).mkdir( name ) ) {
-			callback.triggerSuccess();
-		} else {
-			callback.triggerFailure( "Unknown error" );
+		case Ssh: {
+			QVariantMap params;
+			params.insert( "dir", mData->mRemotePath + "/" + name );
+			mData->getHost()->sendServerRequest( mData->mSudo, NULL, "mkdir", QVariant( params ), callback );
+			break;
 		}
-		break;
 
-	default: break;
+		case Sftp: {
+			SFTPRequest *request = new SFTPRequest( SFTPRequest::MkDir, callback );
+			request->setPath( mData->mRemotePath + "/" + name );
+			mData->getHost()->sendSftpRequest( request );
+			break;
+		}
+
+		case Local:
+			if ( QDir( getPath() ).mkdir( name ) ) {
+				callback.triggerSuccess();
+			} else {
+				callback.triggerFailure( "Unknown error" );
+			}
+			break;
+
+		default: break;
 	}
 }
 

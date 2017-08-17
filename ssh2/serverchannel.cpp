@@ -85,16 +85,16 @@ void ServerChannel::initialize() {
 
 bool ServerChannel::update() {
 	switch ( mStatus ) {
-	case Opening:
-		return handleOpening();
+		case Opening:
+			return handleOpening();
 
-	case Open:
-		return mainUpdate();
+		case Open:
+			return mainUpdate();
 
-	case Disconnected:
-		return false;
+		case Disconnected:
+			return false;
 
-	default:;
+		default:;
 	}
 
 	return false;
@@ -420,20 +420,20 @@ int ServerChannel::getConnectionScore() {
 QString ServerChannel::getConnectionDescription() {
 	if ( mStatus == Opening ) {
 		switch ( mInternalStatus ) {
-		case _CheckingServer:
-		case _CheckingServerResponse:
-			return tr( "Checking server" );
+			case _CheckingServer:
+			case _CheckingServerResponse:
+				return tr( "Checking server" );
 
-		case _StartingServerUploader:
-		case _WaitingForServerUploader:
-		case _UploadingServerScript:
-		case _WaitingForServerUploadResponse:
-			return tr( "Updating server" );
+			case _StartingServerUploader:
+			case _WaitingForServerUploader:
+			case _UploadingServerScript:
+			case _WaitingForServerUploadResponse:
+				return tr( "Updating server" );
 
-		case _SendingSudoPassword:
-			return tr( "Requesting sudo" );
+			case _SendingSudoPassword:
+				return tr( "Requesting sudo" );
 
-		default:;
+			default:;
 		}
 	}
 

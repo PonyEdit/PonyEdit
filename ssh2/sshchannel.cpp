@@ -52,13 +52,13 @@ int SshChannel::getConnectionScore() {
 
 QString SshChannel::getConnectionDescription() {
 	switch ( mStatus ) {
-	case Opening:
-		return tr( "Opening Channel" );
+		case Opening:
+			return tr( "Opening Channel" );
 
-	case Open:
-		return tr( "Connected" );
+		case Open:
+			return tr( "Connected" );
 
-	default:;
+		default:;
 	}
 
 	return mSession->getConnectionDescription();
