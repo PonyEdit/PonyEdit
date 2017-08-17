@@ -5,6 +5,10 @@ sudo: false
 
 matrix:
   include:
+    - os: osx
+      compiler: clang
+      env:
+        - TEST_SUITE=build
     - os: linux
       cache:
         directories:
@@ -30,10 +34,6 @@ matrix:
           notification_email: gary@pento.net
       env:
         - TEST_SUITE=build
-    - os: osx
-      compiler: clang
-      env:
-        - TEST_SUITE=build
 
 env:
   global:
@@ -43,7 +43,13 @@ env:
 
 before_install:
   # Only run Coverity on the Linux build
-  - if [ "$TRAVIS_BRANCH" = "$coverity_branch" ] && ! [ "$TRAVIS_OS_NAME" = "linux" -a "$TEST_SUITE" = "build" ]; then exit; fi
+  # Coverity will either run on $coverity_branch, or master during the weekly cron.
+  - |
+    if [ "$TRAVIS_BRANCH" = "$coverity_branch" ] && ! [ "$TRAVIS_OS_NAME" = "linux" -a "$TEST_SUITE" = "build" ]; then
+      exit
+    elif [ "$TRAVIS_EVENT_TYPE" = "cron" ] && ! [ "$TRAVIS_OS_NAME" = "linux" -a "$TEST_SUITE" = "build" ]; then
+      exit
+    fi
   - |
     if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       PATH=/opt/qt59/bin:$PATH
@@ -62,9 +68,17 @@ install:
       brew link --force qt5
     fi
 
+before_script:
+  - |
+    if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$TEST_SUITE" = "build" ]; then
+      export DISPLAY=:99.0
+      sh -e /etc/init.d/xvfb start
+      sleep 3 # give xvfb some time to start
+    fi
+
 script:
   # No need to run the usual build for the coverity scan
-  - if [ "$TRAVIS_BRANCH" = "$coverity_branch" ]; then exit ; fi
+  - if [ "$TRAVIS_BRANCH" = "$coverity_branch" ] || [ "$TRAVIS_EVENT_TYPE" = "cron" ]; then exit; fi
   - |
     if [ "$TEST_SUITE" = "uncrustify" ]; then
       uncrustify -v
@@ -76,6 +90,14 @@ script:
       qmake
       make -j 2
     fi
+
+after_success:
+  - if [ "$TEST_SUITE" != "build" ]; then exit; fi
+  - |
+    if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+      cd PonyEdit.app/Contents/MacOS
+    fi
+  - ./PonyEdit --version
 
 notifications:
   email:
