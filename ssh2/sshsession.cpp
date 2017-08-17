@@ -36,16 +36,23 @@
 bool SshSession::sLibsInitialized;
 
 SshSession::SshSession( SshHost* host ) :
+	mHost( host ),
+	mStatus( Disconnected ),
+	mErrorDetails(),
 	mThreadEndedCalled( false ),
+	mKeepaliveSent( false ),
+	mLastActivityTimer(),
+	mThread( NULL ),
 	mSocket( 0 ),
-	mHandle( 0 ),
-	mSocketReadNotifier( 0 ),
-	mSocketExceptionNotifier( 0 ),
-	mAtChannelLimit( false ) {
+	mHandle( NULL ),
+	mSocketReadNotifier( NULL ),
+	mSocketExceptionNotifier( NULL ),
+	mChannels(),
+	mChannelsLock(),
+	mAtChannelLimit( false ),
+	mPasswordAttempt() {
 	SSHLOG_TRACE( host ) << "Opening a new session";
 
-	mHost = host;
-	mStatus = Disconnected;
 	initializeLibrary();
 
 	mThread = new SshSessionThread( this );
