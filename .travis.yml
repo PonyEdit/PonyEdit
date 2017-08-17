@@ -68,6 +68,12 @@ install:
       brew link --force qt5
     fi
 
+before_script:
+  - if [ "$TEST_SUITE" != "build" ]; then exit; fi
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
+
 script:
   # No need to run the usual build for the coverity scan
   - if [ "$TRAVIS_BRANCH" = "$coverity_branch" ] || [ "$TRAVIS_EVENT_TYPE" = "cron" ]; then exit; fi
