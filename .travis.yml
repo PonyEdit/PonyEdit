@@ -5,6 +5,10 @@ sudo: false
 
 matrix:
   include:
+    - os: osx
+      compiler: clang
+      env:
+        - TEST_SUITE=build
     - os: linux
       cache:
         directories:
@@ -28,10 +32,6 @@ matrix:
           build_command: "make -j 2"
           branch_pattern: $coverity_branch
           notification_email: gary@pento.net
-      env:
-        - TEST_SUITE=build
-    - os: osx
-      compiler: clang
       env:
         - TEST_SUITE=build
 
