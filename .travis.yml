@@ -43,7 +43,13 @@ env:
 
 before_install:
   # Only run Coverity on the Linux build
-  - if [ "$TRAVIS_BRANCH" = "$coverity_branch" ] && ! [ "$TRAVIS_OS_NAME" = "linux" -a "$TEST_SUITE" = "build" ]; then exit; fi
+  # Coverity will either run on $coverity_branch, or master during the weekly cron.
+  - |
+    if [ "$TRAVIS_BRANCH" = "$coverity_branch" ] && ! [ "$TRAVIS_OS_NAME" = "linux" -a "$TEST_SUITE" = "build" ]; then
+      exit
+    elif [ "$TRAVIS_EVENT_TYPE" = "cron" ] && ! [ "$TRAVIS_OS_NAME" = "linux" -a "$TEST_SUITE" = "build" ]; then
+      exit
+    fi
   - |
     if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       PATH=/opt/qt59/bin:$PATH
@@ -64,7 +70,7 @@ install:
 
 script:
   # No need to run the usual build for the coverity scan
-  - if [ "$TRAVIS_BRANCH" = "$coverity_branch" ]; then exit ; fi
+  - if [ "$TRAVIS_BRANCH" = "$coverity_branch" ] || [ "$TRAVIS_EVENT_TYPE" = "cron" ]; then exit ; fi
   - |
     if [ "$TEST_SUITE" = "uncrustify" ]; then
       uncrustify -v
