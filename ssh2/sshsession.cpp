@@ -1,19 +1,20 @@
+#include <QDebug>
+#include <QSocketNotifier>
+
+#include <libssh2.h>
+#include <openssl/crypto.h>
+#include <openssl/opensslconf.h>
+
 #include "dialogrethreader.h"
 #include "hostkeydlg.h"
 #include "main/globaldispatcher.h"
 #include "main/ponyedit.h"
 #include "main/tools.h"
 #include "passworddlg.h"
+#include "QsLog.h"
 #include "sshchannel.h"
 #include "sshhost.h"
 #include "sshsession.h"
-
-#include <libssh2.h>
-#include <openssl/crypto.h>
-#include <openssl/opensslconf.h>
-#include <QDebug>
-#include <QSocketNotifier>
-#include "QsLog.h"
 
 #ifdef Q_OS_WIN
 	#include <windows.h>
@@ -183,7 +184,12 @@ bool SshSession::openSocket( unsigned long ipAddress ) {
 bool SshSession::openSocket() {
 	setStatus( NsLookup );
 
-	mSocket = socket( AF_INET, SOCK_STREAM, 0 );
+	int ret = socket( AF_INET, SOCK_STREAM, 0 );
+	if ( ret == -1 ) {
+		SSHLOG_ERROR( mHost ) << "Unable to open socket";
+		return false;
+	}
+	mSocket = ret;
 	bool connected = false;
 
 	// If there is a cached ip address, try that first.
