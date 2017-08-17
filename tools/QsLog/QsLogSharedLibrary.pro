@@ -5,6 +5,7 @@ QT -= gui
 CONFIG -= console
 CONFIG -= app_bundle
 CONFIG += shared
+CONFIG += c++11
 TEMPLATE = lib
 
 QSLOG_DESTDIR=$$(QSLOG_DESTDIR)

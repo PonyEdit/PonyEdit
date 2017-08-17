@@ -32,16 +32,7 @@
 
 const int QsLogging::SizeRotationStrategy::MaxBackupCount = 10;
 
-QsLogging::RotationStrategy::~RotationStrategy()
-{
-}
-
-QsLogging::SizeRotationStrategy::SizeRotationStrategy()
-    : mCurrentSizeInBytes(0)
-    , mMaxSizeInBytes(0)
-    , mBackupsCount(0)
-{
-}
+QsLogging::RotationStrategy::~RotationStrategy() noexcept = default;
 
 void QsLogging::SizeRotationStrategy::setInitialInfo(const QFile &file)
 {
@@ -57,7 +48,12 @@ void QsLogging::SizeRotationStrategy::setInitialInfo(const QString &filePath, in
 
 void QsLogging::SizeRotationStrategy::includeMessageInCalculation(const QString &message)
 {
-    mCurrentSizeInBytes += message.toUtf8().size();
+    includeMessageInCalculation(message.toUtf8());
+}
+
+void QsLogging::SizeRotationStrategy::includeMessageInCalculation(const QByteArray &message)
+{
+    mCurrentSizeInBytes += message.size();
 }
 
 bool QsLogging::SizeRotationStrategy::shouldRotate()
@@ -83,8 +79,7 @@ void QsLogging::SizeRotationStrategy::rotate()
          const QString backupFileName = logNamePattern.arg(i);
          if (fileExistsAtPath(backupFileName)) {
              lastExistingBackupIndex = qMin(i, mBackupsCount - 1);
-         }
-         else {
+         } else {
              break;
          }
      }
@@ -146,8 +141,8 @@ bool QsLogging::SizeRotationStrategy::renameFileFromTo(const QString &from, cons
 
 const char* const QsLogging::FileDestination::Type = "file";
 
-QsLogging::FileDestination::FileDestination(const QString& filePath, RotationStrategyPtr rotationStrategy)
-    : mRotationStrategy(rotationStrategy)
+QsLogging::FileDestination::FileDestination(const QString& filePath, RotationStrategyPtrU&& rotationStrategy)
+    : mRotationStrategy(std::move(rotationStrategy))
 {
     mFile.setFileName(filePath);
     if (!mFile.open(QFile::WriteOnly | QFile::Text | mRotationStrategy->recommendedOpenModeFlag())) {
@@ -161,9 +156,10 @@ QsLogging::FileDestination::FileDestination(const QString& filePath, RotationStr
 
 void QsLogging::FileDestination::write(const LogMessage& message)
 {
-    mRotationStrategy->includeMessageInCalculation(message.formatted);
+    const QByteArray utf8Message = message.formatted.toUtf8();
+    mRotationStrategy->includeMessageInCalculation(utf8Message);
     if (mRotationStrategy->shouldRotate()) {
-        mOutputStream.setDevice(NULL);
+        mOutputStream.setDevice(nullptr);
         mFile.close();
         mRotationStrategy->rotate();
         if (!mFile.open(QFile::WriteOnly | QFile::Text | mRotationStrategy->recommendedOpenModeFlag())) {
@@ -174,7 +170,7 @@ void QsLogging::FileDestination::write(const LogMessage& message)
         mOutputStream.setCodec(QTextCodec::codecForName("UTF-8"));
     }
 
-    mOutputStream << message.formatted << endl;
+    mOutputStream << utf8Message << endl;
     mOutputStream.flush();
 }
 

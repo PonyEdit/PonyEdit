@@ -36,7 +36,7 @@ void QsDebugOutput::output( const QString& message )
 }
 #elif defined(Q_OS_WIN)
 #define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
+#include <windows.h>
 void QsDebugOutput::output( const QString& message )
 {
    OutputDebugStringW(reinterpret_cast<const WCHAR*>(message.utf16()));

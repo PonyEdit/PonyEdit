@@ -53,5 +53,5 @@ The Qt docs say:
 A **thread-safe** function can be called simultaneously from multiple threads, even when the invocations use shared data, because all references to the shared data are serialized.
 A **reentrant** function can also be called simultaneously from multiple threads, but only if each invocation uses its own data.
 
-Since sending the log message to the destinations is protected by a mutex, the logging macros are thread-safe provided that the log has been initialized - i.e: instance() has been called. Adding and removing destinations is likewise thread-safe.
-The instance function and the setup functions (e.g: setLoggingLevel) are NOT thread-safe and are NOT reentrant, they must be called at program startup.
+Since sending the log message to the destinations is protected by a mutex, the logging macros are thread-safe provided that the log has been initialized - i.e: instance() has been called. Adding and removing destinations and the instance function are likewise thread-safe.
+The setup functions (e.g: setLoggingLevel) are NOT thread-safe and are NOT reentrant, they must be called at program startup.

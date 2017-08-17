@@ -27,10 +27,11 @@
 #define QSLOG_H
 
 #include "QsLogLevel.h"
-#include "QsLogDest.h"
 #include "QsLogMessage.h"
+#include "QsLogSharedLibrary.h"
 #include <QDebug>
 #include <QString>
+#include <memory>
 
 #define QS_LOG_VERSION "2.1"
 
@@ -39,6 +40,7 @@ namespace QsLogging
 
 class Destination;
 class LoggerImpl; // d pointer
+using DestinationPtrU = std::unique_ptr<Destination>;
 
 class QSLOG_SHARED_OBJECT Logger
 {
@@ -46,7 +48,11 @@ public:
     static Logger& instance();
     static Level levelFromLogMessage(const QString& logMessage, bool* conversionSucceeded = 0);
 
-    ~Logger();
+public:
+    Logger(const Logger&) = delete;
+    Logger& operator=(const Logger&) = delete;
+
+    ~Logger() noexcept;
 
 #if defined(Q_OS_WIN)
     //! When QS_LOG_SEPARATE_THREAD is defined on Windows, and you are using this library as a DLL,
@@ -59,15 +65,15 @@ public:
 #endif
 
     //! Adds a log message destination. Don't add null destinations.
-    void addDestination(DestinationPtr destination);
+    void addDestination(DestinationPtrU &&destination);
 
-    //! Removes a previously added destination. Does nothing if destination was not previously added.
-    void removeDestination(const DestinationPtr& destination);
+    //! Removes and returns a previously added destination. Returns null if not found.
+    DestinationPtrU removeDestination(const QString& type);
 
     //! Checks if a destination of a specific type has been added. Pass T::Type as parameter.
     bool hasDestinationOfType(const char* type) const;
 
-    //! Logging at a level < 'newLevel' will be ignored
+    //! Messages at a level < 'newLevel' will be ignored
     void setLoggingLevel(Level newLevel);
 
     //! The default level is INFO
@@ -81,7 +87,7 @@ public:
         explicit Helper(Level logLevel) :
             level(logLevel),
             qtDebug(&buffer) {}
-        ~Helper();
+        ~Helper() noexcept;
         QDebug& stream(){ return qtDebug; }
 
     private:
@@ -92,13 +98,11 @@ public:
 
 private:
     Logger();
-    Logger(const Logger&);            // not available
-    Logger& operator=(const Logger&); // not available
 
     void enqueueWrite(const LogMessage& message);
     void write(const LogMessage& message);
 
-    LoggerImpl* d;
+    std::unique_ptr<LoggerImpl> d;
 
     friend class LoggerThread;
 };

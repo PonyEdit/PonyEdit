@@ -32,16 +32,17 @@
 const char* const QsLogging::FunctorDestination::Type = "functor";
 
 QsLogging::FunctorDestination::FunctorDestination(LogFunction f)
-    : QObject(NULL)
+    : QObject(nullptr)
     , mLogFunction(f)
 {
 }
 
-QsLogging::FunctorDestination::FunctorDestination(QObject *receiver, const char *member)
-    : QObject(NULL)
-    , mLogFunction(NULL)
+QsLogging::FunctorDestination::FunctorDestination(QObject* receiver, const char* member)
+    : QObject(nullptr)
+    , mLogFunction(nullptr)
 {
-    connect(this, SIGNAL(logMessageReady(LogMessage)), receiver, member, Qt::QueuedConnection);
+    connect(this, SIGNAL(logMessageReady(QsLogging::LogMessage)),
+            receiver, member, Qt::QueuedConnection);
 }
 
 

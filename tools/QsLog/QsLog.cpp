@@ -31,20 +31,21 @@
 #include <queue>
 #endif
 #include <QMutex>
-#include <QVector>
 #include <QDateTime>
 #include <QLatin1String>
 #include <QtGlobal>
 #include <cstdlib>
 #include <stdexcept>
+#include <algorithm>
+#include <vector>
 
 namespace QsLogging
 {
-typedef QVector<DestinationPtr> DestinationList;
+using DestinationList = std::vector<DestinationPtrU>;
 
 #ifdef QS_LOG_SEPARATE_THREAD
 //! Messages can be enqueued from other threads and will be logged one by one.
-//! Note: std::queue was used instead of QQueue because it accepts types missing op=.
+//! Note: std::queue was used instead of QQueue because it accepts types missing operator=.
 class LoggerThread : public QThread
 {
 public:
@@ -108,8 +109,7 @@ public:
 LoggerImpl::LoggerImpl()
     : level(InfoLevel)
 {
-    // assume at least file + console
-    destList.reserve(2);
+    destList.reserve(2); // assume at least file + console
 #ifdef QS_LOG_SEPARATE_THREAD
     loggerThread.start(QThread::LowPriority);
 #endif
@@ -146,12 +146,6 @@ bool LoggerImpl::shutDownLoggerThread()
 #endif
 
 
-Logger::Logger()
-    : d(new LoggerImpl)
-{
-    qRegisterMetaType<LogMessage>("QsLogging::LogMessage");
-}
-
 Logger& Logger::instance()
 {
     static Logger instance;
@@ -185,11 +179,7 @@ Level Logger::levelFromLogMessage(const QString& logMessage, bool* conversionSuc
     return OffLevel;
 }
 
-Logger::~Logger()
-{
-    delete d;
-    d = 0;
-}
+Logger::~Logger() noexcept = default;
 
 #if defined(Q_OS_WIN)
 bool Logger::shutDownLoggerThread()
@@ -202,28 +192,36 @@ bool Logger::shutDownLoggerThread()
 }
 #endif
 
-void Logger::addDestination(DestinationPtr destination)
+void Logger::addDestination(DestinationPtrU&& destination)
 {
-    Q_ASSERT(destination.data());
+    Q_ASSERT(destination.get());
     QMutexLocker lock(&d->logMutex);
-    d->destList.push_back(destination);
+    d->destList.emplace_back(std::move(destination));
 }
 
-void Logger::removeDestination(const DestinationPtr& destination)
+DestinationPtrU Logger::removeDestination(const QString &type)
 {
     QMutexLocker lock(&d->logMutex);
-    const int destinationIndex = d->destList.indexOf(destination);
-    if (destinationIndex != -1) {
-        d->destList.remove(destinationIndex);
+
+    const auto it = std::find_if(d->destList.begin(), d->destList.end(), [&type](const DestinationPtrU& dest){
+        return dest->type() == type;
+    });
+
+    if (it != d->destList.end()) {
+        auto removed = std::move(*it);
+        d->destList.erase(it);
+        return removed;
     }
+
+    return DestinationPtrU();
 }
 
 bool Logger::hasDestinationOfType(const char* type) const
 {
     QMutexLocker lock(&d->logMutex);
-    for (DestinationList::iterator it = d->destList.begin(),
-        endIt = d->destList.end();it != endIt;++it) {
-        if ((*it)->type() == QLatin1String(type)) {
+    const QLatin1String latin1Type(type);
+    for (const auto& dest : d->destList) {
+        if (dest->type() == latin1Type) {
             return true;
         }
     }
@@ -241,17 +239,17 @@ Level Logger::loggingLevel() const
     return d->level;
 }
 
-Logger::Helper::~Helper()
+Logger::Helper::~Helper() noexcept
 {
-    try {
-        const LogMessage msg(buffer, QDateTime::currentDateTimeUtc(), level);
-        Logger::instance().enqueueWrite(msg);
-    }
-    catch(std::exception&) {
-        // you shouldn't throw exceptions from a sink
-        Q_ASSERT(!"exception in logger helper destructor");
-        throw;
-    }
+    const LogMessage msg(buffer, QDateTime::currentDateTimeUtc(), level);
+    Logger::instance().enqueueWrite(msg);
+}
+
+
+Logger::Logger()
+    : d(new LoggerImpl)
+{
+    qRegisterMetaType<LogMessage>("QsLogging::LogMessage");
 }
 
 //! directs the message to the task queue or writes it directly
@@ -269,9 +267,8 @@ void Logger::enqueueWrite(const LogMessage& message)
 void Logger::write(const LogMessage& message)
 {
     QMutexLocker lock(&d->logMutex);
-    for (DestinationList::iterator it = d->destList.begin(),
-        endIt = d->destList.end();it != endIt;++it) {
-        (*it)->write(message);
+    for (auto& dest : d->destList) {
+        dest->write(message);
     }
 }
 

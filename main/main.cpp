@@ -22,7 +22,6 @@ int main( int argc, char *argv[] ) {
 
 	QsLogging::Logger& logger = QsLogging::Logger::instance();
 	logger.setLoggingLevel( QsLogging::TraceLevel );
-	QsLogging::DestinationPtr fileDestination, debugDestination;
 
 	try {
 		QCoreApplication::setOrganizationName( "Pentalon" );
@@ -30,22 +29,18 @@ int main( int argc, char *argv[] ) {
 		QCoreApplication::setApplicationVersion( PRETTY_VERSION );
 
 		// Create our data directory if it doesn't already exist
-		QDir datadir( QStandardPaths::writableLocation( QStandardPaths::DataLocation ) );
+		QString datadirPath = QStandardPaths::writableLocation( QStandardPaths::DataLocation );
+		QDir datadir( datadirPath );
 		if ( ! datadir.exists() ) {
 			datadir.mkpath( QStandardPaths::writableLocation( QStandardPaths::DataLocation ) );
 		}
 
-		fileDestination =
-			QsLogging::DestinationPtr( QsLogging::DestinationFactory::MakeFileDestination( QStandardPaths::
-			                                                                               writableLocation(
-													       QStandardPaths
-													       ::
-													       DataLocation )
-			                                                                               + "/ponyedit.log" ) );
-		debugDestination = QsLogging::DestinationPtr(
-			QsLogging::DestinationFactory::MakeDebugOutputDestination() );
-		logger.addDestination( debugDestination );
-		logger.addDestination( fileDestination );
+		QsLogging::DestinationPtrU fileDestination( QsLogging::DestinationFactory::MakeFileDestination( datadirPath +
+		                                                                                                "/ponyedit.log" ) );
+		QsLogging::DestinationPtrU debugDestination( QsLogging::DestinationFactory::MakeDebugOutputDestination() );
+
+		logger.addDestination( std::move( debugDestination ) );
+		logger.addDestination( std::move( fileDestination ) );
 
 		QLOG_INFO() << "PonyEdit version" << PRETTY_VERSION << "started";
 
