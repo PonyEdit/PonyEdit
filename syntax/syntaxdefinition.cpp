@@ -13,10 +13,21 @@ SyntaxDefinition::ContextDef::ContextDef() :
 	attributeLink( NULL ) {}
 SyntaxDefinition::ContextDef::~ContextDef() {}
 
-SyntaxDefinition::SyntaxDefinition( const QString& filename ) {
-	mValid = false;
-	mDeliminators = ".():!+,-<=>%&/;?[]^{|}~\\*, \t";
-
+SyntaxDefinition::SyntaxDefinition( const QString& filename ) :
+	mValid( false ),
+	mSyntaxName(),
+	mKeywordLists(),
+	mContextMap(),
+	mDefaultContext(),
+	mItemDatas(),
+	mContextList(),
+	mIndentationSensitive( false ),
+	mCaseSensitiveKeywords( false ),
+	mWeakDeliminators(),
+	mAdditionalDeliminators(),
+	mWordWrapDeliminator(),
+	mDeliminators( ".():!+,-<=>%&/;?[]^{|}~\\*, \t" ),
+	mCommentStyles() {
 	QFile file( filename );
 	if ( file.open( QFile::ReadOnly ) ) {
 		SyntaxDefXmlHandler handler( this );

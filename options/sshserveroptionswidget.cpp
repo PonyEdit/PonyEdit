@@ -160,7 +160,7 @@ void SshServerOptionsWidget::deleteServer() {
 }
 
 void SshServerOptionsWidget::serverNameUpdated( const QString &newName ) {
-	ServerConfigWidget *widget = dynamic_cast< ServerConfigWidget* >( sender() );
+	ServerConfigWidget *widget = static_cast< ServerConfigWidget* >( sender() );
 	SshHost *host = widget->getEditHost();
 
 	for ( int ii = 0; ii < ui->serversList->count(); ii++ ) {

@@ -8,7 +8,9 @@
 
 ServerConfigWidget::ServerConfigWidget( QWidget *parent ) :
 	QWidget( parent ),
-	ui( new Ui::ServerConfigWidget ) {
+	ui( new Ui::ServerConfigWidget ),
+	mEditHost( NULL ),
+	mLastAutoName() {
 	ui->setupUi( this );
 
 	QIntValidator* portValidator = new QIntValidator( 0, 65535, this );

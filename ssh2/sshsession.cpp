@@ -1,19 +1,20 @@
+#include <QDebug>
+#include <QSocketNotifier>
+
+#include <libssh2.h>
+#include <openssl/crypto.h>
+#include <openssl/opensslconf.h>
+
 #include "dialogrethreader.h"
 #include "hostkeydlg.h"
 #include "main/globaldispatcher.h"
 #include "main/ponyedit.h"
 #include "main/tools.h"
 #include "passworddlg.h"
+#include "QsLog.h"
 #include "sshchannel.h"
 #include "sshhost.h"
 #include "sshsession.h"
-
-#include <libssh2.h>
-#include <openssl/crypto.h>
-#include <openssl/opensslconf.h>
-#include <QDebug>
-#include <QSocketNotifier>
-#include "QsLog.h"
 
 #ifdef Q_OS_WIN
 	#include <windows.h>
@@ -35,16 +36,23 @@
 bool SshSession::sLibsInitialized;
 
 SshSession::SshSession( SshHost* host ) :
+	mHost( host ),
+	mStatus( Disconnected ),
+	mErrorDetails(),
 	mThreadEndedCalled( false ),
+	mKeepaliveSent( false ),
+	mLastActivityTimer(),
+	mThread( NULL ),
 	mSocket( 0 ),
-	mHandle( 0 ),
-	mSocketReadNotifier( 0 ),
-	mSocketExceptionNotifier( 0 ),
-	mAtChannelLimit( false ) {
+	mHandle( NULL ),
+	mSocketReadNotifier( NULL ),
+	mSocketExceptionNotifier( NULL ),
+	mChannels(),
+	mChannelsLock(),
+	mAtChannelLimit( false ),
+	mPasswordAttempt() {
 	SSHLOG_TRACE( host ) << "Opening a new session";
 
-	mHost = host;
-	mStatus = Disconnected;
 	initializeLibrary();
 
 	mThread = new SshSessionThread( this );
@@ -136,9 +144,9 @@ void SshSession::threadMain() {
 
 		// Enter Qt's event loop for this thread.
 		mThread->exec();
-	} catch ( QString* error ) {
+	} catch ( QString& error ) {
 		SSHLOG_ERROR( mHost ) << "Unexpected throw in main session loop: " << error;
-		setErrorStatus( error->prepend( "Thrown error: " ) );
+		setErrorStatus( "Thrown error: " + error );
 		if ( holdingLock ) {
 			mHost->unlockNewSessions();
 		}
@@ -160,7 +168,10 @@ bool SshSession::openSocket( unsigned long ipAddress ) {
 	resetActivityCounter();
 
 	setStatus( OpeningConnection );
+
 	struct sockaddr_in sin;
+	memset( &sin, 0, sizeof( sockaddr_in ) );
+
 	sin.sin_family = AF_INET;
 	sin.sin_port = htons( mHost->getPort() );
 	sin.sin_addr.s_addr = ipAddress;
@@ -180,7 +191,12 @@ bool SshSession::openSocket( unsigned long ipAddress ) {
 bool SshSession::openSocket() {
 	setStatus( NsLookup );
 
-	mSocket = socket( AF_INET, SOCK_STREAM, 0 );
+	int ret = socket( AF_INET, SOCK_STREAM, 0 );
+	if ( ret == -1 ) {
+		SSHLOG_ERROR( mHost ) << "Unable to open socket";
+		return false;
+	}
+	mSocket = ret;
 	bool connected = false;
 
 	// If there is a cached ip address, try that first.
@@ -617,7 +633,7 @@ void SshSession::updateAllChannels() {
 			bool doMore;
 			try {
 				doMore = channel->updateChannel();
-			} catch ( QString* err ) {
+			} catch ( QString& err ) {
 				QLOG_ERROR() << "Critical channel failure:" << err;
 				setErrorStatus( QObject::tr( "Critical channel failure: " ) + err );
 				mThread->quit();                // Abort QThread::exec, fall back to threadMain for

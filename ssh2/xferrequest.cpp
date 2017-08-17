@@ -4,8 +4,13 @@
 
 XferRequest::XferRequest( bool sudo, const QByteArray& filename, const Callback& callback ) :
 	mSudo( sudo ),
-	mFilename( filename ) {
-	mUpload = false;
+	mUpload( false ),
+	mFilename( filename ),
+	mData(),
+	mRequestHeader(),
+	mChecksum(),
+	mEncodedData(),
+	mSize( 0 ) {
 
 	connect( this, SIGNAL( transferSuccess( QVariantMap ) ), callback.getTarget(), callback.getSuccessSlot() );
 	connect( this, SIGNAL( transferFailure( QString, int ) ), callback.getTarget(), callback.getFailureSlot() );

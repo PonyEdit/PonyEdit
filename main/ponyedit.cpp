@@ -30,7 +30,12 @@ MainWindow* gMainWindow = NULL;
 bool PonyEdit::sApplicationExiting = false;
 
 PonyEdit::PonyEdit( int argc, char** argv ) :
-	QApplication( argc, argv ) {
+	QApplication( argc, argv ),
+	mIsRunning( false ),
+	mMemoryLock(),
+	mLocalServer( NULL ),
+	mDialogRethreader( NULL ),
+	mPositionalArguments() {
 	// Parse command line arguments
 	QCommandLineParser parser;
 	parser.setApplicationDescription( "PonyEdit: The fastest remote text editor under the sun. Or over it." );
@@ -170,7 +175,7 @@ bool PonyEdit::notify( QObject *o, QEvent *e ) {
 	bool ret = false;
 	try {
 		ret = QApplication::notify( o, e );
-	} catch ( QString* err ) {
+	} catch ( QString& err ) {
 		QLOG_ERROR() << "UNCAUGHT EXCEPTION:" << err;
 	} catch ( ... ) {
 		QLOG_ERROR() << "UNKNOWN UNCAUGHT EXCEPTION";

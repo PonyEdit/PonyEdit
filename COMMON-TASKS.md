@@ -22,3 +22,12 @@ cp data/*.xml data/syntax/* <PonyEdit syntax defs directory>
 cd ..
 rm -rf extra-cmake-modules syntax-highlighting ~/share
 ```
+
+## Pushing a GitHub Branch to Coverity
+
+Commit and push your code to your GitHub branch. Then, from any branch except the `coverity_scan` branch, replace `task/fix-coverity` with your branch name:
+
+```
+git branch -f coverity_scan origin/task/fix-coverity
+git push -f origin coverity_scan
+```

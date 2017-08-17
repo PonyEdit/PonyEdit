@@ -18,8 +18,14 @@ class SyntaxDefManager {
 
 		struct Record {
 			Record() :
+				filename( "" ),
+				syntaxName( "" ),
+				category( "" ),
+				patterns(),
+				lastUpdated(),
 				valid( false ),
-				priority( 0 ) {}
+				priority( 0 ),
+				hidden( false ) {}
 			void pack( const QXmlAttributes& atts );
 
 			QString filename;

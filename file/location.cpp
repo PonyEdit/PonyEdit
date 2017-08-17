@@ -103,17 +103,27 @@ Location::Location( const Location& parent,
 	mData->mCanWrite = canWrite;
 }
 
-LocationShared::LocationShared() {
+LocationShared::LocationShared() :
+	mReferences( 1 ),
+	mPath(),
+	mLabel(),
+	mType( Location::Unknown ),
+	mProtocol(),
+	mLastModified(),
+	mParent(),
+	mSelfLoaded( false ),
+	mSize( -1 ),
+	mCanRead( false ),
+	mCanWrite( false ),
+	mSudo( false ),
+	mHost( NULL ),
+	mRemoteHostName(),
+	mRemoteUserName(),
+	mRemotePath(),
+	mRemoteHost( NULL ),
+	mServerChannel( NULL ),
+	mFtpChannel( NULL ) {
 	initIconProvider();
-
-	mHost = NULL;
-	mServerChannel = NULL;
-	mReferences = 1;
-	mType = Location::Unknown;
-	mSize = -1;
-	mSelfLoaded = false;
-	mRemoteHost = NULL;
-	mSudo = false;
 }
 
 Location::~Location() {

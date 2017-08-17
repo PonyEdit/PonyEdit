@@ -7,11 +7,13 @@
 ServerRequest::ServerRequest( ServerFile* file,
                               const QByteArray& request,
                               const QVariant& parameters,
-                              const Callback& callback )
-	: mFile( file ),
+                              const Callback& callback ) :
+	mFile( file ),
 	mOpeningFile( NULL ),
 	mRequest( request ),
-	mParameters( parameters ) {
+	mParameters( parameters ),
+	mMessageId( 0 ),
+	mPackedRequest() {
 	if ( callback.getFailureSlot() ) {
 		connect( this,
 		         SIGNAL( requestFailure( QString, int ) ),
@@ -41,7 +43,6 @@ const QByteArray& ServerRequest::prepare( int bufferId ) {
 	mPackedRequest += "\n";
 
 	// "bin" the request; clear out characters that are trouble for ssh comms
-
 
 	return mPackedRequest;
 }
