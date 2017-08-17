@@ -30,7 +30,12 @@ MainWindow* gMainWindow = NULL;
 bool PonyEdit::sApplicationExiting = false;
 
 PonyEdit::PonyEdit( int argc, char** argv ) :
-	QApplication( argc, argv ) {
+	QApplication( argc, argv ),
+	mIsRunning( false ),
+	mMemoryLock(),
+	mLocalServer( NULL ),
+	mDialogRethreader( NULL ),
+	mPositionalArguments() {
 	// Parse command line arguments
 	QCommandLineParser parser;
 	parser.setApplicationDescription( "PonyEdit: The fastest remote text editor under the sun. Or over it." );
