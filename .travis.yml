@@ -102,9 +102,9 @@ after_success:
     fi
   - ./PonyEdit --version
   - | # On the cron job run on the master branch, push the content of master to $coverity_branch
-    if [ "$TRAVIS_BRANCH" = "master" ] && \
-       [ "$TRAVIS_EVENT_TYPE" = "cron" ] && \
-       [ "$TRAVIS_OS_NAME" = "linux" ] && \
+    #if [ "$TRAVIS_BRANCH" = "master" ] && \
+    #   [ "$TRAVIS_EVENT_TYPE" = "cron" ] && \
+    if [ "$TRAVIS_OS_NAME" = "linux" ] && \
        [ "$TEST_SUITE" = "build" ]; then
 
       # Setup SSH access
