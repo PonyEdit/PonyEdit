@@ -43,11 +43,8 @@ env:
 
 before_install:
   # Only run Coverity on the Linux build
-  # Coverity will either run on $coverity_branch, or master during the weekly cron.
   - |
     if [ "$TRAVIS_BRANCH" = "$coverity_branch" ] && ! [ "$TRAVIS_OS_NAME" = "linux" -a "$TEST_SUITE" = "build" ]; then
-      exit
-    elif [ "$TRAVIS_EVENT_TYPE" = "cron" ] && ! [ "$TRAVIS_OS_NAME" = "linux" -a "$TEST_SUITE" = "build" ]; then
       exit
     fi
   - |
@@ -60,7 +57,7 @@ before_install:
 install:
   - |
     if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$TEST_SUITE" = "uncrustify" ]; then
-      source deps/build-uncrustify.sh
+      source .travis/build-uncrustify.sh
     fi
   - |
     if [ "$TRAVIS_OS_NAME" = "osx" ]; then
@@ -78,7 +75,10 @@ before_script:
 
 script:
   # No need to run the usual build for the coverity scan
-  - if [ "$TRAVIS_BRANCH" = "$coverity_branch" ] || [ "$TRAVIS_EVENT_TYPE" = "cron" ]; then exit; fi
+  - |
+    if [ "$TRAVIS_BRANCH" = "$coverity_branch" ]; then
+      exit
+    fi
   - |
     if [ "$TEST_SUITE" = "uncrustify" ]; then
       uncrustify -v
@@ -92,12 +92,35 @@ script:
     fi
 
 after_success:
-  - if [ "$TEST_SUITE" != "build" ]; then exit; fi
+  - |
+    if [ "$TEST_SUITE" != "build" ]; then
+      exit
+    fi
   - |
     if [ "$TRAVIS_OS_NAME" = "osx" ]; then
       cd PonyEdit.app/Contents/MacOS
     fi
   - ./PonyEdit --version
+  - | # On the cron job run on the master branch, push the content of master to $coverity_branch
+    if [ "$TRAVIS_BRANCH" = "master" ] && \
+       [ "$TRAVIS_EVENT_TYPE" = "cron" ] && \
+       [ "$TRAVIS_OS_NAME" = "linux" ] && \
+       [ "$TEST_SUITE" = "build" ]; then
+
+      # Setup SSH access
+      declare -r SSH_FILE="$(mktemp -u $HOME/.ssh/github_deploy_key)"
+      openssl aes-256-cbc -K $encrypted_8ed5141acce9_key -iv $encrypted_8ed5141acce9_iv -in ./travis/github_deploy_key.enc -out "$SSH_FILE" -d
+      chmod 600 "$SSH_FILE"
+      printf "%s\n" \
+        "Host github.com" \
+        "  IdentityFile $SSH_FILE" \
+        "  LogLevel ERROR" >> ~/.ssh/config
+
+      # Force push origin/master to $coverity_branch
+      git remote add origin git@github.com:$TRAVIS_REPO_SLUG.git
+      git branch -f "$coverity_branch" origin/master
+      git push -f origin "$coverity_branch"
+    fi
 
 notifications:
   email:
