@@ -117,8 +117,8 @@ after_success:
         "  LogLevel ERROR" >> ~/.ssh/config
 
       # Force push origin/master to $coverity_branch
-      git branch -f "$coverity_branch" origin/master
-      git push -f origin "$coverity_branch"
+      git branch -f "$coverity_branch" git@github.com:$TRAVIS_REPO_SLUG.git/master
+      git push -f git@github.com:$TRAVIS_REPO_SLUG.git "$coverity_branch"
     fi
 
 notifications:
