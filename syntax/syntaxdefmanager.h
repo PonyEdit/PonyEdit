@@ -7,8 +7,8 @@
 class SyntaxDefManager {
 	public:
 		struct FilePattern {
-			FilePattern( const QString& pattern );
-			bool matches( const QString& filename );
+			FilePattern( const QString &pattern );
+			bool matches( const QString &filename );
 
 			bool isSimpleExtension;
 			QRegExp regExp;
@@ -26,7 +26,7 @@ class SyntaxDefManager {
 				valid( false ),
 				priority( 0 ),
 				hidden( false ) {}
-			void pack( const QXmlAttributes& atts );
+			void pack( const QXmlAttributes &atts );
 
 			QString filename;
 			QString syntaxName;
@@ -41,29 +41,29 @@ class SyntaxDefManager {
 		SyntaxDefManager();
 		~SyntaxDefManager();
 
-		SyntaxDefinition* getDefinitionForFile( const QString& filename );
-		SyntaxDefinition* getDefinitionForSyntax( const QString& syntaxName );
-		SyntaxDefinition* getDefinition( const Record* record );
+		SyntaxDefinition *getDefinitionForFile( const QString &filename );
+		SyntaxDefinition *getDefinitionForSyntax( const QString &syntaxName );
+		SyntaxDefinition *getDefinition( const Record *record );
 
 		QStringList getDefinitionCategories() const;
-		QStringList getSyntaxesInCategory( const QString& category ) const;
-		QStringList getFiltersForCategory( const QString& category ) const;
+		QStringList getSyntaxesInCategory( const QString &category ) const;
+		QStringList getFiltersForCategory( const QString &category ) const;
 
 	private:
 		void updateIndex();
-		void indexFile( const QFileInfo& fileinfo );
-		void addRecord( Record* record );
-		Record* getRecordFor( const QString& filename );
+		void indexFile( const QFileInfo &fileinfo );
+		void addRecord( Record *record );
+		Record *getRecordFor( const QString &filename );
 
-		QList< Record* > mRecordList;
-		QMap< QString, Record* > mRecordsByName;
+		QList< Record * > mRecordList;
+		QMap< QString, Record * > mRecordsByName;
 		QMap< QString, QString > mSyntaxesByCategory;
 		QMap< QString, QString > mFiltersByCategory;
 
-		QList< SyntaxDefinition* > mOpenDefinitionList;
-		QMap< QString, SyntaxDefinition* > mOpenDefinitionsByName;
+		QList< SyntaxDefinition * > mOpenDefinitionList;
+		QMap< QString, SyntaxDefinition * > mOpenDefinitionsByName;
 };
 
-extern SyntaxDefManager* gSyntaxDefManager;
+extern SyntaxDefManager *gSyntaxDefManager;
 
 #endif  // SYNTAXDEFMANAGER_H

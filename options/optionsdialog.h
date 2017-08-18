@@ -27,14 +27,14 @@ class OptionsDialog : public QDialog {
 		void buttonClicked( QAbstractButton *button );
 		void saveOptions();
 		void pageClicked();
-		void pageClicked( QToolButton* page );
+		void pageClicked( QToolButton *page );
 
 	private:
-		void addPage( QToolButton* button, OptionsDialogPage* page );
+		void addPage( QToolButton *button, OptionsDialogPage *page );
 
-		Ui::OptionsDialog* ui;
-		QList< OptionsDialogPage* > mPages;
-		QMap< QToolButton*, OptionsDialogPage* > mPageMap;
+		Ui::OptionsDialog *ui;
+		QList< OptionsDialogPage * > mPages;
+		QMap< QToolButton *, OptionsDialogPage * > mPageMap;
 };
 
 #endif  // OPTIONSDIALOG_H

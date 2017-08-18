@@ -13,7 +13,7 @@
 #include "syntax/syntaxdefmanager.h"
 #include "syntax/syntaxhighlighter.h"
 
-Editor::Editor( BaseFile* file ) :
+Editor::Editor( BaseFile *file ) :
 	QStackedWidget() {
 	mReadOnlyWarning = NULL;
 	mFirstOpen = true;
@@ -27,7 +27,7 @@ Editor::Editor( BaseFile* file ) :
 	addWidget( mEditorPane );
 
 	mWorkingPane = new QWidget();
-	QGridLayout* layout = new QGridLayout( mWorkingPane );
+	QGridLayout *layout = new QGridLayout( mWorkingPane );
 	layout->addItem( new QSpacerItem( 0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding ), 0, 0, 1, 4 );
 	layout->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding ), 1, 0 );
 	mWorkingIcon = new QLabel();
@@ -67,42 +67,42 @@ void Editor::fileOpenProgress( int percent ) {
 
 void Editor::openStatusChanged( int openStatus ) {
 	switch ( openStatus ) {
-	case BaseFile::Closed:
-		break;
+		case BaseFile::Closed:
+			break;
 
-	case BaseFile::Loading:
-		showLoading();
-		break;
+		case BaseFile::Loading:
+			showLoading();
+			break;
 
-	case BaseFile::LoadError:
-		showError( mFile->getError() );
-		break;
+		case BaseFile::LoadError:
+			showError( mFile->getError() );
+			break;
 
-	case BaseFile::Ready:
-		if ( mFirstOpen ) {
-			mFirstOpen = false;
-			mEditor->moveCursor( QTextCursor::Start, QTextCursor::MoveAnchor );
+		case BaseFile::Ready:
+			if ( mFirstOpen ) {
+				mFirstOpen = false;
+				mEditor->moveCursor( QTextCursor::Start, QTextCursor::MoveAnchor );
 
-			if ( mFile->isReadOnly() ) {
-				setReadOnly( true );
-				showReadOnlyWarning();
+				if ( mFile->isReadOnly() ) {
+					setReadOnly( true );
+					showReadOnlyWarning();
+				}
 			}
-		}
 
-	// Intentional fallthrough
+		// Intentional fallthrough
 
-	case BaseFile::Disconnected:
-	case BaseFile::Reconnecting:
-	case BaseFile::Repairing:
-		setCurrentWidget( mEditorPane );
-		if ( hasFocus() ) {
-			mEditor->setFocus();
-		}
-		break;
+		case BaseFile::Disconnected:
+		case BaseFile::Reconnecting:
+		case BaseFile::Repairing:
+			setCurrentWidget( mEditorPane );
+			if ( hasFocus() ) {
+				mEditor->setFocus();
+			}
+			break;
 
-	case BaseFile::Closing:
-		showError( "Closing file..." );
-		break;
+		case BaseFile::Closing:
+			showError( "Closing file..." );
+			break;
 	}
 }
 
@@ -113,7 +113,7 @@ void Editor::showLoading() {
 	setCurrentWidget( mWorkingPane );
 }
 
-void Editor::showError( const QString& error ) {
+void Editor::showError( const QString &error ) {
 	mWorkingIcon->setPixmap( QPixmap( ":/icons/error.png" ) );
 	mWorkingText->setText( QString( "Error: " ) + error );
 	mProgressBar->hide();
@@ -135,7 +135,7 @@ void Editor::close() {
 }
 
 bool Editor::find( const QString &text, bool backwards, bool caseSensitive, bool useRegexp, bool loop ) {
-	QTextDocument* doc = mEditor->document();
+	QTextDocument *doc = mEditor->document();
 	QTextCursor result =
 		Editor::find( doc, mEditor->textCursor(), text, backwards, caseSensitive, useRegexp, loop );
 	if ( ! result.isNull() ) {
@@ -145,9 +145,9 @@ bool Editor::find( const QString &text, bool backwards, bool caseSensitive, bool
 	return false;
 }
 
-QTextCursor Editor::find( QTextDocument* doc,
-                          const QTextCursor& start,
-                          const QString& text,
+QTextCursor Editor::find( QTextDocument *doc,
+                          const QTextCursor &start,
+                          const QString &text,
                           bool backwards,
                           bool caseSensitive,
                           bool useRegExp,
@@ -182,7 +182,7 @@ QTextCursor Editor::find( QTextDocument* doc,
 	return result;
 }
 
-QTextCursor Editor::internalFind( const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop ) {
+QTextCursor Editor::internalFind( const QString &text, bool backwards, bool caseSensitive, bool useRegexp, bool loop ) {
 	if ( backwards && mEditor->textCursor().selectionStart() == 0 && ! loop ) {
 		return QTextCursor();
 	}
@@ -249,7 +249,7 @@ int Editor::replace( const QString &findText,
 
 	if ( all ) {
 		// Scan through the document replacing all
-		QTextDocument* doc = mEditor->document();
+		QTextDocument *doc = mEditor->document();
 		QTextCursor searcher( doc );
 		searcher.setPosition( 0 );
 
@@ -328,13 +328,13 @@ bool Editor::hasFocus() {
 }
 
 void Editor::applyOptions() {
-	QFont* font = Options::EditorFont;
+	QFont *font = Options::EditorFont;
 
 	QFontMetrics fontMetrics( *font );
 	int characterWidth = fontMetrics.width( "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM" ) / 40;
 
 	mEditor->updateFont();
-	mEditor->setTabStopWidth( Options::TabStopWidth * characterWidth );
+	mEditor->setTabStopWidth( Options::TabStopWidth *characterWidth );
 	mEditor->setLineWrapMode( Options::WordWrap ? QPlainTextEdit::WidgetWidth : QPlainTextEdit::NoWrap );
 }
 
@@ -373,7 +373,7 @@ void Editor::sudo() {
 }
 
 void Editor::selectText( int lineNumber, int start, int length ) {
-	QTextDocument* doc = mEditor->document();
+	QTextDocument *doc = mEditor->document();
 
 	QTextBlock block = doc->findBlockByLineNumber( lineNumber );
 	if ( ! block.isValid() ) {

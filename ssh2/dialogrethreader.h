@@ -20,7 +20,7 @@ class DialogRethreader : public QObject {
 
 	public:
 		explicit DialogRethreader();
-		template < class T > static QVariantMap rethreadDialog( const QVariantMap& options ) {
+		template < class T > static QVariantMap rethreadDialog( const QVariantMap &options ) {
 			QMutex mutex;
 
 			DialogRethreadRequest rq;
@@ -28,7 +28,7 @@ class DialogRethreader : public QObject {
 			rq.factoryMethod = ( createDialog< T >);
 			rq.lock = &mutex;
 
-			DialogEvent* e = new DialogEvent( sRunDialogEventId );
+			DialogEvent *e = new DialogEvent( sRunDialogEventId );
 			e->request = &rq;
 
 			mutex.lock();
@@ -40,16 +40,16 @@ class DialogRethreader : public QObject {
 			return rq.result;
 		}
 
-		bool event( QEvent* event );
+		bool event( QEvent *event );
 
 	private:
-		typedef ThreadCrossingDialog*(*DialogFactory)();
+		typedef ThreadCrossingDialog *(*DialogFactory)();
 
 		struct DialogRethreadRequest {
 			DialogFactory factoryMethod;
 			QVariantMap options;
 			QVariantMap result;
-			QMutex* lock;
+			QMutex *lock;
 		};
 
 		class DialogEvent : public QEvent {
@@ -57,14 +57,14 @@ class DialogRethreader : public QObject {
 				DialogEvent( int type ) :
 					QEvent( ( QEvent::Type ) type ),
 					request( NULL ) {}
-				DialogRethreadRequest* request;
+				DialogRethreadRequest *request;
 		};
 
-		template < class T > static ThreadCrossingDialog* createDialog() {
+		template < class T > static ThreadCrossingDialog *createDialog() {
 			return new T();
 		}
 
-		static DialogRethreader* sInstance;
+		static DialogRethreader *sInstance;
 		static int sRunDialogEventId;
 };
 

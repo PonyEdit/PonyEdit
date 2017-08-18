@@ -11,21 +11,21 @@ StartupOptionsWidget::StartupOptionsWidget( QWidget *parent ) :
 	ui->setupUi( this );
 
 	switch ( Options::StartupAction ) {
-	case Options::BlankFile:
-		ui->blankFile->setChecked( true );
-		break;
+		case Options::BlankFile:
+			ui->blankFile->setChecked( true );
+			break;
 
-	case Options::ReopenFiles:
-		ui->reopenFiles->setChecked( true );
-		break;
+		case Options::ReopenFiles:
+			ui->reopenFiles->setChecked( true );
+			break;
 
-	case Options::SetFiles:
-		ui->setFiles->setChecked( true );
-		break;
+		case Options::SetFiles:
+			ui->setFiles->setChecked( true );
+			break;
 
-	case Options::NoFiles:
-	default:
-		ui->noFiles->setChecked( true );
+		case Options::NoFiles:
+		default:
+			ui->noFiles->setChecked( true );
 	}
 
 	if ( Options::StartupAction == Options::SetFiles ) {
@@ -84,10 +84,10 @@ void StartupOptionsWidget::SetFilesToCurrent() {
 		return;
 	}
 
-	QList< BaseFile* > files = gOpenFileManager.getOpenFiles();
+	QList< BaseFile * > files = gOpenFileManager.getOpenFiles();
 
 	ui->fileList->clear();
-	foreach ( BaseFile * file, files ) {
+	foreach ( BaseFile *file, files ) {
 		Location loc = file->getLocation();
 		ui->fileList->appendPlainText( loc.getDisplayPath() );
 	}

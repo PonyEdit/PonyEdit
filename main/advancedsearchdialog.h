@@ -21,7 +21,7 @@ class AdvancedSearchDialog : public QDialog {
 		void searchAndReplace();
 
 	private:
-		QList< BaseFile* > getLocalHaystackFiles();
+		QList< BaseFile * > getLocalHaystackFiles();
 
 		Ui::AdvancedSearchDialog *ui;
 };

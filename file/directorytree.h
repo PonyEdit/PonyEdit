@@ -12,7 +12,7 @@
 
 class DirectoryTree : public QTreeWidget {
 	public:
-		DirectoryTree( QWidget* parent = 0 ) :
+		DirectoryTree( QWidget *parent = 0 ) :
 			QTreeWidget( parent ) {}
 		void mousePressEvent( QMouseEvent *event ) {
 			if ( event->button() == Qt::RightButton ) {

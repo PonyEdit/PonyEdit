@@ -14,12 +14,12 @@ class CodeEditor : public QPlainTextEdit {
 	Q_OBJECT
 
 	public:
-		CodeEditor( BaseFile* file, QWidget *parent = 0 );
+		CodeEditor( BaseFile *file, QWidget *parent = 0 );
 
 		void lineNumberAreaPaintEvent( QPaintEvent *event );
 		int lineNumberAreaWidth();
 
-		int firstNonWhiteSpace( const QTextBlock& block );
+		int firstNonWhiteSpace( const QTextBlock &block );
 
 		void updateFont();
 
@@ -30,9 +30,9 @@ class CodeEditor : public QPlainTextEdit {
 
 	protected:
 		void resizeEvent( QResizeEvent *event );
-		void keyPressEvent( QKeyEvent* event );
+		void keyPressEvent( QKeyEvent *event );
 		void wheelEvent( QWheelEvent *e );
-		void applyIndent( QTextCursor& cursor, bool outdent );
+		void applyIndent( QTextCursor &cursor, bool outdent );
 		void focusInEvent( QFocusEvent *e );
 
 	public slots:
@@ -47,8 +47,8 @@ class CodeEditor : public QPlainTextEdit {
 
 	private:
 		LineNumberWidget *mLineNumberWidget;
-		SyntaxHighlighter* mSyntaxHighlighter;
-		BaseFile* mFile;
+		SyntaxHighlighter *mSyntaxHighlighter;
+		BaseFile *mFile;
 
 		QTextEdit::ExtraSelection mCurrentLine;
 		QList< QTextEdit::ExtraSelection > mMatchingParenthesis;

@@ -5,7 +5,7 @@
 #include "customtreemodel.h"
 #include "customtreewidget.h"
 
-CustomTreeEntry::CustomTreeEntry( const QIcon& icon, const QString& label ) :
+CustomTreeEntry::CustomTreeEntry( const QIcon &icon, const QString &label ) :
 	mModel( NULL ),
 	mParent( NULL ),
 	mIndex( 0 ),
@@ -17,7 +17,7 @@ CustomTreeEntry::CustomTreeEntry( const QIcon& icon, const QString& label ) :
 	mData( NULL ),
 	mHover( false ) {}
 
-CustomTreeEntry::CustomTreeEntry( CustomTreeModel* model ) :
+CustomTreeEntry::CustomTreeEntry( CustomTreeModel *model ) :
 	mModel( model ),
 	mParent( NULL ),
 	mIndex( 0 ),
@@ -37,7 +37,7 @@ CustomTreeEntry::~CustomTreeEntry() {
 		mModel->endRemoveRows();
 	}
 
-	foreach ( CustomTreeEntry * child, mChildren ) {
+	foreach ( CustomTreeEntry *child, mChildren ) {
 		child->mParent = NULL;
 		child->mModel = NULL;
 		delete child;
@@ -50,12 +50,12 @@ CustomTreeEntry::~CustomTreeEntry() {
 
 void CustomTreeEntry::updateChildIndices() {
 	int index = 0;
-	foreach ( CustomTreeEntry * child, mChildren ) {
+	foreach ( CustomTreeEntry *child, mChildren ) {
 		child->mIndex = index++;
 	}
 }
 
-void CustomTreeEntry::addChild( CustomTreeEntry* child ) {
+void CustomTreeEntry::addChild( CustomTreeEntry *child ) {
 	child->mModel = mModel;
 	child->mParent = this;
 	mDelayedLoad = false;
@@ -73,7 +73,7 @@ void CustomTreeEntry::removeAllChildren() {
 	}
 
 	mModel->beginRemoveRows( mModel->getEntryIndex( this ), 0, mChildren.count() - 1 );
-	foreach ( CustomTreeEntry * entry, mChildren ) {
+	foreach ( CustomTreeEntry *entry, mChildren ) {
 		entry->mParent = NULL;
 		entry->mModel = NULL;
 		delete entry;
@@ -82,7 +82,7 @@ void CustomTreeEntry::removeAllChildren() {
 	mModel->endRemoveRows();
 }
 
-CustomTreeEntry* CustomTreeEntry::child( int i ) {
+CustomTreeEntry *CustomTreeEntry::child( int i ) {
 	handleDelayedLoad();
 	return mChildren.at( i );
 }
@@ -111,21 +111,21 @@ void CustomTreeEntry::setExpandable( bool expandable ) {
 	mExpandable = expandable;
 }
 
-void CustomTreeEntry::setDelayedLoad( QObject* callbackTarget, const char* loadSlot ) {
+void CustomTreeEntry::setDelayedLoad( QObject *callbackTarget, const char *loadSlot ) {
 	// Disconnect any previously set delayed load actions
-	disconnect( SIGNAL( expandItem( CustomTreeEntry* ) ) );
+	disconnect( SIGNAL( expandItem( CustomTreeEntry * ) ) );
 
 	mExpandable = mDelayedLoad = ( callbackTarget != NULL );
 	if ( callbackTarget != NULL ) {
 		connect( this,
-		         SIGNAL( expandItem( CustomTreeEntry* ) ),
+		         SIGNAL( expandItem( CustomTreeEntry * ) ),
 		         callbackTarget,
 		         loadSlot,
 		         Qt::QueuedConnection );
 	}
 }
 
-void CustomTreeEntry::handleLeftClick( const QPoint& pos ) {
+void CustomTreeEntry::handleLeftClick( const QPoint &pos ) {
 	emit leftClicked( this, pos );
 }
 
@@ -137,12 +137,12 @@ void CustomTreeEntry::handleRightClick( const QPoint &pos ) {
 	emit rightClicked( this, pos );
 }
 
-QPoint CustomTreeEntry::mapToGlobal( const QPoint& pos ) {
+QPoint CustomTreeEntry::mapToGlobal( const QPoint &pos ) {
 	QRect myRect = mModel->mWidget->visualRect( mModel->getEntryIndex( this ) );
 	return mModel->mWidget->mapToGlobal( pos + myRect.topLeft() );
 }
 
-void CustomTreeEntry::drawIcon( QPainter* painter, QRect* area, const QIcon& icon, bool animating ) {
+void CustomTreeEntry::drawIcon( QPainter *painter, QRect *area, const QIcon &icon, bool animating ) {
 	QRect destination( area->left() + 2, area->top(), area->height(), area->height() );
 
 	if ( animating ) {
@@ -153,7 +153,7 @@ void CustomTreeEntry::drawIcon( QPainter* painter, QRect* area, const QIcon& ico
 	area->setLeft( area->left() + area->height() + 4 );
 }
 
-void CustomTreeEntry::drawGutterText( QPainter* painter, QRect* area, const QString& text ) {
+void CustomTreeEntry::drawGutterText( QPainter *painter, QRect *area, const QString &text ) {
 	static QTextOption to;
 	to.setAlignment( Qt::AlignBottom | Qt::AlignRight );
 
@@ -174,7 +174,7 @@ void CustomTreeEntry::invalidate() {
 	}
 }
 
-void CustomTreeEntry::addGutterIcon( int id, bool hover, const QIcon& icon, const QString& tooltip ) {
+void CustomTreeEntry::addGutterIcon( int id, bool hover, const QIcon &icon, const QString &tooltip ) {
 	GutterIcon gi;
 	gi.id = id;
 	gi.hover = hover;
@@ -183,7 +183,7 @@ void CustomTreeEntry::addGutterIcon( int id, bool hover, const QIcon& icon, cons
 	mGutterIcons.append( gi );
 }
 
-void CustomTreeEntry::drawGutterIcons( QPainter* painter, QRect* area ) {
+void CustomTreeEntry::drawGutterIcons( QPainter *painter, QRect *area ) {
 	for ( QList< GutterIcon >::iterator i = mGutterIcons.begin(); i != mGutterIcons.end(); ++i ) {
 		if ( isHover() || ! ( *i ).hover ) {
 			area->setRight( area->right() - ( area->height() + 2 ) );
@@ -195,7 +195,7 @@ void CustomTreeEntry::drawGutterIcons( QPainter* painter, QRect* area ) {
 	}
 }
 
-int CustomTreeEntry::gutterIconAt( const QPoint& pos ) {
+int CustomTreeEntry::gutterIconAt( const QPoint &pos ) {
 	foreach ( const GutterIcon &gi, mGutterIcons ) {
 		if ( gi.visibleArea.contains( pos ) ) {
 			return gi.id;

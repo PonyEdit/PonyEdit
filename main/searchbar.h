@@ -16,8 +16,8 @@ class SearchBar : public QWidget {
 
 	signals:
 		void closeRequested();
-		void find( const QString& text, bool backwards );
-		void replace( const QString& findText, const QString& replaceText, bool all );
+		void find( const QString &text, bool backwards );
+		void replace( const QString &findText, const QString &replaceText, bool all );
 
 	public slots:
 		void findNext();

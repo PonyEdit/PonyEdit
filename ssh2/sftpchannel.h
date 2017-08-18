@@ -13,7 +13,7 @@ typedef _LIBSSH2_SFTP_HANDLE LIBSSH2_SFTP_HANDLE;
 class SFTPRequest;
 class SFTPChannel : public SshChannel {
 	public:
-		SFTPChannel( SshHost* host );
+		SFTPChannel( SshHost *host );
 
 		virtual bool update();
 		virtual Type getType() {
@@ -21,7 +21,7 @@ class SFTPChannel : public SshChannel {
 		}
 
 	protected:
-		void criticalError( const QString& error );
+		void criticalError( const QString &error );
 		bool handleOpening();
 		bool mainUpdate();
 		bool updateLs();
@@ -32,9 +32,9 @@ class SFTPChannel : public SshChannel {
 	private:
 		enum RequestState { Beginning, Sizing, Reading, Writing, Finishing };
 
-		LIBSSH2_SFTP* mHandle;
-		LIBSSH2_SFTP_HANDLE* mOperationHandle;
-		SFTPRequest* mCurrentRequest;
+		LIBSSH2_SFTP *mHandle;
+		LIBSSH2_SFTP_HANDLE *mOperationHandle;
+		SFTPRequest *mCurrentRequest;
 		RequestState mRequestState;
 
 		QVariantMap mResult;

@@ -4,10 +4,10 @@
 #include "main/tools.h"
 #include "serverrequest.h"
 
-ServerRequest::ServerRequest( ServerFile* file,
-                              const QByteArray& request,
-                              const QVariant& parameters,
-                              const Callback& callback ) :
+ServerRequest::ServerRequest( ServerFile *file,
+                              const QByteArray &request,
+                              const QVariant &parameters,
+                              const Callback &callback ) :
 	mFile( file ),
 	mOpeningFile( NULL ),
 	mRequest( request ),
@@ -28,7 +28,7 @@ ServerRequest::ServerRequest( ServerFile* file,
 	}
 }
 
-const QByteArray& ServerRequest::prepare( int bufferId ) {
+const QByteArray &ServerRequest::prepare( int bufferId ) {
 	QVariantMap requestRoot;
 	requestRoot.insert( "i", mMessageId );
 	requestRoot.insert( "c", mRequest );
@@ -47,11 +47,11 @@ const QByteArray& ServerRequest::prepare( int bufferId ) {
 	return mPackedRequest;
 }
 
-void ServerRequest::failRequest( const QString& error, int errorFlags ) {
+void ServerRequest::failRequest( const QString &error, int errorFlags ) {
 	emit requestFailure( error, errorFlags );
 }
 
-void ServerRequest::handleReply( const QVariantMap& reply ) {
+void ServerRequest::handleReply( const QVariantMap &reply ) {
 	if ( ! reply.contains( "error" ) ) {
 		emit requestSuccess( reply );
 	} else {

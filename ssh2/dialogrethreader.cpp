@@ -1,7 +1,7 @@
 #include <QCoreApplication>
 #include "dialogrethreader.h"
 
-DialogRethreader* DialogRethreader::sInstance;
+DialogRethreader *DialogRethreader::sInstance;
 int DialogRethreader::sRunDialogEventId;
 
 DialogRethreader::DialogRethreader() :
@@ -10,14 +10,14 @@ DialogRethreader::DialogRethreader() :
 	sRunDialogEventId = QEvent::registerEventType();
 }
 
-bool DialogRethreader::event( QEvent* event ) {
+bool DialogRethreader::event( QEvent *event ) {
 	if ( event->type() == sRunDialogEventId ) {
 		event->accept();
 
-		DialogEvent* e = reinterpret_cast< DialogEvent * >( event );
-		DialogRethreadRequest* rq = e->request;
+		DialogEvent *e = reinterpret_cast< DialogEvent * >( event );
+		DialogRethreadRequest *rq = e->request;
 
-		ThreadCrossingDialog* dialog = rq->factoryMethod();
+		ThreadCrossingDialog *dialog = rq->factoryMethod();
 		dialog->setOptions( rq->options );
 		dialog->exec();
 		rq->result = dialog->getResult();

@@ -26,7 +26,7 @@ HTMLPreview::HTMLPreview( MainWindow *parent ) :
 	ui->refreshButton->setMinimumHeight( 32 );
 #endif
 
-	connect( gDispatcher, SIGNAL( selectFile( BaseFile* ) ), this, SLOT( fileSelected( BaseFile* ) ) );
+	connect( gDispatcher, SIGNAL( selectFile( BaseFile * ) ), this, SLOT( fileSelected( BaseFile * ) ) );
 
 	connect( ui->refreshButton, SIGNAL( clicked() ), this, SLOT( manualRefresh() ) );
 
@@ -62,20 +62,20 @@ void HTMLPreview::fileSaved() {
 		return;
 	}
 
-	BaseFile *file = static_cast< BaseFile* >( sender() );
+	BaseFile *file = static_cast< BaseFile * >( sender() );
 
 	if ( file->hasUnsavedChanges() ) {
 		return;
 	}
 
 	switch ( ui->refreshFrom->currentIndex() ) {
-	case 0:
-		displayHTML( file->getTextDocument()->toPlainText() );
-		break;
+		case 0:
+			displayHTML( file->getTextDocument()->toPlainText() );
+			break;
 
-	case 1:
-		displayURL();
-		break;
+		case 1:
+			displayURL();
+			break;
 	}
 }
 
@@ -84,7 +84,7 @@ void HTMLPreview::fileChanged() {
 		return;
 	}
 
-	QTextDocument *doc = static_cast< QTextDocument* >( sender() );
+	QTextDocument *doc = static_cast< QTextDocument * >( sender() );
 
 	if ( ui->refreshFrom->currentIndex() == 0 ) {
 		displayHTML( doc->toPlainText() );
@@ -100,15 +100,15 @@ void HTMLPreview::manualRefresh() {
 	}
 
 	switch ( ui->refreshFrom->currentIndex() ) {
-	case 0:
-		if ( file ) {
-			displayHTML( file->getTextDocument()->toPlainText() );
-		}
-		break;
+		case 0:
+			if ( file ) {
+				displayHTML( file->getTextDocument()->toPlainText() );
+			}
+			break;
 
-	case 1:
-		displayURL();
-		break;
+		case 1:
+			displayURL();
+			break;
 	}
 }
 

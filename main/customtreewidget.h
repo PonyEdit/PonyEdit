@@ -13,19 +13,19 @@ class CustomTreeWidget : public QTreeView {
 		explicit CustomTreeWidget( QWidget *parent = 0 );
 		~CustomTreeWidget();
 
-		void addTopLevelEntry( CustomTreeEntry* entry );
+		void addTopLevelEntry( CustomTreeEntry *entry );
 		void mousePressEvent( QMouseEvent *event );
 
-		virtual void paintEvent( QPaintEvent* event );
-		virtual void timerEvent( QTimerEvent* event );
-		void registerAnimation( const QModelIndex& area );
+		virtual void paintEvent( QPaintEvent *event );
+		virtual void timerEvent( QTimerEvent *event );
+		void registerAnimation( const QModelIndex &area );
 
 	private slots:
 		void entryClicked( QModelIndex index );
 
 	private:
-		CustomTreeModel* mModel;
-		CustomTreeDelegate* mDelegate;
+		CustomTreeModel *mModel;
+		CustomTreeDelegate *mDelegate;
 		QPoint mLastClickedPoint;
 
 		int mAnimationTimerId;

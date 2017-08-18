@@ -11,7 +11,7 @@
 #include "options/options.h"
 #include "syntax/syntaxhighlighter.h"
 
-CodeEditor::CodeEditor( BaseFile* file, QWidget *parent ) :
+CodeEditor::CodeEditor( BaseFile *file, QWidget *parent ) :
 	QPlainTextEdit( parent ) {
 	mFile = file;
 	mLineNumberWidget = new LineNumberWidget( this );
@@ -109,8 +109,8 @@ void CodeEditor::highlightCurrentLine() {
 	setExtraSelections( extraSelections );
 }
 
-void CodeEditor::applyIndent( QTextCursor& cursor, bool outdent ) {
-	QTextDocument* doc = document();
+void CodeEditor::applyIndent( QTextCursor &cursor, bool outdent ) {
+	QTextDocument *doc = document();
 	int position = cursor.position();
 	int column = 0;
 	int lastTabPosition = 0;
@@ -157,8 +157,8 @@ void CodeEditor::applyIndent( QTextCursor& cursor, bool outdent ) {
 	}
 }
 
-int CodeEditor::firstNonWhiteSpace( const QTextBlock& block ) {
-	QTextDocument* doc = document();
+int CodeEditor::firstNonWhiteSpace( const QTextBlock &block ) {
+	QTextDocument *doc = document();
 	int scan = block.position();
 	int length = block.length();
 	int end = scan + length;
@@ -186,7 +186,7 @@ void CodeEditor::redo() {
 	mFile->endRedoBlock();
 }
 
-void CodeEditor::keyPressEvent( QKeyEvent* event ) {
+void CodeEditor::keyPressEvent( QKeyEvent *event ) {
 	// Take special note of undo/redo key chords, for version tracking
 	bool isUndo = event->matches( QKeySequence::Undo );
 	bool isRedo = event->matches( QKeySequence::Redo );
@@ -248,8 +248,8 @@ void CodeEditor::keyPressEvent( QKeyEvent* event ) {
 	// Keep indent on next line, if options say to
 	if ( Options::IndentMode == Options::KeepIndentOnNextLine ) {
 		if ( event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter ) {
-			const QTextBlock& currentBlock = textCursor().block();
-			const QTextBlock& previousBlock = currentBlock.previous();
+			const QTextBlock &currentBlock = textCursor().block();
+			const QTextBlock &previousBlock = currentBlock.previous();
 
 			if ( previousBlock.isValid() ) {
 				QString previousLine = previousBlock.text();
@@ -277,11 +277,11 @@ void CodeEditor::wheelEvent( QWheelEvent *e ) {
 }
 
 void CodeEditor::updateFont() {
-	QFont* font = new QFont( *Options::EditorFont );
+	QFont *font = new QFont( *Options::EditorFont );
 	font->setWeight( QFont::Normal );
 
 	int pointSize = font->pointSize();
-	pointSize = ( pointSize * Options::EditorFontZoom ) / 100;
+	pointSize = ( pointSize *Options::EditorFontZoom ) / 100;
 	font->setPointSize( pointSize );
 
 	setFont( *font );
@@ -320,7 +320,7 @@ void CodeEditor::deleteLine() {
 
 void CodeEditor::focusInEvent( QFocusEvent *e ) {
 	// Find the EditorStack that owns me...
-	QObject* object;
+	QObject *object;
 	for ( object = this; object != NULL; object = object->parent() ) {
 		if ( strcmp( "EditorPanel", object->metaObject()->className() ) == 0 ) {
 			break;
@@ -331,7 +331,7 @@ void CodeEditor::focusInEvent( QFocusEvent *e ) {
 		return;
 	}
 
-	EditorPanel* editorPanel = ( EditorPanel * ) object;
+	EditorPanel *editorPanel = ( EditorPanel * ) object;
 	editorPanel->takeFocus();
 
 	QPlainTextEdit::focusInEvent( e );

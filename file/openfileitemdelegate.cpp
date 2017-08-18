@@ -20,7 +20,7 @@ void OpenFileItemDelegate::paint( QPainter *painter,
                                   const QStyleOptionViewItem &option,
                                   const QModelIndex &index ) const {
 	Location location = index.data( OpenFileTreeModel::LocationRole ).value< Location >();
-	BaseFile* file = ( BaseFile * ) index.data( OpenFileTreeModel::FileRole ).value< void* >();
+	BaseFile *file = ( BaseFile * ) index.data( OpenFileTreeModel::FileRole ).value< void * >();
 	OpenFileTreeModel::Level level = ( OpenFileTreeModel::Level ) index.data( OpenFileTreeModel::TypeRole ).toInt();
 	QString label = index.data( OpenFileTreeModel::LabelRole ).toString();
 
@@ -51,7 +51,7 @@ void OpenFileItemDelegate::paint( QPainter *painter,
 		// Column 0 contains the label, and if it's a file also the status.
 		QRect labelRect = option.rect;
 
-		QPaintDevice* device = painter->device();
+		QPaintDevice *device = painter->device();
 		painter->end();
 
 		{

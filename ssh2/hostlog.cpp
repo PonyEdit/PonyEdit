@@ -2,7 +2,7 @@
 #include "sshhost.h"
 #include "ui_hostlog.h"
 
-HostLog::HostLog( SshHost* host ) :
+HostLog::HostLog( SshHost *host ) :
 	QWidget( NULL ),
 	ui( new Ui::HostLog ) {
 	ui->setupUi( this );
@@ -16,7 +16,7 @@ HostLog::~HostLog() {
 	delete ui;
 }
 
-void HostLog::closeEvent( QCloseEvent* ) {
+void HostLog::closeEvent( QCloseEvent * ) {
 	this->deleteLater();
 }
 

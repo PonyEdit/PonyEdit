@@ -5,7 +5,7 @@
 #include "main/global.h"
 #include "options.h"
 
-QFont* Options::EditorFont = NULL;
+QFont *Options::EditorFont = NULL;
 int Options::EditorFontZoom;
 int Options::TabStopWidth;
 bool Options::WordWrap;
@@ -22,26 +22,26 @@ Options::FileListTypes Options::FileListType;
 
 int Options::LoggingLevel;
 
-Options* Options::sInstance = NULL;
+Options *Options::sInstance = NULL;
 
-Options* Options::getInstance() {
+Options *Options::getInstance() {
 	if ( ! sInstance ) {
 		sInstance = new Options();
 	}
 	return sInstance;
 }
 
-QVariant Options::get( const QString& key, const QVariant& defaultValue ) {
+QVariant Options::get( const QString &key, const QVariant &defaultValue ) {
 	QSettings settings;
 	return settings.value( key, defaultValue );
 }
 
-void Options::set( const QString& key, const QVariant& value ) {
+void Options::set( const QString &key, const QVariant &value ) {
 	QSettings settings;
 	settings.setValue( key, value );
 }
 
-void Options::autoPersist( QCheckBox* control, const QString& optionKey, bool defaultValue ) {
+void Options::autoPersist( QCheckBox *control, const QString &optionKey, bool defaultValue ) {
 	control->setChecked( get( optionKey, defaultValue ).toBool() );
 	getInstance()->autoPersist( control,
 	                            optionKey,
@@ -49,7 +49,7 @@ void Options::autoPersist( QCheckBox* control, const QString& optionKey, bool de
 	                            SLOT( persistantCheckBoxChanged( bool ) ) );
 }
 
-void Options::autoPersist( QLineEdit* control, const QString& optionKey, const QString& defaultValue ) {
+void Options::autoPersist( QLineEdit *control, const QString &optionKey, const QString &defaultValue ) {
 	control->setText( get( optionKey, defaultValue ).toString() );
 	getInstance()->autoPersist( control,
 	                            optionKey,
@@ -57,16 +57,16 @@ void Options::autoPersist( QLineEdit* control, const QString& optionKey, const Q
 	                            SLOT( persistantLineEditChanged( QString ) ) );
 }
 
-void Options::autoPersist( QWidget* control,
-                           const QString& optionKey,
-                           const char* changedSignal,
-                           const char* persistSlot ) {
+void Options::autoPersist( QWidget *control,
+                           const QString &optionKey,
+                           const char *changedSignal,
+                           const char *persistSlot ) {
 	mPersistantKeys.insert( control, optionKey );
 	connect( control, changedSignal, this, persistSlot );
-	connect( control, SIGNAL( destroyed( QObject* ) ), this, SLOT( endAutoPersist( QObject* ) ) );
+	connect( control, SIGNAL( destroyed( QObject * ) ), this, SLOT( endAutoPersist( QObject * ) ) );
 }
 
-void Options::endAutoPersist( QObject* control ) {
+void Options::endAutoPersist( QObject *control ) {
 	mPersistantKeys.remove( control );
 }
 
@@ -74,11 +74,11 @@ void Options::persistantCheckBoxChanged( bool checked ) {
 	persistValue( QObject::sender(), checked );
 }
 
-void Options::persistantLineEditChanged( const QString& text ) {
+void Options::persistantLineEditChanged( const QString &text ) {
 	persistValue( QObject::sender(), text );
 }
 
-void Options::persistValue( QObject* control, const QVariant& value ) {
+void Options::persistValue( QObject *control, const QVariant &value ) {
 	QString optionKey = mPersistantKeys.value( control );
 	if ( ! optionKey.isEmpty() ) {
 		set( optionKey, value );

@@ -5,10 +5,10 @@
 #include "syntax/syntaxrule.h"
 #include "syntaxdefmanager.h"
 
-QMap< QString, SyntaxRule::Type >* SyntaxRule::sTypeMap;
+QMap< QString, SyntaxRule::Type > *SyntaxRule::sTypeMap;
 bool SyntaxRule::sTypeMapInitialized = false;
 
-SyntaxRule::SyntaxRule( SyntaxRule* parent, const QString& name, const QXmlAttributes& attributes ) :
+SyntaxRule::SyntaxRule( SyntaxRule *parent, const QString &name, const QXmlAttributes &attributes ) :
 	mDefinition( NULL ),
 	mParent( parent ),
 	mName( name ),
@@ -94,7 +94,7 @@ SyntaxRule::SyntaxRule( SyntaxRule* parent, const QString& name, const QXmlAttri
 	}
 }
 
-SyntaxRule::SyntaxRule( SyntaxRule* parent,
+SyntaxRule::SyntaxRule( SyntaxRule *parent,
                         QSharedPointer< SyntaxRule > other,
                         bool duplicateChildren,
                         bool maintainLinks ) :
@@ -156,7 +156,7 @@ void SyntaxRule::addChildRule( QSharedPointer< SyntaxRule > rule ) {
 	mChildRules.append( rule );
 }
 
-void SyntaxRule::applyDynamicCaptures( const QStringList& captures ) {
+void SyntaxRule::applyDynamicCaptures( const QStringList &captures ) {
 	if ( mType == DetectChar || mType == Detect2Chars ) {
 		if ( captures.length() > mDynamicCharIndex ) {
 			mCharacterA = captures[mDynamicCharIndex][0];
@@ -184,7 +184,7 @@ void SyntaxRule::unlink() {
 	mContextLink = SyntaxDefinition::ContextLink();
 }
 
-bool SyntaxRule::link( SyntaxDefinition* def ) {
+bool SyntaxRule::link( SyntaxDefinition *def ) {
 	if ( mLinked ) {
 		return true;
 	}
@@ -215,21 +215,21 @@ bool SyntaxRule::link( SyntaxDefinition* def ) {
 
 	// Rule specific link-ups
 	switch ( mType ) {
-	case RegExpr:
-		if ( ! mDynamic ) {
-			prepareRegExp();
-		}
-		break;
+		case RegExpr:
+			if ( ! mDynamic ) {
+				prepareRegExp();
+			}
+			break;
 
-	case Keyword:
-		mKeywordLink = def->getKeywordList( mString );
-		if ( ! mKeywordLink ) {
-			QLOG_WARN() << "Failed to link syntax keyword list: " << mString;
-			return false;
-		}
-		break;
+		case Keyword:
+			mKeywordLink = def->getKeywordList( mString );
+			if ( ! mKeywordLink ) {
+				QLOG_WARN() << "Failed to link syntax keyword list: " << mString;
+				return false;
+			}
+			break;
 
-	default: break;
+		default: break;
 	}
 
 	if ( getCaseSensitivity() == Qt::CaseSensitive ) {
@@ -299,240 +299,241 @@ int SyntaxRule::match( const QString &string, int position ) {
 	}
 
 	switch ( mType ) {
-	case DetectChar:
-		if ( getCaseSensitivity() == Qt::CaseInsensitive ) {
-			match = ( string.at( position ).toLower() == mCharacterA ? 1 : 0 );
-		} else {
-			match = ( string.at( position ) == mCharacterA ? 1 : 0 );
-		}
-		break;
-
-	case Detect2Chars:
-		if ( position < string.length() - 1 ) {
+		case DetectChar:
 			if ( getCaseSensitivity() == Qt::CaseInsensitive ) {
-				match =
-					( string.at( position ).toLower() == mCharacterA &&
-					  string.at( position + 1 ).toLower() == mCharacterB ? 2 : 0 );
+				match = ( string.at( position ).toLower() == mCharacterA ? 1 : 0 );
 			} else {
-				match =
-					( string.at( position ) == mCharacterA &&
-					  string.at( position + 1 ) == mCharacterB ? 2 : 0 );
+				match = ( string.at( position ) == mCharacterA ? 1 : 0 );
 			}
-		}
-		break;
+			break;
 
-	case AnyChar:
-		if ( mString.contains( string.at( position ) ) ) {
-			match = 1;
-		}
-		break;
-
-	case StringDetect:
-		if ( Tools::compareSubstring( string, mString, position, getCaseSensitivity() ) ) {
-			match = mString.length();
-		}
-		break;
-
-	case WordDetect:
-		if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
-			if ( position == string.length() - mString.length() ||
-			     ( string.length() > position + mString.length() &&
-			       mDefinition->isDeliminator( string.at( position + mString.length() ) ) ) ) {
-				if ( Tools::compareSubstring( string, mString, position, getCaseSensitivity() ) ) {
-					match = mString.length();
+		case Detect2Chars:
+			if ( position < string.length() - 1 ) {
+				if ( getCaseSensitivity() == Qt::CaseInsensitive ) {
+					match =
+						( string.at( position ).toLower() == mCharacterA &&
+						  string.at( position + 1 ).toLower() == mCharacterB ? 2 : 0 );
+				} else {
+					match =
+						( string.at( position ) == mCharacterA &&
+						  string.at( position + 1 ) == mCharacterB ? 2 : 0 );
 				}
 			}
-		}
-		break;
+			break;
 
-	case RegExpr: {
-		if ( mRegExpLineStart && position > 0 ) {
+		case AnyChar:
+			if ( mString.contains( string.at( position ) ) ) {
+				match = 1;
+			}
+			break;
+
+		case StringDetect:
+			if ( Tools::compareSubstring( string, mString, position, getCaseSensitivity() ) ) {
+				match = mString.length();
+			}
+			break;
+
+		case WordDetect:
+			if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
+				if ( position == string.length() - mString.length() ||
+				     ( string.length() > position + mString.length() &&
+				       mDefinition->isDeliminator( string.at( position + mString.length() ) ) ) ) {
+					if ( Tools::compareSubstring( string, mString, position, getCaseSensitivity() ) ) {
+						match = mString.length();
+					}
+				}
+			}
+			break;
+
+		case RegExpr: {
+			if ( mRegExpLineStart && position > 0 ) {
+				break;
+			}
+
+			int index = mRegExp.indexIn( string, position, QRegExp::CaretAtOffset );
+			if ( index == position ) {
+				match = mRegExp.matchedLength();
+			}
 			break;
 		}
 
-		int index = mRegExp.indexIn( string, position, QRegExp::CaretAtOffset );
-		if ( index == position ) {
-			match = mRegExp.matchedLength();
-		}
-		break;
-	}
+		case IncludeRules:
+			QLOG_WARN() << "IncludeRules left in the SyntaxDefinition after linking!";
+			break;
 
-	case IncludeRules:
-		QLOG_WARN() << "IncludeRules left in the SyntaxDefinition after linking!";
-		break;
-
-	case Keyword:
-		if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
-			bool caseSensitive = mDefinition->getKeywordCaseSensitivity();
-			const QChar* s = string.constData() + position;
-			const StringTrie::Node* scan =
-				( caseSensitive ? mKeywordLink->items : mKeywordLink->lcItems ).startScan();
-			int length = 0;
+		case Keyword:
+			if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
+				bool caseSensitive = mDefinition->getKeywordCaseSensitivity();
+				const QChar *s = string.constData() + position;
+				const StringTrie::Node *scan =
+					( caseSensitive ? mKeywordLink->items : mKeywordLink->lcItems ).startScan();
+				int length = 0;
 
 
-			while ( ! s->isNull() && ! mDefinition->isDeliminator( *s ) ) {
-				if ( mKeywordLink->items.continueScan( &scan,
-				                                       static_cast< unsigned char >( caseSensitive ? s->toLatin1() : s->
-				                                                                     toLower().toLatin1() ) ) ) {
-					length++;
-				} else {
-					length = 0;
-					break;
-				}
-
-				s++;
-			}
-			if ( length && mKeywordLink->items.endScan( scan ) ) {
-				match = length;
-			}
-		}
-		break;
-
-	case DetectSpaces:
-		while ( position + match < string.length() && string.at( position + match ).isSpace() ) {
-			match++;
-		}
-		break;
-
-	case HlCOct:
-		if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
-			// Octals start with 0, but have no x like hex. eg; 01562 is octal.
-			if ( string.at( position ) == '0' ) {
-				int lookahead = 1;
-				const QChar* s = string.constData() + position + 1;
-				while ( position + lookahead < string.length() && ( *s >= '0' ) && ( *s <= '7' ) ) {
-					s++, lookahead++;
-				}
-
-				if ( lookahead > 1 ) {
-					match = lookahead;
-				}
-			}
-		}
-		break;
-
-	case Int:
-		if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
-			// Ints are any numbers 0-9
-			const QChar* s = string.constData() + position;
-
-			int extra = 0;
-			if ( *s == '-' ) {
-				extra++, s++;
-			}
-			while ( position + match < string.length() && ( s->isDigit() ) ) {
-				s++, match++;
-			}
-			if ( match ) {
-				match += extra;
-			}
-		}
-		break;
-
-	case DetectIdentifier: {
-		// [a-zA-Z_][a-zA-Z0-9_]*
-		const QChar* s = string.constData() + position;
-		if ( ( *s >= 'a' && *s <= 'z' ) || ( *s >= 'A' && *s <= 'Z' ) || *s == '_' ) {
-			s++;
-			match = 1;
-			while ( position + match < string.length() &&
-			        ( ( *s >= 'a' && *s <= 'z' ) || ( *s >= 'A' && *s <= 'Z' ) || *s == '_' ||
-			          ( *s >= '0' && *s <= '9' ) ) ) {
-				s++, match++;
-			}
-		}
-		break;
-	}
-
-	case Float:
-		if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
-			// [-][0-9]+.[0-9]#+e[0-9]+
-			const QChar* s = string.constData() + position;
-			int extra = 0;
-			bool seenDecimal = false;
-			if ( *s == '-' ) {
-				extra++, s++;
-			}
-			if ( ! s->isNull() && s->isDigit() ) {
-				match++, s++;
-				while ( ! s->isNull() && ( s->isDigit() || *s == '.' || *s == 'e' || *s == 'E' ) ) {
-					if ( *s == '.' ) {
-						seenDecimal = true;
+				while ( ! s->isNull() && ! mDefinition->isDeliminator( *s ) ) {
+					if ( mKeywordLink->items.continueScan( &scan,
+					                                       static_cast< unsigned char >( caseSensitive ? s->toLatin1() :
+					                                                                     s->
+					                                                                     toLower().toLatin1() ) ) ) {
+						length++;
+					} else {
+						length = 0;
+						break;
 					}
-					match++, s++;
-				}
-				match += extra;
-			}
-			if ( ! seenDecimal ) {
-				match = false;
-			}
-		}
-		break;
 
-	case HlCHex:
-		if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
-			// [-]0x[0-9]+
-			const QChar* s = string.constData() + position;
-			int extra = 0;
-			if ( *s == '-' ) {
-				extra++, s++;
+					s++;
+				}
+				if ( length && mKeywordLink->items.endScan( scan ) ) {
+					match = length;
+				}
 			}
-			if ( *( s++ ) == '0' ) {
-				if ( *( s++ ) == 'x' ) {
-					while ( ! s->isNull() &&
-					        ( s->isDigit() || ( *s >= 'A' && *s <= 'F' ) ||
-					          ( *s >= 'a' && *s <= 'f' ) ) ) {
+			break;
+
+		case DetectSpaces:
+			while ( position + match < string.length() && string.at( position + match ).isSpace() ) {
+				match++;
+			}
+			break;
+
+		case HlCOct:
+			if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
+				// Octals start with 0, but have no x like hex. eg; 01562 is octal.
+				if ( string.at( position ) == '0' ) {
+					int lookahead = 1;
+					const QChar *s = string.constData() + position + 1;
+					while ( position + lookahead < string.length() && ( *s >= '0' ) && ( *s <= '7' ) ) {
+						s++, lookahead++;
+					}
+
+					if ( lookahead > 1 ) {
+						match = lookahead;
+					}
+				}
+			}
+			break;
+
+		case Int:
+			if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
+				// Ints are any numbers 0-9
+				const QChar *s = string.constData() + position;
+
+				int extra = 0;
+				if ( *s == '-' ) {
+					extra++, s++;
+				}
+				while ( position + match < string.length() && ( s->isDigit() ) ) {
+					s++, match++;
+				}
+				if ( match ) {
+					match += extra;
+				}
+			}
+			break;
+
+		case DetectIdentifier: {
+			// [a-zA-Z_][a-zA-Z0-9_]*
+			const QChar *s = string.constData() + position;
+			if ( ( *s >= 'a' && *s <= 'z' ) || ( *s >= 'A' && *s <= 'Z' ) || *s == '_' ) {
+				s++;
+				match = 1;
+				while ( position + match < string.length() &&
+				        ( ( *s >= 'a' && *s <= 'z' ) || ( *s >= 'A' && *s <= 'Z' ) || *s == '_' ||
+				          ( *s >= '0' && *s <= '9' ) ) ) {
+					s++, match++;
+				}
+			}
+			break;
+		}
+
+		case Float:
+			if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
+				// [-][0-9]+.[0-9]#+e[0-9]+
+				const QChar *s = string.constData() + position;
+				int extra = 0;
+				bool seenDecimal = false;
+				if ( *s == '-' ) {
+					extra++, s++;
+				}
+				if ( ! s->isNull() && s->isDigit() ) {
+					match++, s++;
+					while ( ! s->isNull() && ( s->isDigit() || *s == '.' || *s == 'e' || *s == 'E' ) ) {
+						if ( *s == '.' ) {
+							seenDecimal = true;
+						}
 						match++, s++;
 					}
-					if ( match > 0 ) {
-						match += 2 + extra;
+					match += extra;
+				}
+				if ( ! seenDecimal ) {
+					match = false;
+				}
+			}
+			break;
+
+		case HlCHex:
+			if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
+				// [-]0x[0-9]+
+				const QChar *s = string.constData() + position;
+				int extra = 0;
+				if ( *s == '-' ) {
+					extra++, s++;
+				}
+				if ( *( s++ ) == '0' ) {
+					if ( *( s++ ) == 'x' ) {
+						while ( ! s->isNull() &&
+						        ( s->isDigit() || ( *s >= 'A' && *s <= 'F' ) ||
+						          ( *s >= 'a' && *s <= 'f' ) ) ) {
+							match++, s++;
+						}
+						if ( match > 0 ) {
+							match += 2 + extra;
+						}
 					}
 				}
 			}
+			break;
+
+		case HlCStringChar:
+			match = detectStringChar( string, position );
+			break;
+
+		case HlCChar: {
+			const QChar *s = string.constData() + position;
+			if ( *s == '\'' ) {
+				s++;
+				if ( s->isNull() ) {
+					return 0;
+				}
+
+				int innerLen = 1;
+				if ( *s == '\\' ) {
+					innerLen = detectStringChar( string, position + 1 );
+				}
+
+				s += innerLen;
+				if ( ! s->isNull() && *s == '\'' ) {
+					match = innerLen + 2;
+				}
+			}
+			break;
 		}
-		break;
 
-	case HlCStringChar:
-		match = detectStringChar( string, position );
-		break;
-
-	case HlCChar: {
-		const QChar* s = string.constData() + position;
-		if ( *s == '\'' ) {
-			s++;
-			if ( s->isNull() ) {
-				return 0;
+		case RangeDetect:
+			if ( string[position] == mCharacterA ) {
+				int end = string.indexOf( mCharacterB, position + 1 );
+				if ( end > position ) {
+					match = end - position;
+				}
 			}
+			break;
 
-			int innerLen = 1;
-			if ( *s == '\\' ) {
-				innerLen = detectStringChar( string, position + 1 );
+		case LineContinue:
+			if ( position == string.length() - 1 ) {
+				if ( string.at( position ) == '\\' ) {
+					match = 1;
+				}
 			}
-
-			s += innerLen;
-			if ( ! s->isNull() && *s == '\'' ) {
-				match = innerLen + 2;
-			}
-		}
-		break;
-	}
-
-	case RangeDetect:
-		if ( string[position] == mCharacterA ) {
-			int end = string.indexOf( mCharacterB, position + 1 );
-			if ( end > position ) {
-				match = end - position;
-			}
-		}
-		break;
-
-	case LineContinue:
-		if ( position == string.length() - 1 ) {
-			if ( string.at( position ) == '\\' ) {
-				match = 1;
-			}
-		}
-		break;
+			break;
 	}
 
 	// If this rule matches, check for child matches too
@@ -549,8 +550,8 @@ int SyntaxRule::match( const QString &string, int position ) {
 	return match;
 }
 
-int SyntaxRule::detectStringChar( const QString& string, int position ) {
-	const QChar* s = string.constData() + position;
+int SyntaxRule::detectStringChar( const QString &string, int position ) {
+	const QChar *s = string.constData() + position;
 	if ( *s == '\\' ) {
 		s++;
 		if ( s->isNull() ) {
@@ -558,18 +559,18 @@ int SyntaxRule::detectStringChar( const QString& string, int position ) {
 		}
 
 		switch ( s->toLatin1() ) {
-		case 'a':
-		case 'b':
-		case 'f':
-		case 'n':
-		case 'r':
-		case 't':
-		case 'v':
-		case '\'':
-		case '"':
-		case '\\':
-		case '?':
-			return 2;
+			case 'a':
+			case 'b':
+			case 'f':
+			case 'n':
+			case 'r':
+			case 't':
+			case 'v':
+			case '\'':
+			case '"':
+			case '\\':
+			case '?':
+				return 2;
 		}
 
 		int nLength = 0;

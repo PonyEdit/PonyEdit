@@ -13,9 +13,9 @@ class ServerRequest : QObject {
 	public:
 		enum ErrorFlags { PermissionError = 0x01, ConnectionError = 0x02 };
 
-		explicit ServerRequest( ServerFile* file,
-		                        const QByteArray& request,
-		                        const QVariant& parameters,
+		explicit ServerRequest( ServerFile *file,
+		                        const QByteArray &request,
+		                        const QVariant &parameters,
 		                        const Callback &callback );
 
 		inline void setMessageId( int messageId ) {
@@ -26,38 +26,38 @@ class ServerRequest : QObject {
 			return mMessageId;
 		}
 
-		inline ServerFile* getFile() const {
+		inline ServerFile *getFile() const {
 			return mFile;
 		}
 
-		inline const QByteArray& getRequest() const {
+		inline const QByteArray &getRequest() const {
 			return mRequest;
 		}
 
 		// Requests to open files don't pass a file ptr in to the constructor; the attach this separate opening
 		// file pointer. This is because server channels use the mFile pointer to lock file-bound requests to
 		// the channels with corresponding bufferIds.
-		inline ServerFile* getOpeningFile() const {
+		inline ServerFile *getOpeningFile() const {
 			return mOpeningFile;
 		}
 
-		inline void setOpeningFile( ServerFile* file ) {
+		inline void setOpeningFile( ServerFile *file ) {
 			mOpeningFile = file;
 		}
 
-		inline const QByteArray& getPackedRequest( int bufferId ) {
+		inline const QByteArray &getPackedRequest( int bufferId ) {
 			return mPackedRequest.isNull() ? prepare( bufferId ) : mPackedRequest;
 		}
 
-		void handleReply( const QVariantMap& reply );
-		void failRequest( const QString& error, int errorFlags );
+		void handleReply( const QVariantMap &reply );
+		void failRequest( const QString &error, int errorFlags );
 
 	signals:
 		void requestSuccess( QVariantMap results );
 		void requestFailure( QString error, int errorFlags );
 
 	private:
-		const QByteArray& prepare( int bufferId );
+		const QByteArray &prepare( int bufferId );
 
 		QPointer< ServerFile > mFile;
 		QPointer< ServerFile > mOpeningFile;

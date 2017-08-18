@@ -4,7 +4,7 @@
 #include "globaldispatcher.h"
 #include "windowmanager.h"
 
-EditorPanel::EditorPanel( QWidget* parent, EditorPanel* parentPanel, EditorStack* inheritedStack ) :
+EditorPanel::EditorPanel( QWidget *parent, EditorPanel *parentPanel, EditorStack *inheritedStack ) :
 	QFrame( parent ) {
 	mParentPanel = parentPanel;
 	mLayout = new QVBoxLayout( this );
@@ -41,23 +41,23 @@ void EditorPanel::setupBorder() {
 	}
 }
 
-void EditorPanel::displayEditor( Editor* editor ) {
+void EditorPanel::displayEditor( Editor *editor ) {
 	if ( isSplit() ) {
 		return;
 	}
 	mEditorStack->displayEditor( editor );
 }
 
-void EditorPanel::displayFile( BaseFile* file ) {
+void EditorPanel::displayFile( BaseFile *file ) {
 	if ( isSplit() ) {
 		return;
 	}
 	mEditorStack->displayFile( file );
 }
 
-void EditorPanel::fileClosed( BaseFile* file ) {
+void EditorPanel::fileClosed( BaseFile *file ) {
 	if ( isSplit() ) {
-		foreach ( EditorPanel * child, mChildPanels ) {
+		foreach ( EditorPanel *child, mChildPanels ) {
 			child->fileClosed( file );
 		}
 	} else {
@@ -93,12 +93,12 @@ void EditorPanel::unsplit() {
 		return;
 	}
 
-	EditorPanel* currentEditor = gWindowManager->getCurrentPanel();
+	EditorPanel *currentEditor = gWindowManager->getCurrentPanel();
 
 	// Pick which descendant to keep during the unsplit. Attempt 1: See if
 	// the current panel is a child of this split panel.
-	EditorPanel* keeper = NULL;
-	EditorPanel* scanCurrent = currentEditor;
+	EditorPanel *keeper = NULL;
+	EditorPanel *scanCurrent = currentEditor;
 	while ( scanCurrent != NULL && scanCurrent != this ) {
 		scanCurrent = scanCurrent->getParentPanel();
 	}
@@ -115,7 +115,7 @@ void EditorPanel::unsplit() {
 	}
 
 	// Remove the keeper's editor stack
-	EditorStack* keepStack = keeper->mEditorStack;
+	EditorStack *keepStack = keeper->mEditorStack;
 	keeper->layout()->removeWidget( keepStack );
 	keepStack->setParent( NULL );
 
@@ -147,12 +147,12 @@ void EditorPanel::split( Qt::Orientation orientation ) {
 	setupBorder();
 
 	// Left/Top editor stack
-	EditorPanel* stackA = new EditorPanel( mSplitWidget, this, mEditorStack );
+	EditorPanel *stackA = new EditorPanel( mSplitWidget, this, mEditorStack );
 	mChildPanels.append( stackA );
 	mSplitWidget->addWidget( stackA );
 
 	// Right/Bottom editor stack
-	EditorPanel* stackB = new EditorPanel( mSplitWidget, this );
+	EditorPanel *stackB = new EditorPanel( mSplitWidget, this );
 	mChildPanels.append( stackB );
 	mSplitWidget->addWidget( stackB );
 
@@ -171,16 +171,16 @@ void EditorPanel::split( Qt::Orientation orientation ) {
 	}
 }
 
-EditorPanel* EditorPanel::findStack( Editor* editor ) {
+EditorPanel *EditorPanel::findStack( Editor *editor ) {
 	if ( isSplit() ) {
-		foreach ( EditorPanel * child, mChildPanels ) {
-			EditorPanel* childResult = child->findStack( editor );
+		foreach ( EditorPanel *child, mChildPanels ) {
+			EditorPanel *childResult = child->findStack( editor );
 			if ( childResult != NULL ) {
 				return childResult;
 			}
 		}
 	} else {
-		foreach ( QObject * child, mEditorStack->children() ) {
+		foreach ( QObject *child, mEditorStack->children() ) {
 			if ( child == editor ) {
 				return this;
 			}
@@ -193,19 +193,19 @@ EditorPanel* EditorPanel::findStack( Editor* editor ) {
 void EditorPanel::takeFocus() {
 	gWindowManager->setCurrentEditorPanel( this );
 
-	Editor* editor = getCurrentEditor();
+	Editor *editor = getCurrentEditor();
 	if ( editor != NULL && editor->getFile() != NULL ) {
 		gDispatcher->emitSelectFile( editor->getFile() );
 	}
 }
 
-Editor* EditorPanel::getCurrentEditor() const {
+Editor *EditorPanel::getCurrentEditor() const {
 	return mEditorStack->getCurrentEditor();
 }
 
-EditorPanel* EditorPanel::findNextPanel() {
+EditorPanel *EditorPanel::findNextPanel() {
 	// Walk up the tree until we run out of tree, or find a first child.
-	EditorPanel* scan = this;
+	EditorPanel *scan = this;
 	while ( scan->mParentPanel != NULL && scan->mParentPanel->getSecondChild() == scan ) {
 		scan = scan->mParentPanel;
 	}
@@ -225,9 +225,9 @@ EditorPanel* EditorPanel::findNextPanel() {
 	return scan;
 }
 
-EditorPanel* EditorPanel::findPreviousPanel() {
+EditorPanel *EditorPanel::findPreviousPanel() {
 	// Walk up the tree until we run out of tree, or find a second child.
-	EditorPanel* scan = this;
+	EditorPanel *scan = this;
 	while ( scan->mParentPanel != NULL && scan->mParentPanel->getFirstChild() == scan ) {
 		scan = scan->mParentPanel;
 	}

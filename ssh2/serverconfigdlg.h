@@ -15,7 +15,7 @@ class ServerConfigDlg : public QDialog {
 		explicit ServerConfigDlg( QWidget *parent = 0 );
 		~ServerConfigDlg();
 
-		void setEditHost( SshHost* host );
+		void setEditHost( SshHost *host );
 
 	private:
 		Ui::ServerConfigDlg *ui;

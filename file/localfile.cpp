@@ -2,7 +2,7 @@
 
 #include "localfile.h"
 
-LocalFile::LocalFile( const Location& location ) :
+LocalFile::LocalFile( const Location &location ) :
 	BaseFile( location ) {
 	connect( this,
 	         SIGNAL( localFileOpened( QString, QByteArray, bool ) ),
@@ -11,7 +11,7 @@ LocalFile::LocalFile( const Location& location ) :
 	         Qt::QueuedConnection );
 }
 
-BaseFile* LocalFile::newFile( const QString& content ) {
+BaseFile *LocalFile::newFile( const QString &content ) {
 	mContent = content;
 
 	save();

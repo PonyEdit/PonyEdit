@@ -22,19 +22,19 @@ class SiteManager : public QObject {
 
 	public slots:
 		void checkForUpdates( bool forceNotification = false );
-		void handleReply( QNetworkReply* reply );
+		void handleReply( QNetworkReply *reply );
 
 	signals:
-		void updateAvailable( const QVariantMap& version, const QVariantMap& changes );
+		void updateAvailable( const QVariantMap &version, const QVariantMap &changes );
 		void noUpdateAvailable();
 
 	private:
 		void handleUpdateCheckReply( QList< QVariant > reply, bool forceNotification );
 
-		QNetworkAccessManager* mManager;
-		QMap< QNetworkReply*, Messages > mReplies;
+		QNetworkAccessManager *mManager;
+		QMap< QNetworkReply *, Messages > mReplies;
 };
 
-extern SiteManager* gSiteManager;
+extern SiteManager *gSiteManager;
 
 #endif  // SITEMANAGER_H

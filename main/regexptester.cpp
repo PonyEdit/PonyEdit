@@ -77,15 +77,15 @@ void RegExpTester::updateResult() {
 		int length = regExp.matchedLength();
 		ui->matchedText->setText( QString( "\"" ) + data.mid( index, length > 100 ? 100 : length ) + "\"" );
 
-		quint32* color = captureColors;
-		quint32* colorEnd = captureColors + ( sizeof( captureColors ) / sizeof( quint32 ) );
+		quint32 *color = captureColors;
+		quint32 *colorEnd = captureColors + ( sizeof( captureColors ) / sizeof( quint32 ) );
 
 		QTextCursor cursor( ui->testData->document() );
 		cursor.movePosition( QTextCursor::End, QTextCursor::KeepAnchor );
 		cursor.setCharFormat( QTextCharFormat() );
 
 		for ( int i = 1; i <= regExp.captureCount(); i++ ) {
-			QListWidgetItem* item = new QListWidgetItem( regExp.cap( i ) );
+			QListWidgetItem *item = new QListWidgetItem( regExp.cap( i ) );
 			item->setBackgroundColor( QColor( *color ) );
 			ui->captures->addItem( item );
 

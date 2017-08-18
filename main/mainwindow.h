@@ -31,19 +31,19 @@ class MainWindow : public QMainWindow {
 		void newFile();
 		void openFile();
 		void openSingleFile();
-		void openSingleFile( const Location& loc );
+		void openSingleFile( const Location &loc );
 		void saveFile();
 		void saveFileAs();
 		void saveAllFiles();
 		void closeFile();
 		void closeAllFiles();
 		void closeAllExceptCurrentFile();
-		void fileSelected( BaseFile* file );
+		void fileSelected( BaseFile *file );
 
 		void print();
 
 		void updateTitle();
-		void updateTitle( BaseFile* file );
+		void updateTitle( BaseFile *file );
 
 		void undo();
 		void redo();
@@ -83,21 +83,21 @@ class MainWindow : public QMainWindow {
 		void currentEditorChanged();
 		void updateSyntaxSelection();
 
-		Editor* getCurrentEditor();
+		Editor *getCurrentEditor();
 
 		void openFileListChanged();
 		void viewSplittingChanged();
 
-		void registerContextMenuItem( QDockWidget* widget ) {
+		void registerContextMenuItem( QDockWidget *widget ) {
 			mMenuControlledDockWidgets.append( widget );
 		}
 
-		void registerContextMenuItem( QToolBar* toolbar ) {
+		void registerContextMenuItem( QToolBar *toolbar ) {
 			mMenuControlledToolBar.append( toolbar );
 		}
 
 	protected:
-		void closeEvent( QCloseEvent* event );
+		void closeEvent( QCloseEvent *event );
 		void dragEnterEvent( QDragEnterEvent * );
 		void dropEvent( QDropEvent * );
 
@@ -123,31 +123,31 @@ class MainWindow : public QMainWindow {
 
 		void nextStartupPrompt();
 
-		FileList* mFileList;
-		TabbedFileList* mTabbedFileList;
-		QStatusBar* mStatusBar;
-		QLabel* mStatusLine;
+		FileList *mFileList;
+		TabbedFileList *mTabbedFileList;
+		QStatusBar *mStatusBar;
+		QLabel *mStatusLine;
 
 		QList< Location > mRecentFiles;
-		QMenu* mRecentFilesMenu;
+		QMenu *mRecentFilesMenu;
 
-		QAction* mQuickListMenuItem;
-		QAction* mTabbedListMenuItem;
+		QAction *mQuickListMenuItem;
+		QAction *mTabbedListMenuItem;
 
-		QList< QAction* > mActionsRequiringFiles;
-		QList< QAction* > mActionsRequiringSplitViews;
+		QList< QAction * > mActionsRequiringFiles;
+		QList< QAction * > mActionsRequiringSplitViews;
 
-		QMap< QString, QAction* > mSyntaxMenuEntries;
-		QAction* mCurrentSyntaxMenuItem;
-		QMenu* mSyntaxMenu;
+		QMap< QString, QAction * > mSyntaxMenuEntries;
+		QAction *mCurrentSyntaxMenuItem;
+		QMenu *mSyntaxMenu;
 
-		QList< QDockWidget* > mMenuControlledDockWidgets;
-		QList< QToolBar* > mMenuControlledToolBar;
-		UnsavedChangesDialog* mUnsavedChangesDialog;
+		QList< QDockWidget * > mMenuControlledDockWidgets;
+		QList< QToolBar * > mMenuControlledToolBar;
+		UnsavedChangesDialog *mUnsavedChangesDialog;
 
 		bool mWasMaximized;
 };
 
-extern MainWindow* gMainWindow;
+extern MainWindow *gMainWindow;
 
 #endif  // MAINWINDOW_H

@@ -6,7 +6,7 @@
 #include "searchresultdelegate.h"
 #include "searchresultmodel.h"
 
-SearchResultDelegate::SearchResultDelegate( SearchResultModel* model, QObject *parent ) :
+SearchResultDelegate::SearchResultDelegate( SearchResultModel *model, QObject *parent ) :
 	QStyledItemDelegate( parent ) {
 	mModel = model;
 }
@@ -16,7 +16,7 @@ void SearchResultDelegate::paint( QPainter *painter,
                                   const QModelIndex &index ) const {
 	QStyledItemDelegate::paint( painter, option, index );
 
-	SearchResultModel::Result* result = mModel->getResultForIndex( index );
+	SearchResultModel::Result *result = mModel->getResultForIndex( index );
 	if ( result ) {
 		painter->setFont( *Options::EditorFont );
 

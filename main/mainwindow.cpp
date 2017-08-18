@@ -98,15 +98,15 @@ MainWindow::MainWindow( QWidget *parent )
 	         this,
 	         SLOT( showStatusMessage( QString ) ),
 	         Qt::QueuedConnection );
-	connect( gDispatcher, SIGNAL( selectFile( BaseFile* ) ), this, SLOT( fileSelected( BaseFile* ) ) );
+	connect( gDispatcher, SIGNAL( selectFile( BaseFile * ) ), this, SLOT( fileSelected( BaseFile * ) ) );
 	connect( gWindowManager,
 	         SIGNAL( currentChanged() ),
 	         this,
 	         SLOT( currentEditorChanged() ),
 	         Qt::QueuedConnection );
-	connect( gDispatcher, SIGNAL( syntaxChanged( BaseFile* ) ), this, SLOT( updateSyntaxSelection() ) );
-	connect( &gOpenFileManager, SIGNAL( fileOpened( BaseFile* ) ), this, SLOT( openFileListChanged() ) );
-	connect( &gOpenFileManager, SIGNAL( fileClosed( BaseFile* ) ), this, SLOT( openFileListChanged() ) );
+	connect( gDispatcher, SIGNAL( syntaxChanged( BaseFile * ) ), this, SLOT( updateSyntaxSelection() ) );
+	connect( &gOpenFileManager, SIGNAL( fileOpened( BaseFile * ) ), this, SLOT( openFileListChanged() ) );
+	connect( &gOpenFileManager, SIGNAL( fileClosed( BaseFile * ) ), this, SLOT( openFileListChanged() ) );
 	connect( gWindowManager, SIGNAL( splitChanged() ), this, SLOT( viewSplittingChanged() ) );
 
 	mRecentFiles = Tools::loadRecentFiles();
@@ -136,7 +136,7 @@ void MainWindow::createToolbar() {
 	// Main toolbar
 	//
 
-	QToolBar* toolbar = new QToolBar( "File Toolbar" );
+	QToolBar *toolbar = new QToolBar( "File Toolbar" );
 	toolbar->addAction( QIcon( ":/icons/new.png" ), "New", this, SLOT( newFile() ) );
 	toolbar->addAction( QIcon( ":/icons/open.png" ), "Open", this, SLOT( openFile() ) );
 	mActionsRequiringFiles.append( toolbar->addAction( QIcon( ":/icons/save.png" ),
@@ -150,7 +150,7 @@ void MainWindow::createToolbar() {
 	registerContextMenuItem( toolbar );
 	toolbar->setObjectName( "File Toolbar" );
 
-	QWidget* spacer = new QWidget();
+	QWidget *spacer = new QWidget();
 	spacer->setSizePolicy( QSizePolicy::Maximum, QSizePolicy::Expanding );
 	toolbar->addWidget( spacer );
 
@@ -186,7 +186,7 @@ void MainWindow::createToolbar() {
 void MainWindow::newFile() {
 	QString path = "";
 	Location location( path );
-	BaseFile* file = location.getFile();
+	BaseFile *file = location.getFile();
 
 	gWindowManager->displayFile( file );
 
@@ -220,15 +220,15 @@ void MainWindow::openFile() {
 }
 
 void MainWindow::openSingleFile() {
-	QAction* action = static_cast< QAction* >( sender() );
+	QAction *action = static_cast< QAction * >( sender() );
 	if ( action ) {
 		openSingleFile( mRecentFiles[action->data().toInt()] );
 	}
 }
 
-void MainWindow::openSingleFile( const Location& loc ) {
+void MainWindow::openSingleFile( const Location &loc ) {
 	if ( ! loc.isDirectory() ) {
-		BaseFile* file;
+		BaseFile *file;
 		try {
 			file = Location( loc ).getFile();
 		} catch ( QString &e ) {
@@ -252,7 +252,7 @@ void MainWindow::openSingleFile( const Location& loc ) {
 }
 
 void MainWindow::saveFile() {
-	Editor* current = gWindowManager->currentEditor();
+	Editor *current = gWindowManager->currentEditor();
 	if ( current ) {
 		if ( current->getFile()->getLocation().getProtocol() == Location::Unsaved ) {
 			saveFileAs();
@@ -267,7 +267,7 @@ void MainWindow::saveFile() {
 }
 
 void MainWindow::saveFileAs() {
-	Editor* current = gWindowManager->currentEditor();
+	Editor *current = gWindowManager->currentEditor();
 	if ( current == NULL ) {
 		return;
 	}
@@ -293,15 +293,15 @@ void MainWindow::saveFileAs() {
 }
 
 void MainWindow::saveAllFiles() {
-	QList< BaseFile* > unsavedFiles = gOpenFileManager.getUnsavedFiles( gOpenFileManager.getOpenFiles() );
+	QList< BaseFile * > unsavedFiles = gOpenFileManager.getUnsavedFiles( gOpenFileManager.getOpenFiles() );
 
-	foreach ( BaseFile * file, unsavedFiles ) {
+	foreach ( BaseFile *file, unsavedFiles ) {
 		file->save();
 	}
 }
 
 void MainWindow::closeFile() {
-	Editor* current = gWindowManager->currentEditor();
+	Editor *current = gWindowManager->currentEditor();
 	if ( current ) {
 		QList< BaseFile * > files;
 		files.append( current->getFile() );
@@ -315,18 +315,18 @@ void MainWindow::closeAllFiles() {
 }
 
 void MainWindow::closeAllExceptCurrentFile() {
-	QList< BaseFile* > openFiles = gOpenFileManager.getOpenFiles();
+	QList< BaseFile * > openFiles = gOpenFileManager.getOpenFiles();
 
-	BaseFile* current = gWindowManager->currentEditor()->getFile();
+	BaseFile *current = gWindowManager->currentEditor()->getFile();
 
-	foreach ( BaseFile * file, openFiles ) {
+	foreach ( BaseFile *file, openFiles ) {
 		if ( file != current ) {
 			file->close();
 		}
 	}
 }
 
-void MainWindow::fileSelected( BaseFile* file ) {
+void MainWindow::fileSelected( BaseFile *file ) {
 	if ( ! file ) {
 		return;
 	}
@@ -337,15 +337,15 @@ void MainWindow::fileSelected( BaseFile* file ) {
 }
 
 void MainWindow::updateTitle() {
-	BaseFile* file = static_cast< BaseFile* >( sender() );
+	BaseFile *file = static_cast< BaseFile * >( sender() );
 	if ( file->isClosed() ) {
 		setWindowTitle( "PonyEdit" );
 		return;
 	}
-	QList< Editor* > editors = file->getAttachedEditors();
+	QList< Editor * > editors = file->getAttachedEditors();
 
 	bool current = false;
-	foreach ( Editor * editor, editors ) {
+	foreach ( Editor *editor, editors ) {
 		if ( editor == gWindowManager->currentEditor() ) {
 			current = true;
 		}
@@ -356,7 +356,7 @@ void MainWindow::updateTitle() {
 	}
 }
 
-void MainWindow::updateTitle( BaseFile* file ) {
+void MainWindow::updateTitle( BaseFile *file ) {
 	bool modified = false;
 	QString title = "PonyEdit - ";
 	title += file->getLocation().getLabel();
@@ -389,7 +389,7 @@ void MainWindow::about() {
 }
 
 void MainWindow::contextHelp() {
-	Editor* editor = this->getCurrentEditor();
+	Editor *editor = this->getCurrentEditor();
 	if ( ! editor ) {
 		return;
 	}
@@ -709,7 +709,7 @@ void MainWindow::createEditMenu() {
 }
 
 void MainWindow::createViewMenu() {
-	QMenu* viewMenu = new QMenu( tr( "&View" ), this );
+	QMenu *viewMenu = new QMenu( tr( "&View" ), this );
 	menuBar()->addMenu( viewMenu );
 
 	mActionsRequiringFiles.append( viewMenu->addAction( tr( "&Actual Size" ),
@@ -717,14 +717,14 @@ void MainWindow::createViewMenu() {
 	                                                    SLOT( resetZoom() ),
 	                                                    QKeySequence( Qt::CTRL + Qt::Key_0 ) ) );
 
-	QAction* zoomIn = viewMenu->addAction( tr( "Zoom &In" ), this, SLOT( zoomIn() ) );
+	QAction *zoomIn = viewMenu->addAction( tr( "Zoom &In" ), this, SLOT( zoomIn() ) );
 	mActionsRequiringFiles.append( zoomIn );
 	QList< QKeySequence > zoomInShortcuts;
 	zoomInShortcuts.append( QKeySequence::ZoomIn );
 	zoomInShortcuts.append( QKeySequence( Qt::CTRL + Qt::Key_Equal ) );
 	zoomIn->setShortcuts( zoomInShortcuts );
 
-	QAction* zoomOut = viewMenu->addAction( tr( "Zoom &Out" ), this, SLOT( zoomOut() ) );
+	QAction *zoomOut = viewMenu->addAction( tr( "Zoom &Out" ), this, SLOT( zoomOut() ) );
 	mActionsRequiringFiles.append( zoomOut );
 	QList< QKeySequence > zoomOutShortcuts;
 	zoomOutShortcuts.append( QKeySequence::ZoomOut );
@@ -751,20 +751,20 @@ void MainWindow::createViewMenu() {
 	viewMenu->addMenu( mSyntaxMenu );
 	mSyntaxMenu->setEnabled( false );
 
-	QAction* action = mSyntaxMenu->addAction( tr( "(No Highlighting)" ), this, SLOT( syntaxMenuOptionClicked() ) );
+	QAction *action = mSyntaxMenu->addAction( tr( "(No Highlighting)" ), this, SLOT( syntaxMenuOptionClicked() ) );
 	action->setCheckable( true );
 	mSyntaxMenuEntries.insert( QString(), action );
 
 	QStringList categories = gSyntaxDefManager->getDefinitionCategories();
 	categories.sort();
 	foreach ( const QString &category, categories ) {
-		QMenu* syntaxSubMenu = new QMenu( category, viewMenu );
+		QMenu *syntaxSubMenu = new QMenu( category, viewMenu );
 		mSyntaxMenu->addMenu( syntaxSubMenu );
 
 		QStringList syntaxes = gSyntaxDefManager->getSyntaxesInCategory( category );
 		syntaxes.sort();
 		foreach ( const QString &syntax, syntaxes ) {
-			QAction* action = syntaxSubMenu->addAction( syntax, this, SLOT( syntaxMenuOptionClicked() ) );
+			QAction *action = syntaxSubMenu->addAction( syntax, this, SLOT( syntaxMenuOptionClicked() ) );
 			action->setData( syntax );
 			action->setCheckable( true );
 			mSyntaxMenuEntries.insert( syntax, action );
@@ -913,7 +913,7 @@ void MainWindow::selectAll() {
 }
 
 void MainWindow::deleteLine() {
-	Editor* current = gWindowManager->currentEditor();
+	Editor *current = gWindowManager->currentEditor();
 	if ( current ) {
 		current->deleteLine();
 	}
@@ -922,7 +922,7 @@ void MainWindow::deleteLine() {
 void MainWindow::showGotoLine() {
 	GotoLineDialog dlg( this );
 	if ( dlg.exec() ) {
-		Editor* current = gWindowManager->currentEditor();
+		Editor *current = gWindowManager->currentEditor();
 		if ( current ) {
 			current->gotoLine( dlg.lineNumber() );
 		}
@@ -935,7 +935,7 @@ void MainWindow::showAdvancedSearch() {
 	dlg.exec();
 }
 
-void MainWindow::closeEvent( QCloseEvent* event ) {
+void MainWindow::closeEvent( QCloseEvent *event ) {
 	nextStartupPrompt();
 	Tools::saveCurrentFiles();
 
@@ -965,18 +965,18 @@ void MainWindow::nextStartupPrompt() {
 }
 
 void MainWindow::syntaxMenuOptionClicked() {
-	QObject* eventSource = QObject::sender();
-	QAction* action = static_cast< QAction* >( eventSource );
+	QObject *eventSource = QObject::sender();
+	QAction *action = static_cast< QAction * >( eventSource );
 	QString syntaxName = action->data().toString();
 
-	Editor* currentEditor = getCurrentEditor();
+	Editor *currentEditor = getCurrentEditor();
 	if ( ! currentEditor ) {
 		return;
 	}
 	currentEditor->getFile()->setSyntax( syntaxName );
 }
 
-Editor* MainWindow::getCurrentEditor() {
+Editor *MainWindow::getCurrentEditor() {
 	return gWindowManager->currentEditor();
 }
 
@@ -990,10 +990,10 @@ void MainWindow::updateSyntaxSelection() {
 		mCurrentSyntaxMenuItem = NULL;
 	}
 
-	Editor* editor = getCurrentEditor();
+	Editor *editor = getCurrentEditor();
 	if ( editor ) {
 		mSyntaxMenu->setEnabled( true );
-		BaseFile* file = editor->getFile();
+		BaseFile *file = editor->getFile();
 		QString syntaxName = file->getSyntax();
 		mCurrentSyntaxMenuItem = mSyntaxMenuEntries.value( syntaxName, NULL );
 		if ( mCurrentSyntaxMenuItem != NULL ) {
@@ -1008,7 +1008,7 @@ void MainWindow::updateRecentFilesMenu() {
 	mRecentFilesMenu->clear();
 
 	for ( int ii = 0; ii < mRecentFiles.length(); ii++ ) {
-		QAction* action =
+		QAction *action =
 			mRecentFilesMenu->addAction( mRecentFiles[ii].getDisplayPath(),
 			                             this,
 			                             SLOT( openSingleFile() ) );
@@ -1064,8 +1064,8 @@ void MainWindow::dropEvent( QDropEvent *event ) {
 }
 
 void MainWindow::showHTMLPreview() {
-	HTMLPreview* htmlPreview = new HTMLPreview( this );
-	QDockWidget* htmlWrapper = new QDockWidget( "HTML Preview", 0 );
+	HTMLPreview *htmlPreview = new HTMLPreview( this );
+	QDockWidget *htmlWrapper = new QDockWidget( "HTML Preview", 0 );
 
 	connect( htmlWrapper, SIGNAL( visibilityChanged( bool ) ), this, SLOT( closeHTMLPreview( bool ) ) );
 
@@ -1083,8 +1083,8 @@ void MainWindow::closeHTMLPreview( bool visible ) {
 		return;
 	}
 
-	QObject* eventSource = QObject::sender();
-	QDockWidget* htmlWrapper = static_cast< QDockWidget* >( eventSource );
+	QObject *eventSource = QObject::sender();
+	QDockWidget *htmlWrapper = static_cast< QDockWidget * >( eventSource );
 
 	// HTMLPreview* htmlPreview = (HTMLPreview*)htmlWrapper->widget();
 
@@ -1114,7 +1114,7 @@ void MainWindow::zoomOut() {
 }
 
 void MainWindow::print() {
-	Editor* current = getCurrentEditor();
+	Editor *current = getCurrentEditor();
 	if ( ! current ) {
 		return;
 	}
@@ -1149,16 +1149,16 @@ void MainWindow::toggleFullScreen() {
 }
 
 // Override for QMainWindow::createPopupMenu. Removes menu entries for things I don't want shown.
-QMenu* MainWindow::createPopupMenu() {
-	QMenu* menu = new QMenu( this );
+QMenu *MainWindow::createPopupMenu() {
+	QMenu *menu = new QMenu( this );
 
-	foreach ( QDockWidget * dockWidget, mMenuControlledDockWidgets ) {
+	foreach ( QDockWidget *dockWidget, mMenuControlledDockWidgets ) {
 		menu->addAction( dockWidget->toggleViewAction() );
 	}
 
 	menu->addSeparator();
 
-	foreach ( QToolBar * toolbar, mMenuControlledToolBar ) {
+	foreach ( QToolBar *toolbar, mMenuControlledToolBar ) {
 		menu->addAction( toolbar->toggleViewAction() );
 	}
 
@@ -1188,7 +1188,7 @@ void MainWindow::switchtoTabbedList() {
 void MainWindow::openFileListChanged() {
 	// Enable / disable all actions that are dependant on open files
 	bool filesOpen = ( gOpenFileManager.getFileCount() > 0 );
-	foreach ( QAction * action, mActionsRequiringFiles ) {
+	foreach ( QAction *action, mActionsRequiringFiles ) {
 		action->setEnabled( filesOpen );
 	}
 }
@@ -1196,7 +1196,7 @@ void MainWindow::openFileListChanged() {
 void MainWindow::viewSplittingChanged() {
 	// Enable / disable all actions that are dependant on split views
 	bool viewSplit = gWindowManager->isSplit();
-	foreach ( QAction * action, mActionsRequiringSplitViews ) {
+	foreach ( QAction *action, mActionsRequiringSplitViews ) {
 		action->setEnabled( viewSplit );
 	}
 }

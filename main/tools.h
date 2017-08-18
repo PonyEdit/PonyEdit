@@ -26,25 +26,25 @@ class Tools {
 
 		static void initialize();
 
-		static QString squashLabel( const QString& label, const QFontMetrics& metrics, int width );
+		static QString squashLabel( const QString &label, const QFontMetrics &metrics, int width );
 
-		static QString getStringXmlAttribute( const QXmlAttributes& attribs, const QString& key );
-		static QChar getCharXmlAttribute( const QXmlAttributes& attribs, const QString& key );
-		static int getIntXmlAttribute( const QXmlAttributes& attribs, const QString& key, int defaulVal );
+		static QString getStringXmlAttribute( const QXmlAttributes &attribs, const QString &key );
+		static QChar getCharXmlAttribute( const QXmlAttributes &attribs, const QString &key );
+		static int getIntXmlAttribute( const QXmlAttributes &attribs, const QString &key, int defaulVal );
 
-		static bool compareSubstring( const QString& superstring,
-		                              const QString& substring,
+		static bool compareSubstring( const QString &superstring,
+		                              const QString &substring,
 		                              int superstringIndex,
 		                              Qt::CaseSensitivity caseSensitivity );
-		static QStringList splitQuotedList( const QString& list, QChar separator );
+		static QStringList splitQuotedList( const QString &list, QChar separator );
 
-		static QString getResourcePath( const QString& subpath );
-		static void setResourcePath( const QString& path );
+		static QString getResourcePath( const QString &subpath );
+		static void setResourcePath( const QString &path );
 
 		static QString stringifyIpAddress( unsigned long ipAddress );
 
-		static int unbin( QByteArray& target, const char* source, int maxTarget, int maxSource, bool* leftoverEscape = NULL );
-		static QByteArray bin( const QByteArray& source );
+		static int unbin( QByteArray &target, const char *source, int maxTarget, int maxSource, bool *leftoverEscape = NULL );
+		static QByteArray bin( const QByteArray &source );
 		static unsigned char unbinEscape( unsigned char c );
 
 	private:

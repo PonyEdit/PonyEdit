@@ -45,7 +45,7 @@ void UpdateNotificationDialog::setChanges( const QStringList &alerts, const QStr
 	ui->changesBrowser->setHtml( changesStr );
 }
 
-void UpdateNotificationDialog::setDownloadURL( const QString& fileURL ) {
+void UpdateNotificationDialog::setDownloadURL( const QString &fileURL ) {
 	mFileURL = fileURL;
 }
 
@@ -57,14 +57,14 @@ void UpdateNotificationDialog::openDownloadURL() {
 	QDesktopServices::openUrl( QUrl( "https://github.com/PonyEdit/PonyEdit/releases" ) );
 }
 
-QProgressBar* UpdateNotificationDialog::getProgressBar() {
+QProgressBar *UpdateNotificationDialog::getProgressBar() {
 	return ui->downloadProgress;
 }
 
-QLabel* UpdateNotificationDialog::getProgressLabel() {
+QLabel *UpdateNotificationDialog::getProgressLabel() {
 	return ui->downloadLabel;
 }
 
-QWidget* UpdateNotificationDialog::getButtonWrapper() {
+QWidget *UpdateNotificationDialog::getButtonWrapper() {
 	return ui->buttonWrapper;
 }

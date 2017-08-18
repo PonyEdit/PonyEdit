@@ -15,11 +15,11 @@ class FileList : public QDockWidget {
 		explicit FileList( QWidget *parent = 0 );
 
 	private slots:
-		void selectFile( BaseFile* file );
+		void selectFile( BaseFile *file );
 		void fileSelected();
 
 	private:
-		OpenFileTreeView* mTreeView;
+		OpenFileTreeView *mTreeView;
 };
 
 #endif  // FILELIST_H

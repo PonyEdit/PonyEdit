@@ -17,13 +17,13 @@ class UpdateNotificationDialog : public QDialog {
 		explicit UpdateNotificationDialog( QWidget *parent = 0 );
 		~UpdateNotificationDialog();
 
-		void setNewVersion( const QString& version );
+		void setNewVersion( const QString &version );
 		void setChanges( const QStringList &alerts, const QStringList &changes );
-		void setDownloadURL( const QString& fileURL );
+		void setDownloadURL( const QString &fileURL );
 
-		QProgressBar* getProgressBar();
-		QLabel* getProgressLabel();
-		QWidget* getButtonWrapper();
+		QProgressBar *getProgressBar();
+		QLabel *getProgressLabel();
+		QWidget *getButtonWrapper();
 
 	signals:
 		void downloadAndInstall( QString );

@@ -20,25 +20,25 @@ class BaseFile : public QObject {
 	public:
 		struct Change { int revision; int position; int remove; QString insert; };
 		enum OpenStatus { Loading, LoadError, Ready, /**/ Disconnected, Reconnecting, Repairing, SyncError, /**/ Closing, Closed };
-		static const char* sStatusLabels[];
+		static const char *sStatusLabels[];
 
-		static BaseFile* getFile( const Location& location );
-		static const QList< BaseFile* >& getActiveFiles();
+		static BaseFile *getFile( const Location &location );
+		static const QList< BaseFile * > &getActiveFiles();
 		virtual ~BaseFile();
 
-		inline const QString& getContent() const {
+		inline const QString &getContent() const {
 			return mContent;
 		}
 
-		inline const Location& getLocation() const {
+		inline const Location &getLocation() const {
 			return mLocation;
 		}
 
-		inline QTextDocument* getTextDocument() {
+		inline QTextDocument *getTextDocument() {
 			return mDocument;
 		}
 
-		inline const QString& getError() const {
+		inline const QString &getError() const {
 			return mError;
 		}
 
@@ -62,7 +62,7 @@ class BaseFile : public QObject {
 			return mReadOnly;
 		}
 
-		virtual BaseFile* newFile( const QString& content ) = 0;
+		virtual BaseFile *newFile( const QString &content ) = 0;
 		virtual void open() = 0;
 		virtual void save() = 0;
 		virtual void close() = 0;       // Warning: This call is asynchronous in some kinds of file; eg
@@ -73,18 +73,18 @@ class BaseFile : public QObject {
 			return true;
 		}
 
-		void savedRevision( int revision, int undoLength, const QByteArray& checksum );
+		void savedRevision( int revision, int undoLength, const QByteArray &checksum );
 
-		inline const QList< Editor* >& getAttachedEditors() {
+		inline const QList< Editor * > &getAttachedEditors() {
 			return mAttachedEditors;
 		}
 
-		void editorAttached( Editor* editor );  // Call only from Editor constructor.
-		void editorDetached( Editor* editor );  // Call only from Editor destructor.
+		void editorAttached( Editor *editor );  // Call only from Editor constructor.
+		void editorDetached( Editor *editor );  // Call only from Editor destructor.
 
 		QString getChecksum() const;
-		static QString getChecksum( const QByteArray& content );
-		const Location& getDirectory() const;
+		static QString getChecksum( const QByteArray &content );
+		const Location &getDirectory() const;
 
 		void ignoreChanges() {
 			mIgnoreChanges++;
@@ -97,8 +97,8 @@ class BaseFile : public QObject {
 		}
 
 		QString getSyntax() const;
-		void setSyntax( const QString& syntaxName );
-		void setSyntax( SyntaxDefinition* syntaxDef );
+		void setSyntax( const QString &syntaxName );
+		void setSyntax( SyntaxDefinition *syntaxDef );
 
 		void beginRedoBlock();  // Note the start & end of undo/redo actions for revision tracking
 		void beginUndoBlock();
@@ -117,27 +117,27 @@ class BaseFile : public QObject {
 		}
 
 	public slots:
-		void openSuccess( const QString& content, const QByteArray& checksum, bool readOnly );
-		void openFailure( const QString& error, int errorFlags );
+		void openSuccess( const QString &content, const QByteArray &checksum, bool readOnly );
+		void openFailure( const QString &error, int errorFlags );
 
 		void documentChanged( int position, int removeChars, int added );
 		void closeCompleted();
-		void saveFailure( const QString& errorMessage, bool permissionError );
+		void saveFailure( const QString &errorMessage, bool permissionError );
 
 	signals:
-		void fileOpenedRethreadSignal( const QString& content, const QByteArray& checksum, bool readOnly );
+		void fileOpenedRethreadSignal( const QString &content, const QByteArray &checksum, bool readOnly );
 		void closeCompletedRethreadSignal();
-		void saveFailedRethreadSignal( const QString& errorMessage, bool permissionError );
+		void saveFailedRethreadSignal( const QString &errorMessage, bool permissionError );
 		void fileProgress( int percent );
 		void openStatusChanged( int newStatus );
 		void unsavedStatusChanged();
 
 	protected:
-		BaseFile( const Location& location );
+		BaseFile( const Location &location );
 		void setOpenStatus( OpenStatus newStatus );
 		void setProgress( int percent );
 
-		virtual void handleDocumentChange( int position, int removeChars, const QString& insert );
+		virtual void handleDocumentChange( int position, int removeChars, const QString &insert );
 		virtual void setLastSavedRevision( int lastSavedRevision );
 
 		virtual void reconnect() {}     // Called when connection dropouts have recovered or relocating a file
@@ -148,8 +148,8 @@ class BaseFile : public QObject {
 		QString mContent;
 		QString mError;
 
-		QTextDocument* mDocument;
-		QPlainTextDocumentLayout* mDocumentLayout;
+		QTextDocument *mDocument;
+		QPlainTextDocumentLayout *mDocumentLayout;
 
 		bool mChanged;
 		bool mDosLineEndings;
@@ -169,9 +169,9 @@ class BaseFile : public QObject {
 
 		int mProgress;
 		OpenStatus mOpenStatus;
-		QList< Editor* > mAttachedEditors;
+		QList< Editor * > mAttachedEditors;
 
-		SyntaxHighlighter* mHighlighter;
+		SyntaxHighlighter *mHighlighter;
 
 		static QMutex sDeletionLock;    // Used to prevent cross-thread operations sensitive to the sudden
 		                                // deletion of files from getting upset.

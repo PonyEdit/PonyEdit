@@ -19,7 +19,7 @@ class SshServerOptionsWidget : public OptionsDialogPage {
 		explicit SshServerOptionsWidget( QWidget *parent = 0 );
 		~SshServerOptionsWidget();
 
-		QListWidgetItem* populateServers();
+		QListWidgetItem *populateServers();
 
 	signals:
 		void accepted();
@@ -29,15 +29,15 @@ class SshServerOptionsWidget : public OptionsDialogPage {
 		void accept();
 		void reject();
 		void serverClicked( QListWidgetItem *current, QListWidgetItem *previous = NULL );
-		void serverNameUpdated( const QString& newName );
+		void serverNameUpdated( const QString &newName );
 		void newServer();
 		void deleteServer();
 
 	private:
 		Ui::SshServerOptionsWidget *ui;
 
-		OptionsDialog* mParent;
-		QList< ServerConfigWidget* > mConfigWidgets;
+		OptionsDialog *mParent;
+		QList< ServerConfigWidget * > mConfigWidgets;
 };
 
 #endif  // SSHSERVEROPTIONSWIDGET_H

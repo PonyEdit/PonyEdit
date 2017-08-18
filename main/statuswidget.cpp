@@ -15,9 +15,9 @@ StatusWidget::StatusWidget( bool dialogChild, QWidget *parent ) :
 
 	connect( this, SIGNAL( signalUpdateLayouts() ), this, SLOT( updateLayouts() ), Qt::QueuedConnection );
 	connect( ui->buttonBox,
-	         SIGNAL( clicked( QAbstractButton* ) ),
+	         SIGNAL( clicked( QAbstractButton * ) ),
 	         this,
-	         SLOT( buttonClicked( QAbstractButton* ) ) );
+	         SLOT( buttonClicked( QAbstractButton * ) ) );
 }
 
 StatusWidget::~StatusWidget() {
@@ -27,7 +27,7 @@ StatusWidget::~StatusWidget() {
 
 void StatusWidget::close( Result result ) {
 	if ( mDialogChild ) {
-		QDialog* parentDialog = static_cast< QDialog* >( parentWidget() );
+		QDialog *parentDialog = static_cast< QDialog * >( parentWidget() );
 		parentDialog->done( result );
 	}
 	emit completed();
@@ -99,9 +99,9 @@ void StatusWidget::setButtons( Buttons buttons ) {
 	}
 
 	// Pick a default button
-	QAbstractButton* firstButton = NULL;
+	QAbstractButton *firstButton = NULL;
 	int highestValue = 1;
-	QMapIterator< QAbstractButton*, Button > i( mButtons );
+	QMapIterator< QAbstractButton *, Button > i( mButtons );
 	while ( i.hasNext() ) {
 		i.next();
 		if ( i.value() > highestValue ) {
@@ -111,7 +111,7 @@ void StatusWidget::setButtons( Buttons buttons ) {
 	}
 
 	if ( firstButton ) {
-		static_cast< QPushButton* >( firstButton )->setDefault( true );
+		static_cast< QPushButton * >( firstButton )->setDefault( true );
 	}
 }
 
@@ -119,6 +119,6 @@ void StatusWidget::setButtonsEnabled( bool enabled ) {
 	ui->buttonBox->setEnabled( enabled );
 }
 
-QLayout* StatusWidget::getLogArea() {
+QLayout *StatusWidget::getLogArea() {
 	return ui->logArea;
 }

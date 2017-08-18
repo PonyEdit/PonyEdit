@@ -17,7 +17,7 @@
 #include "syntax/syntaxhighlighter.h"
 #include "unsavedfile.h"
 
-const char* BaseFile::sStatusLabels[] = {
+const char *BaseFile::sStatusLabels[] = {
 	"Loading...",
 	"Error while loading",
 	"Ready",
@@ -30,31 +30,31 @@ const char* BaseFile::sStatusLabels[] = {
 };
 QMutex BaseFile::sDeletionLock;
 
-BaseFile* BaseFile::getFile( const Location& location ) {
+BaseFile *BaseFile::getFile( const Location &location ) {
 	// See if the specified location is already open...
-	BaseFile* existingFile = gOpenFileManager.getFile( location );
+	BaseFile *existingFile = gOpenFileManager.getFile( location );
 	if ( existingFile ) {
 		return existingFile;
 	}
 
 	// If not, create a new file object.
-	BaseFile* newFile = NULL;
+	BaseFile *newFile = NULL;
 	Location::Protocol protocol = location.getProtocol();
 	switch ( protocol ) {
-	case Location::Ssh:
-		newFile = new ServerFile( location );
-		break;
+		case Location::Ssh:
+			newFile = new ServerFile( location );
+			break;
 
-	case Location::Local:
-		newFile = new LocalFile( location );
-		break;
+		case Location::Local:
+			newFile = new LocalFile( location );
+			break;
 
-	case Location::Sftp:
-		newFile = new FtpFile( location );
-		break;
+		case Location::Sftp:
+			newFile = new FtpFile( location );
+			break;
 
-	default:
-		newFile = new UnsavedFile( location );
+		default:
+			newFile = new UnsavedFile( location );
 	}
 
 	if ( newFile ) {
@@ -66,7 +66,7 @@ BaseFile* BaseFile::getFile( const Location& location ) {
 
 BaseFile::~BaseFile() {
 	// Tell every attached editor
-	foreach ( Editor * editor, mAttachedEditors ) {
+	foreach ( Editor *editor, mAttachedEditors ) {
 		editor->fileClosed();
 	}
 
@@ -75,7 +75,7 @@ BaseFile::~BaseFile() {
 	}
 }
 
-BaseFile::BaseFile( const Location& location ) :
+BaseFile::BaseFile( const Location &location ) :
 	mLocation( location ),
 	mContent( "" ),
 	mError( "" ),
@@ -149,7 +149,7 @@ void BaseFile::handleDocumentChange( int position, int removeChars, const QStrin
 	}
 }
 
-void BaseFile::openSuccess( const QString& content, const QByteArray& checksum, bool readOnly ) {
+void BaseFile::openSuccess( const QString &content, const QByteArray &checksum, bool readOnly ) {
 	// If this is not the main thread, move to the main thread.
 	if ( ! Tools::isMainThread() ) {
 		emit fileOpenedRethreadSignal( content, checksum, readOnly );
@@ -178,7 +178,7 @@ void BaseFile::openSuccess( const QString& content, const QByteArray& checksum, 
 	setOpenStatus( Ready );
 }
 
-void BaseFile::openFailure( const QString& error, int /*errorFlags*/ ) {
+void BaseFile::openFailure( const QString &error, int /*errorFlags*/ ) {
 	// TODO: Check the errorFlags for a permission error, to offer a SUDO option.
 	mError = error;
 	setOpenStatus( LoadError );
@@ -190,17 +190,17 @@ void BaseFile::setOpenStatus( OpenStatus newStatus ) {
 	emit openStatusChanged( newStatus );
 }
 
-void BaseFile::editorAttached( Editor* editor ) {
+void BaseFile::editorAttached( Editor *editor ) {
 	// Call only from Editor constructor.
 	mAttachedEditors.append( editor );
 }
 
-void BaseFile::editorDetached( Editor* editor ) {
+void BaseFile::editorDetached( Editor *editor ) {
 	// Call only from Editor destructor.
 	mAttachedEditors.removeOne( editor );
 }
 
-QString BaseFile::getChecksum( const QByteArray& content ) {
+QString BaseFile::getChecksum( const QByteArray &content ) {
 	QCryptographicHash hash( QCryptographicHash::Md5 );
 	hash.addData( content );
 	return QString( hash.result().toHex().toLower() );
@@ -210,7 +210,7 @@ QString BaseFile::getChecksum() const {
 	return getChecksum( mContent.toUtf8() );
 }
 
-void BaseFile::savedRevision( int revision, int undoLength, const QByteArray& checksum ) {
+void BaseFile::savedRevision( int revision, int undoLength, const QByteArray &checksum ) {
 	mLastSaveChecksum = checksum;
 	setLastSavedRevision( revision );
 
@@ -231,7 +231,7 @@ void BaseFile::setProgress( int percent ) {
 	emit fileProgress( percent );
 }
 
-const Location& BaseFile::getDirectory() const {
+const Location &BaseFile::getDirectory() const {
 	return mLocation.getDirectory();
 }
 
@@ -263,11 +263,11 @@ QString BaseFile::getSyntax() const {
 	return mHighlighter->getSyntaxDefinition()->getSyntaxName();
 }
 
-void BaseFile::setSyntax( const QString& syntaxName ) {
+void BaseFile::setSyntax( const QString &syntaxName ) {
 	setSyntax( gSyntaxDefManager->getDefinitionForSyntax( syntaxName ) );
 }
 
-void BaseFile::setSyntax( SyntaxDefinition* syntaxDef ) {
+void BaseFile::setSyntax( SyntaxDefinition *syntaxDef ) {
 	ignoreChanges();
 	if ( syntaxDef ) {
 		if ( ! mHighlighter ) {
@@ -285,14 +285,14 @@ void BaseFile::setSyntax( SyntaxDefinition* syntaxDef ) {
 	gDispatcher->emitSyntaxChanged( this );
 }
 
-void BaseFile::saveFailure( const QString& errorMessage, bool permissionError ) {
+void BaseFile::saveFailure( const QString &errorMessage, bool permissionError ) {
 	// Make sure this is always run in the UI thread
 	if ( ! Tools::isMainThread() ) {
 		emit saveFailedRethreadSignal( errorMessage, permissionError );
 		return;
 	}
 
-	StatusWidget* errorWidget = new StatusWidget( true );
+	StatusWidget *errorWidget = new StatusWidget( true );
 	errorWidget->setStatus( QPixmap( ":/icons/error.png" ), errorMessage );
 	errorWidget->setButtons( StatusWidget::Retry | StatusWidget::Cancel |
 	                         ( permissionError && mLocation.canSudo() &&
@@ -304,16 +304,16 @@ void BaseFile::saveFailure( const QString& errorMessage, bool permissionError ) 
 
 	StatusWidget::Button button = errorWidget->getResult();
 	switch ( button ) {
-	case StatusWidget::Retry:
-		save();
-		break;
+		case StatusWidget::Retry:
+			save();
+			break;
 
-	case StatusWidget::SudoRetry:
-		sudo();
-		save();
-		break;
+		case StatusWidget::SudoRetry:
+			sudo();
+			save();
+			break;
 
-	default: break;
+		default: break;
 	}
 }
 

@@ -12,21 +12,21 @@ class TabbedFileList : public QDockWidget {
 	public:
 		explicit TabbedFileList( QWidget *parent = 0 );
 
-		int findTab( BaseFile* file );
+		int findTab( BaseFile *file );
 
 	signals:
 	public slots:
 	private slots:
-		void fileOpened( BaseFile* file );
-		void fileClosed( BaseFile* file );
-		void fileSelected( BaseFile* file );
+		void fileOpened( BaseFile *file );
+		void fileClosed( BaseFile *file );
+		void fileSelected( BaseFile *file );
 		void fileChanged();
 
 		void currentChanged( int index );
 		void tabCloseRequested( int index );
 
 	private:
-		QTabBar* mTabs;
+		QTabBar *mTabs;
 };
 
 #endif  // TABBEDFILELIST_H

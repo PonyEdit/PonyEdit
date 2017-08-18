@@ -12,9 +12,9 @@ class HostLog : public QWidget {
 	Q_OBJECT
 
 	public:
-		explicit HostLog( SshHost* host );
+		explicit HostLog( SshHost *host );
 		~HostLog();
-		void closeEvent( QCloseEvent* );
+		void closeEvent( QCloseEvent * );
 
 	public slots:
 		void newLogLine( QString line );

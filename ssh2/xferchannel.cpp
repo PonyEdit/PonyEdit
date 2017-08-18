@@ -6,7 +6,7 @@
 #include "xferchannel.h"
 #include "xferrequest.h"
 
-XferChannel::XferChannel( SshHost* host, bool sudo ) :
+XferChannel::XferChannel( SshHost *host, bool sudo ) :
 	ServerChannel( host, sudo ),
 	mInternalStatus( _WaitingForRequests ),
 	mCurrentRequest( NULL ),

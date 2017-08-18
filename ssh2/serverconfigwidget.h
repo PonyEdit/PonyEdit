@@ -16,8 +16,8 @@ class ServerConfigWidget : public QWidget {
 		explicit ServerConfigWidget( QWidget *parent = 0 );
 		~ServerConfigWidget();
 
-		void setEditHost( SshHost* host );
-		SshHost* getEditHost();
+		void setEditHost( SshHost *host );
+		SshHost *getEditHost();
 
 		void setFocus();
 
@@ -28,7 +28,7 @@ class ServerConfigWidget : public QWidget {
 	signals:
 		void rejected();
 		void accepted();
-		void nameUpdated( const QString& oldName );
+		void nameUpdated( const QString &oldName );
 
 	private slots:
 		void keyPressEvent( QKeyEvent *event );

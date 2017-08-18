@@ -17,16 +17,16 @@ class Editor : public QStackedWidget {
 	Q_OBJECT
 
 	public:
-		explicit Editor( BaseFile* file );
+		explicit Editor( BaseFile *file );
 		~Editor();
 		void save();
 		void close();
 
-		BaseFile* getFile() const {
+		BaseFile *getFile() const {
 			return mFile;
 		}
 
-		const Location& getLocation() const {
+		const Location &getLocation() const {
 			return mFile->getLocation();
 		}
 
@@ -46,13 +46,13 @@ class Editor : public QStackedWidget {
 			mEditor->print( printer );
 		}
 
-		CodeEditor* getCodeEditor() {
+		CodeEditor *getCodeEditor() {
 			return mEditor;
 		}
 
-		static QTextCursor find( QTextDocument* doc,
-		                         const QTextCursor& start,
-		                         const QString& text,
+		static QTextCursor find( QTextDocument *doc,
+		                         const QTextCursor &start,
+		                         const QString &text,
 		                         bool backwards,
 		                         bool caseSensitive,
 		                         bool useRegExp,
@@ -62,8 +62,8 @@ class Editor : public QStackedWidget {
 	public slots:
 		void openStatusChanged( int openStatus );
 		void fileOpenProgress( int percent );
-		bool find( const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true );
-		int replace( const QString& findText, const QString& replaceText, bool caseSensitive, bool useRegex, bool all );
+		bool find( const QString &text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true );
+		int replace( const QString &findText, const QString &replaceText, bool caseSensitive, bool useRegex, bool all );
 		void setFocus();
 		bool hasFocus();
 		void applyOptions();
@@ -103,23 +103,23 @@ class Editor : public QStackedWidget {
 
 	private:
 		void showLoading();
-		void showError( const QString& error );
-		QTextCursor internalFind( const QString& text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true );
+		void showError( const QString &error );
+		QTextCursor internalFind( const QString &text, bool backwards, bool caseSensitive, bool useRegexp, bool loop = true );
 
 		bool mFirstOpen;
 
-		QWidget* mEditorPane;
-		QVBoxLayout* mEditorPaneLayout;
-		BaseFile* mFile;
-		CodeEditor* mEditor;
-		QTextDocument* mDocument;
+		QWidget *mEditorPane;
+		QVBoxLayout *mEditorPaneLayout;
+		BaseFile *mFile;
+		CodeEditor *mEditor;
+		QTextDocument *mDocument;
 
-		QWidget* mWorkingPane;
-		QLabel* mWorkingIcon;
-		QLabel* mWorkingText;
-		QProgressBar* mProgressBar;
+		QWidget *mWorkingPane;
+		QLabel *mWorkingIcon;
+		QLabel *mWorkingText;
+		QProgressBar *mProgressBar;
 
-		EditorWarningBar* mReadOnlyWarning;
+		EditorWarningBar *mReadOnlyWarning;
 };
 
 #endif  // EDITOR_H

@@ -20,16 +20,16 @@ SFTPChannel::SFTPChannel( SshHost *host ) :
 
 bool SFTPChannel::update() {
 	switch ( mStatus ) {
-	case Opening:
-		return handleOpening();
+		case Opening:
+			return handleOpening();
 
-	case Open:
-		return mainUpdate();
+		case Open:
+			return mainUpdate();
 
-	case Disconnected:
-		return false;
+		case Disconnected:
+			return false;
 
-	default:;
+		default:;
 	}
 
 	return false;
@@ -58,7 +58,7 @@ bool SFTPChannel::handleOpening() {
 	return true;
 }
 
-void SFTPChannel::criticalError( const QString& error ) {
+void SFTPChannel::criticalError( const QString &error ) {
 	// Fail the current job (if there is one)
 	if ( mCurrentRequest ) {
 		mCurrentRequest->triggerFailure( error, ServerRequest::ConnectionError );
@@ -82,24 +82,24 @@ bool SFTPChannel::mainUpdate() {
 	// Handle the current request...
 	bool continueRequest;
 	switch ( mCurrentRequest->getType() ) {
-	case SFTPRequest::Ls:
-		continueRequest = updateLs();
-		break;
+		case SFTPRequest::Ls:
+			continueRequest = updateLs();
+			break;
 
-	case SFTPRequest::ReadFile:
-		continueRequest = updateReadFile();
-		break;
+		case SFTPRequest::ReadFile:
+			continueRequest = updateReadFile();
+			break;
 
-	case SFTPRequest::WriteFile:
-		continueRequest = updateWriteFile();
-		break;
+		case SFTPRequest::WriteFile:
+			continueRequest = updateWriteFile();
+			break;
 
-	case SFTPRequest::MkDir:
-		continueRequest = updateMkDir();
-		break;
+		case SFTPRequest::MkDir:
+			continueRequest = updateMkDir();
+			break;
 
-	default:
-		continueRequest = false;
+		default:
+			continueRequest = false;
 	}
 
 	// If the request is finished, delete it.
@@ -290,7 +290,7 @@ bool SFTPChannel::updateWriteFile() {
 	}
 
 	if ( mRequestState == Writing ) {
-		const QByteArray& content = mCurrentRequest->getContent();
+		const QByteArray &content = mCurrentRequest->getContent();
 		rc = libssh2_sftp_write( mOperationHandle,
 		                         content.constData() + mOperationCursor,
 		                         content.length() - mOperationCursor );

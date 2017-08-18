@@ -8,21 +8,21 @@
 class QObject;
 class Callback {
 	public:
-		Callback( QObject* target = 0, const char* successSlot = 0, const char* failureSlot = 0, const char* progressSlot = 0 );
+		Callback( QObject *target = 0, const char *successSlot = 0, const char *failureSlot = 0, const char *progressSlot = 0 );
 
-		inline QObject* getTarget() const {
+		inline QObject *getTarget() const {
 			return mTarget.data();
 		}
 
-		inline const char* getSuccessSlot() const {
+		inline const char *getSuccessSlot() const {
 			return mSuccessSlot;
 		}
 
-		inline const char* getFailureSlot() const {
+		inline const char *getFailureSlot() const {
 			return mFailureSlot;
 		}
 
-		inline const char* getProgressSlot() const {
+		inline const char *getProgressSlot() const {
 			return mProgressSlot;
 		}
 
@@ -32,9 +32,9 @@ class Callback {
 
 	private:
 		QPointer< QObject > mTarget;
-		const char* mSuccessSlot;
-		const char* mFailureSlot;
-		const char* mProgressSlot;
+		const char *mSuccessSlot;
+		const char *mFailureSlot;
+		const char *mProgressSlot;
 };
 
 class CallbackDummy : QObject {

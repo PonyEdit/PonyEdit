@@ -12,20 +12,20 @@
 #include "ssh2/serverrequest.h"
 #include "ssh2/sshhost.h"
 
-ServerFile::ServerFile( const Location& location ) :
+ServerFile::ServerFile( const Location &location ) :
 	BaseFile( location ) {
 	mHost = location.getRemoteHost();
 	mChangePumpCursor = 0;
 }
 
 ServerFile::~ServerFile() {
-	foreach ( Change * change, mChangesSinceLastSave ) {
+	foreach ( Change *change, mChangesSinceLastSave ) {
 		delete change;
 	}
 	mChangesSinceLastSave.clear();
 }
 
-BaseFile* ServerFile::newFile( const QString& content ) {
+BaseFile *ServerFile::newFile( const QString &content ) {
 	SSHLOG_TRACE( mHost ) << "Creating a new server file" << content.length() << "bytes long";
 
 	setOpenStatus( BaseFile::Loading );
@@ -180,14 +180,14 @@ void ServerFile::movePumpCursor( int revision ) {
 	}
 }
 
-void ServerFile::handleDocumentChange( int position, int removeChars, const QString& insert ) {
+void ServerFile::handleDocumentChange( int position, int removeChars, const QString &insert ) {
 	if ( mIgnoreChanges ) {
 		return;
 	}
 
 	BaseFile::handleDocumentChange( position, removeChars, insert );
 
-	Change* change = new Change();
+	Change *change = new Change();
 	change->revision = mRevision;
 	change->position = position;
 	change->remove = removeChars;
@@ -201,7 +201,7 @@ void ServerFile::handleDocumentChange( int position, int removeChars, const QStr
 
 void ServerFile::pumpChangeQueue() {
 	while ( mChangePumpCursor < mChangesSinceLastSave.length() ) {
-		Change* change = mChangesSinceLastSave[mChangePumpCursor++];
+		Change *change = mChangesSinceLastSave[mChangePumpCursor++];
 
 		// Send this change to the remote server
 		QMap< QString, QVariant > params;
@@ -259,7 +259,7 @@ void ServerFile::setLastSavedRevision( int lastSavedRevision ) {
 
 	// Purge all stored changes up to that point...
 	while ( mChangesSinceLastSave.length() > 0 && mChangesSinceLastSave[0]->revision <= mLastSavedRevision ) {
-		Change* change = mChangesSinceLastSave.takeFirst();
+		Change *change = mChangesSinceLastSave.takeFirst();
 		mChangePumpCursor--;
 		delete change;
 	}

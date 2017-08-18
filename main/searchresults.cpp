@@ -11,7 +11,7 @@
 
 SearchResults::SearchResults( QWidget *parent ) :
 	QWidget( parent ) {
-	QVBoxLayout* mainLayout = new QVBoxLayout( this );
+	QVBoxLayout *mainLayout = new QVBoxLayout( this );
 	mainLayout->setMargin( 0 );
 
 	mModel = new SearchResultModel( this );
@@ -23,7 +23,7 @@ SearchResults::SearchResults( QWidget *parent ) :
 	mTreeView->setHeaderHidden( true );
 	mainLayout->addWidget( mTreeView );
 
-	QHBoxLayout* childLayout = new QHBoxLayout();
+	QHBoxLayout *childLayout = new QHBoxLayout();
 	mainLayout->addLayout( childLayout );
 	childLayout->setMargin( 5 );
 
@@ -47,13 +47,13 @@ void SearchResults::clearResults() {
 	mModel->clear();
 }
 
-void SearchResults::showResults( const QList< SearchResultModel::Result >& results ) {
+void SearchResults::showResults( const QList< SearchResultModel::Result > &results ) {
 	mModel->clear();
 	mModel->addResults( results );
 }
 
 void SearchResults::itemClicked( QModelIndex index ) {
-	SearchResultModel::Result* result = mModel->getResultForIndex( index );
+	SearchResultModel::Result *result = mModel->getResultForIndex( index );
 	if ( result != NULL ) {
 		gWindowManager->showAndSelect( result->location, result->lineNumber, result->start, result->length );
 	}

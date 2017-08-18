@@ -1,9 +1,9 @@
 #include "unsavedfile.h"
 
-UnsavedFile::UnsavedFile( const Location& location ) :
+UnsavedFile::UnsavedFile( const Location &location ) :
 	BaseFile( location ) {}
 
-BaseFile* UnsavedFile::newFile( const QString& /* content */ ) {
+BaseFile *UnsavedFile::newFile( const QString & /* content */ ) {
 	setOpenStatus( Ready );
 	return this;
 }

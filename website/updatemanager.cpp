@@ -13,7 +13,7 @@
 #include "updatemanager.h"
 #include "updatenotificationdialog.h"
 
-UpdateManager* UpdateManager::sInstance;
+UpdateManager *UpdateManager::sInstance;
 
 UpdateManager::UpdateManager( QObject *parent ) :
 	QObject( parent ),
@@ -25,10 +25,10 @@ UpdateManager::UpdateManager( QObject *parent ) :
 	sInstance = this;
 }
 
-void UpdateManager::updateFound( const QString& version,
-                                 const QString& url,
-                                 const QStringList& alerts,
-                                 const QStringList& changes ) {
+void UpdateManager::updateFound( const QString &version,
+                                 const QString &url,
+                                 const QStringList &alerts,
+                                 const QStringList &changes ) {
 	mNotificationDlg = new UpdateNotificationDialog();
 
 	connect( mNotificationDlg, SIGNAL( downloadAndInstall( QString ) ), this, SLOT( startDownload( QString ) ) );
@@ -51,19 +51,19 @@ void UpdateManager::noUpdateFound() {
 }
 
 void UpdateManager::startDownload( QString file ) {
-	QProgressBar* progressBar = mNotificationDlg->getProgressBar();
+	QProgressBar *progressBar = mNotificationDlg->getProgressBar();
 	progressBar->show();
 
-	QLabel* progressLabel = mNotificationDlg->getProgressLabel();
+	QLabel *progressLabel = mNotificationDlg->getProgressLabel();
 	progressLabel->show();
 
-	QWidget* buttonWrapper = mNotificationDlg->getButtonWrapper();
+	QWidget *buttonWrapper = mNotificationDlg->getButtonWrapper();
 	buttonWrapper->hide();
 
 	connect( &mNetManager,
-	         SIGNAL( authenticationRequired( QNetworkReply*, QAuthenticator* ) ),
+	         SIGNAL( authenticationRequired( QNetworkReply *, QAuthenticator * ) ),
 	         this,
-	         SLOT( downloadAuth( QNetworkReply*, QAuthenticator* ) ) );
+	         SLOT( downloadAuth( QNetworkReply *, QAuthenticator * ) ) );
 	qDebug() << file;
 	QUrl download( file );
 
@@ -84,11 +84,11 @@ void UpdateManager::startDownload( QString file ) {
 }
 
 void UpdateManager::downloadProgress( qint64 bytesReceived, qint64 bytesTotal ) {
-	QProgressBar* progressBar = mNotificationDlg->getProgressBar();
+	QProgressBar *progressBar = mNotificationDlg->getProgressBar();
 	progressBar->setMaximum( bytesTotal );
 	progressBar->setValue( bytesReceived );
 
-	QLabel* progressLabel = mNotificationDlg->getProgressLabel();
+	QLabel *progressLabel = mNotificationDlg->getProgressLabel();
 
 	double rec = bytesReceived;
 	double total = bytesTotal;
@@ -154,7 +154,7 @@ void UpdateManager::downloadFinished() {
 	QStringList args;
 
 #if defined Q_OS_WIN32 || defined Q_OS_MAC
-	QLabel* progressLabel = mNotificationDlg->getProgressLabel();
+	QLabel *progressLabel = mNotificationDlg->getProgressLabel();
 
 	QFileInfo info( mTempFile );
 

@@ -8,16 +8,16 @@ class FileStatusWidget : public StatusWidget {
 	Q_OBJECT
 
 	public:
-		FileStatusWidget( BaseFile* file, QWidget* parent );
+		FileStatusWidget( BaseFile *file, QWidget *parent );
 		~FileStatusWidget();
 
-		void showEvent( QShowEvent* );
+		void showEvent( QShowEvent * );
 
 	private slots:
 		void openStatusChanged();
 
 	private:
-		BaseFile* mFile;
+		BaseFile *mFile;
 };
 
 #endif  // FILESTATUSWIDGET_H

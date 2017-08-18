@@ -14,18 +14,18 @@ class UnsavedChangesDialog : public QDialog {
 	Q_OBJECT
 
 	public:
-		explicit UnsavedChangesDialog( const QList< BaseFile* >& files, bool closeFilesOnDiscard = true );
+		explicit UnsavedChangesDialog( const QList< BaseFile * > &files, bool closeFilesOnDiscard = true );
 		~UnsavedChangesDialog();
 
 	private slots:
-		void buttonClicked( QAbstractButton* button );
+		void buttonClicked( QAbstractButton *button );
 		void selectionChanged( QItemSelection before, QItemSelection after );
 		void fileStateChanged();
-		void fileClosed( BaseFile* file );
+		void fileClosed( BaseFile *file );
 
 	private:
-		QDialogButtonBox* mButtonBox;
-		OpenFileTreeView* mTreeView;
+		QDialogButtonBox *mButtonBox;
+		OpenFileTreeView *mTreeView;
 		bool mCloseFilesOnDiscard;
 };
 

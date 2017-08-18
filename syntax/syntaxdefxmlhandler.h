@@ -9,10 +9,10 @@
 class SyntaxDefXmlHandler : public QXmlDefaultHandler {
 	public:
 // Constructor with definition = load full file, into definition
-		SyntaxDefXmlHandler( SyntaxDefinition* definition );
+		SyntaxDefXmlHandler( SyntaxDefinition *definition );
 
 // Constructor with manager record = load basic info only, into record
-		SyntaxDefXmlHandler( SyntaxDefManager::Record* record );
+		SyntaxDefXmlHandler( SyntaxDefManager::Record *record );
 
 		bool startElement( const QString &namespaceURI,
 		                   const QString &localName,
@@ -24,7 +24,7 @@ class SyntaxDefXmlHandler : public QXmlDefaultHandler {
 		QString errorString() const;
 
 	private:
-		void packManagerRecord( const QXmlAttributes& atts );
+		void packManagerRecord( const QXmlAttributes &atts );
 
 		enum ElementFlags {
 			None         = 0x0000,
@@ -40,14 +40,14 @@ class SyntaxDefXmlHandler : public QXmlDefaultHandler {
 			Comments     = 0x0200
 		};
 
-		SyntaxDefinition* mDefinition;
-		SyntaxDefManager::Record* mRecord;
+		SyntaxDefinition *mDefinition;
+		SyntaxDefManager::Record *mRecord;
 
 		int mCurrentBlocks;
 
-		SyntaxDefinition::KeywordList* mKeywordList;
-		SyntaxDefinition::ContextDef* mContext;
-		SyntaxRule* mRule;
+		SyntaxDefinition::KeywordList *mKeywordList;
+		SyntaxDefinition::ContextDef *mContext;
+		SyntaxRule *mRule;
 };
 
 #endif  // SYNTAXDEFXMLHANDLER_H

@@ -13,7 +13,7 @@ ServerConfigWidget::ServerConfigWidget( QWidget *parent ) :
 	mLastAutoName() {
 	ui->setupUi( this );
 
-	QIntValidator* portValidator = new QIntValidator( 0, 65535, this );
+	QIntValidator *portValidator = new QIntValidator( 0, 65535, this );
 	ui->hostPort->setValidator( portValidator );
 
 	connect( this, SIGNAL( accepted() ), this, SLOT( acceptedHandler() ) );
@@ -49,7 +49,7 @@ QString ServerConfigWidget::getPassword() {
 	return ui->password->text();
 }
 
-void ServerConfigWidget::setEditHost( SshHost* host ) {
+void ServerConfigWidget::setEditHost( SshHost *host ) {
 	mEditHost = host;
 	ui->hostName->setText( host->getHostname() );
 	ui->userName->setText( host->getUsername() );
@@ -72,7 +72,7 @@ void ServerConfigWidget::setEditHost( SshHost* host ) {
 	updateName();
 }
 
-SshHost* ServerConfigWidget::getEditHost() {
+SshHost *ServerConfigWidget::getEditHost() {
 	return mEditHost;
 }
 

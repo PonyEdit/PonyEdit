@@ -4,12 +4,12 @@
 #include "ssh2/sshhost.h"
 #include "tools/callback.h"
 
-FtpFile::FtpFile( const Location& location ) :
+FtpFile::FtpFile( const Location &location ) :
 	BaseFile( location ) {
 	mHost = location.getRemoteHost();
 }
 
-BaseFile* FtpFile::newFile( const QString& content ) {
+BaseFile *FtpFile::newFile( const QString &content ) {
 	openSuccess( content, getChecksum( content.toUtf8() ).toLatin1(), false );
 	save();
 	return this;
@@ -18,7 +18,7 @@ BaseFile* FtpFile::newFile( const QString& content ) {
 void FtpFile::open() {
 	setOpenStatus( BaseFile::Loading );
 
-	SFTPRequest* request =
+	SFTPRequest *request =
 		new SFTPRequest( SFTPRequest::ReadFile,
 		                 Callback( this,
 		                           SLOT( sftpReadSuccess( QVariantMap ) ),
@@ -46,7 +46,7 @@ void FtpFile::sftpReadProgress( int progress ) {
 void FtpFile::save() {
 	setProgress( 0 );
 
-	SFTPRequest* request =
+	SFTPRequest *request =
 		new SFTPRequest( SFTPRequest::WriteFile,
 		                 Callback( this,
 		                           SLOT( sftpWriteSuccess( QVariantMap ) ),
