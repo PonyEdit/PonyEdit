@@ -649,7 +649,7 @@ void SshSession::updateAllChannels() {
 			SshChannel::Status status = channel->getStatus();
 			switch ( status ) {
 				case SshChannel::Sessionless: // Server refused to create another channel on this
-				                              // session;
+					                      // session;
 					                      // pass back to SshHost to find a new home.
 					mChannels.removeAt( i-- );
 					mAtChannelLimit = true;
@@ -658,7 +658,7 @@ void SshSession::updateAllChannels() {
 					break;
 
 				case SshChannel::Error: // Serious read/write error occurred. Assume the whole session
-				                        // is dead.
+					                // is dead.
 					setErrorStatus( QObject::tr( "Critical channel failure: " ) +
 					                channel->getErrorDetails() );
 					mThread->quit();        // Abort QThread::exec, fall back to threadMain for
@@ -666,7 +666,7 @@ void SshSession::updateAllChannels() {
 					break;
 
 				case SshChannel::Disconnected: // Neatly disconnected. Just take it out of the roster,
-				                               // notify
+					                       // notify
 					                       // the host.
 					mChannels.removeAt( i-- );
 					emit channelNeatlyClosed( channel );
