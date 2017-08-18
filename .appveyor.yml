@@ -1,0 +1,22 @@
+version: build{build}
+
+branches:
+  except:
+    - coverity_scan
+    - gh-pages
+
+image: Visual Studio 2017
+
+environment:
+  QTDIR: C:\Qt\5.9.1\mingw53_32
+
+matrix:
+  fast_finish: true
+
+install:
+  - set PATH=%QTDIR%\bin;%PATH%
+
+build_script:
+  - qmake PonyEdit.pro
+  - mingw32-make -j 4
+  - dir
