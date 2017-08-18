@@ -50,8 +50,6 @@ before_install:
   - |
     if [ "$TRAVIS_OS_NAME" = "linux" ]; then
       PATH=/opt/qt59/bin:$PATH
-    else
-      brew update
     fi
 
 install:
