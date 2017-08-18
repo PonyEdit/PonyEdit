@@ -108,8 +108,8 @@ after_success:
        [ "$TEST_SUITE" = "build" ]; then
 
       # Setup SSH access
-      declare -r SSH_FILE="$(mktemp -u $HOME/.ssh/github_deploy_key)"
-      openssl aes-256-cbc -K $encrypted_8ed5141acce9_key -iv $encrypted_8ed5141acce9_iv -in ./travis/github_deploy_key.enc -out "$SSH_FILE" -d
+      declare -r SSH_FILE="$(mktemp -u $HOME/.ssh/XXXXX)"
+      openssl aes-256-cbc -K $encrypted_8ed5141acce9_key -iv $encrypted_8ed5141acce9_iv -in ".travis/github_deploy_key.enc" -out "$SSH_FILE" -d
       chmod 600 "$SSH_FILE"
       printf "%s\n" \
         "Host github.com" \
@@ -117,7 +117,6 @@ after_success:
         "  LogLevel ERROR" >> ~/.ssh/config
 
       # Force push origin/master to $coverity_branch
-      git remote add origin git@github.com:$TRAVIS_REPO_SLUG.git
       git branch -f "$coverity_branch" origin/master
       git push -f origin "$coverity_branch"
     fi
