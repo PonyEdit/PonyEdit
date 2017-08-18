@@ -102,9 +102,9 @@ after_success:
     fi
   - ./PonyEdit --version
   - | # On the cron job run on the master branch, push the content of master to $coverity_branch
-    #if [ "$TRAVIS_BRANCH" = "master" ] && \
-    #   [ "$TRAVIS_EVENT_TYPE" = "cron" ] && \
-    if [ "$TRAVIS_OS_NAME" = "linux" ] && \
+    if [ "$TRAVIS_BRANCH" = "master" ] && \
+       [ "$TRAVIS_EVENT_TYPE" = "cron" ] && \
+       [ "$TRAVIS_OS_NAME" = "linux" ] && \
        [ "$TEST_SUITE" = "build" ]; then
 
       # Setup SSH access
@@ -117,9 +117,7 @@ after_success:
         "  LogLevel ERROR" >> ~/.ssh/config
 
       # Force push origin/master to $coverity_branch
-      git remote -v
       git remote set-url origin git@github.com:$TRAVIS_REPO_SLUG.git
-      git remote -v
       git branch -f "$coverity_branch" origin/master
       git push -f origin "$coverity_branch"
     fi
