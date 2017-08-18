@@ -16,4 +16,6 @@ install:
 build_script:
   - qmake
   - nmake
-  - dir
+
+on_success:
+  - release\ponyedit.exe --version
