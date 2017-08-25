@@ -63,7 +63,7 @@ SshSession::AuthMethods SshSettings::authMethods( QByteArray hostname ) {
 			}
 		}
 
-		iterator++;
+		++iterator;
 	}
 
 	return methods;
@@ -84,7 +84,7 @@ QByteArray SshSettings::hostname( QByteArray hostname ) {
 			}
 		}
 
-		iterator++;
+		++iterator;
 	}
 
 	return returnHostname;

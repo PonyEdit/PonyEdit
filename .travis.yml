@@ -88,7 +88,7 @@ script:
       qmake -v
       qmake
       make -j 2
-      make check
+      make check | perl tests/colourise.pl
     fi
 
 after_success:

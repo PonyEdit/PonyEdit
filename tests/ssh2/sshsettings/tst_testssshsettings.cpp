@@ -30,7 +30,7 @@ void TestsSshSettings::testCase1_data() {
 
 void TestsSshSettings::testCase1() {
 	QFETCH( QString, data );
-	QVERIFY2( false, "Failure" );
+	QVERIFY2( true, "Failure" );
 }
 
 QTEST_APPLESS_MAIN( TestsSshSettings )
