@@ -62,6 +62,8 @@ SshSession::AuthMethods SshSettings::authMethods( QByteArray hostname ) {
 				methods &= ~SshSession::AuthMethod::AuthPublicKey;
 			}
 		}
+
+		iterator++;
 	}
 
 	return methods;
@@ -81,6 +83,8 @@ QByteArray SshSettings::hostname( QByteArray hostname ) {
 				returnHostname = iterator.value()["hostname"].toLatin1();
 			}
 		}
+
+		iterator++;
 	}
 
 	return returnHostname;
