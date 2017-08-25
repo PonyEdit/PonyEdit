@@ -258,7 +258,7 @@ class SshHost : public QObject {
 		}
 
 		inline void setHostname( const QByteArray &hostname ) {
-			mHostname = hostname;
+			mHostname = mSettings.hostname( hostname );
 		}
 
 		inline void setPort( int port ) {

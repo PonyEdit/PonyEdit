@@ -1,6 +1,7 @@
 #include <QFile>
 #include <QRegExp>
 #include <QStandardPaths>
+#include <QString>
 #include <QTextStream>
 
 #include "QsLog.h"
@@ -40,7 +41,7 @@ SshSettings::SshSettings() :
 	}
 }
 
-SshSession::AuthMethods SshSettings::authMethods( QString hostname ) {
+SshSession::AuthMethods SshSettings::authMethods( QByteArray hostname ) {
 	SshSession::AuthMethods methods = SshSession::AuthMethod::AuthPassword | SshSession::AuthMethod::AuthKeyboardInteractive |
 	                                  SshSession::AuthMethod::AuthPublicKey;
 
@@ -64,4 +65,23 @@ SshSession::AuthMethods SshSettings::authMethods( QString hostname ) {
 	}
 
 	return methods;
+}
+
+QByteArray SshSettings::hostname( QByteArray hostname ) {
+	QByteArray returnHostname = hostname = hostname.toLower();
+
+	QMap< QString, QMap< QString, QString > >::const_iterator iterator = mConfig.constBegin();
+
+	QRegExp hostMatch;
+	hostMatch.setPatternSyntax( ( QRegExp::Wildcard ) );
+	while ( iterator != mConfig.constEnd() ) {
+		hostMatch.setPattern( iterator.key() );
+		if ( hostMatch.exactMatch( hostname ) ) {
+			if ( ! iterator.value()["hostname"].isEmpty() ) {
+				returnHostname = iterator.value()["hostname"].toLatin1();
+			}
+		}
+	}
+
+	return returnHostname;
 }

@@ -10,9 +10,24 @@
 class SshSettings {
 	public:
 		SshSettings();
-		SshSession::AuthMethods authMethods( QString hostname );
+		SshSession::AuthMethods authMethods( QByteArray hostname );
+		QByteArray hostname( QByteArray hostname );
 
 	private:
+		/*
+		 * mConfig is stored like so:
+		 * {
+		 *   hostname: {
+		 *     setting: value
+		 *     setting: value
+		 *   },
+		 *   hostname: {
+		 *     ...
+		 *   },
+		 *   ...
+		 *
+		 * hostname can be either a static string, or a Unix wildcard matcher
+		 */
 		QMap< QString, QMap< QString, QString > > mConfig;
 };
 
