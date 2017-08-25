@@ -1,4 +1,5 @@
 #include <QDebug>
+
 #include "main/globaldispatcher.h"
 #include "main/ponyedit.h"
 #include "main/tools.h"
@@ -22,6 +23,7 @@ SshHost::SshHost() :
 	mCachedIpAddress( 0 ),
 	mCachedAuthMethod( SshSession::AuthNone ),
 	mChannelLimitGuess( CHANNEL_LIMIT_GUESS ),
+	mSettings(),
 	mSaveHost( true ),
 	mSavePassword( false ),
 	mSaveKeyPassphrase( false ),

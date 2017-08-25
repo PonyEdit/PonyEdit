@@ -530,7 +530,7 @@ bool SshSession::authenticate() {
 }
 
 SshSession::AuthMethods SshSession::getAuthenticationMethods() {
-	AuthMethods methods = SshSettings::authMethods( mHost->getHostname() );
+	AuthMethods methods = mHost->authMethods();
 
 	char *authlist = libssh2_userauth_list( mHandle, mHost->getUsername(), mHost->getUsername().length() );
 	if ( NULL == authlist ) {

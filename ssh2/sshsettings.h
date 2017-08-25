@@ -9,11 +9,11 @@
 
 class SshSettings {
 	public:
-		static void init();
-		static SshSession::AuthMethods authMethods( QString hostname );
+		SshSettings();
+		SshSession::AuthMethods authMethods( QString hostname );
 
 	private:
-		static QMap< QString, QMap< QString, QString > > sConfig;
+		QMap< QString, QMap< QString, QString > > mConfig;
 };
 
 #endif // SSHSETTINGS_H

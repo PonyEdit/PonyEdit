@@ -76,8 +76,6 @@ void ServerChannel::initialize() {
 	}
 	sServerScript = f.readAll();
 
-	SshSettings::init();
-
 	QCryptographicHash hash( QCryptographicHash::Md5 );
 	hash.addData( sServerScript );
 	QByteArray checksum = hash.result().toHex().toLower();

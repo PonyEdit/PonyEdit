@@ -6,9 +6,8 @@
 #include "QsLog.h"
 #include "sshsettings.h"
 
-QMap< QString, QMap< QString, QString > > SshSettings::sConfig;
-
-void SshSettings::init() {
+SshSettings::SshSettings() :
+	mConfig() {
 	QFile file( QStandardPaths::writableLocation( QStandardPaths::HomeLocation ) + "/.ssh/config" );
 
 	if ( ! file.open( QFile::ReadOnly | QFile::Text ) ) {
@@ -37,7 +36,7 @@ void SshSettings::init() {
 			continue;
 		}
 
-		sConfig[currentHost][key] = value;
+		mConfig[currentHost][key] = value;
 	}
 }
 
@@ -47,11 +46,11 @@ SshSession::AuthMethods SshSettings::authMethods( QString hostname ) {
 
 	hostname = hostname.toLower();
 
-	QMap< QString, QMap< QString, QString > >::const_iterator iterator = sConfig.constBegin();
+	QMap< QString, QMap< QString, QString > >::const_iterator iterator = mConfig.constBegin();
 
 	QRegExp hostMatch;
 	hostMatch.setPatternSyntax( ( QRegExp::Wildcard ) );
-	while ( iterator != sConfig.constEnd() ) {
+	while ( iterator != mConfig.constEnd() ) {
 		hostMatch.setPattern( iterator.key() );
 		if ( hostMatch.exactMatch( hostname ) ) {
 			if ( iterator.value()["passwordauthentication"] != "yes" ) {

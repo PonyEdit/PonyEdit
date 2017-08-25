@@ -15,6 +15,7 @@
 #include "QsLog.h"
 #include "sshchannel.h"
 #include "sshsession.h"
+#include "sshsettings.h"
 
 // Configuration
 
@@ -87,6 +88,10 @@ class SshHost : public QObject {
 		                     const QByteArray &filename,
 		                     const QByteArray &content,
 		                     const Callback &callback = Callback() );
+
+		SshSession::AuthMethods authMethods() {
+			return mSettings.authMethods( mHostname );
+		}
 
 		//
 		// Stuff for saving hosts
@@ -395,6 +400,9 @@ class SshHost : public QObject {
 		SshSession::AuthMethod mCachedAuthMethod;
 		int mChannelLimitGuess;
 		QByteArray mHomeDirectory;
+
+		// SSH settings from the SSH config file
+		SshSettings mSettings;
 
 		// Saved server parameters
 		QString mName;
