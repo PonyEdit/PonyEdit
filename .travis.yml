@@ -49,8 +49,9 @@ before_install:
       exit
     fi
   - |
-    if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+    if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$TEST_SUITE" = "build" ]; then
       PATH=/opt/qt59/bin:$PATH
+      pip install --user codecov
     fi
 
 install:
@@ -89,6 +90,14 @@ script:
       qmake
       make -j 2
       make check | perl tests/colourise.pl
+
+      if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+        for filename in find src -name \*.cpp -not -path './src/tools/QsLog/*' -not -path './deps/*'; do
+          gcov-5 -n -0 . $filename > /dev/null
+        done
+
+        codecov
+      fi
     fi
 
 after_success:
@@ -101,6 +110,10 @@ after_success:
       cd PonyEdit.app/Contents/MacOS
     fi
   - ./PonyEdit --version
+  - |
+    if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$TEST_SUITE" = "build" ]; then
+      bash <(curl -s https://codecov.io/bash)
+    fi
   - | # On the cron job run on the master branch, push the content of master to $coverity_branch
     if [ "$TRAVIS_BRANCH" = "master" ] && \
        [ "$TRAVIS_EVENT_TYPE" = "cron" ] && \
