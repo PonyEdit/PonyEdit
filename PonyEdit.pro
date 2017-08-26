@@ -1,8 +1,8 @@
 TEMPLATE = subdirs
 
 SUBDIRS = \
-	src \
-	tests
+	$$SRCDIR \
+	$$TESTSDIR
 
 OTHER_FILES += \
 	README.md \
@@ -10,5 +10,4 @@ OTHER_FILES += \
 	.gitignore \
 	.travis.yml \
 	uncrustify.cfg \
-	syntax/test.pl \
 	ponyedit.rc

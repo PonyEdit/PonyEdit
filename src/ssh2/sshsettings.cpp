@@ -16,8 +16,19 @@ SshSettings::SshSettings() :
 		return;
 	}
 
-	QTextStream in( &file );
+	QString fileContent = file.readAll();
+
+	file.close();
+
+	parse( fileContent );
+}
+
+void SshSettings::parse( QString config ) {
+	QTextStream in( &config );
 	QString line, key, value, currentHost;
+
+	mConfig.clear();
+
 	while ( in.readLineInto( &line ) ) {
 		line = line.trimmed();
 		line.remove( QRegExp( "#.*" ) );

@@ -10,8 +10,14 @@
 class SshSettings {
 	public:
 		SshSettings();
+		void parse( QString config );
+
 		SshSession::AuthMethods authMethods( QByteArray hostname );
 		QByteArray hostname( QByteArray hostname );
+
+		QMap< QString, QMap< QString, QString > > getConfig() {
+			return mConfig;
+		}
 
 	private:
 		/*

@@ -550,7 +550,7 @@ OTHER_FILES += \
 RESOURCES += \
 	resources.qrc
 
-include($$PWD/tools/QsLog/QsLog.pri)
+include( ../common.pri )
 
 DISTFILES += \
 	server/server.pl
