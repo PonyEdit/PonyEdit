@@ -3,9 +3,12 @@
 #include <QString>
 #include <QtTest>
 
+#include "ssh2/sshsession.h"
 #include "ssh2/sshsettings.h"
 
 typedef QMap< QString, QMap< QString, QString > > configMap;
+
+Q_DECLARE_METATYPE( SshSession::AuthMethods );
 
 class TestsSshSettings : public QObject {
 	Q_OBJECT
@@ -19,6 +22,9 @@ class TestsSshSettings : public QObject {
 
 		void testParse_data();
 		void testParse();
+
+		void testAuthMethods_data();
+		void testAuthMethods();
 
 		void testHostname_data();
 		void testHostname();
@@ -108,6 +114,105 @@ void TestsSshSettings::testParse() {
 	settings.parse( inputFile );
 
 	QCOMPARE( settings.getConfig(), expectedConfig );
+}
+
+void TestsSshSettings::testAuthMethods_data() {
+	QTest::addColumn< QString >( "inputFile" );
+	QTest::addColumn< QByteArray >( "hostname" );
+	QTest::addColumn< SshSession::AuthMethods >( "expectedAuthMethods" );
+
+	SshSession::AuthMethods expectedAuthMethods;
+
+	expectedAuthMethods = SshSession::AuthMethod::AuthPassword | SshSession::AuthMethod::AuthKeyboardInteractive |
+	                      SshSession::AuthMethod::AuthPublicKey;
+
+	QTest::newRow( "empty" )
+	        << QString()
+	        << QByteArray( "ponyedit.com" )
+	        << expectedAuthMethods;
+
+	QTest::newRow( "simple" )
+	        << QString( "User pento" )
+	        << QByteArray( "ponyedit.com" )
+	        << expectedAuthMethods;
+
+	QTest::newRow( "single host, no auth" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    User pento" )
+	        << QByteArray( "ponyedit.com" )
+	        << expectedAuthMethods;
+
+	expectedAuthMethods = SshSession::AuthMethod::AuthKeyboardInteractive | SshSession::AuthMethod::AuthPublicKey;
+
+	QTest::newRow( "single host, disallow password" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    PasswordAuthentication no" )
+	        << QByteArray( "ponyedit.com" )
+	        << expectedAuthMethods;
+
+	expectedAuthMethods = SshSession::AuthMethod::AuthPassword | SshSession::AuthMethod::AuthPublicKey;
+
+	QTest::newRow( "single host, disallow keyboard" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    KbdInteractiveAuthentication no" )
+	        << QByteArray( "ponyedit.com" )
+	        << expectedAuthMethods;
+
+	expectedAuthMethods = SshSession::AuthMethod::AuthPassword | SshSession::AuthMethod::AuthKeyboardInteractive;
+
+	QTest::newRow( "single host, disallow public key" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    PubkeyAuthentication no" )
+	        << QByteArray( "ponyedit.com" )
+	        << expectedAuthMethods;
+
+	expectedAuthMethods = SshSession::AuthMethod::AuthPassword;
+
+	QTest::newRow( "single host, disallow multiple" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    PubkeyAuthentication no\n"
+	                    "    KbdInteractiveAuthentication no" )
+	        << QByteArray( "ponyedit.com" )
+	        << expectedAuthMethods;
+
+	expectedAuthMethods = SshSession::AuthMethod::AuthKeyboardInteractive | SshSession::AuthMethod::AuthPublicKey;
+
+	QTest::newRow( "multi host, disallow password" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    PasswordAuthentication no\n\n"
+	                    "Host ponyedit.org\n"
+	                    "    KbdInteractiveAuthentication no" )
+	        << QByteArray( "ponyedit.com" )
+	        << expectedAuthMethods;
+
+	expectedAuthMethods = SshSession::AuthMethod::AuthPublicKey;
+
+	QTest::newRow( "wildcard, disallow password and keyboard" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    PasswordAuthentication no\n\n"
+	                    "Host ponyedit.*\n"
+	                    "    KbdInteractiveAuthentication no" )
+	        << QByteArray( "ponyedit.com" )
+	        << expectedAuthMethods;
+
+	expectedAuthMethods = SshSession::AuthMethod::AuthPublicKey;
+
+	QTest::newRow( "top level, disallow password and keyboard" )
+	        << QString( "PasswordAuthentication no\n"
+	                    "KbdInteractiveAuthentication no" )
+	        << QByteArray( "ponyedit.com" )
+	        << expectedAuthMethods;
+}
+
+void TestsSshSettings::testAuthMethods() {
+	QFETCH( QString, inputFile );
+	QFETCH( QByteArray, hostname );
+	QFETCH( SshSession::AuthMethods, expectedAuthMethods );
+
+	SshSettings settings;
+	settings.parse( inputFile );
+
+	QCOMPARE( settings.authMethods( hostname ), expectedAuthMethods );
 }
 
 void TestsSshSettings::testHostname_data() {
