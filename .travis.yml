@@ -93,7 +93,7 @@ script:
 
       if [ "$TRAVIS_OS_NAME" = "linux" ]; then
         for filename in find src -name \*.cpp -not -path './src/tools/QsLog/*' -not -path './deps/*'; do
-          gcov -n -0 . $filename > /dev/null
+          gcov -n -o . $filename > /dev/null
         done
 
         codecov
