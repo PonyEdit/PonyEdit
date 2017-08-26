@@ -1,3 +1,4 @@
+#include <QByteArray>
 #include <QMap>
 #include <QString>
 #include <QtTest>
@@ -15,8 +16,12 @@ class TestsSshSettings : public QObject {
 	private Q_SLOTS:
 		void initTestCase();
 		void cleanupTestCase();
+
 		void testParse_data();
 		void testParse();
+
+		void testHostname_data();
+		void testHostname();
 };
 
 TestsSshSettings::TestsSshSettings() {}
@@ -37,7 +42,7 @@ void TestsSshSettings::testParse_data() {
 	        << expectedConfig;
 
 	expectedConfig.clear();
-	expectedConfig[""]["user"] = "pento";
+	expectedConfig["*"]["user"] = "pento";
 
 	QTest::newRow( "simple" )
 	        << QString( "User pento" )
@@ -82,7 +87,7 @@ void TestsSshSettings::testParse_data() {
 	expectedConfig["ponyedit.com"]["user"] = "pento";
 	expectedConfig["ponyedit.org"]["hostname"] = "ponyedit.org";
 	expectedConfig["ponyedit.org"]["identitiesonly"] = "yes";
-	expectedConfig[""]["identityfile"] = "~/.ssh/id_rsa";
+	expectedConfig["*"]["identityfile"] = "~/.ssh/id_rsa";
 
 	QTest::newRow( "multi host, multi key, top level" )
 	        << QString( "IdentityFile ~/.ssh/id_rsa\n\n"
@@ -103,6 +108,69 @@ void TestsSshSettings::testParse() {
 	settings.parse( inputFile );
 
 	QCOMPARE( settings.getConfig(), expectedConfig );
+}
+
+void TestsSshSettings::testHostname_data() {
+	QTest::addColumn< QString >( "inputFile" );
+	QTest::addColumn< QByteArray >( "hostname" );
+	QTest::addColumn< QByteArray >( "expectedHostname" );
+
+	QTest::newRow( "empty" )
+	        << QString()
+	        << QByteArray( "ponyedit.com" )
+	        << QByteArray( "ponyedit.com" );
+
+	QTest::newRow( "single host, no hostname" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    User pento" )
+	        << QByteArray( "ponyedit.com" )
+	        << QByteArray( "ponyedit.com" );
+
+	QTest::newRow( "single host, same hostname" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    Hostname ponyedit.com" )
+	        << QByteArray( "ponyedit.com" )
+	        << QByteArray( "ponyedit.com" );
+
+	QTest::newRow( "single host, different hostname" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    Hostname ponyedit.org" )
+	        << QByteArray( "ponyedit.com" )
+	        << QByteArray( "ponyedit.org" );
+
+	QTest::newRow( "different host, different hostname" )
+	        << QString( "Host ponyedit.org\n"
+	                    "    Hostname ponyedit.org" )
+	        << QByteArray( "ponyedit.com" )
+	        << QByteArray( "ponyedit.com" );
+
+	QTest::newRow( "wildcard host, same hostname" )
+	        << QString( "Host ponyedit.*\n"
+	                    "    Hostname ponyedit.com" )
+	        << QByteArray( "ponyedit.com" )
+	        << QByteArray( "ponyedit.com" );
+
+	QTest::newRow( "wildcard host, different hostname" )
+	        << QString( "Host ponyedit.*\n"
+	                    "    Hostname ponyedit.org" )
+	        << QByteArray( "ponyedit.com" )
+	        << QByteArray( "ponyedit.org" );
+
+	QTest::newRow( "top level hostname, different hostname" )
+	        << QString( "Hostname ponyedit.org" )
+	        << QByteArray( "ponyedit.com" )
+	        << QByteArray( "ponyedit.org" );
+}
+
+void TestsSshSettings::testHostname() {
+	QFETCH( QString, inputFile );
+	QFETCH( QByteArray, hostname );
+	QFETCH( QByteArray, expectedHostname );
+
+	SshSettings settings;
+	settings.parse( inputFile );
+
+	QCOMPARE( settings.hostname( hostname ), expectedHostname );
 }
 
 QTEST_APPLESS_MAIN( TestsSshSettings )

@@ -25,7 +25,10 @@ SshSettings::SshSettings() :
 
 void SshSettings::parse( QString config ) {
 	QTextStream in( &config );
-	QString line, key, value, currentHost;
+	QString line,
+	        key,
+	        value,
+	        currentHost = "*";
 
 	mConfig.clear();
 
