@@ -1,7 +1,7 @@
 PonyEdit
 ========
 
-[![Travis](https://img.shields.io/travis/PonyEdit/PonyEdit.svg)](https://travis-ci.org/PonyEdit/PonyEdit/) [![Coverity Scan](https://img.shields.io/coverity/scan/13486.svg)](https://scan.coverity.com/projects/ponyedit-ponyedit) [![Codacy grade](https://img.shields.io/codacy/grade/b5dfdb299ee6473c9c505c4b9cc2211b.svg)](https://www.codacy.com/app/pento/PonyEdit/dashboard)
+[![Travis](https://img.shields.io/travis/PonyEdit/PonyEdit.svg)](https://travis-ci.org/PonyEdit/PonyEdit/) [![Coverity Scan](https://img.shields.io/coverity/scan/13486.svg)](https://scan.coverity.com/projects/ponyedit-ponyedit) [![Codacy grade](https://img.shields.io/codacy/grade/b5dfdb299ee6473c9c505c4b9cc2211b.svg)](https://www.codacy.com/app/pento/PonyEdit/dashboard) [![Codecov](https://codecov.io/gh/PonyEdit/PonyEdit/branch/master/graph/badge.svg)](https://codecov.io/gh/PonyEdit/PonyEdit)
 
 Coding at the speed of thought.
 

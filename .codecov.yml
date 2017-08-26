@@ -1,0 +1,4 @@
+ignore:
+  - tests/.*
+  - src/tools/QsLog/.*
+  - deps/.*
