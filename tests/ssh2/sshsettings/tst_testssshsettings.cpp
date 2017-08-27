@@ -6,8 +6,6 @@
 #include "ssh2/sshsession.h"
 #include "ssh2/sshsettings.h"
 
-typedef QMap< QString, QMap< QString, QString > > configMap;
-
 Q_DECLARE_METATYPE( SshSession::AuthMethods );
 
 class TestsSshSettings : public QObject {
@@ -28,6 +26,9 @@ class TestsSshSettings : public QObject {
 
 		void testHostname_data();
 		void testHostname();
+
+		void testUser_data();
+		void testUser();
 };
 
 TestsSshSettings::TestsSshSettings() {}
@@ -276,6 +277,70 @@ void TestsSshSettings::testHostname() {
 	settings.parse( inputFile );
 
 	QCOMPARE( settings.hostname( hostname ), expectedHostname );
+}
+
+void TestsSshSettings::testUser_data() {
+	QTest::addColumn< QString >( "inputFile" );
+	QTest::addColumn< QByteArray >( "user" );
+	QTest::addColumn< QByteArray >( "expectedUser" );
+
+	QTest::newRow( "empty" )
+	        << QString()
+	        << QByteArray( "pento" )
+	        << QByteArray( "pento" );
+
+
+	QTest::newRow( "single host, no user" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    Hostname ponyedit.com" )
+	        << QByteArray( "pento" )
+	        << QByteArray( "pento" );
+
+	QTest::newRow( "single host, same user" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    User pento" )
+	        << QByteArray( "pento" )
+	        << QByteArray( "pento" );
+
+	QTest::newRow( "single host, different user" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    User thingalon" )
+	        << QByteArray( "pento" )
+	        << QByteArray( "thingalon" );
+
+	QTest::newRow( "different host, different user" )
+	        << QString( "Host ponyedit.org\n"
+	                    "    User thingalon" )
+	        << QByteArray( "pento" )
+	        << QByteArray( "pento" );
+
+	QTest::newRow( "wildcard host, same user" )
+	        << QString( "Host ponyedit.*\n"
+	                    "    User pento" )
+	        << QByteArray( "pento" )
+	        << QByteArray( "pento" );
+
+	QTest::newRow( "wildcard host, different user" )
+	        << QString( "Host ponyedit.*\n"
+	                    "    User thingalon" )
+	        << QByteArray( "pento" )
+	        << QByteArray( "thingalon" );
+
+	QTest::newRow( "top level hostname, different user" )
+	        << QString( "User thingalon" )
+	        << QByteArray( "pento" )
+	        << QByteArray( "thingalon" );
+}
+
+void TestsSshSettings::testUser() {
+	QFETCH( QString, inputFile );
+	QFETCH( QByteArray, user );
+	QFETCH( QByteArray, expectedUser );
+
+	SshSettings settings;
+	settings.parse( inputFile );
+
+	QCOMPARE( settings.user( QByteArray( "ponyedit.com" ), user ), expectedUser );
 }
 
 QTEST_APPLESS_MAIN( TestsSshSettings )

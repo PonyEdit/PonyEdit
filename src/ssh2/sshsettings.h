@@ -1,11 +1,14 @@
 #ifndef SSHSETTINGS_H
 #define SSHSETTINGS_H
 
+#include <QByteArray>
 #include <QMap>
 #include <QString>
 #include <QStringList>
 
 #include "sshsession.h"
+
+typedef QMap< QString, QMap< QString, QString > > configMap;
 
 class SshSettings {
 	public:
@@ -13,11 +16,21 @@ class SshSettings {
 		void parse( QString config );
 
 		SshSession::AuthMethods authMethods( QByteArray hostname );
-		QByteArray hostname( QByteArray hostname );
+
+		QByteArray hostname( QByteArray hostname ) {
+			return getValue( hostname, "hostname", hostname ).toLatin1();
+		}
+
+		QByteArray user( QByteArray hostname, QByteArray user ) {
+			return getValue( hostname, "user", user ).toLatin1();
+		}
 
 		QMap< QString, QMap< QString, QString > > getConfig() {
 			return mConfig;
 		}
+
+	protected:
+		QString getValue( QByteArray hostname, QString key, QByteArray originalValue );
 
 	private:
 		/*
@@ -34,7 +47,7 @@ class SshSettings {
 		 *
 		 * hostname can be either a static string, or a Unix wildcard matcher
 		 */
-		QMap< QString, QMap< QString, QString > > mConfig;
+		configMap mConfig;
 };
 
 #endif // SSHSETTINGS_H

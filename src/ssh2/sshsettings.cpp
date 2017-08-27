@@ -61,7 +61,7 @@ SshSession::AuthMethods SshSettings::authMethods( QByteArray hostname ) {
 
 	hostname = hostname.toLower();
 
-	QMap< QString, QMap< QString, QString > >::const_iterator iterator = mConfig.constBegin();
+	configMap::const_iterator iterator = mConfig.constBegin();
 
 	QRegExp hostMatch;
 	hostMatch.setPatternSyntax( ( QRegExp::Wildcard ) );
@@ -90,23 +90,25 @@ SshSession::AuthMethods SshSettings::authMethods( QByteArray hostname ) {
 	return methods;
 }
 
-QByteArray SshSettings::hostname( QByteArray hostname ) {
-	QByteArray returnHostname = hostname = hostname.toLower();
+QString SshSettings::getValue( QByteArray hostname, QString key, QByteArray originalValue ) {
+	hostname = hostname.toLower();
+	key = key.toLower();
+	QString returnValue = originalValue = originalValue.toLower();
 
-	QMap< QString, QMap< QString, QString > >::const_iterator iterator = mConfig.constBegin();
+	configMap::const_iterator iterator = mConfig.constBegin();
 
 	QRegExp hostMatch;
 	hostMatch.setPatternSyntax( ( QRegExp::Wildcard ) );
 	while ( iterator != mConfig.constEnd() ) {
 		hostMatch.setPattern( iterator.key() );
 		if ( hostMatch.exactMatch( hostname ) ) {
-			if ( ! iterator.value()["hostname"].isEmpty() ) {
-				returnHostname = iterator.value()["hostname"].toLatin1();
+			if ( ! iterator.value()[key].isEmpty() ) {
+				returnValue = iterator.value()[key];
 			}
 		}
 
 		++iterator;
 	}
 
-	return returnHostname;
+	return returnValue;
 }

@@ -266,7 +266,7 @@ class SshHost : public QObject {
 		}
 
 		inline void setUsername( const QByteArray &username ) {
-			mUsername = username;
+			mUsername = mSettings.user( mHostname, username );
 		}
 
 		inline void setPassword( const QByteArray &password ) {
