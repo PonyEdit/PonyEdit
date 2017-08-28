@@ -24,7 +24,7 @@ PonyEdit compiles with the latest version of [Qt](https://www.qt.io/).
 On Mac OS, you'll need [brew](https://brew.sh/), and to ensure the following packages are installed:
 
 * `libssh2`
-* `libssl@1.1`
+* `openssl@1.1`
 
 On Linux, you'll also need to install these packages:
 
