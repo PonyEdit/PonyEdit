@@ -230,6 +230,10 @@ class SshHost : public QObject {
 			return mPassword;
 		}
 
+		inline bool identitiesOnly() {
+			return mSettings.identitiesOnly( mHostname );
+		}
+
 		inline const QByteArray &getKeyFile() const {
 			return mKeyFile;
 		}

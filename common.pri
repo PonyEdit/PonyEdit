@@ -1,4 +1,4 @@
-include( $$SRCDIR/tools/QsLog/QsLog.pri )
+include( src/tools/QsLog/QsLog.pri )
 
 linux {
 	# gcov

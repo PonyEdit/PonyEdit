@@ -29,6 +29,9 @@ class TestsSshSettings : public QObject {
 
 		void testUser_data();
 		void testUser();
+
+		void testIdentitiesOnly_data();
+		void testIdentitiesOnly();
 };
 
 TestsSshSettings::TestsSshSettings() {}
@@ -341,6 +344,64 @@ void TestsSshSettings::testUser() {
 	settings.parse( inputFile );
 
 	QCOMPARE( settings.user( QByteArray( "ponyedit.com" ), user ), expectedUser );
+}
+
+void TestsSshSettings::testIdentitiesOnly_data() {
+	QTest::addColumn< QString >( "inputFile" );
+	QTest::addColumn< bool >( "expectedIdentitiesSettings" );
+
+	QTest::newRow( "empty" )
+	        << QString()
+	        << false;
+
+	QTest::newRow( "single host, no setting" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    Hostname ponyedit.com" )
+	        << false;
+
+	QTest::newRow( "single host, setting off" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    IdentitiesOnly no" )
+	        << false;
+
+	QTest::newRow( "single host, setting on" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    IdentitiesOnly yes" )
+	        << true;
+
+	QTest::newRow( "single host, setting gibberish" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    IdentitiesOnly WAT" )
+	        << false;
+
+	QTest::newRow( "different host, setting on" )
+	        << QString( "Host ponyedit.org\n"
+	                    "    IdentitiesOnly yes" )
+	        << false;
+
+	QTest::newRow( "wildcard host, setting off" )
+	        << QString( "Host ponyedit.*\n"
+	                    "    IdentitiesOnly no" )
+	        << false;
+
+	QTest::newRow( "wildcard host, setting on" )
+	        << QString( "Host ponyedit.*\n"
+	                    "    IdentitiesOnly yes" )
+	        << true;
+
+	QTest::newRow( "top level hostname, setting on" )
+	        << QString( "IdentitiesOnly yes" )
+	        << true;
+}
+
+void TestsSshSettings::testIdentitiesOnly() {
+	QFETCH( QString, inputFile );
+	QFETCH( bool, expectedIdentitiesSettings );
+
+	SshSettings settings;
+	settings.parse( inputFile );
+
+	QCOMPARE( settings.identitiesOnly( QByteArray( "ponyedit.com" ) ), expectedIdentitiesSettings );
 }
 
 QTEST_APPLESS_MAIN( TestsSshSettings )

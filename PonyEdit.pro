@@ -9,5 +9,6 @@ OTHER_FILES += \
 	COMMON-TASKS.md \
 	.gitignore \
 	.travis.yml \
+	.qmake.conf \
 	uncrustify.cfg \
 	ponyedit.rc

@@ -497,6 +497,11 @@ bool SshSession::authenticate() {
 
 	bool authenticated = false;
 
+	// If SSH config has IdentitiesOnly set, we can only use the agent.
+	if ( mHost->identitiesOnly() ) {
+		return authenticateAgent();
+	}
+
 	// If there is a cached authentication method, use that...
 	AuthMethod cachedMethod = mHost->getCachedAuthMethod();
 	if ( cachedMethod ) {
