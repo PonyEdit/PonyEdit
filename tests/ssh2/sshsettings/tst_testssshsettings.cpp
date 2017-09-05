@@ -3,6 +3,7 @@
 #include <QString>
 #include <QtTest>
 
+#include "QsLog.h"
 #include "ssh2/sshsession.h"
 #include "ssh2/sshsettings.h"
 
@@ -37,7 +38,11 @@ class TestsSshSettings : public QObject {
 		void testIdentityFile();
 };
 
-TestsSshSettings::TestsSshSettings() {}
+TestsSshSettings::TestsSshSettings() {
+	// Ensure logging lines are run
+	QsLogging::Logger &logger = QsLogging::Logger::instance();
+	logger.setLoggingLevel( QsLogging::TraceLevel );
+}
 
 void TestsSshSettings::initTestCase() {}
 
