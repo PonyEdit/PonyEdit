@@ -243,6 +243,10 @@ class SshHost : public QObject {
 			return mKeyPassphrase;
 		}
 
+		inline int getKeepalive() {
+			return mSettings.serverAliveInterval( mHostname );
+		}
+
 		inline const QByteArray &getSudoPassword() const {
 			return mSudoPassword;
 		}

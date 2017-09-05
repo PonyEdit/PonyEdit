@@ -36,6 +36,9 @@ class TestsSshSettings : public QObject {
 
 		void testIdentityFile_data();
 		void testIdentityFile();
+
+		void testServerAliveInternal_data();
+		void testServerAliveInternal();
 };
 
 TestsSshSettings::TestsSshSettings() {
@@ -483,6 +486,64 @@ void TestsSshSettings::testIdentityFile() {
 	settings.parse( inputFile );
 
 	QCOMPARE( settings.identityFile( QByteArray( "ponyedit.com" ), identityFile ), expectedIdentityFile );
+}
+
+void TestsSshSettings::testServerAliveInternal_data() {
+	QTest::addColumn< QString >( "inputFile" );
+	QTest::addColumn< int >( "expectedServerAliveInternal" );
+
+	QTest::newRow( "empty" )
+	        << QString()
+	        << 0;
+
+	QTest::newRow( "single host, no setting" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    Hostname ponyedit.com" )
+	        << 0;
+
+	QTest::newRow( "single host, setting off" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    ServerAliveInternal 0" )
+	        << 0;
+
+	QTest::newRow( "single host, setting on" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    ServerAliveInternal 42" )
+	        << 42;
+
+	QTest::newRow( "single host, setting gibberish" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    ServerAliveInternal WAT" )
+	        << 0;
+
+	QTest::newRow( "different host, setting on" )
+	        << QString( "Host ponyedit.org\n"
+	                    "    ServerAliveInternal 42" )
+	        << 0;
+
+	QTest::newRow( "wildcard host, setting off" )
+	        << QString( "Host ponyedit.*\n"
+	                    "    ServerAliveInternal 0" )
+	        << 0;
+
+	QTest::newRow( "wildcard host, setting on" )
+	        << QString( "Host ponyedit.*\n"
+	                    "    ServerAliveInternal 42" )
+	        << 42;
+
+	QTest::newRow( "top level hostname, setting on" )
+	        << QString( "ServerAliveInternal 42" )
+	        << 42;
+}
+
+void TestsSshSettings::testServerAliveInternal() {
+	QFETCH( QString, inputFile );
+	QFETCH( int, expectedServerAliveInternal );
+
+	SshSettings settings;
+	settings.parse( inputFile );
+
+	QCOMPARE( settings.serverAliveInterval( QByteArray( "ponyedit.com" ) ), expectedServerAliveInternal );
 }
 
 QTEST_APPLESS_MAIN( TestsSshSettings )

@@ -117,6 +117,7 @@ class SshSession : public QObject {
 
 		bool mThreadEndedCalled;
 
+		int mKeepaliveTime;
 		bool mKeepaliveSent;
 		QTime mLastActivityTimer;
 

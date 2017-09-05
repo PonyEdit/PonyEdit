@@ -33,6 +33,10 @@ class SshSettings {
 			return getValue( hostname, "identityfile", identityFile ).toLatin1();
 		}
 
+		int serverAliveInterval( QByteArray hostname ) {
+			return getValue( hostname, "serveraliveinternal", "0" ).toInt();
+		}
+
 		QMap< QString, QMap< QString, QString > > getConfig() {
 			return mConfig;
 		}

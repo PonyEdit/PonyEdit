@@ -41,6 +41,7 @@ SshSession::SshSession( SshHost *host ) :
 	mStatus( Disconnected ),
 	mErrorDetails(),
 	mThreadEndedCalled( false ),
+	mKeepaliveTime( mHost->getKeepalive() * 1000 ),
 	mKeepaliveSent( false ),
 	mLastActivityTimer(),
 	mThread( NULL ),
@@ -53,6 +54,10 @@ SshSession::SshSession( SshHost *host ) :
 	mAtChannelLimit( false ),
 	mPasswordAttempt() {
 	SSHLOG_TRACE( host ) << "Opening a new session";
+
+	if ( ! mKeepaliveTime ) {
+		mKeepaliveTime = KEEPALIVE_MSEC;
+	}
 
 	initializeLibrary();
 
@@ -581,7 +586,7 @@ void SshSession::connect() {
 	if ( int rc = libssh2_session_handshake( mHandle, mSocket ) ) {
 		throw( QObject::tr( "Failed to start session: %1" ).arg( rc ) );
 	}
-	libssh2_keepalive_config( mHandle, 1, ( KEEPALIVE_MSEC / 1000 ) - 5 );
+	libssh2_keepalive_config( mHandle, 1, ( mKeepaliveTime / 1000 ) - 5 );
 
 	// Verify the host fingerprint
 	if ( ! verifyHostFingerprint() ) {
@@ -764,7 +769,7 @@ void SshSession::heartbeat() {
 	if ( mLastActivityTimer.elapsed() > TIMEOUT_MSEC ) {
 		setErrorStatus( QObject::tr( "Session timeout" ) );
 		mThread->quit();
-	} else if ( mLastActivityTimer.elapsed() > KEEPALIVE_MSEC ) {
+	} else if ( mLastActivityTimer.elapsed() > mKeepaliveTime ) {
 		SSHLOG_TRACE( mHost ) << "Sending keepalive heartbeat.";
 		mKeepaliveSent = true;
 		int dontCare;
