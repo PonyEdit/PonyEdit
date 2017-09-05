@@ -16,10 +16,10 @@ void StringTrie::addWord( const QString &word ) {
 	Node *scan = mRoot;
 	for ( int i = 0; i < word.length(); i++ ) {
 		int c = word.at( i ).toLatin1();
-		if ( scan->children[c] == NULL ) {
-			scan->children[c] = allocateNode();
+		if ( scan->children[ c ] == NULL ) {
+			scan->children[ c ] = allocateNode();
 		}
-		scan = scan->children[c];
+		scan = scan->children[ c ];
 	}
 	scan->terminator = true;
 }
@@ -28,10 +28,10 @@ bool StringTrie::containsWord( const QString &word ) {
 	Node *scan = mRoot;
 	for ( int i = 0; i < word.length(); i++ ) {
 		int c = word.at( i ).toLatin1();
-		if ( scan->children[c] == NULL ) {
+		if ( scan->children[ c ] == NULL ) {
 			return false;
 		}
-		scan = scan->children[c];
+		scan = scan->children[ c ];
 	}
 	return scan->terminator;
 }

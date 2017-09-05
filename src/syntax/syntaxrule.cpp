@@ -159,12 +159,12 @@ void SyntaxRule::addChildRule( QSharedPointer< SyntaxRule > rule ) {
 void SyntaxRule::applyDynamicCaptures( const QStringList &captures ) {
 	if ( mType == DetectChar || mType == Detect2Chars ) {
 		if ( captures.length() > mDynamicCharIndex ) {
-			mCharacterA = captures[mDynamicCharIndex][0];
+			mCharacterA = captures[ mDynamicCharIndex ][ 0 ];
 		}
 	} else {
 		foreach ( DynamicSlot slot, mDynamicStringSlots ) {
 			if ( captures.length() > slot.id ) {
-				QString insert = captures[slot.id];
+				QString insert = captures[ slot.id ];
 				insert.replace( QRegExp( "(\\W)" ), "\\\\1" );
 				mString.insert( slot.pos, insert );
 			}
@@ -250,7 +250,7 @@ bool SyntaxRule::link( SyntaxDefinition *def ) {
 				if ( index == mString.length() - 1 ) {
 					break;
 				}
-				char c = mString[index + 1].toLatin1();
+				char c = mString[ index + 1 ].toLatin1();
 
 				if ( c == '%' ) {
 					mString.remove( index, 1 );
@@ -288,7 +288,7 @@ int SyntaxRule::match( const QString &string, int position ) {
 
 	if ( mFirstNonSpace ) {
 		for ( int i = 0; i < position; i++ ) {
-			if ( ! string[i].isSpace() ) {
+			if ( ! string[ i ].isSpace() ) {
 				return 0;
 			}
 		}
@@ -519,7 +519,7 @@ int SyntaxRule::match( const QString &string, int position ) {
 		}
 
 		case RangeDetect:
-			if ( string[position] == mCharacterA ) {
+			if ( string[ position ] == mCharacterA ) {
 				int end = string.indexOf( mCharacterB, position + 1 );
 				if ( end > position ) {
 					match = end - position;

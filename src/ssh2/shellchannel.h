@@ -43,7 +43,7 @@ class ShellChannel : public SshChannel {
 		LIBSSH2_CHANNEL *mHandle;
 
 		QByteArray mReadBuffer;
-		char mScratchBuffer[SSH_SHELL_BUFFER_SIZE];
+		char mScratchBuffer[ SSH_SHELL_BUFFER_SIZE ];
 
 	private:
 		void setInternalStatus( InternalStatus newStatus );

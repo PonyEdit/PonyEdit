@@ -395,7 +395,7 @@ void ServerChannel::finalizeServerInit( const QByteArray &initString ) {
 	}
 
 	QJsonParseError error;
-	QVariantMap initBlob = QJsonDocument::fromJson( lines[1], &error ).object().toVariantMap();
+	QVariantMap initBlob = QJsonDocument::fromJson( lines[ 1 ], &error ).object().toVariantMap();
 	if ( error.error ) {
 		criticalError( "JSON initialization blob invalid" );
 	}

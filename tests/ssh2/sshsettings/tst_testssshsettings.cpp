@@ -63,14 +63,14 @@ void TestsSshSettings::testParse_data() {
 	        << expectedConfig;
 
 	expectedConfig.clear();
-	expectedConfig["*"]["user"] = "pento";
+	expectedConfig[ "*" ][ "user" ] = "pento";
 
 	QTest::newRow( "simple" )
 	        << QString( "User pento" )
 	        << expectedConfig;
 
 	expectedConfig.clear();
-	expectedConfig["ponyedit.com"]["hostname"] = "ponyedit.com";
+	expectedConfig[ "ponyedit.com" ][ "hostname" ] = "ponyedit.com";
 
 	QTest::newRow( "single host" )
 	        << QString( "Host ponyedit.com\n"
@@ -78,7 +78,7 @@ void TestsSshSettings::testParse_data() {
 	        << expectedConfig;
 
 	expectedConfig.clear();
-	expectedConfig["ponyedit.com"]["hostname"] = "ponyedit.com";
+	expectedConfig[ "ponyedit.com" ][ "hostname" ] = "ponyedit.com";
 
 	QTest::newRow( "single host, empty missing" )
 	        << QString( "Host ponyedit.com\n"
@@ -87,8 +87,8 @@ void TestsSshSettings::testParse_data() {
 	        << expectedConfig;
 
 	expectedConfig.clear();
-	expectedConfig["ponyedit.com"]["hostname"] = "ponyedit.com";
-	expectedConfig["ponyedit.org"]["hostname"] = "ponyedit.org";
+	expectedConfig[ "ponyedit.com" ][ "hostname" ] = "ponyedit.com";
+	expectedConfig[ "ponyedit.org" ][ "hostname" ] = "ponyedit.org";
 
 	QTest::newRow( "multi host" )
 	        << QString( "Host ponyedit.com\n"
@@ -98,10 +98,10 @@ void TestsSshSettings::testParse_data() {
 	        << expectedConfig;
 
 	expectedConfig.clear();
-	expectedConfig["ponyedit.com"]["hostname"] = "ponyedit.com";
-	expectedConfig["ponyedit.com"]["user"] = "pento";
-	expectedConfig["ponyedit.org"]["hostname"] = "ponyedit.org";
-	expectedConfig["ponyedit.org"]["identitiesonly"] = "yes";
+	expectedConfig[ "ponyedit.com" ][ "hostname" ] = "ponyedit.com";
+	expectedConfig[ "ponyedit.com" ][ "user" ] = "pento";
+	expectedConfig[ "ponyedit.org" ][ "hostname" ] = "ponyedit.org";
+	expectedConfig[ "ponyedit.org" ][ "identitiesonly" ] = "yes";
 
 	QTest::newRow( "multi host, multi key" )
 	        << QString( "Host ponyedit.com\n"
@@ -113,11 +113,11 @@ void TestsSshSettings::testParse_data() {
 	        << expectedConfig;
 
 	expectedConfig.clear();
-	expectedConfig["ponyedit.com"]["hostname"] = "ponyedit.com";
-	expectedConfig["ponyedit.com"]["user"] = "pento";
-	expectedConfig["ponyedit.org"]["hostname"] = "ponyedit.org";
-	expectedConfig["ponyedit.org"]["identitiesonly"] = "yes";
-	expectedConfig["*"]["identityfile"] = "~/.ssh/id_rsa";
+	expectedConfig[ "ponyedit.com" ][ "hostname" ] = "ponyedit.com";
+	expectedConfig[ "ponyedit.com" ][ "user" ] = "pento";
+	expectedConfig[ "ponyedit.org" ][ "hostname" ] = "ponyedit.org";
+	expectedConfig[ "ponyedit.org" ][ "identitiesonly" ] = "yes";
+	expectedConfig[ "*" ][ "identityfile" ] = "~/.ssh/id_rsa";
 
 	QTest::newRow( "multi host, multi key, top level" )
 	        << QString( "IdentityFile ~/.ssh/id_rsa\n\n"

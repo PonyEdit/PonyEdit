@@ -30,7 +30,7 @@ void OpenFileManager::registerFile( BaseFile *file ) {
 	// Keep the mOpenFiles list alphabetically sorted by Location.
 	int scan;
 	for ( scan = 0; scan < mOpenFiles.length(); scan++ ) {
-		if ( mOpenFiles[scan]->getLocation().getPath() > file->getLocation().getPath() ) {
+		if ( mOpenFiles[ scan ]->getLocation().getPath() > file->getLocation().getPath() ) {
 			break;
 		}
 	}

@@ -98,7 +98,7 @@ void OpenFileTreeModel::addNodeToTree( Node *parentNode, Node *node ) {
 	// Work out where within the parent to insert this new item... (Sorting alphabetically)
 	int insertIndex;
 	for ( insertIndex = 0; insertIndex < parentNode->children.length(); insertIndex++ ) {
-		if ( parentNode->children[insertIndex]->location.getPath() > node->location.getPath() ) {
+		if ( parentNode->children[ insertIndex ]->location.getPath() > node->location.getPath() ) {
 			break;
 		}
 	}
@@ -182,7 +182,7 @@ QModelIndex OpenFileTreeModel::index( int row, int column, const QModelIndex &pa
 	if ( parentNode->children.length() <= row || 0 > row ) {
 		return QModelIndex();
 	}
-	Node *Node = parentNode->children[row];
+	Node *Node = parentNode->children[ row ];
 
 	return createIndex( row, column, Node );
 }
@@ -227,7 +227,7 @@ QVariant OpenFileTreeModel::data( const QModelIndex &index, int role ) const {
 			if ( node->file->hasUnsavedChanges() ) {
 				tooltip += "\nUnsaved Changes";
 			}
-			tooltip += QString( "\n" ) + node->file->sStatusLabels[node->file->getOpenStatus()];
+			tooltip += QString( "\n" ) + node->file->sStatusLabels[ node->file->getOpenStatus() ];
 		}
 		return QVariant( tooltip );
 	} else if ( role < Qt::UserRole ) {

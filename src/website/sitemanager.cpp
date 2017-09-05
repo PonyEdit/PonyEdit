@@ -101,7 +101,7 @@ void SiteManager::handleUpdateCheckReply( QList< QVariant > reply, bool forceNot
 		QVariantMap entry = rawEntry.toMap();
 
 		// Split the version number...
-		QString version = entry["tag_name"].toString();
+		QString version = entry[ "tag_name" ].toString();
 		QStringList versionPieces = version.split( notNumeric );
 		int major = versionPieces.empty() ? 0 : versionPieces.takeFirst().toInt();
 		int minor = versionPieces.empty() ? 0 : versionPieces.takeFirst().toInt();
@@ -109,11 +109,11 @@ void SiteManager::handleUpdateCheckReply( QList< QVariant > reply, bool forceNot
 
 		// Find a download URL...
 		QString entry_url;
-		foreach ( QVariant rawAsset, entry["assets"].toList() ) {
+		foreach ( QVariant rawAsset, entry[ "assets" ].toList() ) {
 			QVariantMap asset = rawAsset.toMap();
-			if ( asset["name"].toString() == DOWNLOAD_NAME ) {
+			if ( asset[ "name" ].toString() == DOWNLOAD_NAME ) {
 				// This asset is for this OS :)
-				entry_url = asset["url"].toString();
+				entry_url = asset[ "url" ].toString();
 			}
 		}
 		if ( entry_url.isEmpty() ) {
@@ -125,7 +125,7 @@ void SiteManager::handleUpdateCheckReply( QList< QVariant > reply, bool forceNot
 		     ( major == MAJOR_VERSION && minor > MINOR_VERSION ) ||
 		     ( major == MAJOR_VERSION && minor == MINOR_VERSION && revision > REVISION ) ) {
 
-			QStringList releaseNotes = entry["body"].toString().split( newline );
+			QStringList releaseNotes = entry[ "body" ].toString().split( newline );
 			foreach ( QString note, releaseNotes ) {
 				note = note.trimmed();
 				if ( note.startsWith( '*' ) && note.endsWith( '*' ) ) {

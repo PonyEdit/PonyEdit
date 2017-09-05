@@ -68,8 +68,8 @@ FileDialog::FileDialog( QWidget *parent, bool saveAs ) :
 	ui->fileList->horizontalHeader()->setSortIndicatorShown( true );
 
 	QList< int > sizes = ui->splitter->sizes();
-	sizes[0] = 1;
-	sizes[1] = 300;
+	sizes[ 0 ] = 1;
+	sizes[ 1 ] = 300;
 	ui->splitter->setSizes( sizes );
 
 	ui->directoryTree->setContextMenuPolicy( Qt::CustomContextMenu );
@@ -290,8 +290,8 @@ void FileDialog::populateWindowsShares( CustomTreeEntry *entry ) {
 		if ( dwResultEnum == NO_ERROR ) {
 			for ( i = 0; i < cEntries; i++ ) {
 				CustomTreeEntry *childEntry;
-				QString name( ( QChar * ) lpnrLocal[i].lpRemoteName );
-				if ( lpnrLocal[i].dwDisplayType == RESOURCEDISPLAYTYPE_SHARE ) {
+				QString name( ( QChar * ) lpnrLocal[ i ].lpRemoteName );
+				if ( lpnrLocal[ i ].dwDisplayType == RESOURCEDISPLAYTYPE_SHARE ) {
 					// Folder; add as a clickable location
 					Location loc = Location( name );
 					childEntry = addLocationToTree( entry, loc );
@@ -303,8 +303,8 @@ void FileDialog::populateWindowsShares( CustomTreeEntry *entry ) {
 					entry->addChild( childEntry );
 
 					if ( RESOURCEUSAGE_CONTAINER ==
-					     ( lpnrLocal[i].dwUsage & RESOURCEUSAGE_CONTAINER ) ) {
-						childEntry->setData< LPNETRESOURCE >( &lpnrLocal[i] );
+					     ( lpnrLocal[ i ].dwUsage & RESOURCEUSAGE_CONTAINER ) ) {
+						childEntry->setData< LPNETRESOURCE >( &lpnrLocal[ i ] );
 						populateWindowsShares( childEntry );
 					}
 				}
@@ -552,11 +552,11 @@ void FileDialog::keyPressEvent( QKeyEvent *event ) {
 	} else if ( ( focusWidget() == ui->fileList || focusWidget() == ui->fileName ) &&
 	            ( event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return ) ) {
 		QList< Location > selections = getSelectedLocations();
-		if ( selections.length() > 1 || ( selections.length() > 0 && ! selections[0].isDirectory() ) ||
+		if ( selections.length() > 1 || ( selections.length() > 0 && ! selections[ 0 ].isDirectory() ) ||
 		     ( selections.length() == 0 && ui->fileName->currentText().length() > 0 ) ) {
 			accept();
-		} else if ( selections.length() > 0 && selections[0].isDirectory() ) {
-			showLocation( selections[0] );
+		} else if ( selections.length() > 0 && selections[ 0 ].isDirectory() ) {
+			showLocation( selections[ 0 ] );
 		}
 	}
 }
@@ -624,12 +624,12 @@ QList< Location > FileDialog::getSelectedLocations() const {
 Location FileDialog::getNewLocation() const {
 	QList< Location > selections = getSelectedLocations();
 	if ( selections.length() > 0 ) {
-		return selections[0];
+		return selections[ 0 ];
 	}
 
 	QStringList entries = Tools::splitQuotedList( ui->fileName->currentText(), ',' );
 	if ( entries.length() ) {
-		return Location( mCurrentLocation.getPath() + "/" + entries[0] );
+		return Location( mCurrentLocation.getPath() + "/" + entries[ 0 ] );
 	}
 
 	return Location();

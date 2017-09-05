@@ -35,11 +35,11 @@ class EditorPanel : public QFrame {
 
 // Public methods for split panels
 		inline EditorPanel *getFirstChild() const {
-			return mChildPanels[0];
+			return mChildPanels[ 0 ];
 		}
 
 		inline EditorPanel *getSecondChild() const {
-			return mChildPanels[1];
+			return mChildPanels[ 1 ];
 		}
 
 		void unsplit();

@@ -7,7 +7,7 @@ class StringTrie {
 	public:
 		struct Node {
 			bool terminator;
-			Node *children[256];
+			Node *children[ 256 ];
 		};
 
 		StringTrie();
@@ -19,8 +19,8 @@ class StringTrie {
 		}
 
 		inline bool continueScan( const Node **node, unsigned char character ) {
-			if ( ( *node )->children[( unsigned int ) character] ) {
-				*node = ( *node )->children[( unsigned int ) character]; return true;
+			if ( ( *node )->children[ ( unsigned int ) character ] ) {
+				*node = ( *node )->children[ ( unsigned int ) character ]; return true;
 			} else {
 				return false;
 			}

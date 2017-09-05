@@ -175,7 +175,7 @@ void ServerFile::serverReconnectFailure( QString error, int flags ) {
 void ServerFile::movePumpCursor( int revision ) {
 	mChangePumpCursor = 0;
 	while ( mChangePumpCursor < mChangesSinceLastSave.length() &&
-	        mChangesSinceLastSave[mChangePumpCursor]->revision <= revision ) {
+	        mChangesSinceLastSave[ mChangePumpCursor ]->revision <= revision ) {
 		mChangePumpCursor++;
 	}
 }
@@ -201,7 +201,7 @@ void ServerFile::handleDocumentChange( int position, int removeChars, const QStr
 
 void ServerFile::pumpChangeQueue() {
 	while ( mChangePumpCursor < mChangesSinceLastSave.length() ) {
-		Change *change = mChangesSinceLastSave[mChangePumpCursor++];
+		Change *change = mChangesSinceLastSave[ mChangePumpCursor++ ];
 
 		// Send this change to the remote server
 		QMap< QString, QVariant > params;
@@ -258,7 +258,7 @@ void ServerFile::setLastSavedRevision( int lastSavedRevision ) {
 	BaseFile::setLastSavedRevision( lastSavedRevision );
 
 	// Purge all stored changes up to that point...
-	while ( mChangesSinceLastSave.length() > 0 && mChangesSinceLastSave[0]->revision <= mLastSavedRevision ) {
+	while ( mChangesSinceLastSave.length() > 0 && mChangesSinceLastSave[ 0 ]->revision <= mLastSavedRevision ) {
 		Change *change = mChangesSinceLastSave.takeFirst();
 		mChangePumpCursor--;
 		delete change;

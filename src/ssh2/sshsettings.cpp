@@ -51,7 +51,7 @@ void SshSettings::parse( QString config ) {
 			continue;
 		}
 
-		mConfig[currentHost][key] = value;
+		mConfig[ currentHost ][ key ] = value;
 	}
 }
 
@@ -68,18 +68,18 @@ SshSession::AuthMethods SshSettings::authMethods( QByteArray hostname ) {
 	while ( iterator != mConfig.constEnd() ) {
 		hostMatch.setPattern( iterator.key() );
 		if ( hostMatch.exactMatch( hostname ) ) {
-			if ( ! iterator.value()["passwordauthentication"].isEmpty() &&
-			     iterator.value()["passwordauthentication"] != "yes" ) {
+			if ( ! iterator.value()[ "passwordauthentication" ].isEmpty() &&
+			     iterator.value()[ "passwordauthentication" ] != "yes" ) {
 				methods &= ~SshSession::AuthMethod::AuthPassword;
 			}
 
-			if ( ! iterator.value()["kbdinteractiveauthentication"].isEmpty() &&
-			     iterator.value()["kbdinteractiveauthentication"] != "yes" ) {
+			if ( ! iterator.value()[ "kbdinteractiveauthentication" ].isEmpty() &&
+			     iterator.value()[ "kbdinteractiveauthentication" ] != "yes" ) {
 				methods &= ~SshSession::AuthMethod::AuthKeyboardInteractive;
 			}
 
-			if ( ! iterator.value()["pubkeyauthentication"].isEmpty() &&
-			     iterator.value()["pubkeyauthentication"] != "yes" ) {
+			if ( ! iterator.value()[ "pubkeyauthentication" ].isEmpty() &&
+			     iterator.value()[ "pubkeyauthentication" ] != "yes" ) {
 				methods &= ~SshSession::AuthMethod::AuthPublicKey;
 			}
 		}
@@ -102,8 +102,8 @@ QString SshSettings::getValue( QByteArray hostname, QString key, QByteArray orig
 	while ( iterator != mConfig.constEnd() ) {
 		hostMatch.setPattern( iterator.key() );
 		if ( hostMatch.exactMatch( hostname ) ) {
-			if ( ! iterator.value()[key].isEmpty() ) {
-				returnValue = iterator.value()[key];
+			if ( ! iterator.value()[ key ].isEmpty() ) {
+				returnValue = iterator.value()[ key ];
 			}
 		}
 
