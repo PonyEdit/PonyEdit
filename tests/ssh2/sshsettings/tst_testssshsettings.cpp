@@ -71,6 +71,15 @@ void TestsSshSettings::testParse_data() {
 
 	expectedConfig.clear();
 	expectedConfig["ponyedit.com"]["hostname"] = "ponyedit.com";
+
+	QTest::newRow( "single host, empty missing" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    Hostname ponyedit.com\n"
+	                    "    User" )
+	        << expectedConfig;
+
+	expectedConfig.clear();
+	expectedConfig["ponyedit.com"]["hostname"] = "ponyedit.com";
 	expectedConfig["ponyedit.org"]["hostname"] = "ponyedit.org";
 
 	QTest::newRow( "multi host" )
