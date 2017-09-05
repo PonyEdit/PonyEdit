@@ -32,6 +32,9 @@ class TestsSshSettings : public QObject {
 
 		void testIdentitiesOnly_data();
 		void testIdentitiesOnly();
+
+		void testIdentityFile_data();
+		void testIdentityFile();
 };
 
 TestsSshSettings::TestsSshSettings() {}
@@ -402,6 +405,70 @@ void TestsSshSettings::testIdentitiesOnly() {
 	settings.parse( inputFile );
 
 	QCOMPARE( settings.identitiesOnly( QByteArray( "ponyedit.com" ) ), expectedIdentitiesSettings );
+}
+
+void TestsSshSettings::testIdentityFile_data() {
+	QTest::addColumn< QString >( "inputFile" );
+	QTest::addColumn< QByteArray >( "identityFile" );
+	QTest::addColumn< QByteArray >( "expectedIdentityFile" );
+
+	QTest::newRow( "empty" )
+	        << QString()
+	        << QByteArray( "~/.ssh/id_rsa" )
+	        << QByteArray( "~/.ssh/id_rsa" );
+
+
+	QTest::newRow( "single host, no IdentityFile" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    Hostname ponyedit.com" )
+	        << QByteArray( "~/.ssh/id_rsa" )
+	        << QByteArray( "~/.ssh/id_rsa" );
+
+	QTest::newRow( "single host, same IdentityFile" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    IdentityFile ~/.ssh/id_rsa" )
+	        << QByteArray( "~/.ssh/id_rsa" )
+	        << QByteArray( "~/.ssh/id_rsa" );
+
+	QTest::newRow( "single host, different IdentityFile" )
+	        << QString( "Host ponyedit.com\n"
+	                    "    IdentityFile ~/.ssh/id_md5" )
+	        << QByteArray( "~/.ssh/id_rsa" )
+	        << QByteArray( "~/.ssh/id_md5" );
+
+	QTest::newRow( "different host, different IdentityFile" )
+	        << QString( "Host ponyedit.org\n"
+	                    "    IdentityFile ~/.ssh/id_md5" )
+	        << QByteArray( "~/.ssh/id_rsa" )
+	        << QByteArray( "~/.ssh/id_rsa" );
+
+	QTest::newRow( "wildcard host, same IdentityFile" )
+	        << QString( "Host ponyedit.*\n"
+	                    "    IdentityFile ~/.ssh/id_rsa" )
+	        << QByteArray( "~/.ssh/id_rsa" )
+	        << QByteArray( "~/.ssh/id_rsa" );
+
+	QTest::newRow( "wildcard host, different IdentityFile" )
+	        << QString( "Host ponyedit.*\n"
+	                    "    IdentityFile ~/.ssh/id_md5" )
+	        << QByteArray( "~/.ssh/id_rsa" )
+	        << QByteArray( "~/.ssh/id_md5" );
+
+	QTest::newRow( "top level hostname, different IdentityFile" )
+	        << QString( "IdentityFile ~/.ssh/id_md5" )
+	        << QByteArray( "~/.ssh/id_rsa" )
+	        << QByteArray( "~/.ssh/id_md5" );
+}
+
+void TestsSshSettings::testIdentityFile() {
+	QFETCH( QString, inputFile );
+	QFETCH( QByteArray, identityFile );
+	QFETCH( QByteArray, expectedIdentityFile );
+
+	SshSettings settings;
+	settings.parse( inputFile );
+
+	QCOMPARE( settings.identityFile( QByteArray( "ponyedit.com" ), identityFile ), expectedIdentityFile );
 }
 
 QTEST_APPLESS_MAIN( TestsSshSettings )

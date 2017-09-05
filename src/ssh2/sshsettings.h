@@ -29,6 +29,10 @@ class SshSettings {
 			return ( getValue( hostname, "identitiesonly", "no" ) == "yes" );
 		}
 
+		QByteArray identityFile( QByteArray hostname, QByteArray identityFile ) {
+			return getValue( hostname, "identityfile", identityFile ).toLatin1();
+		}
+
 		QMap< QString, QMap< QString, QString > > getConfig() {
 			return mConfig;
 		}
