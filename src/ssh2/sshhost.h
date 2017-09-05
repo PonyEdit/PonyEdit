@@ -2,6 +2,7 @@
 #define SSHHOST_H
 
 #include <QByteArray>
+#include <QDir>
 #include <QList>
 #include <QMutex>
 #include <QObject>
@@ -278,7 +279,10 @@ class SshHost : public QObject {
 		}
 
 		inline void setKeyFile( const QByteArray &keyFile ) {
-			mKeyFile = keyFile;
+			mKeyFile = mSettings.identityFile( mHostname, keyFile );
+			if ( mKeyFile.startsWith( "~/" ) ) {
+				mKeyFile.replace( 0, 1, QDir::homePath().toLatin1() );
+			}
 		}
 
 		inline void setKeyPassphrase( const QByteArray &keyPassphrase ) {

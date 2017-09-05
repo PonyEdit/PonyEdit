@@ -411,6 +411,10 @@ bool SshSession::authenticateAgent() {
 
 	SSHLOG_TRACE( mHost ) << "Looking for an SSH key agent";
 
+	QString identityFile = mHost->getKeyFile();
+
+	SSHLOG_DEBUG( mHost ) << "Configured IdentityFile" << identityFile;
+
 	try {
 		// Initialize SSH agent code
 		agent = libssh2_agent_init( mHandle );
@@ -438,6 +442,14 @@ bool SshSession::authenticateAgent() {
 				       1 ? QObject::tr( "No identities stored in SSH agent were accepted!" ) : QObject::
 				       tr(
 					       "Failed to receive identity from SSH agent!" ) );
+			}
+
+			// If an IdentityFile is configured, check to see if it matches this identity
+			if ( ! identityFile.isEmpty() && identityFile != identity->comment ) {
+				SSHLOG_INFO( mHost ) << "Identity" << identity->comment <<
+				        "did not match configured identity file";
+				prevIdentity = identity;
+				continue;
 			}
 
 			// Try an identity
