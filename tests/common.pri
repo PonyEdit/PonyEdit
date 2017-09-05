@@ -13,8 +13,10 @@ TEMPLATE = app
 DEFINES += QT_DEPRECATED_WARNINGS
 
 # gcov support
-QMAKE_CXXFLAGS_RELEASE -= -O2
-QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
-LIBS += -lgcov
+linux {
+	QMAKE_CXXFLAGS_RELEASE -= -O2
+	QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
+	LIBS += -lgcov
+}
 
 INCLUDEPATH += $$SRCDIR
