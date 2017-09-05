@@ -89,7 +89,7 @@ bool SyntaxDefinition::link() {
 
 		// Pick through the rules in this context, linking <IncludeRules>, context="", etc.
 		for ( int i = 0; i < context->rules.length(); i++ ) {
-			QSharedPointer< SyntaxRule > rule = context->rules[i];
+			QSharedPointer< SyntaxRule > rule = context->rules[ i ];
 
 			// Deal with <IncludeRules> tags
 			if ( rule->getType() == SyntaxRule::IncludeRules ) {
@@ -187,6 +187,6 @@ void SyntaxDefinition::addItemData( ItemData *itemData ) {
 void SyntaxDefinition::setWeakDeliminators( const QString &v ) {
 	mWeakDeliminators = v;
 	for ( int i = 0; i < v.length(); i++ ) {
-		mDeliminators.remove( v[i] );
+		mDeliminators.remove( v[ i ] );
 	}
 }

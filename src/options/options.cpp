@@ -107,14 +107,14 @@ void Options::save() {
 	int skipped = 0;
 	QString file;
 	for ( int ii = 0; ii + skipped < StartupFiles.length(); ii++ ) {
-		file = StartupFiles[ii].trimmed();
+		file = StartupFiles[ ii ].trimmed();
 		if ( file.isNull() ) {
 			skipped++;
 			continue;
 		}
 		settings.setArrayIndex( ii - skipped );
 		settings.setValue( ntr( "path" ), QVariant( file ) );
-		settings.setValue( ntr( "line" ), QVariant( StartupFilesLineNo[ii] ) );
+		settings.setValue( ntr( "line" ), QVariant( StartupFilesLineNo[ ii ] ) );
 	}
 	settings.endArray();
 }

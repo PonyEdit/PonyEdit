@@ -36,7 +36,7 @@ SearchResultModel::InternalTreeNode *SearchResultModel::createFileNode( const Lo
 	// Keep the locations alphabetically sorted
 	int i;
 	for ( i = 0; i < mRootNode->children.length(); i++ ) {
-		if ( mRootNode->children[i]->result.location.getPath() < location.getPath() ) {
+		if ( mRootNode->children[ i ]->result.location.getPath() < location.getPath() ) {
 			break;
 		}
 	}
@@ -104,7 +104,7 @@ QModelIndex SearchResultModel::index( int row, int column, const QModelIndex &pa
 		return QModelIndex();
 	}
 
-	return createIndex( row, column, parentNode->children[row] );
+	return createIndex( row, column, parentNode->children[ row ] );
 }
 
 QModelIndex SearchResultModel::parent( const QModelIndex &child ) const {

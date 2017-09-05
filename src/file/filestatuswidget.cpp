@@ -22,7 +22,7 @@ void FileStatusWidget::showEvent( QShowEvent * ) {
 void FileStatusWidget::openStatusChanged() {
 	BaseFile::OpenStatus status = mFile->getOpenStatus();
 
-	this->setStatus( QPixmap( ":/icons/loading.png" ), BaseFile::sStatusLabels[status] );
+	this->setStatus( QPixmap( ":/icons/loading.png" ), BaseFile::sStatusLabels[ status ] );
 
 	if ( status == BaseFile::Ready ) {
 		close( true );

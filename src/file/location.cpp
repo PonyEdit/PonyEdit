@@ -171,7 +171,7 @@ bool Location::isHidden() const {
 #ifdef Q_OS_WIN32
 	if ( mData->mProtocol == Local ) {
 		WCHAR *wchar = ( WCHAR * ) malloc( ( mData->mPath.length() + 1 ) * sizeof( WCHAR ) );
-		wchar[mData->mPath.toWCharArray( wchar )] = 0;
+		wchar[ mData->mPath.toWCharArray( wchar ) ] = 0;
 		DWORD result = GetFileAttributes( wchar );
 		free( wchar );
 
@@ -323,9 +323,9 @@ void LocationShared::setPath( const QString &path ) {
 	if ( gSftpServerRegExp.indexIn( mPath ) > -1 ) {
 		mProtocol = Location::Sftp;
 		QStringList parts = gSftpServerRegExp.capturedTexts();
-		mRemoteUserName = parts[2];
-		mRemoteHostName = parts[3];
-		mRemotePath = parts[4];
+		mRemoteUserName = parts[ 2 ];
+		mRemoteHostName = parts[ 3 ];
+		mRemotePath = parts[ 4 ];
 
 		if ( mRemotePath.length() == 0 ) {
 			mRemotePath = "/";
@@ -334,9 +334,9 @@ void LocationShared::setPath( const QString &path ) {
 	} else if ( gSshServerRegExp.indexIn( mPath ) > -1 ) {
 		mProtocol = Location::Ssh;
 		QStringList parts = gSshServerRegExp.capturedTexts();
-		mRemoteUserName = parts[1];
-		mRemoteHostName = parts[2];
-		mRemotePath = parts[3];
+		mRemoteUserName = parts[ 1 ];
+		mRemoteHostName = parts[ 2 ];
+		mRemotePath = parts[ 3 ];
 
 		if ( mRemotePath.length() == 0 ) {
 			mRemotePath = "/";
@@ -530,7 +530,7 @@ void Location::addToFavorites() {
 
 void Location::deleteFavorite( const QString &path ) {
 	for ( int i = 0; i < sFavorites.length(); i++ ) {
-		if ( sFavorites[i].path == path ) {
+		if ( sFavorites[ i ].path == path ) {
 			sFavorites.removeAt( i );
 			saveFavorites();
 			return;
@@ -568,7 +568,7 @@ void Location::loadFavorites() {
 void Location::addSortedFavorite( const Favorite &favorite ) {
 	int i;
 	for ( i = 0; i < sFavorites.length(); i++ ) {
-		if ( favorite.name.compare( sFavorites[i].name, Qt::CaseInsensitive ) > 0 ) {
+		if ( favorite.name.compare( sFavorites[ i ].name, Qt::CaseInsensitive ) > 0 ) {
 			break;
 		}
 	}

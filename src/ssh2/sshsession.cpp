@@ -222,8 +222,8 @@ bool SshSession::openSocket() {
 			throw( tr( "Could not find host: %1" ).arg( QString( mHost->getHostname() ) ) );
 		}
 
-		while ( ! connected && server->h_addr_list[tryAddress] != 0 ) {
-			connected = openSocket( *( u_long * ) server->h_addr_list[tryAddress++] );
+		while ( ! connected && server->h_addr_list[ tryAddress ] != 0 ) {
+			connected = openSocket( *( u_long * ) server->h_addr_list[ tryAddress++ ] );
 		}
 	}
 
@@ -347,11 +347,11 @@ void SshSession::interactiveAuthCallback( const char *,
 	if ( num_prompts == 1 ) {
 		SshSession *connection = ( SshSession * ) ( *abstract );
 #ifdef Q_OS_WIN32
-		responses[0].text = _strdup( connection->mPasswordAttempt );
+		responses[ 0 ].text = _strdup( connection->mPasswordAttempt );
 #else
-		responses[0].text = strdup( connection->mPasswordAttempt );
+		responses[ 0 ].text = strdup( connection->mPasswordAttempt );
 #endif
-		responses[0].length = connection->mPasswordAttempt.length();
+		responses[ 0 ].length = connection->mPasswordAttempt.length();
 	}
 }
 
@@ -648,7 +648,7 @@ void SshSession::updateAllChannels() {
 		mChannelsLock.lock();
 		for ( int i = 0; i < mChannels.length(); i++ ) {
 			// Update the channel
-			SshChannel *channel = mChannels[i];
+			SshChannel *channel = mChannels[ i ];
 			if ( NULL == channel ) {
 				continue;
 			}

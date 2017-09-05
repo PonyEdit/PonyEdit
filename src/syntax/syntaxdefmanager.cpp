@@ -92,7 +92,7 @@ void SyntaxDefManager::addRecord( Record *record ) {
 	// Keep the record list in priority order
 	int i;
 	for ( i = 0; i < mRecordList.length(); i++ ) {
-		if ( mRecordList[i]->priority < record->priority ) {
+		if ( mRecordList[ i ]->priority < record->priority ) {
 			break;
 		}
 	}

@@ -27,7 +27,7 @@ class SshHostTreeEntry : public CustomTreeEntry {
 		static bool sCustomDrawKitInitialized;
 		static QTextOption sLabelTextOption;
 		static QIcon sDisconnectedIcon;
-		static QIcon sConnectingIcon[4];
+		static QIcon sConnectingIcon[ 4 ];
 		static QIcon sConnectedIcon;
 		static QIcon sLogIcon;
 

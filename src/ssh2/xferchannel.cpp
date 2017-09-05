@@ -65,8 +65,8 @@ bool XferChannel::mainUpdate() {
 		}
 
 		QList< QByteArray > parts = r.data.split( ',' );
-		mCurrentRequest->setDataSize( parts[0].toInt() );
-		mCurrentRequest->setChecksum( parts[1] );
+		mCurrentRequest->setDataSize( parts[ 0 ].toInt() );
+		mCurrentRequest->setChecksum( parts[ 1 ] );
 
 		mLeftoverEscape = false;
 		mInternalStatus = _DownloadingBody;

@@ -373,7 +373,7 @@ ServerRequest *SshHost::getNextServerRequest( bool sudo, const QMap< ServerFile 
 
 	lock.lock();
 	for ( int i = 0; i < list.length(); i++ ) {
-		ServerFile *file = list[i]->getFile();
+		ServerFile *file = list[ i ]->getFile();
 		if ( file == NULL || registeredBuffers.contains( file ) ) {
 			// TODO: Add some code to ensure no request gets lost in the queue permanently if its
 			// buffer-locked channel gets killed
@@ -621,7 +621,7 @@ void SshHost::failXferRequests( const QString &error,
                                 QList< XferRequest * > &requestList ) {
 	listLock.lock();
 	for ( int i = 0; i < requestList.length(); i++ ) {
-		XferRequest *request = requestList[i];
+		XferRequest *request = requestList[ i ];
 		requestList.removeAt( i );
 		request->handleFailure( error, flags );
 		delete request;

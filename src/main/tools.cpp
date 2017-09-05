@@ -179,7 +179,7 @@ QString Tools::squashLabel( const QString &label, const QFontMetrics &metrics, i
 		QString shorten = result.mid( cursor, nextSeparator - cursor );
 		int cullLength = metrics.boundingRect( shorten.mid( 1 ) ).width();
 
-		result.replace( cursor, shorten.length(), shorten[0] );
+		result.replace( cursor, shorten.length(), shorten[ 0 ] );
 		cursor = cursor + 2;
 
 		shortFall -= cullLength;
@@ -277,7 +277,7 @@ void Tools::loadStartupFiles() {
 		case Options::SetFiles:
 		case Options::ReopenFiles:
 			for ( int ii = 0; ii < Options::StartupFiles.length(); ii++ ) {
-				QString name = Options::StartupFiles[ii].trimmed();
+				QString name = Options::StartupFiles[ ii ].trimmed();
 
 				if ( name.isNull() ) {
 					continue;
@@ -287,7 +287,7 @@ void Tools::loadStartupFiles() {
 
 				Editor *current = gMainWindow->getCurrentEditor();
 				if ( current ) {
-					current->gotoLine( Options::StartupFilesLineNo[ii] );
+					current->gotoLine( Options::StartupFilesLineNo[ ii ] );
 				}
 			}
 			break;

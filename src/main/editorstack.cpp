@@ -50,8 +50,8 @@ void EditorStack::createEditor( BaseFile *file ) {
 
 void EditorStack::fileClosed( BaseFile *file ) {
 	for ( int i = 0; i < mEditors.length(); i++ ) {
-		if ( mEditors[i]->getFile() == file ) {
-			bool current = ( getCurrentEditor() == mEditors[i] );
+		if ( mEditors[ i ]->getFile() == file ) {
+			bool current = ( getCurrentEditor() == mEditors[ i ] );
 			mEditors.removeAt( i );
 			if ( current ) {
 				gWindowManager->notifyEditorChanged( mParentPanel );

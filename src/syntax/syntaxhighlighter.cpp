@@ -108,7 +108,7 @@ void SyntaxHighlighter::highlightBlock( const QString &fullText ) {
 		QStringList dynamicCaptures;
 		for ( int idx = 0; idx < context->rules.length(); idx++ ) {
 			// NOTE: I apologise for this abuse of pointers.
-			rule = &context->rules[idx];
+			rule = &context->rules[ idx ];
 
 			// For all other (normal) rules, look for a match.
 			matchLength = ( *rule )->match( text, position );

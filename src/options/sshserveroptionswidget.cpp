@@ -40,8 +40,8 @@ void SshServerOptionsWidget::accept() {
 		SshHost *host = ( SshHost * ) item->data( Qt::UserRole ).value< void * >();
 		if ( item->isHidden() ) {
 			for ( int jj = 0; jj < mConfigWidgets.length(); jj++ ) {
-				if ( mConfigWidgets[jj]->getEditHost() == host ) {
-					disconnect( this, 0, mConfigWidgets[jj], 0 );
+				if ( mConfigWidgets[ jj ]->getEditHost() == host ) {
+					disconnect( this, 0, mConfigWidgets[ jj ], 0 );
 				}
 			}
 			delete host;
@@ -90,18 +90,18 @@ QListWidgetItem *SshServerOptionsWidget::populateServers() {
 			delete item;
 		} else {
 			mConfigWidgets.insert( i, new ServerConfigWidget() );
-			mConfigWidgets[i]->setEditHost( host );
+			mConfigWidgets[ i ]->setEditHost( host );
 
-			connect( mConfigWidgets[i], SIGNAL( accepted() ), mParent, SLOT( accept() ) );
-			connect( mConfigWidgets[i], SIGNAL( rejected() ), mParent, SLOT( reject() ) );
-			connect( mConfigWidgets[i],
+			connect( mConfigWidgets[ i ], SIGNAL( accepted() ), mParent, SLOT( accept() ) );
+			connect( mConfigWidgets[ i ], SIGNAL( rejected() ), mParent, SLOT( reject() ) );
+			connect( mConfigWidgets[ i ],
 			         SIGNAL( nameUpdated( QString ) ),
 			         this,
 			         SLOT( serverNameUpdated( QString ) ) );
 
-			connect( this, SIGNAL( accepted() ), mConfigWidgets[i], SLOT( acceptedHandler() ) );
+			connect( this, SIGNAL( accepted() ), mConfigWidgets[ i ], SLOT( acceptedHandler() ) );
 
-			mConfigWidgets[i]->hide();
+			mConfigWidgets[ i ]->hide();
 		}
 	}
 
@@ -112,18 +112,18 @@ void SshServerOptionsWidget::serverClicked( QListWidgetItem *item, QListWidgetIt
 	if ( previous ) {
 		SshHost *prevHost = ( SshHost * ) previous->data( Qt::UserRole ).value< void * >();
 		for ( int ii = 0; ii < mConfigWidgets.length(); ii++ ) {
-			if ( mConfigWidgets[ii]->getEditHost() == prevHost ) {
-				ui->configContainer->layout()->removeWidget( mConfigWidgets[ii] );
-				mConfigWidgets[ii]->hide();
+			if ( mConfigWidgets[ ii ]->getEditHost() == prevHost ) {
+				ui->configContainer->layout()->removeWidget( mConfigWidgets[ ii ] );
+				mConfigWidgets[ ii ]->hide();
 				break;
 			}
 		}
 	}
 	SshHost *host = ( SshHost * ) item->data( Qt::UserRole ).value< void * >();
 	for ( int ii = 0; ii < mConfigWidgets.length(); ii++ ) {
-		if ( mConfigWidgets[ii]->getEditHost() == host ) {
-			ui->configContainer->layout()->addWidget( mConfigWidgets[ii] );
-			mConfigWidgets[ii]->show();
+		if ( mConfigWidgets[ ii ]->getEditHost() == host ) {
+			ui->configContainer->layout()->addWidget( mConfigWidgets[ ii ] );
+			mConfigWidgets[ ii ]->show();
 			break;
 		}
 	}
@@ -139,13 +139,13 @@ void SshServerOptionsWidget::newServer() {
 
 	int row = ui->serversList->row( item );
 	mConfigWidgets.insert( row, new ServerConfigWidget() );
-	mConfigWidgets[row]->setEditHost( host );
+	mConfigWidgets[ row ]->setEditHost( host );
 
-	connect( mConfigWidgets[row], SIGNAL( accepted() ), mParent, SLOT( accept() ) );
-	connect( mConfigWidgets[row], SIGNAL( rejected() ), mParent, SLOT( reject() ) );
-	connect( mConfigWidgets[row], SIGNAL( nameUpdated( QString ) ), this, SLOT( serverNameUpdated( QString ) ) );
+	connect( mConfigWidgets[ row ], SIGNAL( accepted() ), mParent, SLOT( accept() ) );
+	connect( mConfigWidgets[ row ], SIGNAL( rejected() ), mParent, SLOT( reject() ) );
+	connect( mConfigWidgets[ row ], SIGNAL( nameUpdated( QString ) ), this, SLOT( serverNameUpdated( QString ) ) );
 
-	connect( this, SIGNAL( accepted() ), mConfigWidgets[row], SLOT( acceptedHandler() ) );
+	connect( this, SIGNAL( accepted() ), mConfigWidgets[ row ], SLOT( acceptedHandler() ) );
 
 	ui->serversList->setCurrentItem( item );
 }

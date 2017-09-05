@@ -129,7 +129,7 @@ bool SFTPChannel::updateLs() {
 	}
 
 	if ( mRequestState == Reading ) {
-		char buffer[1024];
+		char buffer[ 1024 ];
 		LIBSSH2_SFTP_ATTRIBUTES attrs;
 
 		rc = libssh2_sftp_readdir( mOperationHandle, buffer, sizeof( buffer ), &attrs );
@@ -143,7 +143,7 @@ bool SFTPChannel::updateLs() {
 		} else {// Got a directory entry
 
 			// Skip hidden entries iff request says to
-			if ( mCurrentRequest->getIncludeHidden() || buffer[0] != '.' ) {
+			if ( mCurrentRequest->getIncludeHidden() || buffer[ 0 ] != '.' ) {
 				// Can't determine if remote file is readable/writable, so report all as so.
 				QString flags = "rw";
 				if ( LIBSSH2_SFTP_S_ISDIR( attrs.permissions ) ) {
@@ -230,7 +230,7 @@ bool SFTPChannel::updateReadFile() {
 	}
 
 	if ( mRequestState == Reading ) {
-		char buffer[4096];
+		char buffer[ 4096 ];
 
 		rc = libssh2_sftp_read( mOperationHandle, buffer, sizeof( buffer ) );
 		if ( rc == LIBSSH2_ERROR_EAGAIN ) {

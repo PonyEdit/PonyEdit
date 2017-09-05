@@ -103,10 +103,10 @@ void UpdateManager::downloadProgress( qint64 bytesReceived, qint64 bytesTotal ) 
 
 	total /= 1024 * 1024;
 
-	progressLabel->setText( QString( "%1 %2 of %3 MiB" ).arg( rec, 0, 'f', 1 ).arg( units[unit] ).arg( total,
-	                                                                                                   0,
-	                                                                                                   'f',
-	                                                                                                   1 ) );
+	progressLabel->setText( QString( "%1 %2 of %3 MiB" ).arg( rec, 0, 'f', 1 ).arg( units[ unit ] ).arg( total,
+	                                                                                                     0,
+	                                                                                                     'f',
+	                                                                                                     1 ) );
 }
 
 void UpdateManager::downloadFinished() {
