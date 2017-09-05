@@ -4,6 +4,7 @@
 #include <QByteArray>
 #include <QMap>
 #include <QSet>
+
 #include "shellchannel.h"
 
 class SshHost;

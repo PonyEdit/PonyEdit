@@ -10,6 +10,7 @@
 #include "serverchannel.h"
 #include "serverrequest.h"
 #include "sshhost.h"
+#include "sshsettings.h"
 
 #define SERVER_INIT      " cd ~;" \
 	"if type perl >/dev/null 2>&1;then " \

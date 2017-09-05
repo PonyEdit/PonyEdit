@@ -15,6 +15,7 @@
 #include "sshchannel.h"
 #include "sshhost.h"
 #include "sshsession.h"
+#include "sshsettings.h"
 
 #ifdef Q_OS_WIN
 	#include <windows.h>
@@ -40,6 +41,7 @@ SshSession::SshSession( SshHost *host ) :
 	mStatus( Disconnected ),
 	mErrorDetails(),
 	mThreadEndedCalled( false ),
+	mKeepaliveTime( mHost->getKeepalive() * 1000 ),
 	mKeepaliveSent( false ),
 	mLastActivityTimer(),
 	mThread( NULL ),
@@ -52,6 +54,10 @@ SshSession::SshSession( SshHost *host ) :
 	mAtChannelLimit( false ),
 	mPasswordAttempt() {
 	SSHLOG_TRACE( host ) << "Opening a new session";
+
+	if ( ! mKeepaliveTime ) {
+		mKeepaliveTime = KEEPALIVE_MSEC;
+	}
 
 	initializeLibrary();
 
@@ -410,6 +416,10 @@ bool SshSession::authenticateAgent() {
 
 	SSHLOG_TRACE( mHost ) << "Looking for an SSH key agent";
 
+	QString identityFile = mHost->getKeyFile();
+
+	SSHLOG_DEBUG( mHost ) << "Configured IdentityFile" << identityFile;
+
 	try {
 		// Initialize SSH agent code
 		agent = libssh2_agent_init( mHandle );
@@ -437,6 +447,14 @@ bool SshSession::authenticateAgent() {
 				       1 ? QObject::tr( "No identities stored in SSH agent were accepted!" ) : QObject::
 				       tr(
 					       "Failed to receive identity from SSH agent!" ) );
+			}
+
+			// If an IdentityFile is configured, check to see if it matches this identity
+			if ( ! identityFile.isEmpty() && identityFile != identity->comment ) {
+				SSHLOG_INFO( mHost ) << "Identity" << identity->comment <<
+				        "did not match configured identity file";
+				prevIdentity = identity;
+				continue;
 			}
 
 			// Try an identity
@@ -496,6 +514,11 @@ bool SshSession::authenticate() {
 
 	bool authenticated = false;
 
+	// If SSH config has IdentitiesOnly set, we can only use the agent.
+	if ( mHost->identitiesOnly() ) {
+		return authenticateAgent();
+	}
+
 	// If there is a cached authentication method, use that...
 	AuthMethod cachedMethod = mHost->getCachedAuthMethod();
 	if ( cachedMethod ) {
@@ -529,21 +552,21 @@ bool SshSession::authenticate() {
 }
 
 SshSession::AuthMethods SshSession::getAuthenticationMethods() {
-	AuthMethods methods = AuthNone;
+	AuthMethods methods = mHost->authMethods();
 
 	char *authlist = libssh2_userauth_list( mHandle, mHost->getUsername(), mHost->getUsername().length() );
 	if ( NULL == authlist ) {
-		return methods;
+		return AuthNone;
 	}
 
-	if ( strstr( authlist, "password" ) != NULL ) {
-		methods |= AuthPassword;
+	if ( strstr( authlist, "password" ) == NULL ) {
+		methods &= ~AuthPassword;
 	}
-	if ( strstr( authlist, "keyboard-interactive" ) != NULL ) {
-		methods |= AuthKeyboardInteractive;
+	if ( strstr( authlist, "keyboard-interactive" ) == NULL ) {
+		methods &= ~AuthKeyboardInteractive;
 	}
-	if ( strstr( authlist, "publickey" ) != NULL ) {
-		methods |= AuthPublicKey;
+	if ( strstr( authlist, "publickey" ) == NULL ) {
+		methods &= ~AuthPublicKey;
 	}
 
 	return methods;
@@ -563,7 +586,7 @@ void SshSession::connect() {
 	if ( int rc = libssh2_session_handshake( mHandle, mSocket ) ) {
 		throw( QObject::tr( "Failed to start session: %1" ).arg( rc ) );
 	}
-	libssh2_keepalive_config( mHandle, 1, ( KEEPALIVE_MSEC / 1000 ) - 5 );
+	libssh2_keepalive_config( mHandle, 1, ( mKeepaliveTime / 1000 ) - 5 );
 
 	// Verify the host fingerprint
 	if ( ! verifyHostFingerprint() ) {
@@ -746,7 +769,7 @@ void SshSession::heartbeat() {
 	if ( mLastActivityTimer.elapsed() > TIMEOUT_MSEC ) {
 		setErrorStatus( QObject::tr( "Session timeout" ) );
 		mThread->quit();
-	} else if ( mLastActivityTimer.elapsed() > KEEPALIVE_MSEC ) {
+	} else if ( mLastActivityTimer.elapsed() > mKeepaliveTime ) {
 		SSHLOG_TRACE( mHost ) << "Sending keepalive heartbeat.";
 		mKeepaliveSent = true;
 		int dontCare;

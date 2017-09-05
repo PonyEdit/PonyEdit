@@ -2,6 +2,7 @@
 #define SSHHOST_H
 
 #include <QByteArray>
+#include <QDir>
 #include <QList>
 #include <QMutex>
 #include <QObject>
@@ -15,6 +16,7 @@
 #include "QsLog.h"
 #include "sshchannel.h"
 #include "sshsession.h"
+#include "sshsettings.h"
 
 // Configuration
 
@@ -87,6 +89,10 @@ class SshHost : public QObject {
 		                     const QByteArray &filename,
 		                     const QByteArray &content,
 		                     const Callback &callback = Callback() );
+
+		SshSession::AuthMethods authMethods() {
+			return mSettings.authMethods( mHostname );
+		}
 
 		//
 		// Stuff for saving hosts
@@ -225,12 +231,20 @@ class SshHost : public QObject {
 			return mPassword;
 		}
 
+		inline bool identitiesOnly() {
+			return mSettings.identitiesOnly( mHostname );
+		}
+
 		inline const QByteArray &getKeyFile() const {
 			return mKeyFile;
 		}
 
 		inline const QByteArray &getKeyPassphrase() const {
 			return mKeyPassphrase;
+		}
+
+		inline int getKeepalive() {
+			return mSettings.serverAliveInterval( mHostname );
 		}
 
 		inline const QByteArray &getSudoPassword() const {
@@ -253,7 +267,7 @@ class SshHost : public QObject {
 		}
 
 		inline void setHostname( const QByteArray &hostname ) {
-			mHostname = hostname;
+			mHostname = mSettings.hostname( hostname );
 		}
 
 		inline void setPort( int port ) {
@@ -261,7 +275,7 @@ class SshHost : public QObject {
 		}
 
 		inline void setUsername( const QByteArray &username ) {
-			mUsername = username;
+			mUsername = mSettings.user( mHostname, username );
 		}
 
 		inline void setPassword( const QByteArray &password ) {
@@ -269,7 +283,10 @@ class SshHost : public QObject {
 		}
 
 		inline void setKeyFile( const QByteArray &keyFile ) {
-			mKeyFile = keyFile;
+			mKeyFile = mSettings.identityFile( mHostname, keyFile );
+			if ( mKeyFile.startsWith( "~/" ) ) {
+				mKeyFile.replace( 0, 1, QDir::homePath().toLatin1() );
+			}
 		}
 
 		inline void setKeyPassphrase( const QByteArray &keyPassphrase ) {
@@ -395,6 +412,9 @@ class SshHost : public QObject {
 		SshSession::AuthMethod mCachedAuthMethod;
 		int mChannelLimitGuess;
 		QByteArray mHomeDirectory;
+
+		// SSH settings from the SSH config file
+		SshSettings mSettings;
 
 		// Saved server parameters
 		QString mName;
