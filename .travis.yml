@@ -109,9 +109,6 @@ script:
     fi
 
 after_success:
-  - cd $TRAVIS_BUILD_DIR
-  - pwd
-  - ls
   - |
     if [ "$TEST_SUITE" != "build" ]; then
       exit
@@ -120,9 +117,6 @@ after_success:
     if [ "$TRAVIS_OS_NAME" = "osx" ]; then
       cd PonyEdit.app/Contents/MacOS
     fi
-  - set -e
-  - ./PonyEdit --version
-  - set +e
   - |
     if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$TEST_SUITE" = "build" ]; then
       bash <(curl -s https://codecov.io/bash)
@@ -147,6 +141,10 @@ after_success:
       git branch -f "$coverity_branch" origin/master
       git push -f origin "$coverity_branch"
     fi
+  - set -e
+  - cd $TRAVIS_BUILD_DIR/src
+  - ./PonyEdit --version
+  - set +e
 
 notifications:
   email:
