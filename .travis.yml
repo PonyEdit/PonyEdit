@@ -47,6 +47,7 @@ env:
 before_install:
   # Exit early when something causes an error
   - set -ev
+  - python -c "import fcntl; fcntl.fcntl(1, fcntl.F_SETFL, 0)"
   # Only run Coverity on the Linux build
   - |
     if [ "$TRAVIS_BRANCH" = "$coverity_branch" ] && ! [ "$TRAVIS_OS_NAME" = "linux" -a "$TEST_SUITE" = "build" ]; then
