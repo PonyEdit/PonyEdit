@@ -110,6 +110,8 @@ script:
 
 after_success:
   - cd $TRAVIS_BUILD_DIR
+  - pwd
+  - ls
   - |
     if [ "$TEST_SUITE" != "build" ]; then
       exit
