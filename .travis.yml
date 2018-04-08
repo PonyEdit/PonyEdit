@@ -45,9 +45,6 @@ env:
     - coverity_branch: coverity_scan
 
 before_install:
-  # Exit early when something causes an error
-  - set -ev
-  - python -c "import fcntl; fcntl.fcntl(1, fcntl.F_SETFL, 0)"
   # Only run Coverity on the Linux build
   - |
     if [ "$TRAVIS_BRANCH" = "$coverity_branch" ] && ! [ "$TRAVIS_OS_NAME" = "linux" -a "$TEST_SUITE" = "build" ]; then
@@ -95,9 +92,11 @@ script:
     fi
   - |
     if [ "$TEST_SUITE" = "build" ]; then
+      set -e
       qmake -v
       qmake
       make -j 2
+      set +e
       make check | perl tests/colourise.pl
 
       if [ "$TRAVIS_OS_NAME" = "linux" ]; then
