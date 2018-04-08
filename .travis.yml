@@ -43,6 +43,8 @@ env:
     - coverity_branch: coverity_scan
 
 before_install:
+  # Exit early when something causes an error
+  - set -ev
   # Only run Coverity on the Linux build
   - |
     if [ "$TRAVIS_BRANCH" = "$coverity_branch" ] && ! [ "$TRAVIS_OS_NAME" = "linux" -a "$TEST_SUITE" = "build" ]; then
