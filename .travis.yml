@@ -109,6 +109,7 @@ script:
     fi
 
 after_success:
+  - cd $TRAVIS_BUILD_DIR
   - |
     if [ "$TEST_SUITE" != "build" ]; then
       exit
@@ -117,7 +118,9 @@ after_success:
     if [ "$TRAVIS_OS_NAME" = "osx" ]; then
       cd PonyEdit.app/Contents/MacOS
     fi
+  - set -e
   - ./PonyEdit --version
+  - set +e
   - |
     if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$TEST_SUITE" = "build" ]; then
       bash <(curl -s https://codecov.io/bash)
