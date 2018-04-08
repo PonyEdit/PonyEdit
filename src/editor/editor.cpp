@@ -334,7 +334,7 @@ void Editor::applyOptions() {
 	int characterWidth = fontMetrics.width( "MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM" ) / 40;
 
 	mEditor->updateFont();
-	mEditor->setTabStopWidth( Options::TabStopWidth *characterWidth );
+	mEditor->setTabStopDistance( Options::TabStopWidth *characterWidth );
 	mEditor->setLineWrapMode( Options::WordWrap ? QPlainTextEdit::WidgetWidth : QPlainTextEdit::NoWrap );
 }
 
