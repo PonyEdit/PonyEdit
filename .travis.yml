@@ -21,9 +21,10 @@ matrix:
       addons:
         apt:
           sources:
+            - ubuntu-toolchain-r-test
             - sourceline: 'ppa:beineri/opt-qt-5.10.1-trusty'
           packages:
-            - [ libssh2-1-dev, libssl-dev ]
+            - [ g++-7 libssh2-1-dev, libssl-dev ]
             - [ qt510base, qt510webengine ]
         coverity_scan:
           project:
@@ -35,6 +36,7 @@ matrix:
           notification_email: gary@pento.net
       env:
         - TEST_SUITE=build
+        - CC=gcc-7 && CXX=g++-7
 
 env:
   global:
