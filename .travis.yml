@@ -53,6 +53,10 @@ before_install:
       PATH=/opt/qt510/bin:$PATH
       pip install --user codecov
     fi
+  - |
+    if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+      brew update
+    fi
 
 install:
   - |
