@@ -21,10 +21,10 @@ matrix:
       addons:
         apt:
           sources:
-            - sourceline: 'ppa:beineri/opt-qt591-trusty'
+            - sourceline: 'ppa:beineri/opt-qt-5.10.1-trusty'
           packages:
             - [ libssh2-1-dev, libssl-dev ]
-            - [ qt59base, qt59webengine ]
+            - [ qt510base, qt510webengine ]
         coverity_scan:
           project:
             name: "PonyEdit/PonyEdit"
@@ -50,7 +50,7 @@ before_install:
     fi
   - |
     if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$TEST_SUITE" = "build" ]; then
-      PATH=/opt/qt59/bin:$PATH
+      PATH=/opt/qt510/bin:$PATH
       pip install --user codecov
     fi
 
