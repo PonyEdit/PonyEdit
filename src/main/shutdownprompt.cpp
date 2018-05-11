@@ -1,3 +1,5 @@
+#include <QStyle>
+
 #include "shutdownprompt.h"
 #include "ui_shutdownprompt.h"
 
