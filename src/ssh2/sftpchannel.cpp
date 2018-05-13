@@ -46,7 +46,7 @@ bool SFTPChannel::handleOpening() {
 				// Reassign this channel elsewhere
 				setSession( NULL );
 			} else {
-				criticalError( tr( "Failed to open a channel %1: %2" ).arg( ( unsigned long ) mHandle,
+				criticalError( tr( "Failed to open a channel %1: %2" ).arg( reinterpret_cast< unsigned long >( mHandle ),
 				                                                            0,
 				                                                            16 ).arg( rc ) );
 			}
@@ -153,7 +153,7 @@ bool SFTPChannel::updateLs() {
 				QVariantMap details;
 				details.insert( "f", flags );
 				details.insert( "s", attrs.filesize );
-				details.insert( "m", ( qulonglong ) attrs.mtime );
+				details.insert( "m", static_cast< qulonglong >( attrs.mtime ) );
 				mResult.insert( buffer, details );
 			}
 		}

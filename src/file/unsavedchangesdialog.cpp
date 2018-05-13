@@ -50,7 +50,7 @@ UnsavedChangesDialog::~UnsavedChangesDialog() {}
 
 void UnsavedChangesDialog::buttonClicked( QAbstractButton *button ) {
 	QList< BaseFile * > selectedFiles = mTreeView->getSelectedFiles();
-	if ( button == ( QAbstractButton * ) mButtonBox->button( QDialogButtonBox::Save ) ) {
+	if ( button == dynamic_cast< QAbstractButton * >( mButtonBox->button( QDialogButtonBox::Save ) ) ) {
 		// Save
 		foreach ( BaseFile *file, selectedFiles ) {
 			if ( file->getLocation().getProtocol() == Location::Unsaved ) {
@@ -68,7 +68,7 @@ void UnsavedChangesDialog::buttonClicked( QAbstractButton *button ) {
 				}
 			}
 		}
-	} else if ( button == ( QAbstractButton * ) mButtonBox->button( QDialogButtonBox::Discard ) ) {
+	} else if ( button == dynamic_cast< QAbstractButton * >( mButtonBox->button( QDialogButtonBox::Discard ) ) ) {
 		// Discard
 		foreach ( BaseFile *file, selectedFiles ) {
 			try {

@@ -19,8 +19,8 @@ class StringTrie {
 		}
 
 		inline bool continueScan( const Node **node, unsigned char character ) {
-			if ( ( *node )->children[ ( unsigned int ) character ] ) {
-				*node = ( *node )->children[ ( unsigned int ) character ]; return true;
+			if ( ( *node )->children[ static_cast< unsigned int >( character ) ] ) {
+				*node = ( *node )->children[ static_cast< unsigned int >( character ) ]; return true;
 			} else {
 				return false;
 			}

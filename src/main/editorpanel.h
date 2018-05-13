@@ -1,12 +1,14 @@
 #ifndef EDITORPANEL_H
 #define EDITORPANEL_H
 
-#include <editor/editor.h>
 #include <QDebug>
 #include <QSplitter>
 #include <QVBoxLayout>
 #include <QWidget>
+
+#include "editor/editor.h"
 #include "editorstack.h"
+#include "windowmanager.h"
 
 class WindowManager;
 extern WindowManager *gWindowManager;
@@ -24,7 +26,7 @@ class EditorPanel : public QFrame {
 		}
 
 		inline bool isRootPanel() const {
-			return parent() == ( QObject * ) gWindowManager;
+			return parent() == dynamic_cast< QObject * >( gWindowManager );
 		}
 
 		inline EditorPanel *getParentPanel() const {

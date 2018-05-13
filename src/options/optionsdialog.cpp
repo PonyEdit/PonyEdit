@@ -59,7 +59,7 @@ void OptionsDialog::saveOptions() {
 }
 
 void OptionsDialog::pageClicked() {
-	QToolButton *button = ( QToolButton * ) QObject::sender();
+	QToolButton *button = dynamic_cast< QToolButton * >( QObject::sender() );
 	pageClicked( button );
 }
 

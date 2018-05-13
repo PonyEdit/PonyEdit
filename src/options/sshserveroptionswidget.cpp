@@ -12,7 +12,7 @@ SshServerOptionsWidget::SshServerOptionsWidget( QWidget *parent ) :
 	ui( new Ui::SshServerOptionsWidget ) {
 	ui->setupUi( this );
 
-	mParent = ( OptionsDialog * ) parent;
+	mParent = dynamic_cast< OptionsDialog * >( parent );
 
 	QListWidgetItem *first = populateServers();
 
@@ -37,7 +37,7 @@ SshServerOptionsWidget::~SshServerOptionsWidget() {
 void SshServerOptionsWidget::accept() {
 	for ( int ii = 0; ii < ui->serversList->count(); ii++ ) {
 		QListWidgetItem *item = ui->serversList->item( ii );
-		SshHost *host = ( SshHost * ) item->data( Qt::UserRole ).value< void * >();
+		SshHost *host = item->data( Qt::UserRole ).value< SshHost * >();
 		if ( item->isHidden() ) {
 			for ( int jj = 0; jj < mConfigWidgets.length(); jj++ ) {
 				if ( mConfigWidgets[ jj ]->getEditHost() == host ) {
@@ -62,7 +62,7 @@ QListWidgetItem *SshServerOptionsWidget::populateServers() {
 	QMap< SshHost *, bool > currentList;
 	for ( int i = 0; i < ui->serversList->count(); i++ ) {
 		QListWidgetItem *item = ui->serversList->item( i );
-		SshHost *host = ( SshHost * ) item->data( Qt::UserRole ).value< void * >();
+		SshHost *host = item->data( Qt::UserRole ).value< SshHost * >();
 		currentList.insert( host, false );
 	}
 
@@ -84,7 +84,7 @@ QListWidgetItem *SshServerOptionsWidget::populateServers() {
 	// Remove the list entries that have not been marked as "ok to keep"
 	for ( int i = 0; i < ui->serversList->count(); i++ ) {
 		QListWidgetItem *item = ui->serversList->item( i );
-		SshHost *host = ( SshHost * ) item->data( Qt::UserRole ).value< void * >();
+		SshHost *host = item->data( Qt::UserRole ).value< SshHost * >();
 		if ( ! currentList.value( host, true ) ) {
 			i--;
 			delete item;
@@ -110,7 +110,7 @@ QListWidgetItem *SshServerOptionsWidget::populateServers() {
 
 void SshServerOptionsWidget::serverClicked( QListWidgetItem *item, QListWidgetItem *previous ) {
 	if ( previous ) {
-		SshHost *prevHost = ( SshHost * ) previous->data( Qt::UserRole ).value< void * >();
+		SshHost *prevHost = previous->data( Qt::UserRole ).value< SshHost * >();
 		for ( int ii = 0; ii < mConfigWidgets.length(); ii++ ) {
 			if ( mConfigWidgets[ ii ]->getEditHost() == prevHost ) {
 				ui->configContainer->layout()->removeWidget( mConfigWidgets[ ii ] );
@@ -119,7 +119,7 @@ void SshServerOptionsWidget::serverClicked( QListWidgetItem *item, QListWidgetIt
 			}
 		}
 	}
-	SshHost *host = ( SshHost * ) item->data( Qt::UserRole ).value< void * >();
+	SshHost *host = item->data( Qt::UserRole ).value< SshHost * >();
 	for ( int ii = 0; ii < mConfigWidgets.length(); ii++ ) {
 		if ( mConfigWidgets[ ii ]->getEditHost() == host ) {
 			ui->configContainer->layout()->addWidget( mConfigWidgets[ ii ] );
@@ -153,7 +153,7 @@ void SshServerOptionsWidget::newServer() {
 void SshServerOptionsWidget::deleteServer() {
 	QListWidgetItem *item = ui->serversList->currentItem();
 
-	SshHost *host = ( SshHost * ) item->data( Qt::UserRole ).value< void * >();
+	SshHost *host = item->data( Qt::UserRole ).value< SshHost * >();
 
 	host->setSaveHost( false );
 	item->setHidden( true );
@@ -165,7 +165,7 @@ void SshServerOptionsWidget::serverNameUpdated( const QString &newName ) {
 
 	for ( int ii = 0; ii < ui->serversList->count(); ii++ ) {
 		QListWidgetItem *item = ui->serversList->item( ii );
-		SshHost *testHost = ( SshHost * ) item->data( Qt::UserRole ).value< void * >();
+		SshHost *testHost = item->data( Qt::UserRole ).value< SshHost * >();
 		if ( testHost == host ) {
 			item->setText( newName );
 			break;

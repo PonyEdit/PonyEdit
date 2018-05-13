@@ -205,7 +205,7 @@ QTextCursor Editor::internalFind( const QString &text, bool backwards, bool case
 
 	if ( useRegexp ) {
 		QRegExp regexp( text,
-		                ( Qt::CaseSensitivity ) ( caseSensitive ) ? ( Qt::CaseSensitive ) : ( Qt::CaseInsensitive ) );
+		                ( static_cast< Qt::CaseSensitivity >( caseSensitive ) ) ? ( Qt::CaseSensitive ) : ( Qt::CaseInsensitive ) );
 
 		if ( ! content.contains( regexp ) ) {
 			return QTextCursor();
@@ -214,8 +214,9 @@ QTextCursor Editor::internalFind( const QString &text, bool backwards, bool case
 		newSelection = doc->find( regexp, currentCursor, flags );
 	} else {
 		if ( ! content.contains( text,
-		                         ( Qt::CaseSensitivity ) ( caseSensitive ) ? ( Qt::CaseSensitive ) : ( Qt::
-		                                                                                               CaseInsensitive ) ) ) {
+		                         ( static_cast< Qt::CaseSensitivity >( caseSensitive ) ) ? ( Qt::CaseSensitive ) : ( Qt::
+		                                                                                                             CaseInsensitive ) ) )
+		{
 			return QTextCursor();
 		}
 

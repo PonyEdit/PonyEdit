@@ -24,7 +24,7 @@ AdvancedOptionsWidget::~AdvancedOptionsWidget() {
 
 void AdvancedOptionsWidget::apply() {
 	int level = ui->loggingLevel->value();
-	QsLogging::Logger::instance().setLoggingLevel( ( QsLogging::Level ) level );
+	QsLogging::Logger::instance().setLoggingLevel( static_cast< QsLogging::Level >( level ) );
 	Options::LoggingLevel = level;
 }
 

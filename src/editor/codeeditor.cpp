@@ -78,7 +78,7 @@ void CodeEditor::lineNumberAreaPaintEvent( QPaintEvent *event ) {
 			QString number = QString::number( blockNumber + 1 );
 			painter.setPen( Qt::darkGray );
 			painter.drawText( 0,
-			                  ( int ) ( top + offset ),
+			                  static_cast< int >( top + offset ),
 			                  mLineNumberWidget->width(),
 			                  fontMetrics().height(),
 			                  Qt::AlignRight,
@@ -331,7 +331,7 @@ void CodeEditor::focusInEvent( QFocusEvent *e ) {
 		return;
 	}
 
-	EditorPanel *editorPanel = ( EditorPanel * ) object;
+	EditorPanel *editorPanel = dynamic_cast< EditorPanel * >( object );
 	editorPanel->takeFocus();
 
 	QPlainTextEdit::focusInEvent( e );

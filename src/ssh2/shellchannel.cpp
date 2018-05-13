@@ -46,8 +46,8 @@ bool ShellChannel::handleOpening() {
 					// it if so.
 					setSession( NULL );
 				} else {
-					criticalError( tr( "Failed to open a channel %1: %2" ).arg( ( unsigned long )
-					                                                            mHandle,
+					criticalError( tr( "Failed to open a channel %1: %2" ).arg( reinterpret_cast< unsigned long >(
+													    mHandle ),
 					                                                            0,
 					                                                            16 ).arg( rc ) );
 				}
@@ -63,8 +63,8 @@ bool ShellChannel::handleOpening() {
 		while ( ( rc = libssh2_channel_request_pty( mHandle, mPtyType ) ) == LIBSSH2_ERROR_EAGAIN ) {}
 		;
 		if ( rc < 0 ) {
-			criticalError( tr( "Failed to request an appropriate pty %1: %2" ).arg( ( unsigned long )
-			                                                                        mHandle,
+			criticalError( tr( "Failed to request an appropriate pty %1: %2" ).arg( reinterpret_cast< unsigned long >(
+													mHandle ),
 			                                                                        0,
 			                                                                        16 ).arg(
 					       rc ) );
@@ -87,7 +87,7 @@ bool ShellChannel::handleOpening() {
 			if ( rc == LIBSSH2_ERROR_EAGAIN ) {
 				return true;
 			}
-			criticalError( tr( "Failed to open a shell %1: %2" ).arg( ( unsigned long ) mHandle,
+			criticalError( tr( "Failed to open a shell %1: %2" ).arg( reinterpret_cast< unsigned long >( mHandle ),
 			                                                          0,
 			                                                          16 ).arg( rc ) );
 			return false;

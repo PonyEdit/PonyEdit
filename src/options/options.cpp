@@ -157,7 +157,7 @@ void Options::load() {
 		                                              QVariant( static_cast< int >( QuickList ) ) ).toInt() );
 
 	LoggingLevel = settings.value( ntr( "LoggingLevel" ), QVariant( QsLogging::InfoLevel ) ).toInt();
-	QsLogging::Logger::instance().setLoggingLevel( ( QsLogging::Level ) LoggingLevel );
+	QsLogging::Logger::instance().setLoggingLevel( static_cast< QsLogging::Level >( LoggingLevel ) );
 
 	int count = settings.beginReadArray( "StartupFiles" );
 	for ( int ii = 0; ii < count; ii++ ) {

@@ -183,7 +183,7 @@ bool SshSession::openSocket( unsigned long ipAddress ) {
 	sin.sin_addr.s_addr = ipAddress;
 
 	SSHLOG_INFO( mHost ) << "Connecting to" << Tools::stringifyIpAddress( ipAddress );
-	int rc = ::connect( mSocket, ( struct sockaddr * ) &sin, sizeof( struct sockaddr_in ) );
+	int rc = ::connect( mSocket, reinterpret_cast< struct sockaddr * >( &sin ), sizeof( struct sockaddr_in ) );
 	if ( rc == 0 ) {
 		SSHLOG_INFO( mHost ) << "Connection established";
 		mHost->setCachedIpAddress( ipAddress );
@@ -223,7 +223,7 @@ bool SshSession::openSocket() {
 		}
 
 		while ( ! connected && server->h_addr_list[ tryAddress ] != 0 ) {
-			connected = openSocket( *( u_long * ) server->h_addr_list[ tryAddress++ ] );
+			connected = openSocket( *reinterpret_cast< u_long * >( server->h_addr_list[ tryAddress++ ] ) );
 		}
 	}
 
@@ -345,7 +345,7 @@ void SshSession::interactiveAuthCallback( const char *,
                                           LIBSSH2_USERAUTH_KBDINT_RESPONSE *responses,
                                           void **abstract ) {
 	if ( num_prompts == 1 ) {
-		SshSession *connection = ( SshSession * ) ( *abstract );
+		SshSession *connection = reinterpret_cast< SshSession * >( *abstract );
 #ifdef Q_OS_WIN32
 		responses[ 0 ].text = _strdup( connection->mPasswordAttempt );
 #else
@@ -578,7 +578,7 @@ void SshSession::connect() {
 	}
 
 	// Create an SSH2 session
-	mHandle = libssh2_session_init_ex( NULL, NULL, NULL, ( void * ) this );
+	mHandle = libssh2_session_init_ex( NULL, NULL, NULL, this );
 	libssh2_trace( mHandle,
 	               LIBSSH2_TRACE_SOCKET | LIBSSH2_TRACE_TRANS | LIBSSH2_TRACE_KEX | LIBSSH2_TRACE_AUTH | LIBSSH2_TRACE_CONN | LIBSSH2_TRACE_SCP | LIBSSH2_TRACE_SFTP | LIBSSH2_TRACE_ERROR |
 	               LIBSSH2_TRACE_PUBLICKEY );

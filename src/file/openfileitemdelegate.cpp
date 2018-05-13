@@ -20,8 +20,8 @@ void OpenFileItemDelegate::paint( QPainter *painter,
                                   const QStyleOptionViewItem &option,
                                   const QModelIndex &index ) const {
 	Location location = index.data( OpenFileTreeModel::LocationRole ).value< Location >();
-	BaseFile *file = ( BaseFile * ) index.data( OpenFileTreeModel::FileRole ).value< void * >();
-	OpenFileTreeModel::Level level = ( OpenFileTreeModel::Level ) index.data( OpenFileTreeModel::TypeRole ).toInt();
+	BaseFile *file = index.data( OpenFileTreeModel::FileRole ).value< BaseFile * >();
+	OpenFileTreeModel::Level level = static_cast< OpenFileTreeModel::Level >( index.data( OpenFileTreeModel::TypeRole ).toInt() );
 	QString label = index.data( OpenFileTreeModel::LabelRole ).toString();
 
 	// Always paint the default background

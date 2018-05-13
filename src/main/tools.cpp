@@ -12,7 +12,7 @@
 #include <QtXml>
 #include <QThread>
 
-#define TERABYTE_MULTIPLIER     1099511627776ll
+#define TERABYTE_MULTIPLIER 1099511627776ll
 #define GIGABYTE_MULTIPLIER 1073741824
 #define MEGABYTE_MULTIPLIER 1048576
 #define KILOBYTE_MULTIPLIER 1024
@@ -22,13 +22,13 @@ QString Tools::sResourcePath;
 
 QString Tools::humanReadableBytes( quint64 bytes ) {
 	if ( bytes >= TERABYTE_MULTIPLIER ) {
-		return QString::number( ( double ) bytes / ( double ) TERABYTE_MULTIPLIER, 'f', 1 ) + " TiB";
+		return QString::number( static_cast< double >( bytes ) / static_cast< double >( TERABYTE_MULTIPLIER ), 'f', 1 ) + " TiB";
 	} else if ( bytes >= GIGABYTE_MULTIPLIER ) {
-		return QString::number( ( double ) bytes / ( double ) GIGABYTE_MULTIPLIER, 'f', 1 ) + " GiB";
+		return QString::number( static_cast< double >( bytes ) / static_cast< double >( GIGABYTE_MULTIPLIER ), 'f', 1 ) + " GiB";
 	} else if ( bytes >= MEGABYTE_MULTIPLIER ) {
-		return QString::number( ( double ) bytes / ( double ) MEGABYTE_MULTIPLIER, 'f', 1 ) + " MiB";
+		return QString::number( static_cast< double >( bytes ) / static_cast< double >( MEGABYTE_MULTIPLIER ), 'f', 1 ) + " MiB";
 	} else if ( bytes >= KILOBYTE_MULTIPLIER ) {
-		return QString::number( ( double ) bytes / ( double ) KILOBYTE_MULTIPLIER, 'f', 1 ) + " KiB";
+		return QString::number( static_cast< double >( bytes ) / static_cast< double >( KILOBYTE_MULTIPLIER ), 'f', 1 ) + " KiB";
 	} else {
 		return QString::number( bytes ) + " bytes";
 	}
@@ -89,8 +89,8 @@ void Tools::loadServers() {
 
 		host->setName( settings.value( "name" ).toString() );
 		host->setDefaultDirectory( settings.value( "defaultDirectory", QVariant( "~" ) ).toByteArray() );
-		host->setConnectionType( ( SshHost::ConnectionType ) settings.value( "connectionType",
-		                                                                     QVariant( SshHost::SSH ) ).toInt() );
+		host->setConnectionType( static_cast< SshHost::ConnectionType >( settings.value( "connectionType",
+		                                                                                 QVariant( SshHost::SSH ) ).toInt() ) );
 
 // host->setConnectionType(static_cast<OldSshHost::ConnectionType>(settings.value("connectionType",
 // QVariant(OldSshHost::SSH)).toInt()));
@@ -359,24 +359,24 @@ QString Tools::stringifyIpAddress( unsigned long ipAddress ) {
 }
 
 QByteArray Tools::bin( const QByteArray &source ) {
-	const unsigned char *c = ( const unsigned char * ) source.constData();
+	const unsigned char *c = reinterpret_cast< const unsigned char * >( source.constData() );
 	const unsigned char *end = c + source.length();
 	QByteArray result;
 
 	while ( c < end ) {
 		if ( *c == 0x3 || *c == 0x4 || *c == 0x8 || *c == 0x11 || *c == 0x13 || *c == 0x1D || *c == 0x1E ||
 		     *c == 0x18 || *c == 0x1A || *c == 0x1C || *c == 0x7F ) {
-			result.append( ( unsigned short ) 255 ).append( *c + 128 );
+			result.append( static_cast< unsigned short >( 255 ) ).append( *c + 128 );
 		} else if ( *c == 10 ) {
-			result.append( ( unsigned short ) 253 );
+			result.append( static_cast< unsigned short >( 253 ) );
 		} else if ( *c == 13 ) {
-			result.append( ( unsigned short ) 254 );
+			result.append( static_cast< unsigned short >( 254 ) );
 		} else if ( *c == 253 ) {
-			result.append( ( unsigned short ) 255 ).append( 'A' );
+			result.append( static_cast< unsigned short >( 255 ) ).append( 'A' );
 		} else if ( *c == 254 ) {
-			result.append( ( unsigned short ) 255 ).append( 'B' );
+			result.append( static_cast< unsigned short >( 255 ) ).append( 'B' );
 		} else if ( *c == 255 ) {
-			result.append( ( unsigned short ) 255 ).append( 'C' );
+			result.append( static_cast< unsigned short >( 255 ) ).append( 'C' );
 		} else {
 			result.append( *c );
 		}
@@ -392,7 +392,7 @@ unsigned char Tools::unbinEscape( unsigned char c ) {
 }
 
 int Tools::unbin( QByteArray &target, const char *source, int maxTarget, int maxSource, bool *leftoverEscape ) {
-	const unsigned char *unsignedSource = ( const unsigned char * ) source;
+	const unsigned char *unsignedSource = reinterpret_cast< const unsigned char * >( source );
 	const unsigned char *sourceEnd = unsignedSource + maxSource;
 	const unsigned char *c = unsignedSource;
 
@@ -410,9 +410,9 @@ int Tools::unbin( QByteArray &target, const char *source, int maxTarget, int max
 		if ( *c < 253 ) {
 			target.append( *c );
 		} else if ( *c == 253 ) {
-			target.append( ( unsigned char ) 10 );
+			target.append( static_cast< unsigned char >( 10 ) );
 		} else if ( *c == 254 ) {
-			target.append( ( unsigned char ) 13 );
+			target.append( static_cast< unsigned char >( 13 ) );
 		} else {
 			c++;
 			if ( c >= sourceEnd ) {

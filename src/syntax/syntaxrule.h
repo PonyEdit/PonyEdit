@@ -114,7 +114,7 @@ class SyntaxRule {
 		Qt::CaseSensitivity getCaseSensitivity() {
 			return ( mType == Keyword &&
 			         mCaseSensitivity <
-			         0 ? mDefinition->getKeywordCaseSensitivity() : ( Qt::CaseSensitivity ) mCaseSensitivity );
+			         0 ? mDefinition->getKeywordCaseSensitivity() : static_cast< Qt::CaseSensitivity >( mCaseSensitivity ) );
 		}
 
 		SyntaxDefinition *mDefinition;
