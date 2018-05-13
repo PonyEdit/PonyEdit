@@ -9,7 +9,7 @@ class CodeEditor;
 
 class LineNumberWidget : public QWidget {
 	public:
-		explicit LineNumberWidget( CodeEditor *editor = 0 );
+		explicit LineNumberWidget( CodeEditor *editor = nullptr );
 		QSize sizeHint() const;
 
 	protected:

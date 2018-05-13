@@ -12,7 +12,7 @@ class EditorStack : public QStackedWidget {
 	Q_OBJECT
 
 	public:
-		explicit EditorStack( EditorPanel *parent = 0 );
+		explicit EditorStack( EditorPanel *parent = nullptr );
 
 		Editor *getCurrentEditor() const;
 		void displayEditor( Editor *editor );

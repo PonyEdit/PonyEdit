@@ -9,7 +9,7 @@ class SearchBar : public QWidget {
 	Q_OBJECT
 
 	public:
-		explicit SearchBar( QWidget *parent = 0 );
+		explicit SearchBar( QWidget *parent = nullptr );
 		~SearchBar();
 
 		void takeFocus();

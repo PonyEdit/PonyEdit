@@ -15,7 +15,7 @@ OpenFileTreeModel::OpenFileTreeModel( QObject *parent,
 	mTopLevelNode = new Node( Root );
 	mParent = reinterpret_cast< OpenFileTreeView * >( parent );
 
-	mExplicitFiles = ( files != NULL );
+	mExplicitFiles = ( files != nullptr );
 	if ( mExplicitFiles ) {
 		mFiles = *files;
 
@@ -63,7 +63,7 @@ OpenFileTreeModel::Node *OpenFileTreeModel::Node::findChildNode( const QString &
 			return node;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 OpenFileTreeModel::Node *OpenFileTreeModel::Node::findChildNode( const Location &location ) {
@@ -72,7 +72,7 @@ OpenFileTreeModel::Node *OpenFileTreeModel::Node::findChildNode( const Location 
 			return node;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 OpenFileTreeModel::Node *OpenFileTreeModel::Node::findChildNode( BaseFile *file ) {
@@ -81,7 +81,7 @@ OpenFileTreeModel::Node *OpenFileTreeModel::Node::findChildNode( BaseFile *file 
 			return node;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 QModelIndex OpenFileTreeModel::getNodeIndex( Node *node ) const {
@@ -311,7 +311,7 @@ BaseFile *OpenFileTreeModel::getFileAtIndex( const QModelIndex &index ) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 QList< BaseFile * > OpenFileTreeModel::getIndexAndChildFiles( Node *node ) {

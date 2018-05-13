@@ -94,7 +94,7 @@ QList< BaseFile * > OpenFileTreeView::getSelectedFiles() const {
 	QList< BaseFile * > selectedFiles;
 	foreach ( QModelIndex index, selectedIndices ) {
 		BaseFile *file = mModel->getFileAtIndex( index );
-		if ( file != NULL ) {
+		if ( file != nullptr ) {
 			selectedFiles.append( file );
 		}
 	}

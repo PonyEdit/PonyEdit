@@ -25,7 +25,7 @@ class StatusWidget : public QWidget {
 		Q_DECLARE_FLAGS( Buttons, Button );
 		enum Result { SuccessResult = 1, FailureResult = 0, SudoRequestedResult = -1 };
 
-		explicit StatusWidget( bool dialogChild, QWidget *parent = 0 );
+		explicit StatusWidget( bool dialogChild, QWidget *parent = nullptr );
 		~StatusWidget();
 
 		void setStatus( const QPixmap &pixmap, const QString &message );
@@ -45,7 +45,7 @@ class StatusWidget : public QWidget {
 		void setButtonsEnabled( bool enabled );
 
 		inline bool isShowingInput() const {
-			return mCurrentInputWidget != NULL;
+			return mCurrentInputWidget != nullptr;
 		}
 
 		inline Button getResult() const {

@@ -30,7 +30,7 @@ class SearchResultModel : public QAbstractItemModel {
 			int length;
 		};
 
-		explicit SearchResultModel( QObject *parent = 0 );
+		explicit SearchResultModel( QObject *parent = nullptr );
 		~SearchResultModel();
 
 		void addResult( const Result &result );
@@ -53,7 +53,7 @@ class SearchResultModel : public QAbstractItemModel {
 	private:
 		struct InternalTreeNode {
 			InternalTreeNode() :
-				parent( NULL ),
+				parent( nullptr ),
 				checked( Qt::Checked ) {}
 			~InternalTreeNode() {
 				foreach ( InternalTreeNode *n, children ) {

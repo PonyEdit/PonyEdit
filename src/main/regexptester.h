@@ -11,7 +11,7 @@ class RegExpTester : public QWidget {
 	Q_OBJECT
 
 	public:
-		explicit RegExpTester( QWidget *parent = 0 );
+		explicit RegExpTester( QWidget *parent = nullptr );
 		~RegExpTester();
 
 		void takeFocus( QString initialText );

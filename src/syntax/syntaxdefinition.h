@@ -21,7 +21,7 @@ class SyntaxDefinition {
 		struct ContextLink {
 			ContextLink() :
 				popCount( 0 ),
-				contextDef( NULL ) {}
+				contextDef( nullptr ) {}
 			int popCount;
 			QSharedPointer< ContextDef > contextDef;
 		};

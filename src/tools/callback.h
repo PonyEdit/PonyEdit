@@ -8,7 +8,10 @@
 class QObject;
 class Callback {
 	public:
-		Callback( QObject *target = 0, const char *successSlot = 0, const char *failureSlot = 0, const char *progressSlot = 0 );
+		Callback( QObject *target = nullptr,
+		          const char *successSlot = nullptr,
+		          const char *failureSlot = nullptr,
+		          const char *progressSlot = nullptr );
 
 		inline QObject *getTarget() const {
 			return mTarget.data();

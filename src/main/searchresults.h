@@ -12,7 +12,7 @@ class SearchResults : public QWidget {
 	Q_OBJECT
 
 	public:
-		explicit SearchResults( QWidget *parent = 0 );
+		explicit SearchResults( QWidget *parent = nullptr );
 		void clearResults();
 		void showResults( const QList< SearchResultModel::Result > &results );
 

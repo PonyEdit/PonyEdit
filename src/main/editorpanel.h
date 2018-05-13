@@ -15,12 +15,12 @@ class EditorPanel : public QFrame {
 	Q_OBJECT
 
 	public:
-		explicit EditorPanel( QWidget *parent, EditorPanel *parentPanel = NULL, EditorStack *inheritedStack = NULL );
+		explicit EditorPanel( QWidget *parent, EditorPanel *parentPanel = nullptr, EditorStack *inheritedStack = nullptr );
 		~EditorPanel();
 
 		void fileClosed( BaseFile *file );
 		inline bool isSplit() const {
-			return mSplitWidget != NULL;
+			return mSplitWidget != nullptr;
 		}
 
 		inline bool isRootPanel() const {

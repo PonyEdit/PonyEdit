@@ -13,7 +13,7 @@ class OpenFileTreeView : public QTreeView {
 	public:
 		enum OptionFlags { NoFlags = 0x00, CloseButtons = 0x01, MultiSelect = 0x02, UnsavedOnly = 0x04, RefreshButtons = 0x08 };
 
-		explicit OpenFileTreeView( QWidget *parent, int optionFlags, const QList< BaseFile * > *files = NULL );
+		explicit OpenFileTreeView( QWidget *parent, int optionFlags, const QList< BaseFile * > *files = nullptr );
 		virtual void dataChanged( const QModelIndex &topLeft,
 		                          const QModelIndex &bottomRight,
 		                          const QVector< int > &roles = QVector< int >( ) );

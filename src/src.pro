@@ -33,8 +33,8 @@ linux {
 	LIBS += -lz
 	LIBS += -lssh2 -lcrypto -lssl
 
-	QMAKE_CFLAGS += -Werror -Wunused-parameter -Wno-terminate
-	QMAKE_CXXFLAGS += -Werror -Wunused-parameter -Wno-terminate
+	QMAKE_CFLAGS += -Werror -Wunused-parameter -Wno-terminate -Wzero-as-null-pointer-constant
+	QMAKE_CXXFLAGS += -Werror -Wunused-parameter -Wno-terminate -Wzero-as-null-pointer-constant
 }
 
 macx {
@@ -67,8 +67,8 @@ macx {
 	QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/opt/openssl@1.1/lib/libssl.1.1.dylib @executable_path/libssl.1.1.dylib $$OUT_PWD/PonyEdit.app/Contents/MacOS/PonyEdit;
 	QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/opt/openssl@1.1/lib/libcrypto.1.1.dylib @executable_path/libcrypto.1.1.dylib $$OUT_PWD/PonyEdit.app/Contents/MacOS/PonyEdit;
 
-	QMAKE_CFLAGS += -Werror -Wunused-parameter
-	QMAKE_CXXFLAGS += -Werror -Wunused-parameter
+	QMAKE_CFLAGS += -Werror -Wunused-parameter -Wzero-as-null-pointer-constant
+	QMAKE_CXXFLAGS += -Werror -Wunused-parameter -Wzero-as-null-pointer-constant
 }
 
 QT		+= core widgets gui network xml webengine webenginewidgets printsupport

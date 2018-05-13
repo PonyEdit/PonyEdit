@@ -321,7 +321,7 @@ void CodeEditor::deleteLine() {
 void CodeEditor::focusInEvent( QFocusEvent *e ) {
 	// Find the EditorStack that owns me...
 	QObject *object;
-	for ( object = this; object != NULL; object = object->parent() ) {
+	for ( object = this; object != nullptr; object = object->parent() ) {
 		if ( strcmp( "EditorPanel", object->metaObject()->className() ) == 0 ) {
 			break;
 		}

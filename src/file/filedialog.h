@@ -37,7 +37,7 @@ class FileDialog : public QDialog {
 	Q_OBJECT
 
 	public:
-		explicit FileDialog( QWidget *parent = 0, bool saveAs = false );
+		explicit FileDialog( QWidget *parent = nullptr, bool saveAs = false );
 		~FileDialog();
 
 		void showLocation( const Location &location );

@@ -12,7 +12,7 @@
 #include "unsavedchangesdialog.h"
 
 UnsavedChangesDialog::UnsavedChangesDialog( const QList< BaseFile * > &files, bool closeFilesOnDiscard ) :
-	QDialog( 0 ),
+	QDialog( nullptr ),
 	mCloseFilesOnDiscard( closeFilesOnDiscard ) {
 	QVBoxLayout *layout = new QVBoxLayout( this );
 	setLayout( layout );

@@ -22,7 +22,7 @@ class WindowManager : public QWidget {
 	Q_OBJECT
 
 	public:
-		explicit WindowManager( QWidget *parent = 0 );
+		explicit WindowManager( QWidget *parent = nullptr );
 		~WindowManager();
 
 		void displayFile( BaseFile *file );

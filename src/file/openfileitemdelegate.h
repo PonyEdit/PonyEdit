@@ -10,7 +10,7 @@ class OpenFileItemDelegate : public QStyledItemDelegate {
 	Q_OBJECT
 
 	public:
-		explicit OpenFileItemDelegate( OpenFileTreeView *parent = 0 );
+		explicit OpenFileItemDelegate( OpenFileTreeView *parent = nullptr );
 		virtual void paint( QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index ) const;
 
 	private:

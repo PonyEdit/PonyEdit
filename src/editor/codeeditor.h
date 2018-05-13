@@ -14,7 +14,7 @@ class CodeEditor : public QPlainTextEdit {
 	Q_OBJECT
 
 	public:
-		CodeEditor( BaseFile *file, QWidget *parent = 0 );
+		CodeEditor( BaseFile *file, QWidget *parent = nullptr );
 
 		void lineNumberAreaPaintEvent( QPaintEvent *event );
 		int lineNumberAreaWidth();

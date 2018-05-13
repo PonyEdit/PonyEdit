@@ -15,7 +15,7 @@
 
 Editor::Editor( BaseFile *file ) :
 	QStackedWidget() {
-	mReadOnlyWarning = NULL;
+	mReadOnlyWarning = nullptr;
 	mFirstOpen = true;
 
 	mEditorPane = new QWidget( this );
@@ -152,7 +152,7 @@ QTextCursor Editor::find( QTextDocument *doc,
                           bool caseSensitive,
                           bool useRegExp,
                           bool loop ) {
-	QTextDocument::FindFlags flags = 0;
+	QTextDocument::FindFlags flags = nullptr;
 	if ( caseSensitive ) {
 		flags |= QTextDocument::FindCaseSensitively;
 	}
@@ -193,7 +193,7 @@ QTextCursor Editor::internalFind( const QString &text, bool backwards, bool case
 
 	QTextCursor currentCursor = mEditor->textCursor();
 
-	QTextDocument::FindFlags flags = 0;
+	QTextDocument::FindFlags flags = nullptr;
 	if ( caseSensitive ) {
 		flags |= QTextDocument::FindCaseSensitively;
 	}
@@ -344,7 +344,7 @@ void Editor::setReadOnly( bool readOnly ) {
 
 	if ( ! readOnly && mReadOnlyWarning ) {
 		delete mReadOnlyWarning;
-		mReadOnlyWarning = NULL;
+		mReadOnlyWarning = nullptr;
 	}
 }
 
