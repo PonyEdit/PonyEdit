@@ -121,17 +121,17 @@ QStringList SyntaxDefManager::getSyntaxesInCategory( const QString &category ) c
 
 SyntaxDefinition *SyntaxDefManager::getDefinitionForFile( const QString &filename ) {
 	Record *record = getRecordFor( filename );
-	if ( record == NULL ) {
-		return NULL;
+	if ( record == nullptr ) {
+		return nullptr;
 	}
 
 	return getDefinition( record );
 }
 
 SyntaxDefinition *SyntaxDefManager::getDefinitionForSyntax( const QString &syntax ) {
-	Record *record = ( mRecordsByName.contains( syntax ) ? mRecordsByName.value( syntax ) : NULL );
-	if ( record == NULL ) {
-		return NULL;
+	Record *record = ( mRecordsByName.contains( syntax ) ? mRecordsByName.value( syntax ) : nullptr );
+	if ( record == nullptr ) {
+		return nullptr;
 	}
 
 	return getDefinition( record );
@@ -146,7 +146,7 @@ SyntaxDefinition *SyntaxDefManager::getDefinition( const Record *record ) {
 	if ( ! newDefinition->isValid() ) {
 		delete newDefinition;
 		QLOG_WARN() << "Attempted to use an invalid syntax definition: " << record->filename;
-		return NULL;
+		return nullptr;
 	}
 
 	mOpenDefinitionList.append( newDefinition );
@@ -162,5 +162,5 @@ SyntaxDefManager::Record *SyntaxDefManager::getRecordFor( const QString &filenam
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }

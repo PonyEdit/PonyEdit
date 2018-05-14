@@ -9,7 +9,7 @@ ServerRequest::ServerRequest( ServerFile *file,
                               const QVariant &parameters,
                               const Callback &callback ) :
 	mFile( file ),
-	mOpeningFile( NULL ),
+	mOpeningFile( nullptr ),
 	mRequest( request ),
 	mParameters( parameters ),
 	mMessageId( 0 ),

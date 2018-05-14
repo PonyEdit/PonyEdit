@@ -11,7 +11,7 @@ class GotoLineDialog : public QDialog {
 	Q_OBJECT
 
 	public:
-		explicit GotoLineDialog( QWidget *parent = 0 );
+		explicit GotoLineDialog( QWidget *parent = nullptr );
 		~GotoLineDialog();
 
 		int lineNumber();

@@ -9,7 +9,7 @@ QMap< QString, SyntaxRule::Type > *SyntaxRule::sTypeMap;
 bool SyntaxRule::sTypeMapInitialized = false;
 
 SyntaxRule::SyntaxRule( SyntaxRule *parent, const QString &name, const QXmlAttributes &attributes ) :
-	mDefinition( NULL ),
+	mDefinition( nullptr ),
 	mParent( parent ),
 	mName( name ),
 	mType(),
@@ -30,10 +30,10 @@ SyntaxRule::SyntaxRule( SyntaxRule *parent, const QString &name, const QXmlAttri
 	mIncludeAttrib( false ),
 	mLinked( false ),
 	mChildRules(),
-	mAttributeLink( NULL ),
+	mAttributeLink( nullptr ),
 	mRegExp(),
 	mRegExpLineStart( false ),
-	mKeywordLink( NULL ),
+	mKeywordLink( nullptr ),
 	mContextLink(),
 	mDynamicCharIndex( -1 ),
 	mDynamicStringSlots() {
@@ -64,7 +64,7 @@ SyntaxRule::SyntaxRule( SyntaxRule *parent, const QString &name, const QXmlAttri
 	if ( sTypeMap->contains( lcName ) ) {
 		mType = sTypeMap->value( lcName );
 
-		if ( mType == IncludeRules && mParent != NULL ) {
+		if ( mType == IncludeRules && mParent != nullptr ) {
 			QLOG_WARN() << "Syntax include inside parent rule; disregarding!";;
 			return;
 		}
@@ -98,7 +98,7 @@ SyntaxRule::SyntaxRule( SyntaxRule *parent,
                         QSharedPointer< SyntaxRule > other,
                         bool duplicateChildren,
                         bool maintainLinks ) :
-	mDefinition( NULL ),
+	mDefinition( nullptr ),
 	mParent( parent ),
 	mName( other->mName ),
 	mType( other->mType ),
@@ -119,10 +119,10 @@ SyntaxRule::SyntaxRule( SyntaxRule *parent,
 	mIncludeAttrib( other->mIncludeAttrib ),
 	mLinked( false ),
 	mChildRules(),
-	mAttributeLink( NULL ),
+	mAttributeLink( nullptr ),
 	mRegExp(),
 	mRegExpLineStart( false ),
-	mKeywordLink( NULL ),
+	mKeywordLink( nullptr ),
 	mContextLink(),
 	mDynamicCharIndex( -1 ),
 	mDynamicStringSlots() {
@@ -192,9 +192,9 @@ bool SyntaxRule::link( SyntaxDefinition *def ) {
 	mDefinition = def;
 
 	if ( mAttribute.isEmpty() ) {
-		mAttributeLink = NULL;
+		mAttributeLink = nullptr;
 	} else if ( mType == RegExpr && mAttribute == "String" ) {
-		mAttributeLink = NULL;
+		mAttributeLink = nullptr;
 	} else {
 		mAttributeLink = def->getItemData( mAttribute );
 		if ( ! mAttributeLink && ! mContext.isEmpty() ) {

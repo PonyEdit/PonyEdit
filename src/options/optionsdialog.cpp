@@ -64,7 +64,7 @@ void OptionsDialog::pageClicked() {
 }
 
 void OptionsDialog::pageClicked( QToolButton *button ) {
-	OptionsDialogPage *page = mPageMap.value( button, NULL );
+	OptionsDialogPage *page = mPageMap.value( button, nullptr );
 	if ( page ) {
 		ui->stackedWidget->setCurrentWidget( page );
 		ui->optionLabel->setText( button->text() );

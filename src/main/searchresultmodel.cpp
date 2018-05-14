@@ -53,7 +53,7 @@ SearchResultModel::InternalTreeNode *SearchResultModel::createFileNode( const Lo
 void SearchResultModel::addResult( const Result &result ) {
 	// Find or create a filename node for the result to appear within
 	InternalTreeNode *fileNode = mFileNodeMap.value( result.location.getPath() );
-	if ( fileNode == NULL ) {
+	if ( fileNode == nullptr ) {
 		fileNode = createFileNode( result.location );
 	}
 
@@ -81,7 +81,7 @@ SearchResultModel::InternalTreeNode *SearchResultModel::getNodeForIndex( const Q
 	}
 
 	InternalTreeNode *node = static_cast< InternalTreeNode * >( index.internalPointer() );
-	if ( node == NULL ) {
+	if ( node == nullptr ) {
 		return mRootNode;
 	}
 
@@ -93,7 +93,7 @@ SearchResultModel::Result *SearchResultModel::getResultForIndex( const QModelInd
 	if ( node->result.lineNumber > -1 ) {
 		return &( node->result );
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -110,14 +110,14 @@ QModelIndex SearchResultModel::index( int row, int column, const QModelIndex &pa
 QModelIndex SearchResultModel::parent( const QModelIndex &child ) const {
 	InternalTreeNode *thisNode = getNodeForIndex( child );
 	InternalTreeNode *parentNode = thisNode->parent;
-	if ( parentNode == NULL ) {
+	if ( parentNode == nullptr ) {
 		return QModelIndex();
 	}
 
 	InternalTreeNode *grandparentNode = parentNode->parent;
 
 	int parentRow = 0;
-	if ( grandparentNode != NULL ) {
+	if ( grandparentNode != nullptr ) {
 		parentRow = grandparentNode->children.indexOf( parentNode );
 	}
 
@@ -147,7 +147,7 @@ QVariant SearchResultModel::data( const QModelIndex &index, int role ) const {
 		}
 	} else if ( role == Qt::FontRole ) {
 		// Search results should display in the same font as the text editor
-		if ( node->parent != NULL && node->parent != mRootNode ) {
+		if ( node->parent != nullptr && node->parent != mRootNode ) {
 			return QVariant( *Options::EditorFont );
 		}
 	} else if ( role == Qt::CheckStateRole && mCheckboxes ) {
@@ -181,7 +181,7 @@ void SearchResultModel::setShowCheckboxes( bool checkboxes ) {
 bool SearchResultModel::setData( const QModelIndex &index, const QVariant &value, int /*role*/ ) {
 	Qt::CheckState checked = value.toBool() ? Qt::Checked : Qt::Unchecked;
 	InternalTreeNode *node = getNodeForIndex( index );
-	if ( node->parent == NULL ) {
+	if ( node->parent == nullptr ) {
 		return false;
 	}
 
@@ -234,7 +234,7 @@ void SearchResultModel::replaceSelectedResults( const QString &replacement ) {
 		}
 
 		BaseFile *file = gOpenFileManager.getFile( locationNode->result.location );
-		if ( file == NULL ) {
+		if ( file == nullptr ) {
 			continue;
 		}
 

@@ -20,7 +20,7 @@ class OptionsDialog : public QDialog {
 	public:
 		enum Options { Editor, SshServers, FontsAndColors, Startup, Logging, NumOptions };
 
-		explicit OptionsDialog( QWidget *parent = 0 );
+		explicit OptionsDialog( QWidget *parent = nullptr );
 		~OptionsDialog();
 
 	private slots:

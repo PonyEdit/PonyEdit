@@ -6,7 +6,7 @@
 
 template< class T > class DialogWrapper : public QDialog {
 	public:
-		explicit DialogWrapper( const QString &title, T *content, bool closeButton, QWidget *parent = 0 )
+		explicit DialogWrapper( const QString &title, T *content, bool closeButton, QWidget *parent = nullptr )
 			: QDialog( parent ) {
 			if ( ! closeButton ) {
 				setWindowFlags( Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint );

@@ -10,9 +10,9 @@
 
 SFTPChannel::SFTPChannel( SshHost *host ) :
 	SshChannel( host ),
-	mHandle( NULL ),
-	mOperationHandle( NULL ),
-	mCurrentRequest( NULL ),
+	mHandle( nullptr ),
+	mOperationHandle( nullptr ),
+	mCurrentRequest( nullptr ),
 	mRequestState(),
 	mResult(),
 	mOperationSize( 0 ),
@@ -37,14 +37,14 @@ bool SFTPChannel::update() {
 
 bool SFTPChannel::handleOpening() {
 	mHandle = libssh2_sftp_init( mSession->sessionHandle() );
-	if ( mHandle == NULL ) {
+	if ( mHandle == nullptr ) {
 		int rc = libssh2_session_last_errno( mSession->sessionHandle() );
 		if ( rc == LIBSSH2_ERROR_EAGAIN ) {
 			return true;
 		} else {
 			if ( rc == LIBSSH2_ERROR_CHANNEL_FAILURE ) {
 				// Reassign this channel elsewhere
-				setSession( NULL );
+				setSession( nullptr );
 			} else {
 				criticalError( tr( "Failed to open a channel %1: %2" ).arg( reinterpret_cast< unsigned long >( mHandle ),
 				                                                            0,
@@ -63,7 +63,7 @@ void SFTPChannel::criticalError( const QString &error ) {
 	if ( mCurrentRequest ) {
 		mCurrentRequest->triggerFailure( error, ServerRequest::ConnectionError );
 		delete mCurrentRequest;
-		mCurrentRequest = NULL;
+		mCurrentRequest = nullptr;
 	}
 
 	SshChannel::criticalError( error );
@@ -71,9 +71,9 @@ void SFTPChannel::criticalError( const QString &error ) {
 
 bool SFTPChannel::mainUpdate() {
 	// Make sure there is a request to be handled...
-	if ( mCurrentRequest == NULL ) {
+	if ( mCurrentRequest == nullptr ) {
 		mCurrentRequest = mHost->getNextSftpRequest();
-		if ( mCurrentRequest == NULL ) {
+		if ( mCurrentRequest == nullptr ) {
 			return false;   // No requests in the queue, go to sleep.
 		}
 		mRequestState = Beginning;
@@ -105,7 +105,7 @@ bool SFTPChannel::mainUpdate() {
 	// If the request is finished, delete it.
 	if ( ! continueRequest ) {
 		delete mCurrentRequest;
-		mCurrentRequest = NULL;
+		mCurrentRequest = nullptr;
 	}
 
 	return true;    // Even if request finished, come back to check queue.

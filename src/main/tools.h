@@ -43,7 +43,7 @@ class Tools {
 
 		static QString stringifyIpAddress( unsigned long ipAddress );
 
-		static int unbin( QByteArray &target, const char *source, int maxTarget, int maxSource, bool *leftoverEscape = NULL );
+		static int unbin( QByteArray &target, const char *source, int maxTarget, int maxSource, bool *leftoverEscape = nullptr );
 		static QByteArray bin( const QByteArray &source );
 		static unsigned char unbinEscape( unsigned char c );
 

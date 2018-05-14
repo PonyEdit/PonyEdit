@@ -11,7 +11,7 @@ class PasswordDlg : public ThreadCrossingDialog {
 	Q_OBJECT
 
 	public:
-		explicit PasswordDlg( QWidget *parent = 0 );
+		explicit PasswordDlg( QWidget *parent = nullptr );
 		~PasswordDlg();
 
 		virtual void setOptions( const QVariantMap &options );

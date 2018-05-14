@@ -13,7 +13,7 @@ class FontOptionsWidget : public OptionsDialogPage {
 	Q_OBJECT
 
 	public:
-		explicit FontOptionsWidget( QWidget *parent = 0 );
+		explicit FontOptionsWidget( QWidget *parent = nullptr );
 		~FontOptionsWidget();
 
 		void apply();

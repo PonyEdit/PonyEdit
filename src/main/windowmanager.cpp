@@ -7,13 +7,13 @@
 #include "globaldispatcher.h"
 #include "windowmanager.h"
 
-WindowManager *gWindowManager = NULL;
+WindowManager *gWindowManager = nullptr;
 
 WindowManager::WindowManager( QWidget *parent ) :
 	QWidget( parent ) {
 	mEditorSelectionLocked = false;
 	mParent = reinterpret_cast< MainWindow * >( parent );
-	mCurrentEditorPanel = NULL;
+	mCurrentEditorPanel = nullptr;
 	gWindowManager = this;
 
 	// Create a root editor stack
@@ -42,11 +42,11 @@ WindowManager::~WindowManager() {
 }
 
 void WindowManager::displayFile( BaseFile *file ) {
-	if ( mCurrentEditorPanel != NULL ) {
+	if ( mCurrentEditorPanel != nullptr ) {
 		mCurrentEditorPanel->displayFile( file );
 
 		Editor *e = currentEditor();
-		if ( e != NULL ) {
+		if ( e != nullptr ) {
 			e->setFocus();
 		}
 	}
@@ -66,13 +66,13 @@ void WindowManager::setCurrentEditorPanel( EditorPanel *stack ) {
 		return;
 	}
 
-	if ( mCurrentEditorPanel != NULL ) {
+	if ( mCurrentEditorPanel != nullptr ) {
 		mCurrentEditorPanel->setActive( false );
 	}
 
 	mCurrentEditorPanel = stack;
 
-	if ( mCurrentEditorPanel != NULL ) {
+	if ( mCurrentEditorPanel != nullptr ) {
 		mCurrentEditorPanel->setActive( true );
 	}
 }
@@ -80,12 +80,12 @@ void WindowManager::setCurrentEditorPanel( EditorPanel *stack ) {
 BaseFile *WindowManager::getCurrentFile() {
 	EditorPanel *currentPanel = getCurrentPanel();
 	if ( ! currentPanel ) {
-		return NULL;
+		return nullptr;
 	}
 
 	Editor *currentEditor = currentPanel->getCurrentEditor();
 	if ( ! currentEditor ) {
-		return NULL;
+		return nullptr;
 	}
 
 	return currentEditor->getFile();
@@ -138,7 +138,7 @@ void WindowManager::findPrevious() {
 
 void WindowManager::createSearchBar() {
 	mSearchBar = new SearchBar();
-	mSearchBarWrapper = new QDockWidget( "Search", 0, Qt::FramelessWindowHint );
+	mSearchBarWrapper = new QDockWidget( "Search", nullptr, Qt::FramelessWindowHint );
 	mSearchBarWrapper->setFeatures( QDockWidget::DockWidgetClosable );
 	mSearchBarWrapper->setWidget( mSearchBar );
 
@@ -182,7 +182,7 @@ void WindowManager::hideSearchBar() {
 
 void WindowManager::createRegExpTester() {
 	mRegExpTester = new RegExpTester();
-	mRegExpTesterWrapper = new QDockWidget( tr( "Regular Expression Tester" ), 0 );
+	mRegExpTesterWrapper = new QDockWidget( tr( "Regular Expression Tester" ), nullptr );
 	mRegExpTesterWrapper->setWidget( mRegExpTester );
 
 	mParent->addDockWidget( Qt::BottomDockWidgetArea, mRegExpTesterWrapper, Qt::Horizontal );
@@ -234,8 +234,8 @@ void WindowManager::splitHorizontally() {
 }
 
 Editor *WindowManager::currentEditor() {
-	if ( mCurrentEditorPanel == NULL ) {
-		return NULL;
+	if ( mCurrentEditorPanel == nullptr ) {
+		return nullptr;
 	}
 
 	return mCurrentEditorPanel->getCurrentEditor();
@@ -246,7 +246,7 @@ bool WindowManager::isSplit() {
 }
 
 void WindowManager::removeSplit() {
-	if ( mCurrentEditorPanel == NULL ) {
+	if ( mCurrentEditorPanel == nullptr ) {
 		return;
 	}
 
@@ -260,7 +260,7 @@ void WindowManager::removeAllSplits() {
 }
 
 void WindowManager::nextSplit() {
-	if ( mCurrentEditorPanel == NULL ) {
+	if ( mCurrentEditorPanel == nullptr ) {
 		return;
 	}
 	EditorPanel *nextPanel = mCurrentEditorPanel->findNextPanel();
@@ -270,7 +270,7 @@ void WindowManager::nextSplit() {
 }
 
 void WindowManager::previousSplit() {
-	if ( mCurrentEditorPanel == NULL ) {
+	if ( mCurrentEditorPanel == nullptr ) {
 		return;
 	}
 	EditorPanel *nextPanel = mCurrentEditorPanel->findPreviousPanel();
@@ -333,14 +333,14 @@ void WindowManager::showSearchResults( const QList< SearchResultModel::Result > 
 void WindowManager::showAndSelect( const Location &location, int lineNumber, int start, int length ) {
 	displayLocation( location );
 	Editor *editor = currentEditor();
-	if ( editor != NULL ) {
+	if ( editor != nullptr ) {
 		editor->selectText( lineNumber, start, length );
 	}
 }
 
 void WindowManager::displayLocation( const Location &location ) {
 	BaseFile *file = gOpenFileManager.getFile( location );
-	if ( file != NULL ) {
+	if ( file != nullptr ) {
 		displayFile( file );
 	}
 }

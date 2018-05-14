@@ -8,7 +8,7 @@ class SearchResultDelegate : public QStyledItemDelegate {
 	Q_OBJECT
 
 	public:
-		explicit SearchResultDelegate( SearchResultModel *model, QObject *parent = 0 );
+		explicit SearchResultDelegate( SearchResultModel *model, QObject *parent = nullptr );
 		void paint( QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index ) const;
 
 	private:

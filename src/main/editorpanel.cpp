@@ -9,7 +9,7 @@ EditorPanel::EditorPanel( QWidget *parent, EditorPanel *parentPanel, EditorStack
 	mParentPanel = parentPanel;
 	mLayout = new QVBoxLayout( this );
 	mLayout->setMargin( 0 );
-	mSplitWidget = NULL;
+	mSplitWidget = nullptr;
 
 	setupBorder();
 
@@ -26,7 +26,7 @@ EditorPanel::EditorPanel( QWidget *parent, EditorPanel *parentPanel, EditorStack
 
 EditorPanel::~EditorPanel() {
 	if ( gWindowManager->getCurrentPanel() == this ) {
-		gWindowManager->setCurrentEditorPanel( NULL );
+		gWindowManager->setCurrentEditorPanel( nullptr );
 	}
 }
 
@@ -97,17 +97,17 @@ void EditorPanel::unsplit() {
 
 	// Pick which descendant to keep during the unsplit. Attempt 1: See if
 	// the current panel is a child of this split panel.
-	EditorPanel *keeper = NULL;
+	EditorPanel *keeper = nullptr;
 	EditorPanel *scanCurrent = currentEditor;
-	while ( scanCurrent != NULL && scanCurrent != this ) {
+	while ( scanCurrent != nullptr && scanCurrent != this ) {
 		scanCurrent = scanCurrent->getParentPanel();
 	}
-	if ( scanCurrent != NULL ) {
+	if ( scanCurrent != nullptr ) {
 		keeper = currentEditor;
 	}
 
 	// Attempt 2: If the current panel was not found, just use the first one
-	if ( keeper == NULL ) {
+	if ( keeper == nullptr ) {
 		keeper = this;
 		while ( keeper->isSplit() ) {
 			keeper = keeper->getFirstChild();
@@ -117,12 +117,12 @@ void EditorPanel::unsplit() {
 	// Remove the keeper's editor stack
 	EditorStack *keepStack = keeper->mEditorStack;
 	keeper->layout()->removeWidget( keepStack );
-	keepStack->setParent( NULL );
+	keepStack->setParent( nullptr );
 
 	// Nuke all children of me
 	mChildPanels.clear();
 	delete mSplitWidget;
-	mSplitWidget = NULL;
+	mSplitWidget = nullptr;
 
 	mEditorStack = keepStack;
 	mEditorStack->setParent( this );
@@ -136,7 +136,7 @@ void EditorPanel::unsplit() {
 void EditorPanel::split( Qt::Orientation orientation ) {
 	// Remove the current EditorStack...
 	mLayout->removeWidget( mEditorStack );
-	mEditorStack->setParent( NULL );
+	mEditorStack->setParent( nullptr );
 
 	// Create a splitter
 	mSplitWidget = new QSplitter( this );
@@ -163,7 +163,7 @@ void EditorPanel::split( Qt::Orientation orientation ) {
 	mSplitWidget->setSizes( sizes );
 
 	// EditorStack is now owned by the child Panel; not this panel.
-	mEditorStack = NULL;
+	mEditorStack = nullptr;
 
 	// The new stack should point at the same file as the first stack.
 	if ( stackA->getCurrentEditor() ) {
@@ -175,7 +175,7 @@ EditorPanel *EditorPanel::findStack( Editor *editor ) {
 	if ( isSplit() ) {
 		foreach ( EditorPanel *child, mChildPanels ) {
 			EditorPanel *childResult = child->findStack( editor );
-			if ( childResult != NULL ) {
+			if ( childResult != nullptr ) {
 				return childResult;
 			}
 		}
@@ -187,14 +187,14 @@ EditorPanel *EditorPanel::findStack( Editor *editor ) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void EditorPanel::takeFocus() {
 	gWindowManager->setCurrentEditorPanel( this );
 
 	Editor *editor = getCurrentEditor();
-	if ( editor != NULL && editor->getFile() != NULL ) {
+	if ( editor != nullptr && editor->getFile() != nullptr ) {
 		gDispatcher->emitSelectFile( editor->getFile() );
 	}
 }
@@ -206,13 +206,13 @@ Editor *EditorPanel::getCurrentEditor() const {
 EditorPanel *EditorPanel::findNextPanel() {
 	// Walk up the tree until we run out of tree, or find a first child.
 	EditorPanel *scan = this;
-	while ( scan->mParentPanel != NULL && scan->mParentPanel->getSecondChild() == scan ) {
+	while ( scan->mParentPanel != nullptr && scan->mParentPanel->getSecondChild() == scan ) {
 		scan = scan->mParentPanel;
 	}
 	scan = scan->mParentPanel;
 
 	// Fell off the edge of the world? Just return the first panel.
-	if ( scan == NULL ) {
+	if ( scan == nullptr ) {
 		return gWindowManager->getFirstPanel();
 	}
 
@@ -228,13 +228,13 @@ EditorPanel *EditorPanel::findNextPanel() {
 EditorPanel *EditorPanel::findPreviousPanel() {
 	// Walk up the tree until we run out of tree, or find a second child.
 	EditorPanel *scan = this;
-	while ( scan->mParentPanel != NULL && scan->mParentPanel->getFirstChild() == scan ) {
+	while ( scan->mParentPanel != nullptr && scan->mParentPanel->getFirstChild() == scan ) {
 		scan = scan->mParentPanel;
 	}
 	scan = scan->mParentPanel;
 
 	// Fell off the edge of the world? Just return the last panel.
-	if ( scan == NULL ) {
+	if ( scan == nullptr ) {
 		return gWindowManager->getLastPanel();
 	}
 

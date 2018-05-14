@@ -7,7 +7,7 @@ StatusWidget::StatusWidget( bool dialogChild, QWidget *parent ) :
 	QWidget( parent ),
 	ui( new Ui::StatusWidget ) {
 	mDialogChild = dialogChild;
-	mCurrentInputWidget = NULL;
+	mCurrentInputWidget = nullptr;
 	mCloseOnButton = false;
 	mResult = None;
 
@@ -52,9 +52,9 @@ void StatusWidget::setInputWidget( QWidget *widget ) {
 }
 
 void StatusWidget::clearInputWidget() {
-	if ( mCurrentInputWidget != NULL ) {
+	if ( mCurrentInputWidget != nullptr ) {
 		delete mCurrentInputWidget;
-		mCurrentInputWidget = NULL;
+		mCurrentInputWidget = nullptr;
 
 		emit signalUpdateLayouts();
 	}
@@ -99,7 +99,7 @@ void StatusWidget::setButtons( Buttons buttons ) {
 	}
 
 	// Pick a default button
-	QAbstractButton *firstButton = NULL;
+	QAbstractButton *firstButton = nullptr;
 	int highestValue = 1;
 	QMapIterator< QAbstractButton *, Button > i( mButtons );
 	while ( i.hasNext() ) {

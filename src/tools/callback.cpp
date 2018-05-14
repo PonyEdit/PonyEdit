@@ -7,7 +7,7 @@ Callback::Callback( QObject *target, const char *successSlot, const char *failur
 	mProgressSlot( progressSlot ) {}
 
 void Callback::triggerSuccess( QVariantMap result ) const {
-	if ( mTarget == NULL ) {
+	if ( mTarget == nullptr ) {
 		return;
 	}
 
@@ -18,7 +18,7 @@ void Callback::triggerSuccess( QVariantMap result ) const {
 }
 
 void Callback::triggerFailure( QString error, int flags ) const {
-	if ( mTarget == NULL ) {
+	if ( mTarget == nullptr ) {
 		return;
 	}
 
@@ -29,7 +29,7 @@ void Callback::triggerFailure( QString error, int flags ) const {
 }
 
 void Callback::triggerProgress( int progress ) const {
-	if ( mTarget == NULL ) {
+	if ( mTarget == nullptr ) {
 		return;
 	}
 

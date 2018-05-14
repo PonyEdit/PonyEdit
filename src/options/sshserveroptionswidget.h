@@ -16,7 +16,7 @@ class SshServerOptionsWidget : public OptionsDialogPage {
 	Q_OBJECT
 
 	public:
-		explicit SshServerOptionsWidget( QWidget *parent = 0 );
+		explicit SshServerOptionsWidget( QWidget *parent = nullptr );
 		~SshServerOptionsWidget();
 
 		QListWidgetItem *populateServers();
@@ -28,7 +28,7 @@ class SshServerOptionsWidget : public OptionsDialogPage {
 	public slots:
 		void accept();
 		void reject();
-		void serverClicked( QListWidgetItem *current, QListWidgetItem *previous = NULL );
+		void serverClicked( QListWidgetItem *current, QListWidgetItem *previous = nullptr );
 		void serverNameUpdated( const QString &newName );
 		void newServer();
 		void deleteServer();

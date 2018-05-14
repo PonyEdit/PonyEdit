@@ -12,7 +12,7 @@ class StartupOptionsWidget : public OptionsDialogPage {
 	Q_OBJECT
 
 	public:
-		explicit StartupOptionsWidget( QWidget *parent = 0 );
+		explicit StartupOptionsWidget( QWidget *parent = nullptr );
 		~StartupOptionsWidget();
 
 		void apply();

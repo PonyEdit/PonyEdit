@@ -54,7 +54,7 @@ void SearchResults::showResults( const QList< SearchResultModel::Result > &resul
 
 void SearchResults::itemClicked( QModelIndex index ) {
 	SearchResultModel::Result *result = mModel->getResultForIndex( index );
-	if ( result != NULL ) {
+	if ( result != nullptr ) {
 		gWindowManager->showAndSelect( result->location, result->lineNumber, result->start, result->length );
 	}
 }

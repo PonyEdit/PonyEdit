@@ -3,7 +3,8 @@
 #include <QString>
 #include <QtTest>
 
-#include "QsLog.h"
+#include <QsLog.h>
+
 #include "ssh2/sshsession.h"
 #include "ssh2/sshsettings.h"
 

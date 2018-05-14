@@ -12,7 +12,7 @@ class HostKeyDlg : public ThreadCrossingDialog {
 	Q_OBJECT
 
 	public:
-		explicit HostKeyDlg( QWidget *parent = 0 );
+		explicit HostKeyDlg( QWidget *parent = nullptr );
 		~HostKeyDlg();
 
 		virtual void setOptions( const QVariantMap &options );

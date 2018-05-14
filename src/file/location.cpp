@@ -31,7 +31,7 @@ QList< Location::Favorite > Location::sFavorites;
 // Icon Provider stuff  //
 ///////////////////////////
 
-QFileIconProvider *sIconProvider = NULL;
+QFileIconProvider *sIconProvider = nullptr;
 
 void LocationShared::initIconProvider() {
 	if ( ! sIconProvider ) {
@@ -42,7 +42,7 @@ void LocationShared::initIconProvider() {
 void LocationShared::cleanupIconProvider() {
 	if ( sIconProvider ) {
 		delete( sIconProvider );
-		sIconProvider = NULL;
+		sIconProvider = nullptr;
 	}
 }
 
@@ -51,7 +51,7 @@ void LocationShared::cleanupIconProvider() {
 //////////////////////////////////
 
 Location::Location() {
-	mData = NULL;
+	mData = nullptr;
 }
 
 Location::Location( const Location &other ) {
@@ -62,7 +62,7 @@ Location::Location( const Location &other ) {
 }
 
 Location &Location::operator=( const Location &other ) {
-	if ( mData != other.mData && mData != NULL ) {
+	if ( mData != other.mData && mData != nullptr ) {
 		mData->mReferences--;
 		if ( mData->mReferences <= 0 ) {
 			delete( mData );
@@ -116,18 +116,18 @@ LocationShared::LocationShared() :
 	mCanRead( false ),
 	mCanWrite( false ),
 	mSudo( false ),
-	mHost( NULL ),
+	mHost( nullptr ),
 	mRemoteHostName(),
 	mRemoteUserName(),
 	mRemotePath(),
-	mRemoteHost( NULL ),
-	mServerChannel( NULL ),
-	mFtpChannel( NULL ) {
+	mRemoteHost( nullptr ),
+	mServerChannel( nullptr ),
+	mFtpChannel( nullptr ) {
 	initIconProvider();
 }
 
 Location::~Location() {
-	if ( mData != NULL ) {
+	if ( mData != nullptr ) {
 		mData->mReferences--;
 		if ( mData->mReferences <= 0 ) {
 			delete ( mData );
@@ -148,7 +148,7 @@ const QString &Location::getLabel() const {
 }
 
 bool Location::isNull() const {
-	return ( mData == NULL || getPath() == "" );
+	return ( mData == nullptr || getPath() == "" );
 }
 
 int Location::getSize() const {
@@ -454,7 +454,7 @@ void LocationShared::sshLoadListing( bool includeHidden ) {
 		params.insert( "hidden", true );
 	}
 	getHost()->sendServerRequest( mSudo,
-	                              NULL,
+	                              nullptr,
 	                              "ls",
 	                              QVariant( params ),
 	                              Callback( this,
@@ -501,7 +501,7 @@ void LocationShared::sftpLsFailure( QString error, int /*flags*/ ) {
 }
 
 SshHost *LocationShared::getHost() {
-	if ( mHost == NULL ) {
+	if ( mHost == nullptr ) {
 		mHost = SshHost::getHost( mRemoteHostName.toLatin1(), mRemoteUserName.toLatin1() );
 	}
 
@@ -520,7 +520,7 @@ void Location::addToFavorites() {
 		f.name = getDefaultFavoriteName();
 		f.path = getPath();
 
-		FavoriteLocationDialog dialog( NULL, &f );
+		FavoriteLocationDialog dialog( nullptr, &f );
 		if ( dialog.exec() == QDialog::Accepted ) {
 			addSortedFavorite( f );
 			saveFavorites();
@@ -595,7 +595,7 @@ void Location::createNewDirectory( const QString &name, const Callback &callback
 		case Ssh: {
 			QVariantMap params;
 			params.insert( "dir", mData->mRemotePath + "/" + name );
-			mData->getHost()->sendServerRequest( mData->mSudo, NULL, "mkdir", QVariant( params ), callback );
+			mData->getHost()->sendServerRequest( mData->mSudo, nullptr, "mkdir", QVariant( params ), callback );
 			break;
 		}
 

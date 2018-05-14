@@ -9,7 +9,7 @@
 
 ShellChannel::ShellChannel( SshHost *host, bool machineReadable, const QByteArray &ptyType ) :
 	SshChannel( host ),
-	mHandle( NULL ),
+	mHandle( nullptr ),
 	mReadBuffer(),
 	mScratchBuffer(),
 	mInternalStatus( _OpenSession ),
@@ -35,7 +35,7 @@ bool ShellChannel::handleOpening() {
 
 	if ( mInternalStatus == _OpenSession ) {
 		mHandle = libssh2_channel_open_session( mSession->sessionHandle() );
-		if ( mHandle == NULL ) {
+		if ( mHandle == nullptr ) {
 			int rc = libssh2_session_last_errno( mSession->sessionHandle() );
 			if ( rc == LIBSSH2_ERROR_EAGAIN ) {
 				return true;
@@ -44,7 +44,7 @@ bool ShellChannel::handleOpening() {
 					// This channel needs to be given away; this connection can't handle it.
 					// TODO: Detect if this channel request has been handed off too often and kill
 					// it if so.
-					setSession( NULL );
+					setSession( nullptr );
 				} else {
 					criticalError( tr( "Failed to open a channel %1: %2" ).arg( reinterpret_cast< unsigned long >(
 													    mHandle ),

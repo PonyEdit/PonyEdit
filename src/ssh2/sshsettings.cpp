@@ -4,7 +4,8 @@
 #include <QString>
 #include <QTextStream>
 
-#include "QsLog.h"
+#include <QsLog.h>
+
 #include "sshsettings.h"
 
 SshSettings::SshSettings() :

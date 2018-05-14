@@ -23,18 +23,18 @@
 #include "syntax/syntaxrule.h"
 #include "website/sitemanager.h"
 
-GlobalDispatcher *gDispatcher = NULL;
-SiteManager *gSiteManager = NULL;
-SyntaxDefManager *gSyntaxDefManager = NULL;
-MainWindow *gMainWindow = NULL;
+GlobalDispatcher *gDispatcher = nullptr;
+SiteManager *gSiteManager = nullptr;
+SyntaxDefManager *gSyntaxDefManager = nullptr;
+MainWindow *gMainWindow = nullptr;
 bool PonyEdit::sApplicationExiting = false;
 
 PonyEdit::PonyEdit( int argc, char **argv ) :
 	QApplication( argc, argv ),
 	mIsRunning( false ),
 	mMemoryLock(),
-	mLocalServer( NULL ),
-	mDialogRethreader( NULL ),
+	mLocalServer( nullptr ),
+	mDialogRethreader( nullptr ),
 	mPositionalArguments() {
 	// Parse command line arguments
 	QCommandLineParser parser;

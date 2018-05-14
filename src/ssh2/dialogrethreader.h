@@ -56,7 +56,7 @@ class DialogRethreader : public QObject {
 			public:
 				DialogEvent( int type ) :
 					QEvent( static_cast< QEvent::Type >( type ) ),
-					request( NULL ) {}
+					request( nullptr ) {}
 				DialogRethreadRequest *request;
 		};
 

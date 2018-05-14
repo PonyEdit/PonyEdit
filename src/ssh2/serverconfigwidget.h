@@ -13,7 +13,7 @@ class ServerConfigWidget : public QWidget {
 	Q_OBJECT
 
 	public:
-		explicit ServerConfigWidget( QWidget *parent = 0 );
+		explicit ServerConfigWidget( QWidget *parent = nullptr );
 		~ServerConfigWidget();
 
 		void setEditHost( SshHost *host );

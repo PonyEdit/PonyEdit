@@ -44,8 +44,8 @@
 
 MainWindow::MainWindow( QWidget *parent )
 	: QMainWindow( parent ) {
-	mUnsavedChangesDialog = NULL;
-	mCurrentSyntaxMenuItem = NULL;
+	mUnsavedChangesDialog = nullptr;
+	mCurrentSyntaxMenuItem = nullptr;
 
 	setWindowTitle( tr( "PonyEdit" ) );
 
@@ -268,7 +268,7 @@ void MainWindow::saveFile() {
 
 void MainWindow::saveFileAs() {
 	Editor *current = gWindowManager->currentEditor();
-	if ( current == NULL ) {
+	if ( current == nullptr ) {
 		return;
 	}
 
@@ -985,9 +985,9 @@ void MainWindow::currentEditorChanged() {
 }
 
 void MainWindow::updateSyntaxSelection() {
-	if ( mCurrentSyntaxMenuItem != NULL ) {
+	if ( mCurrentSyntaxMenuItem != nullptr ) {
 		mCurrentSyntaxMenuItem->setChecked( false );
-		mCurrentSyntaxMenuItem = NULL;
+		mCurrentSyntaxMenuItem = nullptr;
 	}
 
 	Editor *editor = getCurrentEditor();
@@ -995,8 +995,8 @@ void MainWindow::updateSyntaxSelection() {
 		mSyntaxMenu->setEnabled( true );
 		BaseFile *file = editor->getFile();
 		QString syntaxName = file->getSyntax();
-		mCurrentSyntaxMenuItem = mSyntaxMenuEntries.value( syntaxName, NULL );
-		if ( mCurrentSyntaxMenuItem != NULL ) {
+		mCurrentSyntaxMenuItem = mSyntaxMenuEntries.value( syntaxName, nullptr );
+		if ( mCurrentSyntaxMenuItem != nullptr ) {
 			mCurrentSyntaxMenuItem->setChecked( true );
 		}
 	} else {
@@ -1065,7 +1065,7 @@ void MainWindow::dropEvent( QDropEvent *event ) {
 
 void MainWindow::showHTMLPreview() {
 	HTMLPreview *htmlPreview = new HTMLPreview( this );
-	QDockWidget *htmlWrapper = new QDockWidget( "HTML Preview", 0 );
+	QDockWidget *htmlWrapper = new QDockWidget( "HTML Preview", nullptr );
 
 	connect( htmlWrapper, SIGNAL( visibilityChanged( bool ) ), this, SLOT( closeHTMLPreview( bool ) ) );
 

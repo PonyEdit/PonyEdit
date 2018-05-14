@@ -1,11 +1,12 @@
 #include <libssh2.h>
 #include <QDebug>
+
 #include "sshchannel.h"
 #include "sshhost.h"
 
 SshChannel::SshChannel( SshHost *host ) :
 	mHost( host ),
-	mSession( NULL ),
+	mSession( nullptr ),
 	mStatus( Sessionless ),
 	mErrorDetails( "" ) {}
 
@@ -14,7 +15,7 @@ SshChannel::~SshChannel() {}
 void SshChannel::setSession( SshSession *session ) {
 	if ( mSession != session ) {
 		mSession = session;
-		setStatus( mSession == NULL ? Sessionless : WaitingForSession );
+		setStatus( mSession == nullptr ? Sessionless : WaitingForSession );
 	}
 }
 

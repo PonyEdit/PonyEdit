@@ -5,19 +5,19 @@
 
 SyntaxDefXmlHandler::SyntaxDefXmlHandler( SyntaxDefinition *definition ) :
 	mDefinition( definition ),
-	mRecord( NULL ),
+	mRecord( nullptr ),
 	mCurrentBlocks( None ),
-	mKeywordList( NULL ),
-	mContext( NULL ),
-	mRule( NULL ) {}
+	mKeywordList( nullptr ),
+	mContext( nullptr ),
+	mRule( nullptr ) {}
 
 SyntaxDefXmlHandler::SyntaxDefXmlHandler( SyntaxDefManager::Record *record ) :
-	mDefinition( NULL ),
+	mDefinition( nullptr ),
 	mRecord( record ),
 	mCurrentBlocks( None ),
-	mKeywordList( NULL ),
-	mContext( NULL ),
-	mRule( NULL ) {}
+	mKeywordList( nullptr ),
+	mContext( nullptr ),
+	mRule( nullptr ) {}
 
 QString SyntaxDefXmlHandler::errorString() const {
 	return QString();
@@ -98,7 +98,7 @@ bool SyntaxDefXmlHandler::startElement( const QString & /* namespaceURI */,
 			// Inside a <context> or a <rule>. Should be a big pile of rules.
 			SyntaxRule *rule = new SyntaxRule( mRule, localName, atts );
 			if ( rule->isValid() ) {
-				if ( mRule == NULL ) {
+				if ( mRule == nullptr ) {
 					mContext->rules.append( QSharedPointer< SyntaxRule >( rule ) );
 				} else {
 					mRule->addChildRule( QSharedPointer< SyntaxRule >( rule ) );
@@ -204,7 +204,7 @@ bool SyntaxDefXmlHandler::endElement( const QString & /* namespaceURI */,
 		case Language | Highlighting | Contexts | Context | Rule:
 			if ( localName.compare( mRule->getName(), Qt::CaseInsensitive ) == 0 ) {
 				mRule = mRule->getParent();
-				if ( mRule == NULL ) {
+				if ( mRule == nullptr ) {
 					mCurrentBlocks &= ~Rule;
 				}
 			}

@@ -18,7 +18,7 @@ QMap< QString, QByteArray > SshHost::sKnownHostFingerprints;
 
 SshHost::SshHost() :
 	mDesiredStatus( Disconnected ),
-	mFirstServerScriptChecker( 0 ),
+	mFirstServerScriptChecker( nullptr ),
 	mServerScriptChecked( false ),
 	mCachedIpAddress( 0 ),
 	mCachedAuthMethod( SshSession::AuthNone ),
@@ -69,7 +69,7 @@ SshHost *SshHost::getHost( const QByteArray &hostname, const QByteArray &usernam
 	dlg.setEditHost( newHost );
 	if ( dlg.exec() != QDialog::Accepted ) {
 		delete newHost;
-		return NULL;
+		return nullptr;
 	}
 
 	sKnownHosts.append( newHost );
@@ -199,10 +199,10 @@ void SshHost::assignSession( SshChannel *channel ) {
 }
 
 SshChannel *SshHost::takeNextHomelessChannel() {
-	SshChannel *taken = NULL;
+	SshChannel *taken = nullptr;
 
 	if ( PonyEdit::isApplicationExiting() ) {
-		return NULL;
+		return nullptr;
 	}
 
 	mHomelessChannelsMutex.lock();
@@ -262,14 +262,14 @@ void SshHost::sendServerRequest( bool sudo,
 	// the file pointer with setOpeningFile. ServerChannels use the file passed to the constructor to determine if a
 	// request must be handled by a particular channel.
 	bool openingFile = ( request == "open" );
-	ServerRequest *newRequest = new ServerRequest( openingFile ? NULL : file, request, parameters, callback );
+	ServerRequest *newRequest = new ServerRequest( openingFile ? nullptr : file, request, parameters, callback );
 	if ( openingFile ) {
 		newRequest->setOpeningFile( file );
 	}
 
 	// Before even enqueing the request, autofail it if it belongs to a channel that's gone.
 	ServerFile *relevantFile = newRequest->getFile();
-	if ( relevantFile != NULL ) {
+	if ( relevantFile != nullptr ) {
 		bool ok = false;
 		foreach ( SshChannel *channel, mChannels ) {
 			if ( channel->is( SshChannel::Server ) || channel->is( SshChannel::SudoServer ) ) {
@@ -354,7 +354,7 @@ int SshHost::countChannels( SshChannel::Type type ) {
 }
 
 SFTPRequest *SshHost::getNextSftpRequest() {
-	SFTPRequest *request = NULL;
+	SFTPRequest *request = nullptr;
 
 	mSftpRequestQueueMutex.lock();
 	if ( ! mSftpRequestQueue.isEmpty() ) {
@@ -366,7 +366,7 @@ SFTPRequest *SshHost::getNextSftpRequest() {
 }
 
 ServerRequest *SshHost::getNextServerRequest( bool sudo, const QMap< ServerFile *, int > &registeredBuffers ) {
-	ServerRequest *request = NULL;
+	ServerRequest *request = nullptr;
 
 	QMutex &lock = sudo ? mSudoServerRequestQueueMutex : mServerRequestQueueMutex;
 	QList< ServerRequest * > &list = sudo ? mSudoServerRequestQueue : mServerRequestQueue;
@@ -374,7 +374,7 @@ ServerRequest *SshHost::getNextServerRequest( bool sudo, const QMap< ServerFile 
 	lock.lock();
 	for ( int i = 0; i < list.length(); i++ ) {
 		ServerFile *file = list[ i ]->getFile();
-		if ( file == NULL || registeredBuffers.contains( file ) ) {
+		if ( file == nullptr || registeredBuffers.contains( file ) ) {
 			// TODO: Add some code to ensure no request gets lost in the queue permanently if its
 			// buffer-locked channel gets killed
 			request = list.takeAt( i );
@@ -399,7 +399,7 @@ bool SshHost::waitBeforeCheckingServer( SshChannel *channel ) {
 
 	bool result = true;
 	mFirstServerScriptCheckerLock.lock();
-	if ( mFirstServerScriptChecker == NULL ) {
+	if ( mFirstServerScriptChecker == nullptr ) {
 		mFirstServerScriptChecker = channel;
 		result = false;
 	}
@@ -410,7 +410,7 @@ bool SshHost::waitBeforeCheckingServer( SshChannel *channel ) {
 
 void SshHost::firstServerCheckComplete() {
 	mServerScriptChecked = true;
-	mFirstServerScriptChecker = NULL;
+	mFirstServerScriptChecker = nullptr;
 }
 
 void SshHost::handleUnsolicitedServerMessage( const QVariantMap & /*message*/ ) {
@@ -450,7 +450,7 @@ void SshHost::enqueueXferRequest( XferRequest *request ) {
 }
 
 XferRequest *SshHost::getNextXferRequest( bool sudo ) {
-	XferRequest *request = NULL;
+	XferRequest *request = nullptr;
 
 	if ( sudo ) {
 		mSudoXferRequestQueueMutex.lock();
@@ -480,7 +480,7 @@ const QByteArray &SshHost::getHomeDirectory() {
 SshHost *SshHost::getBlankHost( bool save ) {
 	SshHost *host = new SshHost();
 	if ( ! host ) {
-		return NULL;
+		return nullptr;
 	}
 
 	host->setSaveHost( save );
@@ -509,8 +509,8 @@ void SshHost::updateOverallStatus() {
 	}
 
 	// Work out which channel is closest to being connected, and display that channel's status.
-	SshChannel *mostConnectedChannel = NULL;
-	SshSession *mostConnectedSession = NULL;
+	SshChannel *mostConnectedChannel = nullptr;
+	SshSession *mostConnectedSession = nullptr;
 	int mostConnectedScore = 0;
 
 	foreach ( SshSession *session, mSessions ) {
@@ -590,8 +590,8 @@ void SshHost::failAllHomelessChannels() {
 }
 
 void SshHost::failAllRequests( const QString &error, int flags ) {
-	failServerRequests( error, flags, mServerRequestQueueMutex, mServerRequestQueue, NULL );
-	failServerRequests( error, flags, mSudoServerRequestQueueMutex, mSudoServerRequestQueue, NULL );
+	failServerRequests( error, flags, mServerRequestQueueMutex, mServerRequestQueue, nullptr );
+	failServerRequests( error, flags, mSudoServerRequestQueueMutex, mSudoServerRequestQueue, nullptr );
 	failXferRequests( error, flags, mXferRequestQueueMutex, mXferRequestQueue );
 	failXferRequests( error, flags, mSudoXferRequestQueueMutex, mSudoXferRequestQueue );
 }
@@ -608,7 +608,7 @@ void SshHost::failServerRequests( const QString &error,
 
 	foreach ( ServerRequest *request, listCopy ) {
 		ServerFile *relatedFile = request->getFile();
-		if ( channel == NULL || channel->handlesFileBuffer( relatedFile ) ) {
+		if ( channel == nullptr || channel->handlesFileBuffer( relatedFile ) ) {
 			request->failRequest( error, flags );
 			delete request;
 		}

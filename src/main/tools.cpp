@@ -17,7 +17,7 @@
 #define MEGABYTE_MULTIPLIER 1048576
 #define KILOBYTE_MULTIPLIER 1024
 
-QThread *sMainThread = NULL;
+QThread *sMainThread = nullptr;
 QString Tools::sResourcePath;
 
 QString Tools::humanReadableBytes( quint64 bytes ) {

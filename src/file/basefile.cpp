@@ -38,7 +38,7 @@ BaseFile *BaseFile::getFile( const Location &location ) {
 	}
 
 	// If not, create a new file object.
-	BaseFile *newFile = NULL;
+	BaseFile *newFile = nullptr;
 	Location::Protocol protocol = location.getProtocol();
 	switch ( protocol ) {
 		case Location::Ssh:
@@ -90,11 +90,11 @@ BaseFile::BaseFile( const Location &location ) :
 	mRevision( 0 ),
 	mLastSavedRevision( 0 ),
 	mLastSavedUndoLength( 0 ),
-	mLastSaveChecksum( NULL ),
+	mLastSaveChecksum( nullptr ),
 	mProgress( -1 ),
 	mOpenStatus( BaseFile::Closed ),
 	mAttachedEditors(),
-	mHighlighter( NULL ) {
+	mHighlighter( nullptr ) {
 	mDocument->setDocumentLayout( mDocumentLayout );
 
 	connect( mDocument, SIGNAL( contentsChange( int, int, int ) ), this, SLOT( documentChanged( int, int, int ) ) );
@@ -278,7 +278,7 @@ void BaseFile::setSyntax( SyntaxDefinition *syntaxDef ) {
 		}
 	} else if ( mHighlighter ) {
 		delete mHighlighter;
-		mHighlighter = NULL;
+		mHighlighter = nullptr;
 	}
 	unignoreChanges();
 

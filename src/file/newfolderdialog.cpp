@@ -43,14 +43,14 @@ void NewFolderDialog::createFailure( QString error, int flags ) {
 	msgbox.setText( error );
 	msgbox.setStandardButtons( QMessageBox::Cancel );
 
-	QPushButton *sudoButton = NULL;
+	QPushButton *sudoButton = nullptr;
 	if ( flags & ServerRequest::PermissionError ) {
 		sudoButton = msgbox.addButton( "Sudo and Try Again", QMessageBox::ActionRole );
 	}
 
 	msgbox.exec();
 
-	if ( sudoButton != NULL && msgbox.clickedButton() == sudoButton ) {
+	if ( sudoButton != nullptr && msgbox.clickedButton() == sudoButton ) {
 		attempt( true );
 	} else {
 		reject();

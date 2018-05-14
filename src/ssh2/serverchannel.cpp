@@ -50,7 +50,7 @@ QByteArray ServerChannel::sServerUpload;
 ServerChannel::ServerChannel( SshHost *host, bool sudo ) :
 	ShellChannel( host ),
 	mInternalStatus( _WaitingForShell ),
-	mCurrentRequest( 0 ),
+	mCurrentRequest( nullptr ),
 	mNextMessageId( 1 ),
 	mSudo( sudo ),
 	mSudoPasswordAttempt(),
@@ -273,7 +273,7 @@ void ServerChannel::criticalError( const QString &error ) {
 	if ( mCurrentRequest ) {
 		mCurrentRequest->failRequest( error, ServerRequest::ConnectionError );
 		delete mCurrentRequest;
-		mCurrentRequest = NULL;
+		mCurrentRequest = nullptr;
 	}
 
 	SshChannel::criticalError( error );
@@ -292,8 +292,8 @@ bool ServerChannel::mainUpdate() {
 				QVariantMap response = QJsonDocument::fromJson( rr.data ).object().toVariantMap();
 				if ( int responseId = response.value( "i", 0 ).toInt() ) {
 					// Look up the request that this response relates to
-					ServerRequest *request = mRequestsAwaitingReplies.value( responseId, NULL );
-					if ( request != NULL ) {
+					ServerRequest *request = mRequestsAwaitingReplies.value( responseId, nullptr );
+					if ( request != nullptr ) {
 						// If the request was opening a file, and a bufferId is returned, record
 						// the relationship
 						BaseFile::deletionLock();
@@ -313,8 +313,8 @@ bool ServerChannel::mainUpdate() {
 
 						// Handle the response.
 						ServerRequest *request =
-							mRequestsAwaitingReplies.value( responseId, NULL );
-						if ( request != NULL ) {
+							mRequestsAwaitingReplies.value( responseId, nullptr );
+						if ( request != nullptr ) {
 							request->handleReply( response );
 						}
 					} else {
@@ -372,7 +372,7 @@ bool ServerChannel::mainUpdate() {
 		SSHLOG_TRACE( mHost ) << "Sent: " << packedRequest;
 		mRequestsAwaitingReplies.insert( mCurrentRequest->getMessageId(), mCurrentRequest );
 
-		mCurrentRequest = NULL;
+		mCurrentRequest = nullptr;
 		setInternalStatus( _WaitingForRequests );
 	}
 

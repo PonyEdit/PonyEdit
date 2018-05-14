@@ -10,7 +10,7 @@ class TabbedFileList : public QDockWidget {
 	Q_OBJECT
 
 	public:
-		explicit TabbedFileList( QWidget *parent = 0 );
+		explicit TabbedFileList( QWidget *parent = nullptr );
 
 		int findTab( BaseFile *file );
 

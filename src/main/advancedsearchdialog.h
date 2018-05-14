@@ -13,7 +13,7 @@ class AdvancedSearchDialog : public QDialog {
 	public:
 		enum Scope { CurrentFile, OpenFiles };
 
-		explicit AdvancedSearchDialog( QWidget *parent = 0 );
+		explicit AdvancedSearchDialog( QWidget *parent = nullptr );
 		~AdvancedSearchDialog();
 
 	private slots:

@@ -8,7 +8,7 @@ class ThreadCrossingDialog : public QDialog {
 	Q_OBJECT
 
 	public:
-		explicit ThreadCrossingDialog( QWidget *parent = 0 );
+		explicit ThreadCrossingDialog( QWidget *parent = nullptr );
 
 		virtual void setOptions( const QVariantMap & /*options*/ ) {}
 		virtual QVariantMap getResult();

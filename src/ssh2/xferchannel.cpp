@@ -9,14 +9,14 @@
 XferChannel::XferChannel( SshHost *host, bool sudo ) :
 	ServerChannel( host, sudo ),
 	mInternalStatus( _WaitingForRequests ),
-	mCurrentRequest( NULL ),
+	mCurrentRequest( nullptr ),
 	mBinaryReadBuffer(),
 	mLeftoverEscape( false ) {}
 
 bool XferChannel::mainUpdate() {
 	if ( mInternalStatus == _WaitingForRequests ) {
 		mCurrentRequest = mHost->getNextXferRequest( mSudo );
-		if ( mCurrentRequest == NULL ) {
+		if ( mCurrentRequest == nullptr ) {
 			return false;
 		} else {
 			mInternalStatus = _SendingRequestHeader;

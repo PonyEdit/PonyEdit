@@ -5,7 +5,7 @@
 #include "main/global.h"
 #include "options.h"
 
-QFont *Options::EditorFont = NULL;
+QFont *Options::EditorFont = nullptr;
 int Options::EditorFontZoom;
 int Options::TabStopWidth;
 bool Options::WordWrap;
@@ -22,7 +22,7 @@ Options::FileListTypes Options::FileListType;
 
 int Options::LoggingLevel;
 
-Options *Options::sInstance = NULL;
+Options *Options::sInstance = nullptr;
 
 Options *Options::getInstance() {
 	if ( ! sInstance ) {
@@ -123,7 +123,7 @@ void Options::load() {
 	QSettings settings;
 
 	QString fontString = settings.value( ntr( "editorFont" ) ).toString();
-	if ( EditorFont != NULL ) {
+	if ( EditorFont != nullptr ) {
 		delete EditorFont;
 	}
 	EditorFont = new QFont();

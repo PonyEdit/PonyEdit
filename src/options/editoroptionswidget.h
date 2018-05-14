@@ -10,7 +10,7 @@ class EditorOptionsWidget : public OptionsDialogPage {
 	Q_OBJECT
 
 	public:
-		explicit EditorOptionsWidget( QWidget *parent = 0 );
+		explicit EditorOptionsWidget( QWidget *parent = nullptr );
 		~EditorOptionsWidget();
 
 		virtual void apply();

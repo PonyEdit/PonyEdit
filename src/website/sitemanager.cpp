@@ -36,7 +36,7 @@ SiteManager::~SiteManager() {
 		delete mManager;
 	}
 
-	mManager = NULL;
+	mManager = nullptr;
 }
 
 void SiteManager::checkForUpdates( bool forceNotification ) {

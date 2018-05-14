@@ -126,7 +126,7 @@ FileDialog::FileDialog( QWidget *parent, bool saveAs ) :
 	Location homeLocation( QDir::homePath() );
 	Editor *editor = gMainWindow->getCurrentEditor();
 
-	if ( NULL != editor ) {
+	if ( nullptr != editor ) {
 		Location currentLoc = editor->getLocation();
 		if ( currentLoc.isNull() ) {
 			showLocation( mLastLocation );
@@ -349,7 +349,7 @@ void FileDialog::locationExpanded( CustomTreeEntry *entry ) {
 
 void FileDialog::folderChildrenLoaded( const QList< Location > &children, const QString &locationPath ) {
 	// Update the folder tree if appropriate
-	CustomTreeEntry *entry = mLoadingLocations.value( locationPath, NULL );
+	CustomTreeEntry *entry = mLoadingLocations.value( locationPath, nullptr );
 	if ( entry ) {
 		mLoadingLocations.remove( locationPath );
 		entry->removeAllChildren();
@@ -460,7 +460,7 @@ void FileDialog::folderChildrenFailed( const QString &error, const QString & /*l
 	showStatus( QPixmap( ":/icons/error.png" ), QString( "Error: " + error ) );
 	ui->statusWidget->setButtons( StatusWidget::Retry |
 	                              ( mCurrentLocation.getRemoteHost() !=
-	                                NULL ? StatusWidget::ShowLog : StatusWidget::None ) |
+	                                nullptr ? StatusWidget::ShowLog : StatusWidget::None ) |
 	                              ( permissionError && ! mCurrentLocation.isSudo() &&
 	                                mCurrentLocation.canSudo() ? StatusWidget::SudoRetry : StatusWidget::None ) );
 }
@@ -497,7 +497,7 @@ void FileDialog::statusButtonClicked( StatusWidget::Button button ) {
 
 		case StatusWidget::ShowLog: {
 			SshHost *host = mCurrentLocation.getRemoteHost();
-			if ( host != NULL ) {
+			if ( host != nullptr ) {
 				host->showLog();
 			}
 			break;

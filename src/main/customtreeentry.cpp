@@ -6,27 +6,27 @@
 #include "customtreewidget.h"
 
 CustomTreeEntry::CustomTreeEntry( const QIcon &icon, const QString &label ) :
-	mModel( NULL ),
-	mParent( NULL ),
+	mModel( nullptr ),
+	mParent( nullptr ),
 	mIndex( 0 ),
 	mExpandable( false ),
 	mDelayedLoad( false ),
 	mStaticIcon( icon ),
 	mStaticLabel( label ),
-	mDataDeleteProc( NULL ),
-	mData( NULL ),
+	mDataDeleteProc( nullptr ),
+	mData( nullptr ),
 	mHover( false ) {}
 
 CustomTreeEntry::CustomTreeEntry( CustomTreeModel *model ) :
 	mModel( model ),
-	mParent( NULL ),
+	mParent( nullptr ),
 	mIndex( 0 ),
 	mExpandable( false ),
 	mDelayedLoad( false ),
-	mStaticIcon( NULL ),
+	mStaticIcon( nullptr ),
 	mStaticLabel( "" ),
-	mDataDeleteProc( NULL ),
-	mData( NULL ),
+	mDataDeleteProc( nullptr ),
+	mData( nullptr ),
 	mHover( false ) {}
 
 CustomTreeEntry::~CustomTreeEntry() {
@@ -38,8 +38,8 @@ CustomTreeEntry::~CustomTreeEntry() {
 	}
 
 	foreach ( CustomTreeEntry *child, mChildren ) {
-		child->mParent = NULL;
-		child->mModel = NULL;
+		child->mParent = nullptr;
+		child->mModel = nullptr;
 		delete child;
 	}
 
@@ -74,8 +74,8 @@ void CustomTreeEntry::removeAllChildren() {
 
 	mModel->beginRemoveRows( mModel->getEntryIndex( this ), 0, mChildren.count() - 1 );
 	foreach ( CustomTreeEntry *entry, mChildren ) {
-		entry->mParent = NULL;
-		entry->mModel = NULL;
+		entry->mParent = nullptr;
+		entry->mModel = nullptr;
 		delete entry;
 	}
 	mChildren.clear();
@@ -115,8 +115,8 @@ void CustomTreeEntry::setDelayedLoad( QObject *callbackTarget, const char *loadS
 	// Disconnect any previously set delayed load actions
 	disconnect( SIGNAL( expandItem( CustomTreeEntry * ) ) );
 
-	mExpandable = mDelayedLoad = ( callbackTarget != NULL );
-	if ( callbackTarget != NULL ) {
+	mExpandable = mDelayedLoad = ( callbackTarget != nullptr );
+	if ( callbackTarget != nullptr ) {
 		connect( this,
 		         SIGNAL( expandItem( CustomTreeEntry * ) ),
 		         callbackTarget,

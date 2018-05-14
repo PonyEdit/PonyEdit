@@ -12,7 +12,7 @@ class FileList : public QDockWidget {
 	Q_OBJECT
 
 	public:
-		explicit FileList( QWidget *parent = 0 );
+		explicit FileList( QWidget *parent = nullptr );
 
 	private slots:
 		void selectFile( BaseFile *file );

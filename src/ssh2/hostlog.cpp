@@ -3,7 +3,7 @@
 #include "ui_hostlog.h"
 
 HostLog::HostLog( SshHost *host ) :
-	QWidget( NULL ),
+	QWidget( nullptr ),
 	ui( new Ui::HostLog ) {
 	ui->setupUi( this );
 	ui->textBox->setPlainText( host->getLog().join( "\n" ) );

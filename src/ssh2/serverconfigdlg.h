@@ -12,7 +12,7 @@ class ServerConfigDlg : public QDialog {
 	Q_OBJECT
 
 	public:
-		explicit ServerConfigDlg( QWidget *parent = 0 );
+		explicit ServerConfigDlg( QWidget *parent = nullptr );
 		~ServerConfigDlg();
 
 		void setEditHost( SshHost *host );

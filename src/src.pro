@@ -67,15 +67,20 @@ macx {
 	QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/opt/openssl@1.1/lib/libssl.1.1.dylib @executable_path/libssl.1.1.dylib $$OUT_PWD/PonyEdit.app/Contents/MacOS/PonyEdit;
 	QMAKE_POST_LINK += /usr/bin/install_name_tool -change /usr/local/opt/openssl@1.1/lib/libcrypto.1.1.dylib @executable_path/libcrypto.1.1.dylib $$OUT_PWD/PonyEdit.app/Contents/MacOS/PonyEdit;
 
+	# Disable warnings for files we don't control
 	QMAKE_CXXFLAGS += --system-header-prefix=openssl/
 	QMAKE_CXXFLAGS += --system-header-prefix=libssh2
 	QMAKE_CXXFLAGS += --system-header-prefix=QsLog
-	QMAKE_CXXFLAGS += -isystem "$$QT_PATH/lib/QtCore.framework/Headers"
+	QMAKE_CXXFLAGS += --system-header-prefix=QtXml
+	QMAKE_CXXFLAGS += --system-header-prefix=QtWidgets
 
-	QMAKE_CXXFLAGS += -Werror -Wunused-parameter 
+	# All warnings are errors
+	QMAKE_CXXFLAGS_WARN_ON += -Werror
 
+	# Catch these warnings
 	QMAKE_CXXFLAGS_WARN_ON += -Wzero-as-null-pointer-constant
 	QMAKE_CXXFLAGS_WARN_ON += -Wold-style-cast
+	QMAKE_CXXFLAGS_WARN_ON += -Wunused-parameter
 }
 
 QT		+= core widgets gui network xml webengine webenginewidgets printsupport

@@ -7,7 +7,7 @@ class OptionsDialogPage : public QWidget {
 	Q_OBJECT
 
 	public:
-		explicit OptionsDialogPage( QWidget *parent = 0 );
+		explicit OptionsDialogPage( QWidget *parent = nullptr );
 
 		virtual void apply() {}
 };

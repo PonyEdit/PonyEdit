@@ -10,7 +10,7 @@ class CustomTreeWidget : public QTreeView {
 	Q_OBJECT
 
 	public:
-		explicit CustomTreeWidget( QWidget *parent = 0 );
+		explicit CustomTreeWidget( QWidget *parent = nullptr );
 		~CustomTreeWidget();
 
 		void addTopLevelEntry( CustomTreeEntry *entry );

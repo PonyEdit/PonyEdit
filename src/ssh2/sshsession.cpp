@@ -44,11 +44,11 @@ SshSession::SshSession( SshHost *host ) :
 	mKeepaliveTime( mHost->getKeepalive() * 1000 ),
 	mKeepaliveSent( false ),
 	mLastActivityTimer(),
-	mThread( NULL ),
+	mThread( nullptr ),
 	mSocket( 0 ),
-	mHandle( NULL ),
-	mSocketReadNotifier( NULL ),
-	mSocketExceptionNotifier( NULL ),
+	mHandle( nullptr ),
+	mSocketReadNotifier( nullptr ),
+	mSocketExceptionNotifier( nullptr ),
 	mChannels(),
 	mChannelsLock(),
 	mAtChannelLimit( false ),
@@ -222,7 +222,7 @@ bool SshSession::openSocket() {
 			throw( tr( "Could not find host: %1" ).arg( QString( mHost->getHostname() ) ) );
 		}
 
-		while ( ! connected && server->h_addr_list[ tryAddress ] != 0 ) {
+		while ( ! connected && server->h_addr_list[ tryAddress ] != nullptr ) {
 			connected = openSocket( *reinterpret_cast< u_long * >( server->h_addr_list[ tryAddress++ ] ) );
 		}
 	}
@@ -367,7 +367,7 @@ bool SshSession::authenticatePublicKey() {
 			int rc = libssh2_userauth_publickey_fromfile_ex( mHandle,
 			                                                 mHost->getUsername(),
 			                                                 mHost->getUsername().length(),
-			                                                 NULL,
+			                                                 nullptr,
 			                                                 mHost->getKeyFile(),
 			                                                 passphrase );
 			if ( rc == 0 ) {
@@ -410,8 +410,8 @@ bool SshSession::authenticatePublicKey() {
 }
 
 bool SshSession::authenticateAgent() {
-	struct libssh2_agent_publickey *identity, *prevIdentity = NULL;
-	LIBSSH2_AGENT *agent = NULL;
+	struct libssh2_agent_publickey *identity, *prevIdentity = nullptr;
+	LIBSSH2_AGENT *agent = nullptr;
 	bool success = false;
 
 	SSHLOG_TRACE( mHost ) << "Looking for an SSH key agent";
@@ -555,17 +555,17 @@ SshSession::AuthMethods SshSession::getAuthenticationMethods() {
 	AuthMethods methods = mHost->authMethods();
 
 	char *authlist = libssh2_userauth_list( mHandle, mHost->getUsername(), mHost->getUsername().length() );
-	if ( NULL == authlist ) {
+	if ( nullptr == authlist ) {
 		return AuthNone;
 	}
 
-	if ( strstr( authlist, "password" ) == NULL ) {
+	if ( strstr( authlist, "password" ) == nullptr ) {
 		methods &= ~AuthPassword;
 	}
-	if ( strstr( authlist, "keyboard-interactive" ) == NULL ) {
+	if ( strstr( authlist, "keyboard-interactive" ) == nullptr ) {
 		methods &= ~AuthKeyboardInteractive;
 	}
-	if ( strstr( authlist, "publickey" ) == NULL ) {
+	if ( strstr( authlist, "publickey" ) == nullptr ) {
 		methods &= ~AuthPublicKey;
 	}
 
@@ -578,7 +578,7 @@ void SshSession::connect() {
 	}
 
 	// Create an SSH2 session
-	mHandle = libssh2_session_init_ex( NULL, NULL, NULL, this );
+	mHandle = libssh2_session_init_ex( nullptr, nullptr, nullptr, this );
 	libssh2_trace( mHandle,
 	               LIBSSH2_TRACE_SOCKET | LIBSSH2_TRACE_TRANS | LIBSSH2_TRACE_KEX | LIBSSH2_TRACE_AUTH | LIBSSH2_TRACE_CONN | LIBSSH2_TRACE_SCP | LIBSSH2_TRACE_SFTP | LIBSSH2_TRACE_ERROR |
 	               LIBSSH2_TRACE_PUBLICKEY );
@@ -649,7 +649,7 @@ void SshSession::updateAllChannels() {
 		for ( int i = 0; i < mChannels.length(); i++ ) {
 			// Update the channel
 			SshChannel *channel = mChannels[ i ];
-			if ( NULL == channel ) {
+			if ( nullptr == channel ) {
 				continue;
 			}
 
@@ -704,7 +704,7 @@ void SshSession::updateAllChannels() {
 		// If this update cycle went by without incident and I have headroom, see if there are homeless channels
 		// to adopt.
 		SshChannel *homelessChannel;
-		while ( ! isAtChannelLimit() && ( homelessChannel = mHost->takeNextHomelessChannel() ) != NULL ) {
+		while ( ! isAtChannelLimit() && ( homelessChannel = mHost->takeNextHomelessChannel() ) != nullptr ) {
 			adoptChannel( homelessChannel );
 		}
 	}
@@ -723,11 +723,11 @@ void SshSession::setStatus( Status newStatus ) {
 }
 
 SshChannel *SshSession::getMostConnectedChannel() {
-	SshChannel *result = NULL;
+	SshChannel *result = nullptr;
 
 	mChannelsLock.lock();
 	if ( mStatus < Connected ) {
-		result = ( mChannels.length() ? mChannels.at( 0 ) : NULL );
+		result = ( mChannels.length() ? mChannels.at( 0 ) : nullptr );
 	} else {
 		int mostConnectedScore = 0;
 		foreach ( SshChannel *channel, mChannels ) {

@@ -15,7 +15,7 @@ class UpdateManager : public QObject {
 	Q_OBJECT
 
 	public:
-		explicit UpdateManager( QObject *parent = 0 );
+		explicit UpdateManager( QObject *parent = nullptr );
 
 		static UpdateManager *instance() {
 			return sInstance;

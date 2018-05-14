@@ -14,7 +14,7 @@ class UpdateNotificationDialog : public QDialog {
 	Q_OBJECT
 
 	public:
-		explicit UpdateNotificationDialog( QWidget *parent = 0 );
+		explicit UpdateNotificationDialog( QWidget *parent = nullptr );
 		~UpdateNotificationDialog();
 
 		void setNewVersion( const QString &version );

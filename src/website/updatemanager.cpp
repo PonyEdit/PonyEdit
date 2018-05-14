@@ -17,9 +17,9 @@ UpdateManager *UpdateManager::sInstance;
 
 UpdateManager::UpdateManager( QObject *parent ) :
 	QObject( parent ),
-	mNotificationDlg( NULL ),
+	mNotificationDlg( nullptr ),
 	mNetManager(),
-	mDownload( NULL ),
+	mDownload( nullptr ),
 	mRedirectCount( 0 ),
 	mTempFile() {
 	sInstance = this;

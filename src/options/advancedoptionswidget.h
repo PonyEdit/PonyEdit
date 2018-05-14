@@ -12,7 +12,7 @@ class AdvancedOptionsWidget : public OptionsDialogPage {
 	Q_OBJECT
 
 	public:
-		explicit AdvancedOptionsWidget( QWidget *parent = 0 );
+		explicit AdvancedOptionsWidget( QWidget *parent = nullptr );
 		~AdvancedOptionsWidget();
 
 		void apply();

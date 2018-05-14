@@ -11,7 +11,7 @@ class ShutdownPrompt : public QDialog {
 	Q_OBJECT
 
 	public:
-		explicit ShutdownPrompt( QWidget *parent = 0 );
+		explicit ShutdownPrompt( QWidget *parent = nullptr );
 		~ShutdownPrompt();
 
 	public slots:

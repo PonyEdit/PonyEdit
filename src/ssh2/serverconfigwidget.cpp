@@ -9,7 +9,7 @@
 ServerConfigWidget::ServerConfigWidget( QWidget *parent ) :
 	QWidget( parent ),
 	ui( new Ui::ServerConfigWidget ),
-	mEditHost( NULL ),
+	mEditHost( nullptr ),
 	mLastAutoName() {
 	ui->setupUi( this );
 

@@ -13,7 +13,7 @@ class HTMLPreview : public QWidget {
 	Q_OBJECT
 
 	public:
-		explicit HTMLPreview( MainWindow *parent = 0 );
+		explicit HTMLPreview( MainWindow *parent = nullptr );
 		~HTMLPreview();
 
 		void displayHTML( QString html );

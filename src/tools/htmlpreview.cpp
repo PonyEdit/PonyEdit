@@ -94,7 +94,7 @@ void HTMLPreview::fileChanged() {
 void HTMLPreview::manualRefresh() {
 	Editor *current = mParent->getCurrentEditor();
 
-	BaseFile *file = NULL;
+	BaseFile *file = nullptr;
 	if ( current ) {
 		file = current->getFile();
 	}

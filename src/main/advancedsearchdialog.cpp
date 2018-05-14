@@ -53,7 +53,7 @@ QList< BaseFile * > AdvancedSearchDialog::getLocalHaystackFiles() {
 	Scope scope = static_cast< Scope >( ui->context->itemData( ui->context->currentIndex() ).toInt() );
 
 	if ( scope == CurrentFile ) {
-		if ( gWindowManager->getCurrentFile() != NULL ) {
+		if ( gWindowManager->getCurrentFile() != nullptr ) {
 			result.append( gWindowManager->getCurrentFile() );
 		}
 	} else if ( scope == OpenFiles ) {

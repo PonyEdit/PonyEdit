@@ -10,7 +10,7 @@ SyntaxDefinition::ContextDef::ContextDef() :
 	fallthrough( false ),
 	dynamic( false ),
 	listIndex( 0 ),
-	attributeLink( NULL ) {}
+	attributeLink( nullptr ) {}
 SyntaxDefinition::ContextDef::~ContextDef() {}
 
 SyntaxDefinition::SyntaxDefinition( const QString &filename ) :

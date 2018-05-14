@@ -8,13 +8,13 @@
 OpenFileManager gOpenFileManager;
 
 OpenFileManager::OpenFileManager() :
-	QObject( 0 ) {
+	QObject( nullptr ) {
 	mNewFiles = 1;
 }
 
 BaseFile *OpenFileManager::getFile( const Location &location ) const {
 	if ( location.getProtocol() == Location::Unsaved ) {
-		return NULL;
+		return nullptr;
 	}
 
 	foreach ( BaseFile *file, mOpenFiles ) {
@@ -23,7 +23,7 @@ BaseFile *OpenFileManager::getFile( const Location &location ) const {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void OpenFileManager::registerFile( BaseFile *file ) {

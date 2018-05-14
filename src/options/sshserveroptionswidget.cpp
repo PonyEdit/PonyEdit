@@ -41,7 +41,7 @@ void SshServerOptionsWidget::accept() {
 		if ( item->isHidden() ) {
 			for ( int jj = 0; jj < mConfigWidgets.length(); jj++ ) {
 				if ( mConfigWidgets[ jj ]->getEditHost() == host ) {
-					disconnect( this, 0, mConfigWidgets[ jj ], 0 );
+					disconnect( this, nullptr, mConfigWidgets[ jj ], nullptr );
 				}
 			}
 			delete host;

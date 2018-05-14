@@ -26,7 +26,7 @@ QModelIndex CustomTreeModel::index( int row, int column, const QModelIndex &pare
 QModelIndex CustomTreeModel::getEntryIndex( CustomTreeEntry *entry ) const {
 	CustomTreeEntry *parent = entry->getParent();
 
-	if ( parent == NULL ) {
+	if ( parent == nullptr ) {
 		return createIndex( 0, 0, static_cast< void * >( entry ) );
 	} else {
 		return createIndex( entry->getIndexWithinParent(), 0, static_cast< void * >( entry ) );
@@ -37,7 +37,7 @@ QModelIndex CustomTreeModel::parent( const QModelIndex &index ) const {
 	CustomTreeEntry *entry = getEntry( index );
 	CustomTreeEntry *parent = entry->getParent();
 
-	if ( parent == NULL ) {
+	if ( parent == nullptr ) {
 		return QModelIndex();
 	}
 

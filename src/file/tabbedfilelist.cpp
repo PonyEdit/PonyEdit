@@ -35,7 +35,7 @@ TabbedFileList::TabbedFileList( QWidget *parent ) :
 }
 
 int TabbedFileList::findTab( BaseFile *file ) {
-	if ( NULL == file ) {
+	if ( nullptr == file ) {
 		return -1;
 	}
 

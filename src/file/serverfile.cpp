@@ -217,7 +217,7 @@ void ServerFile::pumpChangeQueue() {
 		                          this,
 		                          "change",
 		                          QVariant( params ),
-		                          Callback( this, NULL, SLOT( changePushFailure( QString, int ) ) ) );
+		                          Callback( this, nullptr, SLOT( changePushFailure( QString, int ) ) ) );
 	}
 }
 
