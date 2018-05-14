@@ -13,6 +13,8 @@ DEFINES += "PRETTY_VERSION=\\\"0.91-beta11\\\""
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
+CONFIG += c++14
+
 win32 {
 	DEFINES += NOMINMAX
 
@@ -49,7 +51,7 @@ macx {
 	TARGET = PonyEdit
 	LIBS += -lz
 
-	QMAKE_INCDIR += /usr/local/include /usr/local/opt/openssl@1.1/include
+	QMAKE_INCDIR += /usr/local/include /usr/local/opt/openssl@1.1/include $$PWD/tools/QsLog
 
 	# Bundle dynamic libs in .app
 	dylibs.path = Contents/MacOS
