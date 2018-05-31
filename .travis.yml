@@ -121,13 +121,16 @@ script:
       set -e
       qmake -v
       qmake
+      echo $BUILD_COMMAND
       $BUILD_COMMAND
       set +e
       make check | perl tests/colourise.pl
 
       if [ "$TRAVIS_OS_NAME" = "linux" ]; then
         if [ "$TEST_SUITE" = "sonarcloud" ]; then
-          sonar-scanner
+          ls
+          ls bw-output
+          sonar-scanner -X
         else
           for filename in find src -name \*.cpp -not -path './src/tools/QsLog/*' -not -path './deps/*'; do
             gcov -n -o . $filename > /dev/null
