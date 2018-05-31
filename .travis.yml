@@ -34,6 +34,10 @@ matrix:
           build_command: "make -j 2"
           branch_pattern: $coverity_branch
           notification_email: gary@pento.net
+        sonarcloud:
+          organization: "ponyedit-github"
+          token:
+            secure: "e9h72hQ8fNuIHre16whXXm/DK1OA7w6M4JFXqJ7VPGlUVZNcCTPUhxngFpeq7h04R61TaR/6iIdFUmENCMSxo5wZSw6ngZ90PL3gjDi54MhJKOOsu9R3BqaePldyFRwzNrXgj7WRfQGJB59KP1xcJZu70wS6oBQbh588msup5aQ="
       env:
         - TEST_SUITE=build
         - CC=gcc-7 && CXX=g++-7
@@ -105,6 +109,8 @@ script:
         done
 
         codecov
+
+        sonar-scanner
       fi
     fi
 
