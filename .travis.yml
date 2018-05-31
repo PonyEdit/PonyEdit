@@ -117,7 +117,7 @@ script:
       find . \( -name \*.h -o -name \*.cpp \) -not -path './src/tools/QsLog/*' -not -path './deps/*' | xargs uncrustify -c uncrustify.cfg --check
     fi
   - |
-    if [ "$TEST_SUITE" = "build" ]; then
+    if [ "$TEST_SUITE" = "build" -o "$TEST_SUITE" = "sonarcloud" ]; then
       set -e
       qmake -v
       qmake
