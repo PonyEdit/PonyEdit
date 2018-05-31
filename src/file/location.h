@@ -29,7 +29,7 @@ class Location {
 		Location( const Location &parent,
 		          const QString &path,
 		          Type type,
-		          int size,
+		          qint64 size,
 		          QDateTime lastModified,
 		          bool canRead,
 		          bool canWrite );
@@ -40,7 +40,7 @@ class Location {
 		const QString &getLabel() const;
 		QIcon getIcon() const;
 		Type getType() const;
-		int getSize() const;
+		qint64 getSize() const;
 		const QDateTime &getLastModified() const;
 		Protocol getProtocol() const;
 		QString getHostName() const;    // Regardless of protocol. Returns "Local Computer" for local files.
@@ -131,7 +131,7 @@ class LocationShared : public QObject {
 		QDateTime mLastModified;
 		Location mParent;
 		bool mSelfLoaded;
-		int mSize;
+		qint64 mSize;
 		bool mCanRead;
 		bool mCanWrite;
 		bool mSudo;

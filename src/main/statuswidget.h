@@ -22,7 +22,7 @@ class StatusWidget : public QWidget {
 			SudoRetry = 0x0010,
 			Retry     = 0x0011,
 		};
-		Q_DECLARE_FLAGS( Buttons, Button );
+		Q_DECLARE_FLAGS( Buttons, Button )
 		enum Result { SuccessResult = 1, FailureResult = 0, SudoRequestedResult = -1 };
 
 		explicit StatusWidget( bool dialogChild, QWidget *parent = nullptr );

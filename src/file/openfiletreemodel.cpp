@@ -52,7 +52,7 @@ QString OpenFileTreeModel::Node::getLabel() {
 		case File:
 			return location.getLabel();
 
-		default:
+		case Root:
 			return "";
 	}
 }
@@ -66,18 +66,18 @@ OpenFileTreeModel::Node *OpenFileTreeModel::Node::findChildNode( const QString &
 	return nullptr;
 }
 
-OpenFileTreeModel::Node *OpenFileTreeModel::Node::findChildNode( const Location &location ) {
+OpenFileTreeModel::Node *OpenFileTreeModel::Node::findChildNode( const Location &loc ) {
 	foreach ( Node *node, children ) {
-		if ( node->location == location ) {
+		if ( node->location == loc ) {
 			return node;
 		}
 	}
 	return nullptr;
 }
 
-OpenFileTreeModel::Node *OpenFileTreeModel::Node::findChildNode( BaseFile *file ) {
+OpenFileTreeModel::Node *OpenFileTreeModel::Node::findChildNode( BaseFile *f ) {
 	foreach ( Node *node, children ) {
-		if ( node->file == file ) {
+		if ( node->file == f ) {
 			return node;
 		}
 	}

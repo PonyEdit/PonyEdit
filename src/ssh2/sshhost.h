@@ -35,13 +35,13 @@
 #define SFTP_CHANNEL_QUEUE_MULTIPLIER 2
 
 // Host-specific tracing macros
-#define SSHLOG_TRACE( h ) _SSHLOG_IF( h, QsLogging::TraceLevel )
-#define SSHLOG_DEBUG( h ) _SSHLOG_IF( h, QsLogging::DebugLevel )
-#define SSHLOG_INFO( h )  _SSHLOG_IF( h, QsLogging::InfoLevel )
-#define SSHLOG_WARN( h )  _SSHLOG_IF( h, QsLogging::WarnLevel )
-#define SSHLOG_ERROR( h ) _SSHLOG_IF( h, QsLogging::ErrorLevel )
-#define SSHLOG_FATAL( h ) _SSHLOG_IF( h, QsLogging::FatalLevel )
-#define _SSHLOG_IF( h, l ) if ( QsLogging::Logger::instance().loggingLevel() > l ) {} else h->log( l ).stream()
+#define SSHLOG_TRACE( h ) SSHLOG_IF( h, QsLogging::TraceLevel )
+#define SSHLOG_DEBUG( h ) SSHLOG_IF( h, QsLogging::DebugLevel )
+#define SSHLOG_INFO( h )  SSHLOG_IF( h, QsLogging::InfoLevel )
+#define SSHLOG_WARN( h )  SSHLOG_IF( h, QsLogging::WarnLevel )
+#define SSHLOG_ERROR( h ) SSHLOG_IF( h, QsLogging::ErrorLevel )
+#define SSHLOG_FATAL( h ) SSHLOG_IF( h, QsLogging::FatalLevel )
+#define SSHLOG_IF( h, l ) if ( QsLogging::Logger::instance().loggingLevel() > l ) {} else h->log( l ).stream()
 
 class ServerFile;
 class ServerRequest;
@@ -124,6 +124,7 @@ class SshHost : public QObject {
 					mHost( host ),
 					mLevel( level ),
 					mDebug( &mBuffer ) {}
+				LogHelper( const LogHelper &l ) = default;
 				~LogHelper();
 				inline QDebug &stream() {
 					return mDebug;

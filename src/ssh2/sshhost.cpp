@@ -42,6 +42,7 @@ SshHost::~SshHost() {
 	// Kill every session violenty.
 	foreach ( SshSession *session, mSessions ) {
 		delete session;
+		session = nullptr;
 	}
 }
 
@@ -49,6 +50,7 @@ void SshHost::cleanup() {
 	// Call every host's destructor, forcing them to do nasty shutdowns.
 	foreach ( SshHost *host, sKnownHosts ) {
 		delete host;
+		host = nullptr;
 	}
 }
 

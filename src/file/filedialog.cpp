@@ -410,7 +410,7 @@ void FileDialog::folderChildrenLoaded( const QList< Location > &children, const 
 			item->setData( QVariant( name.toLower() ), SORT_ROLE );
 			row.append( item );
 
-			int size = childLocation.getSize();
+			qint64 size = childLocation.getSize();
 			item = new QStandardItem();
 			item->setText( childLocation.isDirectory() ? "" : Tools::humanReadableBytes( size ) );
 			item->setData( QVariant( size ), SORT_ROLE );
@@ -503,7 +503,11 @@ void FileDialog::statusButtonClicked( StatusWidget::Button button ) {
 			break;
 		}
 
-		default: break;
+		case StatusWidget::None:
+		case StatusWidget::Cancel:
+		case StatusWidget::Done:
+		case StatusWidget::Connect:
+			break;
 	}
 }
 

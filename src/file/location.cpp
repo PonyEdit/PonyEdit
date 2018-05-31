@@ -20,10 +20,10 @@
 	#include <windows.h>
 #endif
 
-QRegExp gSshServerRegExp( "^(?:([^@:]+)@)?([a-zA-Z0-9_\\-.]{2,}):(.+)?" );
-QRegExp gSftpServerRegExp( "^sftp://(([^@/]+)@)?([^/]+)(.*)" );
-QRegExp gLocalPathSeparators( "/" );
-QRegExp gSshPathSeparators( "[/:]" );
+static QRegExp gSshServerRegExp( "^(?:([^@:]+)@)?([a-zA-Z0-9_\\-.]{2,}):(.+)?" );
+static QRegExp gSftpServerRegExp( "^sftp://(([^@/]+)@)?([^/]+)(.*)" );
+static QRegExp gLocalPathSeparators( "/" );
+static QRegExp gSshPathSeparators( "[/:]" );
 QList< Location::Favorite > Location::sFavorites;
 
 
@@ -31,7 +31,7 @@ QList< Location::Favorite > Location::sFavorites;
 // Icon Provider stuff  //
 ///////////////////////////
 
-QFileIconProvider *sIconProvider = nullptr;
+static QFileIconProvider *sIconProvider = nullptr;
 
 void LocationShared::initIconProvider() {
 	if ( ! sIconProvider ) {
@@ -88,7 +88,7 @@ Location::Location( const QString &path ) {
 Location::Location( const Location &parent,
                     const QString &path,
                     Type type,
-                    int size,
+                    qint64 size,
                     QDateTime lastModified,
                     bool canRead,
                     bool canWrite ) {
@@ -151,7 +151,7 @@ bool Location::isNull() const {
 	return ( mData == nullptr || getPath() == "" );
 }
 
-int Location::getSize() const {
+qint64 Location::getSize() const {
 	return mData->mSize;
 }
 
@@ -194,9 +194,6 @@ QString Location::getHostName() const {
 
 		case Unsaved:
 			return QObject::tr( "New Files" );
-
-		default:
-			throw( QObject::tr( "Unknown protocol" ) );
 	}
 }
 
@@ -209,7 +206,7 @@ QString Location::getHostlessPath() const {
 		case Sftp:
 			return mData->mRemotePath;
 
-		default:
+		case Unsaved:
 			throw( QObject::tr( "Unknown protocol" ) );
 	}
 }
@@ -285,7 +282,7 @@ QIcon Location::getIcon() const {
 				return sIconProvider->icon( QFileIconProvider::File );
 			}
 
-		default:
+		case Unsaved:
 			return QIcon();
 	}
 }
@@ -415,7 +412,7 @@ void Location::asyncGetChildren( bool includeHidden ) {
 			mData->sftpLoadListing( includeHidden );
 			break;
 
-		default:
+		case Unsaved:
 			throw( QString( "Invalid file protocol!" ) );
 	}
 }
@@ -614,7 +611,8 @@ void Location::createNewDirectory( const QString &name, const Callback &callback
 			}
 			break;
 
-		default: break;
+		case Unsaved:
+			break;
 	}
 }
 

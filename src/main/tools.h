@@ -12,7 +12,7 @@ class QThread;
 
 class Tools {
 	public:
-		static QString humanReadableBytes( quint64 bytes );
+		static QString humanReadableBytes( qint64 bytes );
 		static void saveServers();
 		static void saveHostFingerprints();
 		static void loadServers();

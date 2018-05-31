@@ -764,7 +764,7 @@ void MainWindow::createViewMenu() {
 		QStringList syntaxes = gSyntaxDefManager->getSyntaxesInCategory( category );
 		syntaxes.sort();
 		foreach ( const QString &syntax, syntaxes ) {
-			QAction *action = syntaxSubMenu->addAction( syntax, this, SLOT( syntaxMenuOptionClicked() ) );
+			action = syntaxSubMenu->addAction( syntax, this, SLOT( syntaxMenuOptionClicked() ) );
 			action->setData( syntax );
 			action->setCheckable( true );
 			mSyntaxMenuEntries.insert( syntax, action );

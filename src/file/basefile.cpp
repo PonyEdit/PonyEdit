@@ -53,7 +53,7 @@ BaseFile *BaseFile::getFile( const Location &location ) {
 			newFile = new FtpFile( location );
 			break;
 
-		default:
+		case Location::Unsaved:
 			newFile = new UnsavedFile( location );
 	}
 
@@ -313,7 +313,12 @@ void BaseFile::saveFailure( const QString &errorMessage, bool permissionError ) 
 			save();
 			break;
 
-		default: break;
+		case StatusWidget::None:
+		case StatusWidget::Cancel:
+		case StatusWidget::ShowLog:
+		case StatusWidget::Done:
+		case StatusWidget::Connect:
+			break;
 	}
 }
 

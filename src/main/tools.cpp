@@ -17,10 +17,10 @@
 #define MEGABYTE_MULTIPLIER 1048576
 #define KILOBYTE_MULTIPLIER 1024
 
-QThread *sMainThread = nullptr;
+static QThread *sMainThread = nullptr;
 QString Tools::sResourcePath;
 
-QString Tools::humanReadableBytes( quint64 bytes ) {
+QString Tools::humanReadableBytes( qint64 bytes ) {
 	if ( bytes >= TERABYTE_MULTIPLIER ) {
 		return QString::number( static_cast< double >( bytes ) / static_cast< double >( TERABYTE_MULTIPLIER ), 'f', 1 ) + " TiB";
 	} else if ( bytes >= GIGABYTE_MULTIPLIER ) {
@@ -234,11 +234,13 @@ bool Tools::compareSubstring( const QString &superstring,
 
 	if ( caseSensitivity == Qt::CaseInsensitive ) {
 		while ( l-- && a->toLower() == b->toLower() ) {
-			a++, b++;
+			a++;
+			b++;
 		}
 	} else {
 		while ( l-- && *a == *b ) {
-			a++, b++;
+			a++;
+			b++;
 		}
 	}
 
@@ -366,19 +368,19 @@ QByteArray Tools::bin( const QByteArray &source ) {
 	while ( c < end ) {
 		if ( *c == 0x3 || *c == 0x4 || *c == 0x8 || *c == 0x11 || *c == 0x13 || *c == 0x1D || *c == 0x1E ||
 		     *c == 0x18 || *c == 0x1A || *c == 0x1C || *c == 0x7F ) {
-			result.append( static_cast< unsigned short >( 255 ) ).append( *c + 128 );
+			result.append( static_cast< char >( 255 ) ).append( static_cast< char >( *c + 128 ) );
 		} else if ( *c == 10 ) {
-			result.append( static_cast< unsigned short >( 253 ) );
+			result.append( static_cast< char >( 253 ) );
 		} else if ( *c == 13 ) {
-			result.append( static_cast< unsigned short >( 254 ) );
+			result.append( static_cast< char >( 254 ) );
 		} else if ( *c == 253 ) {
-			result.append( static_cast< unsigned short >( 255 ) ).append( 'A' );
+			result.append( static_cast< char >( 255 ) ).append( 'A' );
 		} else if ( *c == 254 ) {
-			result.append( static_cast< unsigned short >( 255 ) ).append( 'B' );
+			result.append( static_cast< char >( 255 ) ).append( 'B' );
 		} else if ( *c == 255 ) {
-			result.append( static_cast< unsigned short >( 255 ) ).append( 'C' );
+			result.append( static_cast< char >( 255 ) ).append( 'C' );
 		} else {
-			result.append( *c );
+			result.append( static_cast< char >( *c ) );
 		}
 
 		c++;
@@ -397,18 +399,18 @@ int Tools::unbin( QByteArray &target, const char *source, int maxTarget, int max
 	const unsigned char *c = unsignedSource;
 
 	if ( leftoverEscape && *leftoverEscape && c < sourceEnd ) {
-		target.append( unbinEscape( *c ) );
+		target.append( static_cast< char >( unbinEscape( *c ) ) );
 		*leftoverEscape = false;
 		c++;
 	}
 
 	for (; c < sourceEnd; c++ ) {
 		if ( target.length() >= maxTarget ) {
-			return ( c - unsignedSource );
+			return static_cast< int >( c - unsignedSource );
 		}
 
 		if ( *c < 253 ) {
-			target.append( *c );
+			target.append( static_cast< char >( *c ) );
 		} else if ( *c == 253 ) {
 			target.append( static_cast< unsigned char >( 10 ) );
 		} else if ( *c == 254 ) {
@@ -422,9 +424,9 @@ int Tools::unbin( QByteArray &target, const char *source, int maxTarget, int max
 				break;
 			}
 
-			target.append( unbinEscape( *c ) );
+			target.append( static_cast< char >( unbinEscape( *c ) ) );
 		}
 	}
 
-	return c - unsignedSource;
+	return static_cast< int >( c - unsignedSource );
 }

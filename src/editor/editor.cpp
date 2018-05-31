@@ -89,7 +89,7 @@ void Editor::openStatusChanged( int openStatus ) {
 				}
 			}
 
-		// Intentional fallthrough
+			[ [ fallthrough ] ];
 
 		case BaseFile::Disconnected:
 		case BaseFile::Reconnecting:

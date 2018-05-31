@@ -58,8 +58,8 @@ class OpenFileTreeModel : public QAbstractItemModel {
 					parent( nullptr ),
 					file( nullptr ) {}
 				Node *findChildNode( const QString &label );
-				Node *findChildNode( const Location &location );
-				Node *findChildNode( BaseFile *file );
+				Node *findChildNode( const Location &loc );
+				Node *findChildNode( BaseFile *f );
 				QString getLabel();
 
 				Level level;

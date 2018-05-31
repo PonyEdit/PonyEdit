@@ -13,7 +13,7 @@ DEFINES += "PRETTY_VERSION=\\\"0.91-beta11\\\""
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
-CONFIG += c++14
+CONFIG += c++1z
 
 win32 {
 	DEFINES += NOMINMAX
@@ -72,17 +72,24 @@ macx {
 	# Disable warnings for files we don't control
 	QMAKE_CXXFLAGS += --system-header-prefix=openssl/
 	QMAKE_CXXFLAGS += --system-header-prefix=libssh2
-	QMAKE_CXXFLAGS += --system-header-prefix=QsLog
-	QMAKE_CXXFLAGS += --system-header-prefix=QtXml
-	QMAKE_CXXFLAGS += --system-header-prefix=QtWidgets
+	# If it starts with a capital Q, it's either Qt, or QsLog.
+	QMAKE_CXXFLAGS += --system-header-prefix=Q
 
 	# All warnings are errors
 	QMAKE_CXXFLAGS_WARN_ON += -Werror
 
-	# Catch these warnings
+	# GCC/Clang warnings
+	# QMAKE_CXXFLAGS_WARN_ON += -Weverything
 	QMAKE_CXXFLAGS_WARN_ON += -Wzero-as-null-pointer-constant
 	QMAKE_CXXFLAGS_WARN_ON += -Wold-style-cast
 	QMAKE_CXXFLAGS_WARN_ON += -Wunused-parameter
+	# Remove the warnings we're not worried about.
+	QMAKE_CXXFLAGS_WARN_ON += -Wno-c++98-compat -Wno-c++98-compat-pedantic
+	QMAKE_CXXFLAGS_WARN_ON += -Wno-padded
+	QMAKE_CXXFLAGS_WARN_ON += -Wno-covered-switch-default
+	QMAKE_CXXFLAGS_WARN_ON += -Wno-global-constructors
+	QMAKE_CXXFLAGS_WARN_ON += -Wno-exit-time-destructors
+	QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-macros
 }
 
 QT		+= core widgets gui network xml webengine webenginewidgets printsupport
