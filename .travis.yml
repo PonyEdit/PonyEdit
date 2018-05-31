@@ -127,13 +127,13 @@ script:
 
       if [ "$TRAVIS_OS_NAME" = "linux" ]; then
         if [ "$TEST_SUITE" = "sonarcloud" ]; then
+          sonar-scanner
+        else
           for filename in find src -name \*.cpp -not -path './src/tools/QsLog/*' -not -path './deps/*'; do
             gcov -n -o . $filename > /dev/null
           done
 
           codecov
-        else
-          sonar-scanner
         fi
       fi
     fi
