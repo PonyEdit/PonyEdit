@@ -34,12 +34,28 @@ matrix:
           build_command: "make -j 2"
           branch_pattern: $coverity_branch
           notification_email: gary@pento.net
+      env:
+        - TEST_SUITE=build
+        - CC=gcc-7 && CXX=g++-7
+    - os: linux
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - sourceline: 'ppa:beineri/opt-qt-5.10.1-trusty'
+          packages:
+            - [ g++-7 libssh2-1-dev, libssl-dev ]
+            - [ qt510base, qt510webengine ]
         sonarcloud:
           organization: "ponyedit-github"
           token:
             secure: "e9h72hQ8fNuIHre16whXXm/DK1OA7w6M4JFXqJ7VPGlUVZNcCTPUhxngFpeq7h04R61TaR/6iIdFUmENCMSxo5wZSw6ngZ90PL3gjDi54MhJKOOsu9R3BqaePldyFRwzNrXgj7WRfQGJB59KP1xcJZu70wS6oBQbh588msup5aQ="
+        cache:
+          directories:
+              - '$HOME/.sonar/cache'
       env:
-        - TEST_SUITE=build
+        - TEST_SUITE=sonarcloud
         - CC=gcc-7 && CXX=g++-7
 
 env:
@@ -55,7 +71,7 @@ before_install:
       exit
     fi
   - |
-    if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$TEST_SUITE" = "build" ]; then
+    if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$TEST_SUITE" = "build" -o "$TEST_SUITE" = "sonarcloud" ]; then
       PATH=/opt/qt510/bin:$PATH
       pip install --user codecov
     fi
@@ -77,10 +93,16 @@ install:
 
 before_script:
   - |
-    if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$TEST_SUITE" = "build" ]; then
+    if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$TEST_SUITE" = "build" -o "$TEST_SUITE" = "sonarcloud" ]; then
       export DISPLAY=:99.0
       sh -e /etc/init.d/xvfb start
       sleep 3 # give xvfb some time to start
+    fi
+  - |
+    if [ "$TEST_SUITE" = "sonarcloud" ]; then
+      export BUILD_COMMAND=build-wrapper-linux-x86-64 --out-dir bw-output make
+    else
+      export BUILD_COMMAND=make -j 2
     fi
 
 script:
@@ -99,18 +121,20 @@ script:
       set -e
       qmake -v
       qmake
-      make -j 2
+      $BUILD_COMMAND
       set +e
       make check | perl tests/colourise.pl
 
       if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-        for filename in find src -name \*.cpp -not -path './src/tools/QsLog/*' -not -path './deps/*'; do
-          gcov -n -o . $filename > /dev/null
-        done
+        if [ "$TEST_SUITE" = "sonarcloud" ]; then
+          for filename in find src -name \*.cpp -not -path './src/tools/QsLog/*' -not -path './deps/*'; do
+            gcov -n -o . $filename > /dev/null
+          done
 
-        codecov
-
-        sonar-scanner
+          codecov
+        else
+          sonar-scanner
+        fi
       fi
     fi
 
