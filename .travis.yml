@@ -100,9 +100,9 @@ before_script:
     fi
   - |
     if [ "$TEST_SUITE" = "sonarcloud" ]; then
-      export BUILD_COMMAND=build-wrapper-linux-x86-64 --out-dir bw-output make
+      export BUILD_COMMAND="build-wrapper-linux-x86-64 --out-dir bw-output make"
     else
-      export BUILD_COMMAND=make -j 2
+      export BUILD_COMMAND="make -j 2"
     fi
 
 script:
