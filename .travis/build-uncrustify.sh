@@ -1,6 +1,6 @@
 #!/bin/sh
 
-UNCRUSTIFY="uncrustify-0.65"
+UNCRUSTIFY="uncrustify-0.67"
 OLD_PWD=$(pwd)
 
 cd ~

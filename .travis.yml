@@ -53,6 +53,8 @@ before_install:
     fi
   - |
     if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$TEST_SUITE" = "build" ]; then
+      export CC=gcc-7
+      export CXX=g++-7
       PATH=/opt/qt510/bin:$PATH
       pip install --user codecov
     fi
