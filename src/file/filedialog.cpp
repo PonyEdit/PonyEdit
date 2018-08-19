@@ -85,9 +85,9 @@ FileDialog::FileDialog( QWidget *parent, bool saveAs ) :
 	connect( ui->mainButtonBox, SIGNAL(accepted()), this, SLOT(accept()) );
 	connect( ui->mainButtonBox, SIGNAL(rejected()), this, SLOT(reject()) );
 	connect( ui->fileList->selectionModel(),
-	         SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
+	         SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
 	         this,
-	         SLOT(fileListSelectionChanged(const QItemSelection&,const QItemSelection&)) );
+	         SLOT(fileListSelectionChanged(QItemSelection,QItemSelection)) );
 	connect( gDispatcher,
 	         SIGNAL(locationListSuccess(QList< Location >,QString)),
 	         this,
