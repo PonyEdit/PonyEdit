@@ -323,7 +323,7 @@ class SshHost : public QObject {
 		}
 
 		void invalidateOverallStatus(); // Mark the overall status info as out-of-date, trigger a signal to
-		                                // lazily update.
+	// lazily update.
 
 	public slots:
 		void channelRejected( SshChannel *channel );    // Called when an SshSession couldn't handle a new

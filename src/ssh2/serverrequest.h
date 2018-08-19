@@ -14,8 +14,8 @@ class ServerRequest : QObject {
 		enum ErrorFlags { PermissionError = 0x01, ConnectionError = 0x02 };
 
 		explicit ServerRequest( ServerFile *file,
-		                        const QByteArray &request,
-		                        const QVariant &parameters,
+		                        QByteArray request,
+		                        QVariant parameters,
 		                        const Callback &callback );
 
 		inline void setMessageId( int messageId ) {

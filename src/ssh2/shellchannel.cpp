@@ -1,5 +1,6 @@
 #include <libssh2.h>
 #include <QDebug>
+#include <utility>
 #include "shellchannel.h"
 #include "sshhost.h"
 #include "sshsession.h"
@@ -7,14 +8,14 @@
 #define MACHINE_READABLE_INIT " stty -echo; export PS1=\\%-ponyedit-\\%\n"
 #define MACHINE_READABLE_PROMPT "%-ponyedit-%"
 
-ShellChannel::ShellChannel( SshHost *host, bool machineReadable, const QByteArray &ptyType ) :
+ShellChannel::ShellChannel( SshHost *host, bool machineReadable, QByteArray ptyType ) :
 	SshChannel( host ),
 	mHandle( nullptr ),
 	mReadBuffer(),
 	mScratchBuffer(),
 	mInternalStatus( _OpenSession ),
 	mMachineReadable( machineReadable ),
-	mPtyType( ptyType ) {}
+	mPtyType( std::move( ptyType ) ) {}
 
 bool ShellChannel::update() {
 	switch ( mStatus ) {
@@ -39,20 +40,19 @@ bool ShellChannel::handleOpening() {
 			int rc = libssh2_session_last_errno( mSession->sessionHandle() );
 			if ( rc == LIBSSH2_ERROR_EAGAIN ) {
 				return true;
-			} else {
-				if ( rc == LIBSSH2_ERROR_CHANNEL_FAILURE ) {
-					// This channel needs to be given away; this connection can't handle it.
-					// TODO: Detect if this channel request has been handed off too often and kill
-					// it if so.
-					setSession( nullptr );
-				} else {
-					criticalError( tr( "Failed to open a channel %1: %2" ).arg( reinterpret_cast< unsigned long >(
-													    mHandle ),
-					                                                            0,
-					                                                            16 ).arg( rc ) );
-				}
-				return false;
 			}
+			if ( rc == LIBSSH2_ERROR_CHANNEL_FAILURE ) {
+				// This channel needs to be given away; this connection can't handle it.
+				// TODO: Detect if this channel request has been handed off too often and kill
+				// it if so.
+				setSession( nullptr );
+			} else {
+				criticalError( tr( "Failed to open a channel %1: %2" ).arg( reinterpret_cast< unsigned long >(
+												    mHandle ),
+				                                                            0,
+				                                                            16 ).arg( rc ) );
+			}
+			return false;
 		}
 		setInternalStatus( _RequestPty );
 	}
@@ -193,9 +193,8 @@ ShellChannel::SendResponse ShellChannel::sendData( const QByteArray &data ) {
 int ShellChannel::getConnectionScore() {
 	if ( mStatus == Opening ) {
 		return mInternalStatus;
-	} else {
-		return SshChannel::getConnectionScore();
 	}
+	return SshChannel::getConnectionScore();
 }
 
 QString ShellChannel::getConnectionDescription() {

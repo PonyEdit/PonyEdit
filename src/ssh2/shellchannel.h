@@ -11,7 +11,7 @@ class ShellChannel : public SshChannel {
 	Q_OBJECT
 
 	public:
-		ShellChannel( SshHost *host, bool machineReadable = true, const QByteArray &ptyType = "vanilla" );
+		ShellChannel( SshHost *host, bool machineReadable = true, QByteArray ptyType = "vanilla" );
 
 // Pty types = vanilla, vt102, ansi or xterm.
 

@@ -65,7 +65,7 @@ int main( int argc, char *argv[] ) {
 
 		QTimer::singleShot( 1000, gSiteManager, SLOT( checkForUpdates() ) );
 
-		result = a.exec();
+		result = PonyEdit::exec();
 	} catch ( QString &err ) {
 		QLOG_ERROR() << "FATAL ERROR: " << err;
 	}

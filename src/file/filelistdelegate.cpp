@@ -10,7 +10,7 @@ void FileListDelegate::paint( QPainter *painter, const QStyleOptionViewItem &opt
 	QStyledItemDelegate::paint( painter, option, index );
 
 	if ( index.column() == 0 ) {
-		Location location = index.data( Qt::UserRole ).value< Location >();
+		auto location = index.data( Qt::UserRole ).value< Location >();
 		if ( ! location.canRead() ) {
 			if ( sUnreadable.isNull() ) {
 				sUnreadable = QIcon( ":/icons/unreadable.png" );

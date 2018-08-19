@@ -18,16 +18,17 @@ QMap< QString, QByteArray > SshHost::sKnownHostFingerprints;
 
 SshHost::SshHost() :
 	mDesiredStatus( Disconnected ),
+	mOverallStatus( Disconnected ),
 	mFirstServerScriptChecker( nullptr ),
 	mServerScriptChecked( false ),
 	mCachedIpAddress( 0 ),
 	mCachedAuthMethod( SshSession::AuthNone ),
 	mChannelLimitGuess( CHANNEL_LIMIT_GUESS ),
-	mSettings(),
 	mSaveHost( true ),
 	mSavePassword( false ),
 	mSaveKeyPassphrase( false ),
-	mPort( 22 ) {
+	mPort( 22 ),
+	mConnectionType() {
 	mOverallStatusDirty = true;
 	updateOverallStatus();
 
@@ -63,7 +64,7 @@ SshHost *SshHost::getHost( const QByteArray &hostname, const QByteArray &usernam
 	}
 
 	// No? Time to create a new one.
-	SshHost *newHost = new SshHost();
+	auto *newHost = new SshHost();
 	newHost->setHostname( hostname );
 	newHost->setUsername( username );
 
@@ -155,7 +156,7 @@ void SshHost::removeChannel( SshChannel *channel ) {
 			                    0,
 			                    mServerRequestQueueMutex,
 			                    mServerRequestQueue,
-			                    static_cast< ServerChannel * >( channel ) );
+			                    dynamic_cast< ServerChannel * >( channel ) );
 			break;
 
 		case SshChannel::SudoServer:
@@ -163,7 +164,7 @@ void SshHost::removeChannel( SshChannel *channel ) {
 			                    0,
 			                    mSudoServerRequestQueueMutex,
 			                    mSudoServerRequestQueue,
-			                    static_cast< ServerChannel * >( channel ) );
+			                    dynamic_cast< ServerChannel * >( channel ) );
 			break;
 
 		case SshChannel::Xfer:
@@ -217,7 +218,7 @@ SshChannel *SshHost::takeNextHomelessChannel() {
 }
 
 SshSession *SshHost::openSession() {
-	SshSession *newSession = new SshSession( this );
+	auto *newSession = new SshSession( this );
 	QObject::connect( newSession,
 	                  SIGNAL( hitChannelLimit( SshChannel * ) ),
 	                  this,
@@ -264,7 +265,7 @@ void SshHost::sendServerRequest( bool sudo,
 	// the file pointer with setOpeningFile. ServerChannels use the file passed to the constructor to determine if a
 	// request must be handled by a particular channel.
 	bool openingFile = ( request == "open" );
-	ServerRequest *newRequest = new ServerRequest( openingFile ? nullptr : file, request, parameters, callback );
+	auto *newRequest = new ServerRequest( openingFile ? nullptr : file, request, parameters, callback );
 	if ( openingFile ) {
 		newRequest->setOpeningFile( file );
 	}
@@ -275,7 +276,7 @@ void SshHost::sendServerRequest( bool sudo,
 		bool ok = false;
 		foreach ( SshChannel *channel, mChannels ) {
 			if ( channel->is( SshChannel::Server ) || channel->is( SshChannel::SudoServer ) ) {
-				ServerChannel *serverChannel = static_cast< ServerChannel * >( channel );
+				auto *serverChannel = dynamic_cast< ServerChannel * >( channel );
 				if ( serverChannel->handlesFileBuffer( relevantFile ) ) {
 					ok = true;
 					break;
@@ -427,7 +428,7 @@ void SshHost::setFileContent( bool sudo,
                               const QByteArray &filename,
                               const QByteArray &content,
                               const Callback &callback ) {
-	XferRequest *rq = new XferRequest( sudo, filename, callback );
+	auto *rq = new XferRequest( sudo, filename, callback );
 	rq->setData( content );
 	rq->setDataSize( content.length() );
 	rq->setUpload( true );
@@ -480,7 +481,7 @@ const QByteArray &SshHost::getHomeDirectory() {
 }
 
 SshHost *SshHost::getBlankHost( bool save ) {
-	SshHost *host = new SshHost();
+	auto *host = new SshHost();
 	if ( ! host ) {
 		return nullptr;
 	}
@@ -496,9 +497,8 @@ QString SshHost::getDefaultPath() {
 	if ( mConnectionType == SFTP ) {
 		return QString( "sftp://" ) + ( mUsername.isEmpty() ? QString( "" ) : mUsername + QString( "@" ) ) +
 		       mHostname + QString( "/" ) + mDefaultDirectory;
-	} else {
-		return ( mUsername.isEmpty() ? "" : mUsername + "@" ) + mHostname + ":" + mDefaultDirectory;
 	}
+	return ( mUsername.isEmpty() ? "" : mUsername + "@" ) + mHostname + ":" + mDefaultDirectory;
 }
 
 Location SshHost::getDefaultLocation() {

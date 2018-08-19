@@ -43,14 +43,11 @@ SshSession::SshSession( SshHost *host ) :
 	mThreadEndedCalled( false ),
 	mKeepaliveTime( mHost->getKeepalive() * 1000 ),
 	mKeepaliveSent( false ),
-	mLastActivityTimer(),
 	mThread( nullptr ),
 	mSocket( 0 ),
 	mHandle( nullptr ),
 	mSocketReadNotifier( nullptr ),
 	mSocketExceptionNotifier( nullptr ),
-	mChannels(),
-	mChannelsLock(),
 	mAtChannelLimit( false ),
 	mPasswordAttempt() {
 	SSHLOG_TRACE( host ) << "Opening a new session";
@@ -175,7 +172,7 @@ bool SshSession::openSocket( unsigned long ipAddress ) {
 
 	setStatus( OpeningConnection );
 
-	struct sockaddr_in sin;
+	struct sockaddr_in sin {};
 	memset( &sin, 0, sizeof( sockaddr_in ) );
 
 	sin.sin_family = AF_INET;
@@ -188,10 +185,9 @@ bool SshSession::openSocket( unsigned long ipAddress ) {
 		SSHLOG_INFO( mHost ) << "Connection established";
 		mHost->setCachedIpAddress( ipAddress );
 		return true;
-	} else {
-		SSHLOG_ERROR( mHost ) << "Connection refused - socket error";
-		return false;
 	}
+	SSHLOG_ERROR( mHost ) << "Connection refused - socket error";
+	return false;
 }
 
 bool SshSession::openSocket() {
@@ -345,7 +341,7 @@ void SshSession::interactiveAuthCallback( const char *,
                                           LIBSSH2_USERAUTH_KBDINT_RESPONSE *responses,
                                           void **abstract ) {
 	if ( num_prompts == 1 ) {
-		SshSession *connection = reinterpret_cast< SshSession * >( *abstract );
+		auto *connection = reinterpret_cast< SshSession * >( *abstract );
 #ifdef Q_OS_WIN32
 		responses[ 0 ].text = _strdup( connection->mPasswordAttempt );
 #else
@@ -385,7 +381,7 @@ bool SshSession::authenticatePublicKey() {
 				options.insert( "blurb",
 				                QObject::tr( mHost->getKeyPassphrase().isNull() ?
 				                             "Please enter your key passphrase below."
-							     : "Your key passphrase was rejected. Please try again." ) );
+				                             : "Your key passphrase was rejected. Please try again." ) );
 				options.insert( "memorable", true );
 				options.insert( "remember", remember );
 
@@ -439,7 +435,7 @@ bool SshSession::authenticateAgent() {
 			throw( QObject::tr( "Failed to retrieve identities from SSH agent!" ) );
 		}
 
-		while ( 1 ) {
+		while ( true ) {
 			// Get an identity
 			rc = libssh2_agent_get_identity( agent, &identity, prevIdentity );
 			if ( rc ) {

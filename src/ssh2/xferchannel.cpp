@@ -18,10 +18,9 @@ bool XferChannel::mainUpdate() {
 		mCurrentRequest = mHost->getNextXferRequest( mSudo );
 		if ( mCurrentRequest == nullptr ) {
 			return false;
-		} else {
-			mInternalStatus = _SendingRequestHeader;
-			return true;
 		}
+		mInternalStatus = _SendingRequestHeader;
+		return true;
 	}
 
 	if ( mInternalStatus == _SendingRequestHeader ) {
@@ -54,9 +53,8 @@ bool XferChannel::mainUpdate() {
 				                                0 );
 				mInternalStatus = _WaitingForRequests;
 				return true;
-			} else {
-				throw( QString( r.data ) );
 			}
+			throw( QString( r.data ) );
 		}
 
 		if ( r.data.endsWith( '\r' ) ) {
@@ -84,9 +82,8 @@ bool XferChannel::mainUpdate() {
 		QByteArray checksum = hash.result().toHex().toLower();
 
 		if ( checksum != mCurrentRequest->getChecksum() ) {
-			mCurrentRequest->handleFailure( tr( "Checksum failure: %1 vs %2" ).arg( QString(
-													checksum ) ).arg(
-								QString( mCurrentRequest->getChecksum() ) ),
+			mCurrentRequest->handleFailure( tr( "Checksum failure: %1 vs %2" ).arg( QString( checksum ),
+			                                                                        QString( mCurrentRequest->getChecksum() ) ),
 			                                0 );
 		} else {
 			mCurrentRequest->setData( r.data );
@@ -179,7 +176,7 @@ ShellChannel::ReadReply XferChannel::readBinaryData( int size ) {
 		}
 
 		int currentLength = mBinaryReadBuffer.length();
-		int percent = static_cast< int >( ( static_cast< float >( currentLength ) / size ) * 100 );
+		auto percent = static_cast< int >( ( static_cast< float >( currentLength ) / size ) * 100 );
 		mCurrentRequest->handleProgress( percent );
 	}
 

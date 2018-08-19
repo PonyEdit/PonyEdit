@@ -12,24 +12,12 @@ class OpenFileTreeModel : public QAbstractItemModel {
 	Q_OBJECT
 
 	public:
-		enum Roles { LocationRole = Qt::UserRole, FileRole = Qt::UserRole + 1, TypeRole = Qt::UserRole + 2, LabelRole = Qt::UserRole + 3 };
+		enum Roles { LocationRole = Qt::UserRole, FileRole = Qt::UserRole + 1, TypeRole = Qt::UserRole + 2,
+			     LabelRole = Qt::UserRole + 3 };
 		enum Level { Root, Host, Directory, File };
 
-		OpenFileTreeModel( QObject *parent, int flags, const QList< BaseFile * > *explicitFiles = nullptr ); // Displays
-		                                                                                                     // explicitFiles
-		                                                                                                     // if
-		                                                                                                     // specified;
-		                                                                                                     // if
-		                                                                                                     // left
-		                                                                                                     // NULL,
-		                                                                                                     // gets
-		                                                                                                     // a
-		                                                                                                     // list
-		                                                                                                     // of
-		                                                                                                     // all
-		                                                                                                     // currently
-		                                                                                                     // open
-		                                                                                                     // files
+		// Displays explicitFiles if specified. If left NULL, gets a list of all currently open files.
+		OpenFileTreeModel( QObject *parent, int flags, const QList< BaseFile * > *explicitFiles = nullptr );
 		~OpenFileTreeModel();
 
 		QModelIndex index( int row, int column, const QModelIndex &parent ) const;
@@ -43,7 +31,8 @@ class OpenFileTreeModel : public QAbstractItemModel {
 		BaseFile *getFileAtIndex( const QModelIndex &index );
 		QList< BaseFile * > getIndexAndChildFiles( const QModelIndex &index );
 
-		void removeFile( BaseFile *file );      // Only useful when explicitly specified files.
+		// Only useful when explicitly specified files.
+		void removeFile( BaseFile *file );
 
 	private slots:
 		void fileOpened( BaseFile *file );

@@ -55,7 +55,7 @@ class OpenFileManager : public QObject {
 	signals:
 		void fileOpened( BaseFile *file );      // Emitted every time a file is opened
 		void fileClosed( BaseFile *file );      // Emitted as each file is closed; immediately before object
-		                                        // deletion
+	// deletion
 
 	private:
 		QList< BaseFile * > mOpenFiles;

@@ -13,7 +13,7 @@ ServerConfigWidget::ServerConfigWidget( QWidget *parent ) :
 	mLastAutoName() {
 	ui->setupUi( this );
 
-	QIntValidator *portValidator = new QIntValidator( 0, 65535, this );
+	auto *portValidator = new QIntValidator( 0, 65535, this );
 	ui->hostPort->setValidator( portValidator );
 
 	connect( this, SIGNAL( accepted() ), this, SLOT( acceptedHandler() ) );

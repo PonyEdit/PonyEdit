@@ -33,11 +33,11 @@ void NewFolderDialog::attempt( bool sudo ) {
 	                                  SLOT( createFailure( QString, int ) ) ) );
 }
 
-void NewFolderDialog::createSuccess( QVariantMap /*result*/ ) {
+void NewFolderDialog::createSuccess( const QVariantMap & /*result*/ ) {
 	QDialog::accept();
 }
 
-void NewFolderDialog::createFailure( QString error, int flags ) {
+void NewFolderDialog::createFailure( const QString &error, int flags ) {
 	QMessageBox msgbox;
 	msgbox.setWindowTitle( "Failed to create remote directory" );
 	msgbox.setText( error );

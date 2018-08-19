@@ -70,9 +70,7 @@ BaseFile::~BaseFile() {
 		editor->fileClosed();
 	}
 
-	if ( mDocument ) {
-		delete mDocument;
-	}
+	delete mDocument;
 }
 
 BaseFile::BaseFile( const Location &location ) :
@@ -93,7 +91,6 @@ BaseFile::BaseFile( const Location &location ) :
 	mLastSaveChecksum( nullptr ),
 	mProgress( -1 ),
 	mOpenStatus( BaseFile::Closed ),
-	mAttachedEditors(),
 	mHighlighter( nullptr ) {
 	mDocument->setDocumentLayout( mDocumentLayout );
 
@@ -292,7 +289,7 @@ void BaseFile::saveFailure( const QString &errorMessage, bool permissionError ) 
 		return;
 	}
 
-	StatusWidget *errorWidget = new StatusWidget( true );
+	auto *errorWidget = new StatusWidget( true );
 	errorWidget->setStatus( QPixmap( ":/icons/error.png" ), errorMessage );
 	errorWidget->setButtons( StatusWidget::Retry | StatusWidget::Cancel |
 	                         ( permissionError && mLocation.canSudo() &&

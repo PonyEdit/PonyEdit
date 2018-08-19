@@ -29,7 +29,7 @@ void SearchResultModel::clear() {
 }
 
 SearchResultModel::InternalTreeNode *SearchResultModel::createFileNode( const Location &location ) {
-	InternalTreeNode *newNode = new InternalTreeNode();
+	auto *newNode = new InternalTreeNode();
 	newNode->parent = mRootNode;
 	newNode->result.location = location;
 
@@ -58,7 +58,7 @@ void SearchResultModel::addResult( const Result &result ) {
 	}
 
 	// Create a new node...
-	InternalTreeNode *newNode = new InternalTreeNode();
+	auto *newNode = new InternalTreeNode();
 	newNode->parent = fileNode;
 	newNode->result = result;
 
@@ -80,7 +80,7 @@ SearchResultModel::InternalTreeNode *SearchResultModel::getNodeForIndex( const Q
 		return mRootNode;
 	}
 
-	InternalTreeNode *node = static_cast< InternalTreeNode * >( index.internalPointer() );
+	auto *node = static_cast< InternalTreeNode * >( index.internalPointer() );
 	if ( node == nullptr ) {
 		return mRootNode;
 	}
@@ -92,9 +92,8 @@ SearchResultModel::Result *SearchResultModel::getResultForIndex( const QModelInd
 	InternalTreeNode *node = getNodeForIndex( index );
 	if ( node->result.lineNumber > -1 ) {
 		return &( node->result );
-	} else {
-		return nullptr;
 	}
+	return nullptr;
 }
 
 QModelIndex SearchResultModel::index( int row, int column, const QModelIndex &parent ) const {

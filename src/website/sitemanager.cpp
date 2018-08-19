@@ -32,9 +32,7 @@ SiteManager::~SiteManager() {
 		delete reply;
 	}
 
-	if ( mManager ) {
-		delete mManager;
-	}
+	delete mManager;
 
 	mManager = nullptr;
 }
@@ -59,7 +57,7 @@ void SiteManager::handleReply( QNetworkReply *reply ) {
 
 		QByteArray result = reply->readAll();
 
-		QJsonParseError error;
+		QJsonParseError error{};
 		QVariant data = QJsonDocument::fromJson( result, &error ).toVariant();
 		if ( error.error ) {
 			throw( tr( "Failed to parse reply from website" ) );

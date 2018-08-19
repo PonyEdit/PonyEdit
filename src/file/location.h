@@ -21,7 +21,6 @@ class Location {
 		enum Type { Unknown, File, Directory };
 		enum Protocol { Local, Ssh, Sftp, Unsaved };
 
-	public:
 		Location();
 		Location( const Location &other );
 		Location &operator=( const Location &other );
@@ -30,7 +29,7 @@ class Location {
 		          const QString &path,
 		          Type type,
 		          qint64 size,
-		          QDateTime lastModified,
+		          const QDateTime &lastModified,
 		          bool canRead,
 		          bool canWrite );
 		~Location();
@@ -105,9 +104,9 @@ class LocationShared : public QObject {
 		static void cleanupIconProvider();
 
 	private slots:
-		void sshLsSuccess( QVariantMap results );
-		void sshLsFailure( QString error, int flags );
-		void sftpLsFailure( QString error, int flags );
+		void sshLsSuccess( const QVariantMap &results );
+		void sshLsFailure( const QString &error, int flags );
+		void sftpLsFailure( const QString &error, int flags );
 
 	private:
 		LocationShared();
@@ -123,6 +122,13 @@ class LocationShared : public QObject {
 		SshHost *getHost();
 
 		int mReferences;
+
+		bool mSelfLoaded;
+
+		bool mCanRead;
+		bool mCanWrite;
+		bool mSudo;
+
 		QString mPath;
 		QString mLabel;
 
@@ -130,11 +136,7 @@ class LocationShared : public QObject {
 		Location::Protocol mProtocol;
 		QDateTime mLastModified;
 		Location mParent;
-		bool mSelfLoaded;
 		qint64 mSize;
-		bool mCanRead;
-		bool mCanWrite;
-		bool mSudo;
 
 		SshHost *mHost;
 

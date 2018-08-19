@@ -37,7 +37,7 @@ class SyntaxRule {
 		}
 
 		SyntaxRule( SyntaxRule *parent, const QString &name, const QXmlAttributes &attributes );
-		SyntaxRule( SyntaxRule *parent, QSharedPointer< SyntaxRule > other, bool duplicateChildren, bool maintainLinks );
+		SyntaxRule( SyntaxRule *parent, const QSharedPointer< SyntaxRule > &other, bool duplicateChildren, bool maintainLinks );
 		~SyntaxRule();
 
 		SyntaxRule *getParent() const {
@@ -93,7 +93,7 @@ class SyntaxRule {
 		}
 
 		int match( const QString &string, int position );
-		void addChildRule( QSharedPointer< SyntaxRule > rule );
+		void addChildRule( const QSharedPointer< SyntaxRule > &rule );
 		bool link( SyntaxDefinition *def );
 		void unlink();
 

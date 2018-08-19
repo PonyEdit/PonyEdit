@@ -112,7 +112,6 @@ class Editor : public QStackedWidget {
 		QVBoxLayout *mEditorPaneLayout;
 		BaseFile *mFile;
 		CodeEditor *mEditor;
-		QTextDocument *mDocument;
 
 		QWidget *mWorkingPane;
 		QLabel *mWorkingIcon;

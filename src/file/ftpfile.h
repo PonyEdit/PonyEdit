@@ -19,12 +19,12 @@ class FtpFile : public BaseFile {
 		bool canClose();
 
 	private slots:
-		void sftpReadSuccess( QVariantMap results );
-		void sftpReadFailure( QString error, int flags );
+		void sftpReadSuccess( const QVariantMap &results );
+		void sftpReadFailure( const QString &error, int flags );
 		void sftpReadProgress( int progress );
 
-		void sftpWriteSuccess( QVariantMap results );
-		void sftpWriteFailure( QString error, int flags );
+		void sftpWriteSuccess( const QVariantMap &results );
+		void sftpWriteFailure( const QString &error, int flags );
 		void sftpWriteProgress( int progress );
 
 	private:

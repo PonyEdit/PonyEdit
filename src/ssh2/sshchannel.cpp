@@ -10,7 +10,7 @@ SshChannel::SshChannel( SshHost *host ) :
 	mStatus( Sessionless ),
 	mErrorDetails( "" ) {}
 
-SshChannel::~SshChannel() {}
+SshChannel::~SshChannel() = default;
 
 void SshChannel::setSession( SshSession *session ) {
 	if ( mSession != session ) {
@@ -46,9 +46,8 @@ void SshChannel::setStatus( Status status ) {
 int SshChannel::getConnectionScore() {
 	if ( mStatus == Sessionless ) {
 		return mSession->getStatus();
-	} else {
-		return mStatus;
 	}
+	return mStatus;
 }
 
 QString SshChannel::getConnectionDescription() {

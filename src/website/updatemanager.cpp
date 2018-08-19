@@ -18,10 +18,8 @@ UpdateManager *UpdateManager::sInstance;
 UpdateManager::UpdateManager( QObject *parent ) :
 	QObject( parent ),
 	mNotificationDlg( nullptr ),
-	mNetManager(),
 	mDownload( nullptr ),
-	mRedirectCount( 0 ),
-	mTempFile() {
+	mRedirectCount( 0 ) {
 	sInstance = this;
 }
 
@@ -50,7 +48,7 @@ void UpdateManager::noUpdateFound() {
 	msg.exec();
 }
 
-void UpdateManager::startDownload( QString file ) {
+void UpdateManager::startDownload( const QString &file ) {
 	QProgressBar *progressBar = mNotificationDlg->getProgressBar();
 	progressBar->show();
 
@@ -64,7 +62,7 @@ void UpdateManager::startDownload( QString file ) {
 	         SIGNAL( authenticationRequired( QNetworkReply *, QAuthenticator * ) ),
 	         this,
 	         SLOT( downloadAuth( QNetworkReply *, QAuthenticator * ) ) );
-	qDebug() << file;
+
 	QUrl download( file );
 
 	mTempFile.setFileName( QDir::tempPath() + "/" + QFileInfo( download.path() ).fileName() );
@@ -157,8 +155,6 @@ void UpdateManager::downloadFinished() {
 	QLabel *progressLabel = mNotificationDlg->getProgressLabel();
 
 	QFileInfo info( mTempFile );
-
-	QProcess *installProc = new QProcess();
 #endif
 
 #ifdef Q_OS_WIN32
@@ -166,18 +162,17 @@ void UpdateManager::downloadFinished() {
 	cmd = info.filePath();
 	args << "/verysilent" << "/suppressmsgboxes" << "/norestart";
 
-	installProc->startDetached( cmd, args );
+	QProcess::startDetached( cmd, args );
 #elif defined Q_OS_MAC
 	progressLabel->setText( tr( "Extracting..." ) );
-	QUuid uuid;
-	uuid.createUuid();
+	auto uuid = QUuid::createUuid();
 
 	QString mnt = "/Volumes/" + uuid.toString();
 
 	cmd = "hdiutil";
 	args << "attach" << info.filePath() << "-mountpoint" << mnt << "-noverify" << "-nobrowse" << "-noautoopen";
 
-	installProc->execute( cmd, args );
+	QProcess::execute( cmd, args );
 
 	progressLabel->setText( tr( "Installing..." ) );
 
@@ -185,19 +180,19 @@ void UpdateManager::downloadFinished() {
 	args.clear();
 	args << "-rf" << "/Applications/PonyEdit.app";
 
-	installProc->execute( cmd, args );
+	QProcess::execute( cmd, args );
 
 	cmd = "cp";
 	args.clear();
 	args << "-rf" << mnt + "/PonyEdit.app" << "/Applications";
 
-	installProc->execute( cmd, args );
+	QProcess::execute( cmd, args );
 
 	cmd = "hdiutil";
 	args.clear();
 	args << "detach" << mnt << "-force";
 
-	installProc->startDetached( cmd, args );
+	QProcess::startDetached( cmd, args );
 
 	progressLabel->setText( tr( "Restarting..." ) );
 
@@ -205,7 +200,7 @@ void UpdateManager::downloadFinished() {
 	args.clear();
 	args << "/Applications/PonyEdit.app";
 
-	installProc->startDetached( cmd, args );
+	QProcess::startDetached( cmd, args );
 #endif
 
 	QApplication::exit();

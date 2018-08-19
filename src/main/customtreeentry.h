@@ -12,7 +12,7 @@ class CustomTreeEntry : public QObject {
 	Q_OBJECT
 
 	public:
-		explicit CustomTreeEntry( const QIcon &icon, const QString &label );
+		explicit CustomTreeEntry( QIcon icon, QString label );
 		explicit CustomTreeEntry( CustomTreeModel *model );
 		~CustomTreeEntry();
 
@@ -46,7 +46,7 @@ class CustomTreeEntry : public QObject {
 
 // Data handling methods. Use setAutoDeleteData if you want the data to be deleted with the CustomTreeEntry.
 		template < class T > void setAutoDeleteData( T data ) {
-			mDataDeleteProc = ( deleteData< T >); mData = static_cast< void * >( data );
+			mDataDeleteProc = ( deleteData< T > ); mData = static_cast< void * >( data );
 		}
 
 		template < class T > void setData( T data ) {

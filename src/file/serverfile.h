@@ -20,20 +20,20 @@ class ServerFile : public BaseFile {
 		virtual void sudo();
 
 	public slots:
-		void createSuccess( QVariantMap result );
+		void createSuccess( const QVariantMap &result );
 
 		void serverOpenSuccess( QVariantMap results );
 		void downloadProgress( int percent );
-		void downloadSuccess( QVariantMap result );
+		void downloadSuccess( const QVariantMap &result );
 		void serverChannelFailure();
 
-		void changePushFailure( QString error, int flags );
+		void changePushFailure( const QString &error, int flags );
 
-		void serverSaveSuccess( QVariantMap results );
-		void serverSaveFailure( QString error, int flags );
+		void serverSaveSuccess( const QVariantMap &results );
+		void serverSaveFailure( const QString &error, int flags );
 
-		void serverReconnectSuccess( QVariantMap results );
-		void serverReconnectFailure( QString error, int flags );
+		void serverReconnectSuccess( const QVariantMap &results );
+		void serverReconnectFailure( const QString &error, int flags );
 
 	signals:
 		void resyncSuccessRethreadSignal( int );

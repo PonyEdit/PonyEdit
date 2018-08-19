@@ -88,7 +88,7 @@ void StartupOptionsWidget::SetFilesToCurrent() {
 
 	ui->fileList->clear();
 	foreach ( BaseFile *file, files ) {
-		Location loc = file->getLocation();
+		const Location &loc = file->getLocation();
 		ui->fileList->appendPlainText( loc.getDisplayPath() );
 	}
 }

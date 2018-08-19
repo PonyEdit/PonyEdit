@@ -89,7 +89,7 @@ Location::Location( const Location &parent,
                     const QString &path,
                     Type type,
                     qint64 size,
-                    QDateTime lastModified,
+                    const QDateTime &lastModified,
                     bool canRead,
                     bool canWrite ) {
 	mData = new LocationShared();
@@ -105,17 +105,16 @@ Location::Location( const Location &parent,
 
 LocationShared::LocationShared() :
 	mReferences( 1 ),
+	mSelfLoaded( false ),
+	mCanRead( false ),
+	mCanWrite( false ),
+	mSudo( false ),
 	mPath(),
 	mLabel(),
 	mType( Location::Unknown ),
 	mProtocol(),
-	mLastModified(),
 	mParent(),
-	mSelfLoaded( false ),
 	mSize( -1 ),
-	mCanRead( false ),
-	mCanWrite( false ),
-	mSudo( false ),
 	mHost( nullptr ),
 	mRemoteHostName(),
 	mRemoteUserName(),
@@ -218,9 +217,9 @@ bool Location::operator==( const Location &other ) const {
 const Location &Location::getDirectory() const {
 	if ( isDirectory() ) {
 		return *this;
-	} else {
-		return getParent();
 	}
+
+	return getParent();
 }
 
 const Location &Location::getParent() const {
@@ -249,10 +248,10 @@ QString Location::getParentPath() const {
 	int lastSlash = parentPath.lastIndexOf( '/' );
 	if ( lastSlash < 0 ) {
 		return "";
-	} else {
-		parentPath.truncate( lastSlash );
-		return parentPath;
 	}
+
+	parentPath.truncate( lastSlash );
+	return parentPath;
 }
 
 QString Location::getDisplayPath() const {
@@ -459,7 +458,7 @@ void LocationShared::sshLoadListing( bool includeHidden ) {
 	                                        SLOT( sshLsFailure( QString, int ) ) ) );
 }
 
-void LocationShared::sshLsSuccess( QVariantMap results ) {
+void LocationShared::sshLsSuccess( const QVariantMap &results ) {
 	QList< Location > children;
 	Location parentLocation( this );
 
@@ -489,11 +488,11 @@ void LocationShared::sshLsSuccess( QVariantMap results ) {
 	gDispatcher->emitLocationListSuccess( children, mPath );
 }
 
-void LocationShared::sshLsFailure( QString error, int flags ) {
+void LocationShared::sshLsFailure( const QString &error, int flags ) {
 	gDispatcher->emitLocationListFailure( error, mPath, flags & ServerRequest::PermissionError );
 }
 
-void LocationShared::sftpLsFailure( QString error, int /*flags*/ ) {
+void LocationShared::sftpLsFailure( const QString &error, int /*flags*/ ) {
 	gDispatcher->emitLocationListFailure( error, mPath, false );
 }
 
@@ -576,13 +575,12 @@ QString Location::getDefaultFavoriteName() {
 	switch ( mData->mProtocol ) {
 		case Ssh:
 		case Sftp:
-			return QObject::tr( "%1 on %2", "eg: ~ on Server X" ).arg( getLabel() ).arg( mData->mRemoteHostName );
+			return QObject::tr( "%1 on %2", "eg: ~ on Server X" ).arg( getLabel(), mData->mRemoteHostName );
 
 		case Unsaved:
 			return QObject::tr( "Unsaved" );
 
 		case Local:
-		default:
 			return QObject::tr( "%1 (local)" ).arg( getLabel() );
 	}
 }
@@ -597,7 +595,7 @@ void Location::createNewDirectory( const QString &name, const Callback &callback
 		}
 
 		case Sftp: {
-			SFTPRequest *request = new SFTPRequest( SFTPRequest::MkDir, callback );
+			auto *request = new SFTPRequest( SFTPRequest::MkDir, callback );
 			request->setPath( mData->mRemotePath + "/" + name );
 			mData->getHost()->sendSftpRequest( request );
 			break;

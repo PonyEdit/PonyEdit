@@ -9,7 +9,7 @@ EditorStack::EditorStack( EditorPanel *parent ) :
 }
 
 Editor *EditorStack::getCurrentEditor() const {
-	return static_cast< Editor * >( currentWidget() );
+	return dynamic_cast< Editor * >( currentWidget() );
 }
 
 void EditorStack::displayEditor( Editor *editor ) {
@@ -41,7 +41,7 @@ void EditorStack::displayFile( BaseFile *file ) {
 }
 
 void EditorStack::createEditor( BaseFile *file ) {
-	Editor *newEditor = new Editor( file );
+	auto *newEditor = new Editor( file );
 	mEditors.append( newEditor );
 	addWidget( newEditor );
 

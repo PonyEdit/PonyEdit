@@ -23,15 +23,21 @@ QString Tools::sResourcePath;
 QString Tools::humanReadableBytes( qint64 bytes ) {
 	if ( bytes >= TERABYTE_MULTIPLIER ) {
 		return QString::number( static_cast< double >( bytes ) / static_cast< double >( TERABYTE_MULTIPLIER ), 'f', 1 ) + " TiB";
-	} else if ( bytes >= GIGABYTE_MULTIPLIER ) {
-		return QString::number( static_cast< double >( bytes ) / static_cast< double >( GIGABYTE_MULTIPLIER ), 'f', 1 ) + " GiB";
-	} else if ( bytes >= MEGABYTE_MULTIPLIER ) {
-		return QString::number( static_cast< double >( bytes ) / static_cast< double >( MEGABYTE_MULTIPLIER ), 'f', 1 ) + " MiB";
-	} else if ( bytes >= KILOBYTE_MULTIPLIER ) {
-		return QString::number( static_cast< double >( bytes ) / static_cast< double >( KILOBYTE_MULTIPLIER ), 'f', 1 ) + " KiB";
-	} else {
-		return QString::number( bytes ) + " bytes";
 	}
+
+	if ( bytes >= GIGABYTE_MULTIPLIER ) {
+		return QString::number( static_cast< double >( bytes ) / static_cast< double >( GIGABYTE_MULTIPLIER ), 'f', 1 ) + " GiB";
+	}
+
+	if ( bytes >= MEGABYTE_MULTIPLIER ) {
+		return QString::number( static_cast< double >( bytes ) / static_cast< double >( MEGABYTE_MULTIPLIER ), 'f', 1 ) + " MiB";
+	}
+
+	if ( bytes >= KILOBYTE_MULTIPLIER ) {
+		return QString::number( static_cast< double >( bytes ) / static_cast< double >( KILOBYTE_MULTIPLIER ), 'f', 1 ) + " KiB";
+	}
+
+	return QString::number( bytes ) + " bytes";
 }
 
 void Tools::saveServers() {
@@ -66,7 +72,7 @@ void Tools::loadServers() {
 	int count = settings.beginReadArray( "servers" );
 	for ( int i = 0; i < count; i++ ) {
 		settings.setArrayIndex( i );
-		SshHost *host = new SshHost();
+		auto *host = new SshHost();
 
 		host->setHostname( settings.value( "hostname" ).toByteArray() );
 		host->setPort( settings.value( "port", 22 ).toInt() );
@@ -160,7 +166,7 @@ void Tools::initialize() {
 }
 
 QString Tools::squashLabel( const QString &label, const QFontMetrics &metrics, int availableWidth ) {
-	QRegExp separators( "[\\/\\\\@\\:\\.]" );
+	QRegExp separators( R"([\/\\@\:\.])" );
 	#ifdef Q_OS_MAC
 	availableWidth -= 2;
 	#endif
@@ -317,7 +323,7 @@ void Tools::saveCurrentFiles() {
 		}
 
 		Options::StartupFiles.append( loc.getDisplayPath() );
-		if ( file->getAttachedEditors().size() > 0 ) {
+		if ( ! file->getAttachedEditors().empty() ) {
 			Options::StartupFilesLineNo.append( file->getAttachedEditors().at( 0 )->currentLine() );
 		}
 	}
@@ -361,7 +367,7 @@ QString Tools::stringifyIpAddress( unsigned long ipAddress ) {
 }
 
 QByteArray Tools::bin( const QByteArray &source ) {
-	const unsigned char *c = reinterpret_cast< const unsigned char * >( source.constData() );
+	const auto *c = reinterpret_cast< const unsigned char * >( source.constData() );
 	const unsigned char *end = c + source.length();
 	QByteArray result;
 
@@ -394,7 +400,7 @@ unsigned char Tools::unbinEscape( unsigned char c ) {
 }
 
 int Tools::unbin( QByteArray &target, const char *source, int maxTarget, int maxSource, bool *leftoverEscape ) {
-	const unsigned char *unsignedSource = reinterpret_cast< const unsigned char * >( source );
+	const auto *unsignedSource = reinterpret_cast< const unsigned char * >( source );
 	const unsigned char *sourceEnd = unsignedSource + maxSource;
 	const unsigned char *c = unsignedSource;
 

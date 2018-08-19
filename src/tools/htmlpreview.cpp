@@ -62,7 +62,7 @@ void HTMLPreview::fileSaved() {
 		return;
 	}
 
-	BaseFile *file = static_cast< BaseFile * >( sender() );
+	auto *file = dynamic_cast< BaseFile * >( sender() );
 
 	if ( file->hasUnsavedChanges() ) {
 		return;
@@ -84,7 +84,7 @@ void HTMLPreview::fileChanged() {
 		return;
 	}
 
-	QTextDocument *doc = static_cast< QTextDocument * >( sender() );
+	auto *doc = dynamic_cast< QTextDocument * >( sender() );
 
 	if ( ui->refreshFrom->currentIndex() == 0 ) {
 		displayHTML( doc->toPlainText() );
@@ -112,7 +112,7 @@ void HTMLPreview::manualRefresh() {
 	}
 }
 
-void HTMLPreview::displayHTML( QString html ) {
+void HTMLPreview::displayHTML( const QString &html ) {
 	ui->webView->setHtml( html );
 }
 

@@ -123,9 +123,9 @@ void Options::load() {
 	QSettings settings;
 
 	QString fontString = settings.value( ntr( "editorFont" ) ).toString();
-	if ( EditorFont != nullptr ) {
-		delete EditorFont;
-	}
+
+	delete EditorFont;
+
 	EditorFont = new QFont();
 	EditorFont->fromString( fontString );
 

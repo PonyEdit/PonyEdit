@@ -72,8 +72,8 @@ class MainWindow : public QMainWindow {
 		void about();
 		void checkForUpdates();
 
-		void showErrorMessage( QString error );
-		void showStatusMessage( QString message );
+		void showErrorMessage( const QString &error );
+		void showStatusMessage( const QString &message );
 
 		void syntaxMenuOptionClicked();
 
@@ -119,7 +119,7 @@ class MainWindow : public QMainWindow {
 		void restoreState();
 
 		void updateRecentFilesMenu();
-		void addRecentFile( Location loc );
+		void addRecentFile( const Location &loc );
 
 		void nextStartupPrompt();
 

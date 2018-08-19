@@ -20,6 +20,6 @@ void HostLog::closeEvent( QCloseEvent * ) {
 	this->deleteLater();
 }
 
-void HostLog::newLogLine( QString line ) {
+void HostLog::newLogLine( const QString &line ) {
 	ui->textBox->appendPlainText( line );
 }

@@ -13,7 +13,7 @@ OpenFileTreeModel::OpenFileTreeModel( QObject *parent,
 	QAbstractItemModel( parent ) {
 	mOptionFlags = flags;
 	mTopLevelNode = new Node( Root );
-	mParent = reinterpret_cast< OpenFileTreeView * >( parent );
+	mParent = dynamic_cast< OpenFileTreeView * >( parent );
 
 	mExplicitFiles = ( files != nullptr );
 	if ( mExplicitFiles ) {
@@ -117,7 +117,7 @@ OpenFileTreeModel::Node *OpenFileTreeModel::getHostNode( const Location &locatio
 		return existingNode;
 	}
 
-	Node *newNode = new Node( Host );
+	auto *newNode = new Node( Host );
 	newNode->location = location;
 	addNodeToTree( mTopLevelNode, newNode );
 	return newNode;
@@ -138,7 +138,7 @@ OpenFileTreeModel::Node *OpenFileTreeModel::getDirectoryNode( const Location &lo
 		return existingNode;
 	}
 
-	Node *newNode = new Node( Directory );
+	auto *newNode = new Node( Directory );
 	newNode->location = location;
 	addNodeToTree( hostNode, newNode );
 	return newNode;
@@ -149,7 +149,7 @@ void OpenFileTreeModel::fileOpened( BaseFile *file ) {
 	Node *directoryNode = getDirectoryNode( file->getLocation().getDirectory() );
 
 	// Create a Node for the new file
-	Node *newNode = new Node( File );
+	auto *newNode = new Node( File );
 	newNode->file = file;
 	newNode->location = file->getLocation();
 	addNodeToTree( directoryNode, newNode );
@@ -167,7 +167,7 @@ void OpenFileTreeModel::fileClosed( BaseFile *file ) {
 }
 
 void OpenFileTreeModel::fileChanged() {
-	BaseFile *file = reinterpret_cast< BaseFile * >( QObject::sender() );
+	auto *file = dynamic_cast< BaseFile * >( QObject::sender() );
 	Node *fileNode = mFileLookup.value( file );
 	if ( fileNode ) {
 		QModelIndex index = getNodeIndex( fileNode );
@@ -188,7 +188,7 @@ QModelIndex OpenFileTreeModel::index( int row, int column, const QModelIndex &pa
 }
 
 QModelIndex OpenFileTreeModel::parent( const QModelIndex &index ) const {
-	Node *node = static_cast< Node * >( index.internalPointer() );
+	auto *node = static_cast< Node * >( index.internalPointer() );
 	if ( ! node || ! node->parent || node->parent == mTopLevelNode ) {
 		return QModelIndex();
 	}
@@ -220,26 +220,27 @@ QVariant OpenFileTreeModel::data( const QModelIndex &index, int role ) const {
 		return QVariant();
 	}
 
-	Node *node = static_cast< Node * >( index.internalPointer() );
+	auto *node = static_cast< Node * >( index.internalPointer() );
 	if ( role == Qt::ToolTipRole ) {
 		QString tooltip = node->location.getPath();
 		if ( node->file ) {
 			if ( node->file->hasUnsavedChanges() ) {
 				tooltip += "\nUnsaved Changes";
 			}
-			tooltip += QString( "\n" ) + node->file->sStatusLabels[ node->file->getOpenStatus() ];
+			tooltip += QString( "\n" ) + BaseFile::sStatusLabels[ node->file->getOpenStatus() ];
 		}
 		return QVariant( tooltip );
-	} else if ( role < Qt::UserRole ) {
+	}
+	if ( role < Qt::UserRole ) {
 		return QVariant();
 	}
 
 	switch ( role ) {
 		case LocationRole:
-			return QVariant::fromValue< Location >( node->location );
+			return QVariant::fromValue( node->location );
 
 		case FileRole:
-			return QVariant::fromValue< void * >( node->file );
+			return QVariant::fromValue( node->file );
 
 		case TypeRole:
 			return QVariant( static_cast< int >( node->level ) );
@@ -252,7 +253,7 @@ QVariant OpenFileTreeModel::data( const QModelIndex &index, int role ) const {
 }
 
 Qt::ItemFlags OpenFileTreeModel::flags( const QModelIndex &index ) const {
-	Node *node = static_cast< Node * >( index.internalPointer() );
+	auto *node = static_cast< Node * >( index.internalPointer() );
 	if ( ! node ) {
 		return Qt::NoItemFlags;
 	}
@@ -277,7 +278,7 @@ void OpenFileTreeModel::removeNode( const QModelIndex &index ) {
 		return;
 	}
 
-	Node *node = reinterpret_cast< Node * >( index.internalPointer() );
+	auto *node = static_cast< Node * >( index.internalPointer() );
 	if ( ! node ) {
 		return;
 	}
@@ -305,7 +306,7 @@ void OpenFileTreeModel::removeNode( const QModelIndex &index ) {
 
 BaseFile *OpenFileTreeModel::getFileAtIndex( const QModelIndex &index ) {
 	if ( index.isValid() ) {
-		Node *node = static_cast< Node * >( index.internalPointer() );
+		auto *node = static_cast< Node * >( index.internalPointer() );
 		if ( node ) {
 			return node->file;
 		}

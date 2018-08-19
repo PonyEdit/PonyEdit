@@ -65,7 +65,7 @@ class WindowManager : public QWidget {
 
 		void findInCurrentEditor( const QString &text, bool backwards, bool caseSensitive = false, bool useRegExp = false );
 		void replaceInCurrentEditor( const QString &text, const QString &replaceText, bool all );
-		void searchInFiles( const QList< BaseFile * > files,
+		void searchInFiles( const QList< BaseFile * > &files,
 		                    const QString &text,
 		                    bool caseSensitive,
 		                    bool useRegExp,

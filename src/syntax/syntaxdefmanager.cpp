@@ -37,9 +37,8 @@ SyntaxDefManager::FilePattern::FilePattern( const QString &pattern ) {
 bool SyntaxDefManager::FilePattern::matches( const QString &filename ) {
 	if ( isSimpleExtension ) {
 		return filename.endsWith( extension );
-	} else {
-		return regExp.exactMatch( filename );
 	}
+	return regExp.exactMatch( filename );
 }
 
 SyntaxDefManager::SyntaxDefManager() {
@@ -65,7 +64,7 @@ void SyntaxDefManager::updateIndex() {
 
 void SyntaxDefManager::indexFile( const QFileInfo &fileinfo ) {
 	if ( fileinfo.isFile() ) {
-		Record *record = new Record();
+		auto *record = new Record();
 		record->lastUpdated = QDateTime::currentDateTime();
 		record->filename = fileinfo.filePath();
 
@@ -142,7 +141,7 @@ SyntaxDefinition *SyntaxDefManager::getDefinition( const Record *record ) {
 		return mOpenDefinitionsByName.value( record->syntaxName );
 	}
 
-	SyntaxDefinition *newDefinition = new SyntaxDefinition( record->filename );
+	auto *newDefinition = new SyntaxDefinition( record->filename );
 	if ( ! newDefinition->isValid() ) {
 		delete newDefinition;
 		QLOG_WARN() << "Attempted to use an invalid syntax definition: " << record->filename;

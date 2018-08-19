@@ -14,10 +14,10 @@
 UnsavedChangesDialog::UnsavedChangesDialog( const QList< BaseFile * > &files, bool closeFilesOnDiscard ) :
 	QDialog( nullptr ),
 	mCloseFilesOnDiscard( closeFilesOnDiscard ) {
-	QVBoxLayout *layout = new QVBoxLayout( this );
+	auto *layout = new QVBoxLayout( this );
 	setLayout( layout );
 
-	QLabel *label = new QLabel( this );
+	auto *label = new QLabel( this );
 	label->setText( "The following files have unsaved changes: " );
 	layout->addWidget( label );
 
@@ -46,7 +46,7 @@ UnsavedChangesDialog::UnsavedChangesDialog( const QList< BaseFile * > &files, bo
 	connect( &gOpenFileManager, SIGNAL( fileClosed( BaseFile * ) ), this, SLOT( fileClosed( BaseFile * ) ) );
 }
 
-UnsavedChangesDialog::~UnsavedChangesDialog() {}
+UnsavedChangesDialog::~UnsavedChangesDialog() = default;
 
 void UnsavedChangesDialog::buttonClicked( QAbstractButton *button ) {
 	QList< BaseFile * > selectedFiles = mTreeView->getSelectedFiles();
@@ -87,14 +87,14 @@ void UnsavedChangesDialog::buttonClicked( QAbstractButton *button ) {
 	}
 }
 
-void UnsavedChangesDialog::selectionChanged( QItemSelection /* before */, QItemSelection /* after */ ) {
+void UnsavedChangesDialog::selectionChanged( const QItemSelection & /* before */, const QItemSelection & /* after */ ) {
 	bool itemsSelected = mTreeView->selectionModel()->selectedRows().count() > 0;
 	mButtonBox->button( QDialogButtonBox::Save )->setEnabled( itemsSelected );
 	mButtonBox->button( QDialogButtonBox::Discard )->setEnabled( itemsSelected );
 }
 
 void UnsavedChangesDialog::fileStateChanged() {
-	BaseFile *file = static_cast< BaseFile * >( QObject::sender() );
+	auto *file = dynamic_cast< BaseFile * >( QObject::sender() );
 	if ( ! file->hasUnsavedChanges() ) {
 		BaseFile::OpenStatus status = file->getOpenStatus();
 

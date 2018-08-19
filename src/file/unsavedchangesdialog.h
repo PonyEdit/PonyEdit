@@ -19,7 +19,7 @@ class UnsavedChangesDialog : public QDialog {
 
 	private slots:
 		void buttonClicked( QAbstractButton *button );
-		void selectionChanged( QItemSelection before, QItemSelection after );
+		void selectionChanged( const QItemSelection &before, const QItemSelection &after );
 		void fileStateChanged();
 		void fileClosed( BaseFile *file );
 

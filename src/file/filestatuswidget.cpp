@@ -13,7 +13,7 @@ FileStatusWidget::FileStatusWidget( BaseFile *file, QWidget *parent ) :
 	connect( file, SIGNAL( openStatusChanged( int ) ), this, SLOT( openStatusChanged() ) );
 }
 
-FileStatusWidget::~FileStatusWidget() {}
+FileStatusWidget::~FileStatusWidget() = default;
 
 void FileStatusWidget::showEvent( QShowEvent * ) {
 	openStatusChanged();

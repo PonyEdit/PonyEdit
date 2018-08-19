@@ -54,9 +54,7 @@ ServerChannel::ServerChannel( SshHost *host, bool sudo ) :
 	mNextMessageId( 1 ),
 	mSudo( sudo ),
 	mSudoPasswordAttempt(),
-	mTriedSudoPassword( false ),
-	mRequestsAwaitingReplies(),
-	mBufferIds() {
+	mTriedSudoPassword( false ) {
 	SSHLOG_TRACE( host ) << "Creating a new server channel";
 }
 
@@ -225,10 +223,9 @@ bool ServerChannel::handleOpening() {
 		if ( response.startsWith( "Server OK" ) || response.contains( "Sudo-prompt" ) ) {
 			finalizeServerInit( response );
 			return true;
-		} else {
-			criticalError( "Unexpected response to server initialization: " + response );
-			return false;
 		}
+		criticalError( "Unexpected response to server initialization: " + response );
+		return false;
 	}
 
 	if ( mInternalStatus == _SendingSudoPassword ) {
@@ -394,7 +391,7 @@ void ServerChannel::finalizeServerInit( const QByteArray &initString ) {
 		criticalError( "Invalid server script init" );
 	}
 
-	QJsonParseError error;
+	QJsonParseError error{};
 	QVariantMap initBlob = QJsonDocument::fromJson( lines[ 1 ], &error ).object().toVariantMap();
 	if ( error.error ) {
 		criticalError( "JSON initialization blob invalid" );
@@ -413,9 +410,8 @@ void ServerChannel::finalizeServerInit( const QByteArray &initString ) {
 int ServerChannel::getConnectionScore() {
 	if ( mStatus == Opening ) {
 		return mInternalStatus;
-	} else {
-		return ShellChannel::getConnectionScore();
 	}
+	return ShellChannel::getConnectionScore();
 }
 
 QString ServerChannel::getConnectionDescription() {

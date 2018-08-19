@@ -138,11 +138,10 @@ void CodeEditor::applyIndent( QTextCursor &cursor, bool outdent ) {
 			QChar nextChar = doc->characterAt( position - 1 );
 			if ( ! nextChar.isSpace() ) {
 				break;
-			} else {
-				cursor.deletePreviousChar();
-				removeSpaces--;
-				position--;
 			}
+			cursor.deletePreviousChar();
+			removeSpaces--;
+			position--;
 		}
 	} else {
 		// Insert a tab or a set of spaces
@@ -277,7 +276,7 @@ void CodeEditor::wheelEvent( QWheelEvent *e ) {
 }
 
 void CodeEditor::updateFont() {
-	QFont *font = new QFont( *Options::EditorFont );
+	auto *font = new QFont( *Options::EditorFont );
 	font->setWeight( QFont::Normal );
 
 	int pointSize = font->pointSize();
@@ -331,7 +330,7 @@ void CodeEditor::focusInEvent( QFocusEvent *e ) {
 		return;
 	}
 
-	EditorPanel *editorPanel = dynamic_cast< EditorPanel * >( object );
+	auto *editorPanel = dynamic_cast< EditorPanel * >( object );
 	editorPanel->takeFocus();
 
 	QPlainTextEdit::focusInEvent( e );

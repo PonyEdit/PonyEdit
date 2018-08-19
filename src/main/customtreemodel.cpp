@@ -2,8 +2,7 @@
 #include "customtreemodel.h"
 #include "customtreewidget.h"
 
-CustomTreeModel::CustomTreeModel( CustomTreeWidget *widget ) :
-	QAbstractItemModel() {
+CustomTreeModel::CustomTreeModel( CustomTreeWidget *widget ) {
 	mWidget = widget;
 	mRootNode = new CustomTreeEntry( this );
 }
@@ -28,9 +27,8 @@ QModelIndex CustomTreeModel::getEntryIndex( CustomTreeEntry *entry ) const {
 
 	if ( parent == nullptr ) {
 		return createIndex( 0, 0, static_cast< void * >( entry ) );
-	} else {
-		return createIndex( entry->getIndexWithinParent(), 0, static_cast< void * >( entry ) );
 	}
+	return createIndex( entry->getIndexWithinParent(), 0, static_cast< void * >( entry ) );
 }
 
 QModelIndex CustomTreeModel::parent( const QModelIndex &index ) const {
@@ -62,9 +60,8 @@ QVariant CustomTreeModel::data( const QModelIndex &index, int role ) const {
 		if ( ! entry->isCustomDrawn() ) {
 			if ( role == Qt::DecorationRole ) {
 				return entry->getIcon();
-			} else {
-				return entry->getLabel();
 			}
+			return entry->getLabel();
 		}
 	}
 
@@ -72,7 +69,7 @@ QVariant CustomTreeModel::data( const QModelIndex &index, int role ) const {
 }
 
 CustomTreeEntry *CustomTreeModel::getEntry( const QModelIndex &index ) const {
-	CustomTreeEntry *entry = static_cast< CustomTreeEntry * >( index.internalPointer() );
+	auto *entry = static_cast< CustomTreeEntry * >( index.internalPointer() );
 	return entry ? entry : mRootNode;
 }
 

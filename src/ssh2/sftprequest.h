@@ -3,13 +3,14 @@
 
 #include <QByteArray>
 #include <QVariantMap>
+
 #include "tools/callback.h"
 
 class SFTPRequest {
 	public:
 		enum Type { Ls, MkDir, ReadFile, WriteFile };
 
-		SFTPRequest( Type type, const Callback &callback );
+		SFTPRequest( Type type, Callback callback );
 
 		inline Type getType() const {
 			return mType;

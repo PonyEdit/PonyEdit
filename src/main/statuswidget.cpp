@@ -27,7 +27,7 @@ StatusWidget::~StatusWidget() {
 
 void StatusWidget::close( Result result ) {
 	if ( mDialogChild ) {
-		QDialog *parentDialog = static_cast< QDialog * >( parentWidget() );
+		auto *parentDialog = dynamic_cast< QDialog * >( parentWidget() );
 		parentDialog->done( result );
 	}
 	emit completed();
@@ -111,7 +111,7 @@ void StatusWidget::setButtons( Buttons buttons ) {
 	}
 
 	if ( firstButton ) {
-		static_cast< QPushButton * >( firstButton )->setDefault( true );
+		dynamic_cast< QPushButton * >( firstButton )->setDefault( true );
 	}
 }
 

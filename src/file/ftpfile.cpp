@@ -28,14 +28,14 @@ void FtpFile::open() {
 	mHost->sendSftpRequest( request );
 }
 
-void FtpFile::sftpReadSuccess( QVariantMap results ) {
+void FtpFile::sftpReadSuccess( const QVariantMap &results ) {
 	QByteArray content = results.value( "content", QByteArray() ).toByteArray();
 	QByteArray checksum = BaseFile::getChecksum( content ).toLatin1();
 
 	openSuccess( QString::fromUtf8( content, content.size() ), checksum, false );
 }
 
-void FtpFile::sftpReadFailure( QString error, int flags ) {
+void FtpFile::sftpReadFailure( const QString &error, int flags ) {
 	openFailure( error, flags );
 }
 
@@ -59,7 +59,7 @@ void FtpFile::save() {
 	mHost->sendSftpRequest( request );
 }
 
-void FtpFile::sftpWriteSuccess( QVariantMap results ) {
+void FtpFile::sftpWriteSuccess( const QVariantMap &results ) {
 	setProgress( -1 );
 
 	int revision = results.value( "revision" ).toInt();
@@ -69,9 +69,9 @@ void FtpFile::sftpWriteSuccess( QVariantMap results ) {
 	savedRevision( revision, undoLength, checksum );
 }
 
-void FtpFile::sftpWriteFailure( QString error, int /*lags*/ ) {
+void FtpFile::sftpWriteFailure( const QString &error, int /*lags*/ ) {
 	setProgress( -1 );
-	saveFailure( error, 0 );
+	saveFailure( error, false );
 }
 
 void FtpFile::sftpWriteProgress( int progress ) {

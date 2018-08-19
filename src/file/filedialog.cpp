@@ -127,7 +127,7 @@ FileDialog::FileDialog( QWidget *parent, bool saveAs ) :
 	Editor *editor = gMainWindow->getCurrentEditor();
 
 	if ( nullptr != editor ) {
-		Location currentLoc = editor->getLocation();
+		const Location &currentLoc = editor->getLocation();
 		if ( currentLoc.isNull() ) {
 			showLocation( mLastLocation );
 		} else {
@@ -228,7 +228,7 @@ void FileDialog::populateFolderTree() {
 
 void FileDialog::populateRemoteServers() {
 	// Take an inventory of the servers in the list now...
-	QMap< SshHost *, bool > currentList;
+	QHash< SshHost *, bool > currentList;
 	for ( int i = 0; i < mRemoteServersBranch->childCount(); i++ ) {
 		currentList.insert( mRemoteServersBranch->child( i )->getData< SshHost * >(), false );
 	}
@@ -260,7 +260,7 @@ void FileDialog::populateRemoteServers() {
 }
 
 void FileDialog::serverClicked( CustomTreeEntry *entry ) {
-	SshHost *host = entry->getData< SshHost * >();
+	auto *host = entry->getData< SshHost * >();
 	showLocation( host->getDefaultLocation() );
 }
 
@@ -341,7 +341,7 @@ void FileDialog::locationClicked( CustomTreeEntry *entry ) {
 }
 
 void FileDialog::locationExpanded( CustomTreeEntry *entry ) {
-	Location *location = entry->getData< Location * >();
+	auto *location = entry->getData< Location * >();
 
 	mLoadingLocations.insert( location->getPath(), entry );
 	location->asyncGetChildren( false );
@@ -403,7 +403,7 @@ void FileDialog::folderChildrenLoaded( const QList< Location > &children, const 
 
 			QList< QStandardItem * > row;
 
-			QStandardItem *item = new QStandardItem();
+			auto *item = new QStandardItem();
 			item->setIcon( childLocation.getIcon() );
 			item->setText( name );
 			item->setData( QVariant::fromValue< Location >( childLocation ), DATA_ROLE );
@@ -416,7 +416,7 @@ void FileDialog::folderChildrenLoaded( const QList< Location > &children, const 
 			item->setData( QVariant( size ), SORT_ROLE );
 			row.append( item );
 
-			QDateTime lastModified = childLocation.getLastModified();
+			const QDateTime &lastModified = childLocation.getLastModified();
 			item = new QStandardItem();
 			item->setText( lastModified.toString() );
 			item->setData( QVariant( lastModified ), SORT_ROLE );
@@ -576,7 +576,7 @@ void FileDialog::fileDoubleClicked( QModelIndex index ) {
 	QStandardItem *item = mFileListModel->itemFromIndex( index );
 	int row = item->row();
 	QStandardItem *primaryItem = mFileListModel->item( row, 0 );
-	Location location = primaryItem->data( DATA_ROLE ).value< Location >();
+	auto location = primaryItem->data( DATA_ROLE ).value< Location >();
 
 	if ( location.isDirectory() ) {
 		showLocation( location );
@@ -682,7 +682,7 @@ void FileDialog::updateFavorites() {
 	QMap< QString, bool > currentList;
 	for ( int i = 0; i < mFavoriteLocationsBranch->childCount(); i++ ) {
 		CustomTreeEntry *child = mFavoriteLocationsBranch->child( i );
-		QString *path = child->getData< QString * >();
+		auto *path = child->getData< QString * >();
 		if ( ! path ) {
 			continue;
 		}
@@ -713,7 +713,7 @@ void FileDialog::updateFavorites() {
 	// Remove list entries that don't belong
 	for ( int i = 1; i < mFavoriteLocationsBranch->childCount(); i++ ) {
 		CustomTreeEntry *child = mFavoriteLocationsBranch->child( i );
-		QString *path = child->getData< QString * >();
+		auto *path = child->getData< QString * >();
 		if ( ! path ) {
 			continue;
 		}
@@ -728,7 +728,7 @@ void FileDialog::favoriteMenu( CustomTreeEntry *entry, QPoint pos ) {
 	pos = entry->mapToGlobal( pos );
 
 	QString path = *( entry->getData< QString * >() );
-	QMenu *contextMenu = new QMenu( this );
+	auto *contextMenu = new QMenu( this );
 	QAction *deleteAction = contextMenu->addAction( tr( "Delete Favorite" ) );
 	QAction *selectedAction = contextMenu->exec( pos );
 
@@ -793,7 +793,7 @@ void FileDialog::populateFilterList() {
 
 bool FileDialog::eventFilter( QObject *target, QEvent *event ) {
 	if ( event->type() == QEvent::KeyPress ) {
-		QKeyEvent *keyEvent = static_cast< QKeyEvent * >( event );
+		auto *keyEvent = dynamic_cast< QKeyEvent * >( event );
 		if ( keyEvent->key() == Qt::Key_Up && ( keyEvent->modifiers() & UPDIR_MODIFIER ) ) {
 			upLevel();
 			return true;

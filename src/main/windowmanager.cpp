@@ -12,8 +12,15 @@ WindowManager *gWindowManager = nullptr;
 WindowManager::WindowManager( QWidget *parent ) :
 	QWidget( parent ) {
 	mEditorSelectionLocked = false;
-	mParent = reinterpret_cast< MainWindow * >( parent );
+	mParent = dynamic_cast< MainWindow * >( parent );
 	mCurrentEditorPanel = nullptr;
+	mSearchBarWrapper = nullptr;
+	mSearchBar = nullptr;
+	mRegExpTesterWrapper = nullptr;
+	mRegExpTester = nullptr;
+	mSearchResultsWrapper = nullptr;
+	mSearchResults = nullptr;
+
 	gWindowManager = this;
 
 	// Create a root editor stack
@@ -295,7 +302,7 @@ EditorPanel *WindowManager::getLastPanel() {
 	return panel;
 }
 
-void WindowManager::searchInFiles( const QList< BaseFile * > files,
+void WindowManager::searchInFiles( const QList< BaseFile * > &files,
                                    const QString &text,
                                    bool caseSensitive,
                                    bool useRegExp,

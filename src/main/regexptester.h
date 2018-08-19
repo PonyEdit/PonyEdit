@@ -1,6 +1,7 @@
 #ifndef REGEXPTESTER_H
 #define REGEXPTESTER_H
 
+#include <QVector>
 #include <QWidget>
 
 namespace Ui {
@@ -14,7 +15,7 @@ class RegExpTester : public QWidget {
 		explicit RegExpTester( QWidget *parent = nullptr );
 		~RegExpTester();
 
-		void takeFocus( QString initialText );
+		void takeFocus( const QString &initialText );
 
 	private slots:
 		void updateResult();
@@ -23,6 +24,7 @@ class RegExpTester : public QWidget {
 	private:
 		Ui::RegExpTester *ui;
 		bool mUpdating;
+		QVector< quint32 > mCaptureColors;
 };
 
 #endif  // REGEXPTESTER_H

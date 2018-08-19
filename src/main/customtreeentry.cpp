@@ -1,18 +1,19 @@
 #include <QDebug>
 #include <QStylePainter>
+#include <utility>
 
 #include "customtreeentry.h"
 #include "customtreemodel.h"
 #include "customtreewidget.h"
 
-CustomTreeEntry::CustomTreeEntry( const QIcon &icon, const QString &label ) :
+CustomTreeEntry::CustomTreeEntry( QIcon icon, QString label ) :
 	mModel( nullptr ),
 	mParent( nullptr ),
 	mIndex( 0 ),
 	mExpandable( false ),
 	mDelayedLoad( false ),
-	mStaticIcon( icon ),
-	mStaticLabel( label ),
+	mStaticIcon( std::move( icon ) ),
+	mStaticLabel( std::move( label ) ),
 	mDataDeleteProc( nullptr ),
 	mData( nullptr ),
 	mHover( false ) {}
@@ -184,13 +185,13 @@ void CustomTreeEntry::addGutterIcon( int id, bool hover, const QIcon &icon, cons
 }
 
 void CustomTreeEntry::drawGutterIcons( QPainter *painter, QRect *area ) {
-	for ( QList< GutterIcon >::iterator i = mGutterIcons.begin(); i != mGutterIcons.end(); ++i ) {
-		if ( isHover() || ! ( *i ).hover ) {
+	for ( auto &mGutterIcon : mGutterIcons ) {
+		if ( isHover() || ! mGutterIcon.hover ) {
 			area->setRight( area->right() - ( area->height() + 2 ) );
-			( *i ).visibleArea.setRect( area->width() + 1, 0, area->height(), area->height() );
-			( *i ).icon.paint( painter, area->right() + 1, area->top(), area->height(), area->height() );
+			mGutterIcon.visibleArea.setRect( area->width() + 1, 0, area->height(), area->height() );
+			mGutterIcon.icon.paint( painter, area->right() + 1, area->top(), area->height(), area->height() );
 		} else {
-			( *i ).visibleArea.setRect( -1, -1, 0, 0 );
+			mGutterIcon.visibleArea.setRect( -1, -1, 0, 0 );
 		}
 	}
 }

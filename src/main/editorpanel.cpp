@@ -147,12 +147,12 @@ void EditorPanel::split( Qt::Orientation orientation ) {
 	setupBorder();
 
 	// Left/Top editor stack
-	EditorPanel *stackA = new EditorPanel( mSplitWidget, this, mEditorStack );
+	auto *stackA = new EditorPanel( mSplitWidget, this, mEditorStack );
 	mChildPanels.append( stackA );
 	mSplitWidget->addWidget( stackA );
 
 	// Right/Bottom editor stack
-	EditorPanel *stackB = new EditorPanel( mSplitWidget, this );
+	auto *stackB = new EditorPanel( mSplitWidget, this );
 	mChildPanels.append( stackB );
 	mSplitWidget->addWidget( stackB );
 

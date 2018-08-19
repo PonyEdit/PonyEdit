@@ -9,7 +9,7 @@ class XferRequest : public QObject {
 	Q_OBJECT
 
 	public:
-		XferRequest( bool sudo, const QByteArray &filename, const Callback &callback );
+		XferRequest( bool sudo, QByteArray filename, const Callback &callback );
 
 		inline bool isUploadRequest() const {
 			return mUpload;

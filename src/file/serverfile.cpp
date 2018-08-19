@@ -1,6 +1,7 @@
 #include <QCryptographicHash>
 #include <QDebug>
 #include <QMessageBox>
+#include <utility>
 
 #include "file/openfilemanager.h"
 #include "file/serverfile.h"
@@ -43,7 +44,7 @@ BaseFile *ServerFile::newFile( const QString &content ) {
 	return this;
 }
 
-void ServerFile::createSuccess( QVariantMap /* response */ ) {
+void ServerFile::createSuccess( const QVariantMap & /* response */ ) {
 	SSHLOG_TRACE( mHost ) << "Remote file creation successful.";
 
 	open();
@@ -86,11 +87,11 @@ void ServerFile::serverOpenSuccess( QVariantMap results ) {
 		return;
 	}
 
-	mServerOpenResults = results;
+	mServerOpenResults = std::move( results );
 	finalizeFileOpen();
 }
 
-void ServerFile::downloadSuccess( QVariantMap result ) {
+void ServerFile::downloadSuccess( const QVariantMap &result ) {
 	if ( getOpenStatus() != BaseFile::Loading ) {
 		// Something went wrong while asking the server to open the file, but d/l worked :-/
 		clearTempOpenData();
@@ -145,7 +146,7 @@ void ServerFile::reconnect() {
 	                                    SLOT( serverReconnectFailure( QString, int ) ) ) );
 }
 
-void ServerFile::serverReconnectSuccess( QVariantMap results ) {
+void ServerFile::serverReconnectSuccess( const QVariantMap &results ) {
 	// Great! Make sure the returned checksum matches what we expect the file to contain.
 	if ( results.value( "checksum" ).toByteArray() != mLastSaveChecksum ) {
 		// Going to have to fully re-upload the file.
@@ -157,7 +158,7 @@ void ServerFile::serverReconnectSuccess( QVariantMap results ) {
 	}
 }
 
-void ServerFile::serverReconnectFailure( QString error, int flags ) {
+void ServerFile::serverReconnectFailure( const QString &error, int flags ) {
 	SSHLOG_ERROR( mHost ) << "Failed to reconnect to remote server for file" << mLocation.getLabel();
 
 	// TODO: Special case permission errors into SUDO system.
@@ -187,7 +188,7 @@ void ServerFile::handleDocumentChange( int position, int removeChars, const QStr
 
 	BaseFile::handleDocumentChange( position, removeChars, insert );
 
-	Change *change = new Change();
+	auto *change = new Change();
 	change->revision = mRevision;
 	change->position = position;
 	change->remove = removeChars;
@@ -221,7 +222,7 @@ void ServerFile::pumpChangeQueue() {
 	}
 }
 
-void ServerFile::changePushFailure( QString error, int /*flags*/ ) {
+void ServerFile::changePushFailure( const QString &error, int /*flags*/ ) {
 	SSHLOG_ERROR( mHost ) << "Server push error for file" << mLocation.getLabel() << ": " << error;
 }
 
@@ -242,7 +243,7 @@ void ServerFile::save() {
 	                                    SLOT( serverSaveFailure( QString, int ) ) ) );
 }
 
-void ServerFile::serverSaveSuccess( QVariantMap results ) {
+void ServerFile::serverSaveSuccess( const QVariantMap &results ) {
 	int revision = results.value( "revision" ).toInt();
 	int undoLength = results.value( "undoLength" ).toInt();
 	QByteArray checksum = results.value( "checksum" ).toByteArray();
@@ -250,7 +251,7 @@ void ServerFile::serverSaveSuccess( QVariantMap results ) {
 	savedRevision( revision, undoLength, checksum );
 }
 
-void ServerFile::serverSaveFailure( QString error, int flags ) {
+void ServerFile::serverSaveFailure( const QString &error, int flags ) {
 	saveFailure( error, flags & ServerRequest::PermissionError );
 }
 

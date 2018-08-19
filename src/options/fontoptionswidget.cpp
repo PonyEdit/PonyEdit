@@ -32,7 +32,7 @@ FontOptionsWidget::FontOptionsWidget( QWidget *parent ) :
 	// Populate standard sizes list
 	//
 
-	QList< int > sizes = mFontDatabase.standardSizes();
+	QList< int > sizes = QFontDatabase::standardSizes();
 	foreach ( int size, sizes ) {
 		ui->sizeCombo->addItem( QString::number( size ) );
 	}

@@ -32,10 +32,9 @@ bool PonyEdit::sApplicationExiting = false;
 PonyEdit::PonyEdit( int argc, char **argv ) :
 	QApplication( argc, argv ),
 	mIsRunning( false ),
-	mMemoryLock(),
 	mLocalServer( nullptr ),
-	mDialogRethreader( nullptr ),
-	mPositionalArguments() {
+	mDialogRethreader( nullptr ) {
+
 	// Parse command line arguments
 	QCommandLineParser parser;
 	parser.setApplicationDescription( "PonyEdit: The fastest remote text editor under the sun. Or over it." );
@@ -139,7 +138,7 @@ bool PonyEdit::event( QEvent *e ) {
 			return false;
 		}
 
-		QFileOpenEvent *event = static_cast< QFileOpenEvent * >( e );
+		auto *event = dynamic_cast< QFileOpenEvent * >( e );
 
 		QString name = event->file();
 		if ( name.trimmed().isNull() ) {

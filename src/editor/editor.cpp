@@ -13,8 +13,7 @@
 #include "syntax/syntaxdefmanager.h"
 #include "syntax/syntaxhighlighter.h"
 
-Editor::Editor( BaseFile *file ) :
-	QStackedWidget() {
+Editor::Editor( BaseFile *file ) {
 	mReadOnlyWarning = nullptr;
 	mFirstOpen = true;
 
@@ -27,7 +26,7 @@ Editor::Editor( BaseFile *file ) :
 	addWidget( mEditorPane );
 
 	mWorkingPane = new QWidget();
-	QGridLayout *layout = new QGridLayout( mWorkingPane );
+	auto *layout = new QGridLayout( mWorkingPane );
 	layout->addItem( new QSpacerItem( 0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding ), 0, 0, 1, 4 );
 	layout->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding ), 1, 0 );
 	mWorkingIcon = new QLabel();
@@ -274,24 +273,25 @@ int Editor::replace( const QString &findText,
 
 		editor.endEditBlock();
 		return replacements;
-	} else {
-		// Verify the selected text matches the search text, and replace
-		bool match = false;
-		QString selectedText = mEditor->textCursor().selectedText();
-		if ( useRegex ) {
-			QRegExp re( findText, caseSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive );
-			match = re.exactMatch( selectedText );
-		} else if ( QString::compare( findText,
-		                              selectedText,
-		                              caseSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive ) == 0 ) {
-			match = true;
-		}
-
-		if ( match ) {
-			mEditor->textCursor().insertText( replaceText );
-			return 1;
-		}
 	}
+
+	// Verify the selected text matches the search text, and replace
+	bool match = false;
+	QString selectedText = mEditor->textCursor().selectedText();
+	if ( useRegex ) {
+		QRegExp re( findText, caseSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive );
+		match = re.exactMatch( selectedText );
+	} else if ( QString::compare( findText,
+	                              selectedText,
+	                              caseSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive ) == 0 ) {
+		match = true;
+	}
+
+	if ( match ) {
+		mEditor->textCursor().insertText( replaceText );
+		return 1;
+	}
+
 	return 0;
 }
 
@@ -350,9 +350,8 @@ void Editor::setReadOnly( bool readOnly ) {
 }
 
 void Editor::showReadOnlyWarning() {
-	if ( mReadOnlyWarning ) {
-		delete mReadOnlyWarning;
-	}
+	delete mReadOnlyWarning;
+
 
 	mReadOnlyWarning = new EditorWarningBar( this,
 	                                         QPixmap( ":/icons/warning.png" ),

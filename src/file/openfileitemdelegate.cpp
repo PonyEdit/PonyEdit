@@ -19,8 +19,8 @@ OpenFileItemDelegate::OpenFileItemDelegate( OpenFileTreeView *parent ) :
 void OpenFileItemDelegate::paint( QPainter *painter,
                                   const QStyleOptionViewItem &option,
                                   const QModelIndex &index ) const {
-	Location location = index.data( OpenFileTreeModel::LocationRole ).value< Location >();
-	BaseFile *file = reinterpret_cast< BaseFile * >( index.data( OpenFileTreeModel::FileRole ).value< void * >() );
+	auto location = index.data( OpenFileTreeModel::LocationRole ).value< Location >();
+	auto *file = index.data( OpenFileTreeModel::FileRole ).value< BaseFile * >();
 	OpenFileTreeModel::Level level = static_cast< OpenFileTreeModel::Level >( index.data( OpenFileTreeModel::TypeRole ).toInt() );
 	QString label = index.data( OpenFileTreeModel::LabelRole ).toString();
 

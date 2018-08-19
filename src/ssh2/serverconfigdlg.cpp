@@ -12,7 +12,7 @@ ServerConfigDlg::ServerConfigDlg( QWidget *parent ) :
 
 	mConfigWidget = new ServerConfigWidget;
 
-	QGridLayout *layout = new QGridLayout;
+	auto *layout = new QGridLayout;
 	layout->setContentsMargins( 0, 0, 0, 0 );
 	layout->addWidget( mConfigWidget );
 

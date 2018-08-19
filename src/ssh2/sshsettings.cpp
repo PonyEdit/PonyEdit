@@ -8,8 +8,7 @@
 
 #include "sshsettings.h"
 
-SshSettings::SshSettings() :
-	mConfig() {
+SshSettings::SshSettings() {
 	QFile file( QStandardPaths::writableLocation( QStandardPaths::HomeLocation ) + "/.ssh/config" );
 
 	if ( ! file.open( QFile::ReadOnly | QFile::Text ) ) {

@@ -18,8 +18,8 @@ class NewFolderDialog : public QDialog {
 		virtual void accept();
 
 	private slots:
-		void createSuccess( QVariantMap result );
-		void createFailure( QString error, int flags );
+		void createSuccess( const QVariantMap &result );
+		void createFailure( const QString &error, int flags );
 
 	private:
 		void attempt( bool sudo );

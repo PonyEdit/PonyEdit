@@ -46,6 +46,12 @@ MainWindow::MainWindow( QWidget *parent )
 	: QMainWindow( parent ) {
 	mUnsavedChangesDialog = nullptr;
 	mCurrentSyntaxMenuItem = nullptr;
+	mRecentFilesMenu = nullptr;
+	mQuickListMenuItem = nullptr;
+	mTabbedListMenuItem = nullptr;
+	mSyntaxMenu = nullptr;
+	mWasMaximized = false;
+
 
 	setWindowTitle( tr( "PonyEdit" ) );
 
@@ -150,7 +156,7 @@ void MainWindow::createToolbar() {
 	registerContextMenuItem( toolbar );
 	toolbar->setObjectName( "File Toolbar" );
 
-	QWidget *spacer = new QWidget();
+	auto *spacer = new QWidget();
 	spacer->setSizePolicy( QSizePolicy::Maximum, QSizePolicy::Expanding );
 	toolbar->addWidget( spacer );
 
@@ -220,7 +226,7 @@ void MainWindow::openFile() {
 }
 
 void MainWindow::openSingleFile() {
-	QAction *action = static_cast< QAction * >( sender() );
+	auto *action = dynamic_cast< QAction * >( sender() );
 	if ( action ) {
 		openSingleFile( mRecentFiles[ action->data().toInt() ] );
 	}
@@ -337,7 +343,7 @@ void MainWindow::fileSelected( BaseFile *file ) {
 }
 
 void MainWindow::updateTitle() {
-	BaseFile *file = static_cast< BaseFile * >( sender() );
+	auto *file = dynamic_cast< BaseFile * >( sender() );
 	if ( file->isClosed() ) {
 		setWindowTitle( "PonyEdit" );
 		return;
@@ -758,7 +764,7 @@ void MainWindow::createViewMenu() {
 	QStringList categories = gSyntaxDefManager->getDefinitionCategories();
 	categories.sort();
 	foreach ( const QString &category, categories ) {
-		QMenu *syntaxSubMenu = new QMenu( category, viewMenu );
+		auto *syntaxSubMenu = new QMenu( category, viewMenu );
 		mSyntaxMenu->addMenu( syntaxSubMenu );
 
 		QStringList syntaxes = gSyntaxDefManager->getSyntaxesInCategory( category );
@@ -861,7 +867,7 @@ void MainWindow::createMacDockMenu() {
 #ifndef Q_OS_MAC
 	return;
 #else
-	QMenu *dockMenu = new QMenu( this );
+	auto *dockMenu = new QMenu( this );
 
 	dockMenu->addAction( tr( "New File" ), this, SLOT( newFile() ) );
 
@@ -871,7 +877,7 @@ void MainWindow::createMacDockMenu() {
 
 void MainWindow::createShortcuts() {
 #ifdef Q_OS_MAC
-	QAction *deleteLine = new QAction( this );
+	auto *deleteLine = new QAction( this );
 
 	deleteLine->setShortcut( QKeySequence( Qt::CTRL + Qt::Key_Backspace ) );
 	connect( deleteLine, SIGNAL( triggered() ), this, SLOT( deleteLine() ) );
@@ -880,11 +886,11 @@ void MainWindow::createShortcuts() {
 #endif
 }
 
-void MainWindow::showErrorMessage( QString error ) {
+void MainWindow::showErrorMessage( const QString &error ) {
 	QMessageBox::critical( this, "Error", error );
 }
 
-void MainWindow::showStatusMessage( QString message ) {
+void MainWindow::showStatusMessage( const QString &message ) {
 	mStatusLine->setText( message );
 }
 
@@ -966,7 +972,7 @@ void MainWindow::nextStartupPrompt() {
 
 void MainWindow::syntaxMenuOptionClicked() {
 	QObject *eventSource = QObject::sender();
-	QAction *action = static_cast< QAction * >( eventSource );
+	auto *action = dynamic_cast< QAction * >( eventSource );
 	QString syntaxName = action->data().toString();
 
 	Editor *currentEditor = getCurrentEditor();
@@ -1016,7 +1022,7 @@ void MainWindow::updateRecentFilesMenu() {
 	}
 }
 
-void MainWindow::addRecentFile( Location loc ) {
+void MainWindow::addRecentFile( const Location &loc ) {
 	if ( loc.isNull() ) {
 		return;
 	}
@@ -1064,7 +1070,7 @@ void MainWindow::dropEvent( QDropEvent *event ) {
 }
 
 void MainWindow::showHTMLPreview() {
-	HTMLPreview *htmlPreview = new HTMLPreview( this );
+	auto *htmlPreview = new HTMLPreview( this );
 	QDockWidget *htmlWrapper = new QDockWidget( "HTML Preview", nullptr );
 
 	connect( htmlWrapper, SIGNAL( visibilityChanged( bool ) ), this, SLOT( closeHTMLPreview( bool ) ) );
@@ -1084,7 +1090,7 @@ void MainWindow::closeHTMLPreview( bool visible ) {
 	}
 
 	QObject *eventSource = QObject::sender();
-	QDockWidget *htmlWrapper = static_cast< QDockWidget * >( eventSource );
+	auto *htmlWrapper = dynamic_cast< QDockWidget * >( eventSource );
 
 	// HTMLPreview* htmlPreview = (HTMLPreview*)htmlWrapper->widget();
 
@@ -1121,7 +1127,7 @@ void MainWindow::print() {
 
 	QPrinter printer;
 
-	QPrintDialog *dialog = new QPrintDialog( &printer, this );
+	auto *dialog = new QPrintDialog( &printer, this );
 	dialog->setWindowTitle( tr( "Print Document" ) );
 
 	if ( dialog->exec() != QDialog::Accepted ) {
@@ -1150,7 +1156,7 @@ void MainWindow::toggleFullScreen() {
 
 // Override for QMainWindow::createPopupMenu. Removes menu entries for things I don't want shown.
 QMenu *MainWindow::createPopupMenu() {
-	QMenu *menu = new QMenu( this );
+	auto *menu = new QMenu( this );
 
 	foreach ( QDockWidget *dockWidget, mMenuControlledDockWidgets ) {
 		menu->addAction( dockWidget->toggleViewAction() );

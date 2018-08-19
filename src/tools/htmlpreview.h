@@ -16,7 +16,7 @@ class HTMLPreview : public QWidget {
 		explicit HTMLPreview( MainWindow *parent = nullptr );
 		~HTMLPreview();
 
-		void displayHTML( QString html );
+		void displayHTML( const QString &html );
 		void displayURL();
 
 	public slots:

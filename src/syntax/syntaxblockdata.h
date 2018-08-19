@@ -7,7 +7,7 @@
 
 class SyntaxBlockData : public QTextBlockUserData {
 	public:
-		explicit SyntaxBlockData( const QStack< ContextDefLink > stack );
+		explicit SyntaxBlockData( const QStack< ContextDefLink > &stack );
 
 		QStack< ContextDefLink > mStack;
 };

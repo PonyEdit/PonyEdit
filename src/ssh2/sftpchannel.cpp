@@ -14,7 +14,6 @@ SFTPChannel::SFTPChannel( SshHost *host ) :
 	mOperationHandle( nullptr ),
 	mCurrentRequest( nullptr ),
 	mRequestState(),
-	mResult(),
 	mOperationSize( 0 ),
 	mOperationCursor( 0 ) {}
 
@@ -41,17 +40,16 @@ bool SFTPChannel::handleOpening() {
 		int rc = libssh2_session_last_errno( mSession->sessionHandle() );
 		if ( rc == LIBSSH2_ERROR_EAGAIN ) {
 			return true;
-		} else {
-			if ( rc == LIBSSH2_ERROR_CHANNEL_FAILURE ) {
-				// Reassign this channel elsewhere
-				setSession( nullptr );
-			} else {
-				criticalError( tr( "Failed to open a channel %1: %2" ).arg( reinterpret_cast< unsigned long >( mHandle ),
-				                                                            0,
-				                                                            16 ).arg( rc ) );
-			}
-			return false;
 		}
+		if ( rc == LIBSSH2_ERROR_CHANNEL_FAILURE ) {
+			// Reassign this channel elsewhere
+			setSession( nullptr );
+		} else {
+			criticalError( tr( "Failed to open a channel %1: %2" ).arg( reinterpret_cast< unsigned long >( mHandle ),
+			                                                            0,
+			                                                            16 ).arg( rc ) );
+		}
+		return false;
 	}
 
 	setStatus( Open );
@@ -80,7 +78,7 @@ bool SFTPChannel::mainUpdate() {
 	}
 
 	// Handle the current request...
-	bool continueRequest;
+	bool continueRequest = false;
 	switch ( mCurrentRequest->getType() ) {
 		case SFTPRequest::Ls:
 			continueRequest = updateLs();
@@ -97,9 +95,6 @@ bool SFTPChannel::mainUpdate() {
 		case SFTPRequest::MkDir:
 			continueRequest = updateMkDir();
 			break;
-
-		default:
-			continueRequest = false;
 	}
 
 	// If the request is finished, delete it.
@@ -135,7 +130,8 @@ bool SFTPChannel::updateLs() {
 		rc = libssh2_sftp_readdir( mOperationHandle, buffer, sizeof( buffer ), &attrs );
 		if ( rc == LIBSSH2_ERROR_EAGAIN ) {
 			return true;    // Try again
-		} else if ( rc == 0 ) {
+		}
+		if ( rc == 0 ) {
 			mRequestState = Finishing;
 		} else if ( rc < 0 ) {
 			criticalError( tr( "Error while reading remote directory: %1" ).arg( rc ) );
@@ -163,7 +159,8 @@ bool SFTPChannel::updateLs() {
 		rc = libssh2_sftp_closedir( mOperationHandle );
 		if ( rc == LIBSSH2_ERROR_EAGAIN ) {
 			return true;
-		} else if ( rc < 0 ) {
+		}
+		if ( rc < 0 ) {
 			criticalError( tr( "Failed to cleanly close SFTP directory: %1" ).arg( rc ) );
 			return false;
 		}
@@ -183,7 +180,8 @@ bool SFTPChannel::updateMkDir() {
 	int rc = libssh2_sftp_mkdir_ex( mHandle, path, path.length(), 0644 );
 	if ( rc == LIBSSH2_ERROR_EAGAIN ) {
 		return true;    // Try again.
-	} else if ( rc < 0 ) {
+	}
+	if ( rc < 0 ) {
 		mCurrentRequest->triggerFailure( tr( "Failed to create remote directory: %1" ).arg( rc ), 0 );
 	} else {
 		mCurrentRequest->triggerSuccess( QVariantMap() );
@@ -217,7 +215,8 @@ bool SFTPChannel::updateReadFile() {
 		int rc = libssh2_sftp_fstat_ex( mOperationHandle, &attr, 0 );
 		if ( rc == LIBSSH2_ERROR_EAGAIN ) {
 			return true;
-		} else if ( rc < 0 ) {
+		}
+		if ( rc < 0 ) {
 			criticalError( tr( "Failed to stat remote file: %1" ).arg( rc ) );
 			return false;
 		}
@@ -235,7 +234,8 @@ bool SFTPChannel::updateReadFile() {
 		rc = libssh2_sftp_read( mOperationHandle, buffer, sizeof( buffer ) );
 		if ( rc == LIBSSH2_ERROR_EAGAIN ) {
 			return true;    // Try again
-		} else if ( rc == 0 ) {
+		}
+		if ( rc == 0 ) {
 			mRequestState = Finishing;
 		} else if ( rc < 0 ) {
 			criticalError( tr( "Error while reading file contents: %1" ).arg( rc ) );
@@ -251,7 +251,8 @@ bool SFTPChannel::updateReadFile() {
 		rc = libssh2_sftp_close_handle( mOperationHandle );
 		if ( rc == LIBSSH2_ERROR_EAGAIN ) {
 			return true;
-		} else if ( rc < 0 ) {
+		}
+		if ( rc < 0 ) {
 			criticalError( tr( "Failed to cleanly close SFTP file: %1" ).arg( rc ) );
 			return false;
 		}
@@ -296,13 +297,15 @@ bool SFTPChannel::updateWriteFile() {
 		                         content.length() - mOperationCursor );
 		if ( rc == LIBSSH2_ERROR_EAGAIN ) {
 			return true;    // Try again
-		} else if ( rc < 0 ) {
+		}
+		if ( rc < 0 ) {
 			criticalError( tr( "Error while writing file contents: %1" ).arg( rc ) );
 			return false;
-		} else {// Wrote some data
-			mOperationCursor += rc;
-			mCurrentRequest->triggerProgress( ( mOperationCursor * 100 ) / content.length() );
 		}
+
+		// Wrote some data
+		mOperationCursor += rc;
+		mCurrentRequest->triggerProgress( ( mOperationCursor * 100 ) / content.length() );
 
 		if ( mOperationCursor >= content.length() ) {
 			mRequestState = Finishing;
@@ -313,7 +316,8 @@ bool SFTPChannel::updateWriteFile() {
 		rc = libssh2_sftp_close_handle( mOperationHandle );
 		if ( rc == LIBSSH2_ERROR_EAGAIN ) {
 			return true;
-		} else if ( rc < 0 ) {
+		}
+		if ( rc < 0 ) {
 			criticalError( tr( "Failed to cleanly close SFTP file: %1" ).arg( rc ) );
 			return false;
 		}

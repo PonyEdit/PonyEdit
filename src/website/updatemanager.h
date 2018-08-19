@@ -26,7 +26,7 @@ class UpdateManager : public QObject {
 
 	signals:
 	public slots:
-		void startDownload( QString file );
+		void startDownload( const QString &file );
 		void downloadProgress( qint64 bytesReceived, qint64 bytesTotal );
 		void downloadFinished();
 		void downloadReadyRead();

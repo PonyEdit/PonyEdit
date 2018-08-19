@@ -21,22 +21,16 @@ SyntaxRule::SyntaxRule( SyntaxRule *parent, const QString &name, const QXmlAttri
 	mLookAhead( false ),
 	mFirstNonSpace( false ),
 	mColumn( -1 ),
-	mCharacterA(),
-	mCharacterB(),
 	mString(),
 	mCaseSensitivity( Qt::CaseInsensitive ),
 	mDynamic( false ),
 	mMinimal( false ),
 	mIncludeAttrib( false ),
 	mLinked( false ),
-	mChildRules(),
 	mAttributeLink( nullptr ),
-	mRegExp(),
 	mRegExpLineStart( false ),
 	mKeywordLink( nullptr ),
-	mContextLink(),
-	mDynamicCharIndex( -1 ),
-	mDynamicStringSlots() {
+	mDynamicCharIndex( -1 ) {
 	if ( ! sTypeMapInitialized ) {
 		sTypeMap = new QMap< QString, Type >();
 		sTypeMap->insert( "detectchar", DetectChar );
@@ -95,7 +89,7 @@ SyntaxRule::SyntaxRule( SyntaxRule *parent, const QString &name, const QXmlAttri
 }
 
 SyntaxRule::SyntaxRule( SyntaxRule *parent,
-                        QSharedPointer< SyntaxRule > other,
+                        const QSharedPointer< SyntaxRule > &other,
                         bool duplicateChildren,
                         bool maintainLinks ) :
 	mDefinition( nullptr ),
@@ -118,14 +112,10 @@ SyntaxRule::SyntaxRule( SyntaxRule *parent,
 	mMinimal( other->mMinimal ),
 	mIncludeAttrib( other->mIncludeAttrib ),
 	mLinked( false ),
-	mChildRules(),
 	mAttributeLink( nullptr ),
-	mRegExp(),
 	mRegExpLineStart( false ),
 	mKeywordLink( nullptr ),
-	mContextLink(),
-	mDynamicCharIndex( -1 ),
-	mDynamicStringSlots() {
+	mDynamicCharIndex( -1 ) {
 
 
 	if ( maintainLinks ) {
@@ -150,9 +140,9 @@ SyntaxRule::SyntaxRule( SyntaxRule *parent,
 	}
 }
 
-SyntaxRule::~SyntaxRule() {}
+SyntaxRule::~SyntaxRule() = default;
 
-void SyntaxRule::addChildRule( QSharedPointer< SyntaxRule > rule ) {
+void SyntaxRule::addChildRule( const QSharedPointer< SyntaxRule > &rule ) {
 	mChildRules.append( rule );
 }
 

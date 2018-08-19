@@ -11,7 +11,7 @@
 
 SearchResults::SearchResults( QWidget *parent ) :
 	QWidget( parent ) {
-	QVBoxLayout *mainLayout = new QVBoxLayout( this );
+	auto *mainLayout = new QVBoxLayout( this );
 	mainLayout->setMargin( 0 );
 
 	mModel = new SearchResultModel( this );
@@ -23,7 +23,7 @@ SearchResults::SearchResults( QWidget *parent ) :
 	mTreeView->setHeaderHidden( true );
 	mainLayout->addWidget( mTreeView );
 
-	QHBoxLayout *childLayout = new QHBoxLayout();
+	auto *childLayout = new QHBoxLayout();
 	mainLayout->addLayout( childLayout );
 	childLayout->setMargin( 5 );
 

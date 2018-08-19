@@ -1,12 +1,14 @@
 #include <QDebug>
 #include <QRegExp>
+#include <utility>
+
 #include "sftprequest.h"
 
-SFTPRequest::SFTPRequest( SFTPRequest::Type type, const Callback &callback ) :
+SFTPRequest::SFTPRequest( SFTPRequest::Type type, Callback callback ) :
 	mType( type ),
 	mPath( "" ),
 	mIncludeHidden( false ),
-	mCallback( callback ),
+	mCallback( std::move( callback ) ),
 	mContent(),
 	mRevision( 0 ),
 	mUndoLength( 0 ) {}

@@ -14,8 +14,8 @@ StringTrie::StringTrie() {
 
 void StringTrie::addWord( const QString &word ) {
 	Node *scan = mRoot;
-	for ( int i = 0; i < word.length(); i++ ) {
-		int c = word.at( i ).toLatin1();
+	for ( auto i : word ) {
+		int c = i.toLatin1();
 		if ( scan->children[ c ] == nullptr ) {
 			scan->children[ c ] = allocateNode();
 		}
@@ -26,8 +26,8 @@ void StringTrie::addWord( const QString &word ) {
 
 bool StringTrie::containsWord( const QString &word ) {
 	Node *scan = mRoot;
-	for ( int i = 0; i < word.length(); i++ ) {
-		int c = word.at( i ).toLatin1();
+	for ( auto i : word ) {
+		int c = i.toLatin1();
 		if ( scan->children[ c ] == nullptr ) {
 			return false;
 		}
@@ -39,7 +39,7 @@ bool StringTrie::containsWord( const QString &word ) {
 StringTrie::Node *StringTrie::allocateNode() {
 	if ( sNodeHeapCursor >= NODE_HEAP_SIZE ) {
 		sNodeHeapCursor = 0;
-		QVector< Node > *newVector = new QVector< Node >( NODE_HEAP_SIZE );
+		auto *newVector = new QVector< Node >( NODE_HEAP_SIZE );
 		memset( newVector->data(), 0, newVector->size() * sizeof( Node ) );
 		sNodeHeaps.append( newVector );
 		sCurrentNodeHeap = newVector;

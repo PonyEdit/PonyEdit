@@ -5,16 +5,6 @@
 #include "regexptester.h"
 #include "ui_regexptester.h"
 
-quint32 captureColors[] = {
-	0xFFD56B,
-	0x8C9DFF,
-	0xFF8C8C,
-	0x68FFF4,
-	0xEA84FF,
-	0x90FF8E,
-	0xFFAB96
-};
-
 RegExpTester::RegExpTester( QWidget *parent ) :
 	QWidget( parent ),
 	ui( new Ui::RegExpTester ) {
@@ -33,6 +23,14 @@ RegExpTester::RegExpTester( QWidget *parent ) :
 
 	mUpdating = false;
 
+	mCaptureColors << 0xFFD56B
+	               << 0x8C9DFF
+	               << 0xFF8C8C
+	               << 0x68FFF4
+	               << 0xEA84FF
+	               << 0x90FF8E
+	               << 0xFFAB96;
+
 	applySettings();
 	updateResult();
 }
@@ -46,7 +44,7 @@ void RegExpTester::applySettings() {
 	ui->testData->setFont( *Options::EditorFont );
 }
 
-void RegExpTester::takeFocus( QString regExp ) {
+void RegExpTester::takeFocus( const QString &regExp ) {
 	if ( ! regExp.isEmpty() ) {
 		ui->regexp->setText( regExp );
 		ui->testData->setFocus();
@@ -77,27 +75,29 @@ void RegExpTester::updateResult() {
 		int length = regExp.matchedLength();
 		ui->matchedText->setText( QString( "\"" ) + data.mid( index, length > 100 ? 100 : length ) + "\"" );
 
-		quint32 *color = captureColors;
-		quint32 *colorEnd = captureColors + ( sizeof( captureColors ) / sizeof( quint32 ) );
+
 
 		QTextCursor cursor( ui->testData->document() );
 		cursor.movePosition( QTextCursor::End, QTextCursor::KeepAnchor );
 		cursor.setCharFormat( QTextCharFormat() );
 
+		int colorCount = 0;
 		for ( int i = 1; i <= regExp.captureCount(); i++ ) {
+			quint32 color = mCaptureColors[ colorCount ];
 			QListWidgetItem *item = new QListWidgetItem( regExp.cap( i ) );
-			item->setBackgroundColor( QColor( *color ) );
+
+			item->setBackgroundColor( QColor( color ) );
 			ui->captures->addItem( item );
 
 			QTextCharFormat f;
-			f.setBackground( QBrush( QColor( *color ) ) );
+			f.setBackground( QBrush( QColor( color ) ) );
 			cursor.setPosition( regExp.pos( i ), QTextCursor::MoveAnchor );
 			cursor.movePosition( QTextCursor::Right, QTextCursor::KeepAnchor, regExp.cap( i ).length() );
 			cursor.setCharFormat( f );
 
-			color++;
-			if ( color >= colorEnd ) {
-				color = captureColors;
+			colorCount++;
+			if ( colorCount > mCaptureColors.length() ) {
+				colorCount = 0;
 			}
 		}
 	} else {

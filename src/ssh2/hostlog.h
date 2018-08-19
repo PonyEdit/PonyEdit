@@ -17,7 +17,7 @@ class HostLog : public QWidget {
 		void closeEvent( QCloseEvent * );
 
 	public slots:
-		void newLogLine( QString line );
+		void newLogLine( const QString &line );
 
 	private:
 		Ui::HostLog *ui;

@@ -1,17 +1,18 @@
 #include <QDebug>
 #include <QJsonDocument>
+#include <utility>
 
 #include "main/tools.h"
 #include "serverrequest.h"
 
 ServerRequest::ServerRequest( ServerFile *file,
-                              const QByteArray &request,
-                              const QVariant &parameters,
+                              QByteArray request,
+                              QVariant parameters,
                               const Callback &callback ) :
 	mFile( file ),
 	mOpeningFile( nullptr ),
-	mRequest( request ),
-	mParameters( parameters ),
+	mRequest( std::move( request ) ),
+	mParameters( std::move( parameters ) ),
 	mMessageId( 0 ),
 	mPackedRequest() {
 	if ( callback.getFailureSlot() ) {

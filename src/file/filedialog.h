@@ -97,8 +97,8 @@ class FileDialog : public QDialog {
 		QFileIconProvider mIconProvider;
 		Location mCurrentLocation;
 		QStandardItemModel *mFileListModel;
-		CustomTreeEntry *mRemoteServersBranch;
-		CustomTreeEntry *mFavoriteLocationsBranch;
+		CustomTreeEntry *mRemoteServersBranch{};
+		CustomTreeEntry *mFavoriteLocationsBranch{};
 #ifdef Q_OS_WIN
 		CustomTreeEntry *mLocalNetworkBranch;
 #endif
@@ -109,8 +109,8 @@ class FileDialog : public QDialog {
 
 		bool mSaveAs;
 		bool mInEditHandler;
-		int mSortingColumn;
-		bool mReverseSorting;
+		int mSortingColumn{};
+		bool mReverseSorting{};
 
 		QString mSelectFile;
 };

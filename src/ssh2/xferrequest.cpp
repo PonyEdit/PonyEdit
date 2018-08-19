@@ -1,11 +1,12 @@
 #include <QCryptographicHash>
 #include <QDebug>
+#include <utility>
 #include "xferrequest.h"
 
-XferRequest::XferRequest( bool sudo, const QByteArray &filename, const Callback &callback ) :
+XferRequest::XferRequest( bool sudo, QByteArray filename, const Callback &callback ) :
 	mSudo( sudo ),
 	mUpload( false ),
-	mFilename( filename ),
+	mFilename( std::move( filename ) ),
 	mData(),
 	mRequestHeader(),
 	mChecksum(),

@@ -11,23 +11,17 @@ SyntaxDefinition::ContextDef::ContextDef() :
 	dynamic( false ),
 	listIndex( 0 ),
 	attributeLink( nullptr ) {}
-SyntaxDefinition::ContextDef::~ContextDef() {}
+SyntaxDefinition::ContextDef::~ContextDef() = default;
 
 SyntaxDefinition::SyntaxDefinition( const QString &filename ) :
 	mValid( false ),
 	mSyntaxName(),
-	mKeywordLists(),
-	mContextMap(),
-	mDefaultContext(),
-	mItemDatas(),
-	mContextList(),
 	mIndentationSensitive( false ),
 	mCaseSensitiveKeywords( false ),
 	mWeakDeliminators(),
 	mAdditionalDeliminators(),
 	mWordWrapDeliminator(),
-	mDeliminators( ".():!+,-<=>%&/;?[]^{|}~\\*, \t" ),
-	mCommentStyles() {
+	mDeliminators( ".():!+,-<=>%&/;?[]^{|}~\\*, \t" ) {
 	QFile file( filename );
 	if ( file.open( QFile::ReadOnly ) ) {
 		SyntaxDefXmlHandler handler( this );
@@ -186,7 +180,7 @@ void SyntaxDefinition::addItemData( ItemData *itemData ) {
 
 void SyntaxDefinition::setWeakDeliminators( const QString &v ) {
 	mWeakDeliminators = v;
-	for ( int i = 0; i < v.length(); i++ ) {
-		mDeliminators.remove( v[ i ] );
+	for ( auto i : v ) {
+		mDeliminators.remove( i );
 	}
 }

@@ -8,7 +8,7 @@
 TabbedFileList::TabbedFileList( QWidget *parent ) :
 	QDockWidget( parent ) {
 	setWindowTitle( tr( "Tabbed File List" ) );
-	QWidget *titleWidget = new QWidget( this );
+	auto *titleWidget = new QWidget( this );
 	setTitleBarWidget( titleWidget );
 
 	mTabs = new QTabBar( this );
@@ -68,7 +68,7 @@ void TabbedFileList::fileSelected( BaseFile *file ) {
 }
 
 void TabbedFileList::fileChanged() {
-	BaseFile *file = reinterpret_cast< BaseFile * >( QObject::sender() );
+	auto *file = dynamic_cast< BaseFile * >( QObject::sender() );
 	int idx = findTab( file );
 	if ( file->hasUnsavedChanges() ) {
 		mTabs->setTabText( idx, file->getLocation().getLabel() + " *" );
@@ -78,7 +78,7 @@ void TabbedFileList::fileChanged() {
 }
 
 void TabbedFileList::currentChanged( int index ) {
-	Location loc = mTabs->tabData( index ).value< Location >();
+	auto loc = mTabs->tabData( index ).value< Location >();
 	if ( loc.isNull() ) {
 		return;
 	}
@@ -87,7 +87,7 @@ void TabbedFileList::currentChanged( int index ) {
 
 void TabbedFileList::tabCloseRequested( int index ) {
 	QList< BaseFile * > closingFiles;
-	Location loc = mTabs->tabData( index ).value< Location >();
+	auto loc = mTabs->tabData( index ).value< Location >();
 	if ( loc.isNull() ) {
 		return;
 	}

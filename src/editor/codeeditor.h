@@ -47,7 +47,7 @@ class CodeEditor : public QPlainTextEdit {
 
 	private:
 		LineNumberWidget *mLineNumberWidget;
-		SyntaxHighlighter *mSyntaxHighlighter;
+		SyntaxHighlighter *mSyntaxHighlighter{};
 		BaseFile *mFile;
 
 		QTextEdit::ExtraSelection mCurrentLine;

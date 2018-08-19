@@ -14,7 +14,7 @@ bool DialogRethreader::event( QEvent *event ) {
 	if ( event->type() == sRunDialogEventId ) {
 		event->accept();
 
-		DialogEvent *e = reinterpret_cast< DialogEvent * >( event );
+		auto *e = dynamic_cast< DialogEvent * >( event );
 		DialogRethreadRequest *rq = e->request;
 
 		ThreadCrossingDialog *dialog = rq->factoryMethod();
@@ -26,7 +26,6 @@ bool DialogRethreader::event( QEvent *event ) {
 		// Unlock the provided mutex to tell the calling thread that we're done here.
 		rq->lock->unlock();
 		return true;
-	} else {
-		return QObject::event( event );
 	}
+	return QObject::event( event );
 }
