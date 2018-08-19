@@ -55,6 +55,8 @@ QString OpenFileTreeModel::Node::getLabel() {
 		case Root:
 			return "";
 	}
+
+	return "";
 }
 
 OpenFileTreeModel::Node *OpenFileTreeModel::Node::findChildNode( const QString &label ) {
