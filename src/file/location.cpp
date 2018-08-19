@@ -436,8 +436,8 @@ void LocationShared::sftpLoadListing( bool includeHidden ) {
 	SFTPRequest *request =
 		new SFTPRequest( SFTPRequest::Ls,
 		                 Callback( this,
-		                           SLOT( sshLsSuccess( QVariantMap ) ),
-		                           SLOT( sftpLsFailure( QString, int ) ) ) );
+		                           SLOT(sshLsSuccess(QVariantMap)),
+		                           SLOT(sftpLsFailure(QString,int)) ) );
 	request->setPath( mRemotePath );
 	request->setIncludeHidden( includeHidden );
 	getHost()->sendSftpRequest( request );
@@ -454,8 +454,8 @@ void LocationShared::sshLoadListing( bool includeHidden ) {
 	                              "ls",
 	                              QVariant( params ),
 	                              Callback( this,
-	                                        SLOT( sshLsSuccess( QVariantMap ) ),
-	                                        SLOT( sshLsFailure( QString, int ) ) ) );
+	                                        SLOT(sshLsSuccess(QVariantMap)),
+	                                        SLOT(sshLsFailure(QString,int)) ) );
 }
 
 void LocationShared::sshLsSuccess( const QVariantMap &results ) {

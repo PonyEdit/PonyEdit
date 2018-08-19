@@ -14,9 +14,9 @@ UpdateNotificationDialog::UpdateNotificationDialog( QWidget *parent ) :
 
 	ui->changesBrowser->setOpenExternalLinks( true );
 
-	connect( ui->installLater, SIGNAL( clicked() ), this, SLOT( reject() ) );
-	connect( ui->downloadSite, SIGNAL( clicked() ), this, SLOT( openDownloadURL() ) );
-	connect( ui->installNow, SIGNAL( clicked() ), this, SLOT( emitDownloadAndInstall() ) );
+	connect( ui->installLater, SIGNAL(clicked()), this, SLOT(reject()) );
+	connect( ui->downloadSite, SIGNAL(clicked()), this, SLOT(openDownloadURL()) );
+	connect( ui->installNow, SIGNAL(clicked()), this, SLOT(emitDownloadAndInstall()) );
 }
 
 UpdateNotificationDialog::~UpdateNotificationDialog() {

@@ -7,7 +7,7 @@ HostLog::HostLog( SshHost *host ) :
 	ui( new Ui::HostLog ) {
 	ui->setupUi( this );
 	ui->textBox->setPlainText( host->getLog().join( "\n" ) );
-	connect( host, SIGNAL( newLogLine( QString ) ), this, SLOT( newLogLine( QString ) ) );
+	connect( host, SIGNAL(newLogLine(QString)), this, SLOT(newLogLine(QString)) );
 
 	setWindowTitle( "Log: " + host->getName() );
 }

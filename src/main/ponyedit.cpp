@@ -98,7 +98,7 @@ PonyEdit::PonyEdit( int argc, char **argv ) :
 
 		// create local server and listen to incomming messages from other instances.
 		mLocalServer = new QLocalServer( this );
-		connect( mLocalServer, SIGNAL( newConnection() ), this, SLOT( receiveMessage() ) );
+		connect( mLocalServer, SIGNAL(newConnection()), this, SLOT(receiveMessage()) );
 		mLocalServer->listen( mKey );
 
 		Options::load();
@@ -111,7 +111,7 @@ PonyEdit::PonyEdit( int argc, char **argv ) :
 		gMainWindow = new MainWindow();
 		gMainWindow->show();
 
-		QTimer::singleShot( 1, this, SLOT( loadStartupFiles() ) );
+		QTimer::singleShot( 1, this, SLOT(loadStartupFiles()) );
 	}
 }
 

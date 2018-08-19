@@ -29,7 +29,7 @@ void UpdateManager::updateFound( const QString &version,
                                  const QStringList &changes ) {
 	mNotificationDlg = new UpdateNotificationDialog();
 
-	connect( mNotificationDlg, SIGNAL( downloadAndInstall( QString ) ), this, SLOT( startDownload( QString ) ) );
+	connect( mNotificationDlg, SIGNAL(downloadAndInstall(QString)), this, SLOT(startDownload(QString)) );
 
 	mNotificationDlg->setNewVersion( version );
 	mNotificationDlg->setChanges( alerts, changes );
@@ -59,9 +59,9 @@ void UpdateManager::startDownload( const QString &file ) {
 	buttonWrapper->hide();
 
 	connect( &mNetManager,
-	         SIGNAL( authenticationRequired( QNetworkReply *, QAuthenticator * ) ),
+	         SIGNAL(authenticationRequired(QNetworkReply *,QAuthenticator *)),
 	         this,
-	         SLOT( downloadAuth( QNetworkReply *, QAuthenticator * ) ) );
+	         SLOT(downloadAuth(QNetworkReply *,QAuthenticator *)) );
 
 	QUrl download( file );
 
@@ -74,11 +74,11 @@ void UpdateManager::startDownload( const QString &file ) {
 	mDownload = mNetManager.get( request );
 
 	connect( mDownload,
-	         SIGNAL( downloadProgress( qint64, qint64 ) ),
+	         SIGNAL(downloadProgress(qint64,qint64)),
 	         this,
-	         SLOT( downloadProgress( qint64, qint64 ) ) );
-	connect( mDownload, SIGNAL( finished() ), this, SLOT( downloadFinished() ) );
-	connect( mDownload, SIGNAL( readyRead() ), this, SLOT( downloadReadyRead() ) );
+	         SLOT(downloadProgress(qint64,qint64)) );
+	connect( mDownload, SIGNAL(finished()), this, SLOT(downloadFinished()) );
+	connect( mDownload, SIGNAL(readyRead()), this, SLOT(downloadReadyRead()) );
 }
 
 void UpdateManager::downloadProgress( qint64 bytesReceived, qint64 bytesTotal ) {

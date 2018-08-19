@@ -8,8 +8,8 @@ GotoLineDialog::GotoLineDialog( QWidget *parent ) :
 
 	mLineNumber = 0;
 
-	connect( ui->cancelButton, SIGNAL( clicked() ), this, SLOT( close() ) );
-	connect( ui->gotoButton, SIGNAL( clicked() ), this, SLOT( accept() ) );
+	connect( ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()) );
+	connect( ui->gotoButton, SIGNAL(clicked()), this, SLOT(accept()) );
 }
 
 GotoLineDialog::~GotoLineDialog() {

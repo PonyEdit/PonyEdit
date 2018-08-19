@@ -74,45 +74,45 @@ FileDialog::FileDialog( QWidget *parent, bool saveAs ) :
 
 	ui->directoryTree->setContextMenuPolicy( Qt::CustomContextMenu );
 
-	connect( ui->upLevelButton, SIGNAL( clicked() ), this, SLOT( upLevel() ) );
-	connect( ui->refreshButton, SIGNAL( clicked() ), this, SLOT( refresh() ) );
-	connect( ui->fileList, SIGNAL( doubleClicked( QModelIndex ) ), this, SLOT( fileDoubleClicked( QModelIndex ) ) );
+	connect( ui->upLevelButton, SIGNAL(clicked()), this, SLOT(upLevel()) );
+	connect( ui->refreshButton, SIGNAL(clicked()), this, SLOT(refresh()) );
+	connect( ui->fileList, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(fileDoubleClicked(QModelIndex)) );
 	connect( gDispatcher,
-	         SIGNAL( sshServersUpdated() ),
+	         SIGNAL(sshServersUpdated()),
 	         this,
-	         SLOT( populateRemoteServers() ),
+	         SLOT(populateRemoteServers()),
 	         Qt::QueuedConnection );
-	connect( ui->mainButtonBox, SIGNAL( accepted() ), this, SLOT( accept() ) );
-	connect( ui->mainButtonBox, SIGNAL( rejected() ), this, SLOT( reject() ) );
+	connect( ui->mainButtonBox, SIGNAL(accepted()), this, SLOT(accept()) );
+	connect( ui->mainButtonBox, SIGNAL(rejected()), this, SLOT(reject()) );
 	connect( ui->fileList->selectionModel(),
-	         SIGNAL( selectionChanged( const QItemSelection &, const QItemSelection & ) ),
+	         SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),
 	         this,
-	         SLOT( fileListSelectionChanged( const QItemSelection &, const QItemSelection & ) ) );
+	         SLOT(fileListSelectionChanged(const QItemSelection&,const QItemSelection&)) );
 	connect( gDispatcher,
-	         SIGNAL( locationListSuccess( QList< Location >, QString ) ),
+	         SIGNAL(locationListSuccess(QList< Location >,QString)),
 	         this,
-	         SLOT( folderChildrenLoaded( QList< Location >, QString ) ),
+	         SLOT(folderChildrenLoaded(QList< Location >,QString)),
 	         Qt::QueuedConnection );
 	connect( gDispatcher,
-	         SIGNAL( locationListFailure( QString, QString, bool ) ),
+	         SIGNAL(locationListFailure(QString,QString,bool)),
 	         this,
-	         SLOT( folderChildrenFailed( QString, QString, bool ) ),
+	         SLOT(folderChildrenFailed(QString,QString,bool)),
 	         Qt::QueuedConnection );
-	connect( this, SIGNAL( accepted() ), this, SLOT( closing() ) );
-	connect( this, SIGNAL( rejected() ), this, SLOT( closing() ) );
-	connect( ui->newFolderButton, SIGNAL( clicked() ), this, SLOT( createNewFolder() ) );
+	connect( this, SIGNAL(accepted()), this, SLOT(closing()) );
+	connect( this, SIGNAL(rejected()), this, SLOT(closing()) );
+	connect( ui->newFolderButton, SIGNAL(clicked()), this, SLOT(createNewFolder()) );
 	connect( ui->statusWidget,
-	         SIGNAL( buttonClicked( StatusWidget::Button ) ),
+	         SIGNAL(buttonClicked(StatusWidget::Button)),
 	         this,
-	         SLOT( statusButtonClicked( StatusWidget::Button ) ) );
-	connect( ui->showHidden, SIGNAL( stateChanged( int ) ), this, SLOT( refresh() ) );
-	connect( ui->filterList, SIGNAL( currentIndexChanged( int ) ), this, SLOT( refresh() ) );
-	connect( ui->fileName, SIGNAL( currentIndexChanged( int ) ), this, SLOT( fileNameIndexChanged() ) );
-	connect( ui->fileName, SIGNAL( editTextChanged( QString ) ), this, SLOT( fileNameIndexChanged() ) );
+	         SLOT(statusButtonClicked(StatusWidget::Button)) );
+	connect( ui->showHidden, SIGNAL(stateChanged(int)), this, SLOT(refresh()) );
+	connect( ui->filterList, SIGNAL(currentIndexChanged(int)), this, SLOT(refresh()) );
+	connect( ui->fileName, SIGNAL(currentIndexChanged(int)), this, SLOT(fileNameIndexChanged()) );
+	connect( ui->fileName, SIGNAL(editTextChanged(QString)), this, SLOT(fileNameIndexChanged()) );
 	connect( ui->fileList->horizontalHeader(),
-	         SIGNAL( sectionClicked( int ) ),
+	         SIGNAL(sectionClicked(int)),
 	         this,
-	         SLOT( columnHeaderClicked( int ) ) );
+	         SLOT(columnHeaderClicked(int)) );
 
 	// Install an event filter on all children, to catch some keyboard events
 	foreach ( QObject *child, children() ) {
@@ -188,7 +188,7 @@ void FileDialog::populateFolderTree() {
 #ifdef Q_OS_WIN
 	mLocalNetworkBranch = new CustomTreeEntry( mIconProvider.icon( QFileIconProvider::Network ),
 	                                           tr( "Local Network" ) );
-	mLocalNetworkBranch->setDelayedLoad( this, SLOT( populateWindowsShares( CustomTreeEntry * ) ) );
+	mLocalNetworkBranch->setDelayedLoad( this, SLOT(populateWindowsShares(CustomTreeEntry *)) );
 	ui->directoryTree->addTopLevelEntry( mLocalNetworkBranch );
 #endif
 
@@ -200,7 +200,7 @@ void FileDialog::populateFolderTree() {
 	ui->directoryTree->addTopLevelEntry( mFavoriteLocationsBranch );
 
 	CustomTreeEntry *addFavorite = new CustomTreeEntry( QIcon( ":icons/add.png" ), tr( "Add Favorite..." ) );
-	connect( addFavorite, SIGNAL( leftClicked( CustomTreeEntry *, QPoint ) ), this, SLOT( addToFavorites() ) );
+	connect( addFavorite, SIGNAL(leftClicked(CustomTreeEntry *,QPoint)), this, SLOT(addToFavorites()) );
 	mFavoriteLocationsBranch->addChild( addFavorite );
 
 	updateFavorites();
@@ -215,7 +215,7 @@ void FileDialog::populateFolderTree() {
 	ui->directoryTree->addTopLevelEntry( mRemoteServersBranch );
 
 	CustomTreeEntry *addServer = new CustomTreeEntry( QIcon( ":/icons/add.png" ), tr( "Add Server..." ) );
-	connect( addServer, SIGNAL( leftClicked( CustomTreeEntry *, QPoint ) ), this, SLOT( addNewServer() ) );
+	connect( addServer, SIGNAL(leftClicked(CustomTreeEntry *,QPoint)), this, SLOT(addNewServer()) );
 	mRemoteServersBranch->addChild( addServer );
 
 	populateRemoteServers();
@@ -243,9 +243,9 @@ void FileDialog::populateRemoteServers() {
 			mRemoteServersBranch->addChild( entry );
 
 			connect( entry,
-			         SIGNAL( leftClicked( CustomTreeEntry *, QPoint ) ),
+			         SIGNAL(leftClicked(CustomTreeEntry *,QPoint)),
 			         this,
-			         SLOT( serverClicked( CustomTreeEntry * ) ) );
+			         SLOT(serverClicked(CustomTreeEntry *)) );
 		}
 	}
 
@@ -324,12 +324,12 @@ CustomTreeEntry *FileDialog::addLocationToTree( CustomTreeEntry *parent, const L
 	CustomTreeEntry *newEntry = new CustomTreeEntry( location.getIcon(), location.getLabel() );
 	newEntry->setAutoDeleteData< Location * >( new Location( location ) );
 	connect( newEntry,
-	         SIGNAL( leftClicked( CustomTreeEntry *, QPoint ) ),
+	         SIGNAL(leftClicked(CustomTreeEntry *,QPoint)),
 	         this,
-	         SLOT( locationClicked( CustomTreeEntry * ) ) );
+	         SLOT(locationClicked(CustomTreeEntry *)) );
 
 	if ( location.isDirectory() ) {
-		newEntry->setDelayedLoad( this, SLOT( locationExpanded( CustomTreeEntry * ) ) );
+		newEntry->setDelayedLoad( this, SLOT(locationExpanded(CustomTreeEntry *)) );
 	}
 
 	parent->addChild( newEntry );
@@ -700,13 +700,13 @@ void FileDialog::updateFavorites() {
 			mFavoriteLocationsBranch->addChild( entry );
 
 			connect( entry,
-			         SIGNAL( leftClicked( CustomTreeEntry *, QPoint ) ),
+			         SIGNAL(leftClicked(CustomTreeEntry *,QPoint)),
 			         this,
-			         SLOT( favoriteClicked( CustomTreeEntry * ) ) );
+			         SLOT(favoriteClicked(CustomTreeEntry *)) );
 			connect( entry,
-			         SIGNAL( rightClicked( CustomTreeEntry *, QPoint ) ),
+			         SIGNAL(rightClicked(CustomTreeEntry *,QPoint)),
 			         this,
-			         SLOT( favoriteMenu( CustomTreeEntry *, QPoint ) ) );
+			         SLOT(favoriteMenu(CustomTreeEntry *,QPoint)) );
 		}
 	}
 

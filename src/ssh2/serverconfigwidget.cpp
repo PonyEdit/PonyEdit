@@ -16,10 +16,10 @@ ServerConfigWidget::ServerConfigWidget( QWidget *parent ) :
 	auto *portValidator = new QIntValidator( 0, 65535, this );
 	ui->hostPort->setValidator( portValidator );
 
-	connect( this, SIGNAL( accepted() ), this, SLOT( acceptedHandler() ) );
-	connect( ui->hostName, SIGNAL( textEdited( QString ) ), this, SLOT( updateName() ) );
-	connect( ui->userName, SIGNAL( textEdited( QString ) ), this, SLOT( updateName() ) );
-	connect( ui->keyFileBrowse, SIGNAL( clicked() ), this, SLOT( browseForKeyFile() ) );
+	connect( this, SIGNAL(accepted()), this, SLOT(acceptedHandler()) );
+	connect( ui->hostName, SIGNAL(textEdited(QString)), this, SLOT(updateName()) );
+	connect( ui->userName, SIGNAL(textEdited(QString)), this, SLOT(updateName()) );
+	connect( ui->keyFileBrowse, SIGNAL(clicked()), this, SLOT(browseForKeyFile()) );
 
 	ui->connectionType->addItem( tr( "SSH (fast)" ), QVariant( SshHost::SSH ) );
 	ui->connectionType->addItem( tr( "SFTP (slow)" ), QVariant( SshHost::SFTP ) );

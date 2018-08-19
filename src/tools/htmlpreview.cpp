@@ -26,17 +26,17 @@ HTMLPreview::HTMLPreview( MainWindow *parent ) :
 	ui->refreshButton->setMinimumHeight( 32 );
 #endif
 
-	connect( gDispatcher, SIGNAL( selectFile( BaseFile * ) ), this, SLOT( fileSelected( BaseFile * ) ) );
+	connect( gDispatcher, SIGNAL(selectFile(BaseFile *)), this, SLOT(fileSelected(BaseFile *)) );
 
-	connect( ui->refreshButton, SIGNAL( clicked() ), this, SLOT( manualRefresh() ) );
+	connect( ui->refreshButton, SIGNAL(clicked()), this, SLOT(manualRefresh()) );
 
 	Editor *current = mParent->getCurrentEditor();
 	if ( current ) {
 		BaseFile *file = current->getFile();
 		QTextDocument *doc = file->getTextDocument();
 
-		connect( file, SIGNAL( unsavedStatusChanged() ), this, SLOT( fileSaved() ) );
-		connect( doc, SIGNAL( contentsChanged() ), this, SLOT( fileChanged() ) );
+		connect( file, SIGNAL(unsavedStatusChanged()), this, SLOT(fileSaved()) );
+		connect( doc, SIGNAL(contentsChanged()), this, SLOT(fileChanged()) );
 
 		manualRefresh();
 	}
@@ -53,8 +53,8 @@ void HTMLPreview::fileSelected( BaseFile *file ) {
 
 	QTextDocument *doc = file->getTextDocument();
 
-	connect( file, SIGNAL( unsavedStatusChanged() ), this, SLOT( fileSaved() ) );
-	connect( doc, SIGNAL( contentsChanged() ), this, SLOT( fileChanged() ) );
+	connect( file, SIGNAL(unsavedStatusChanged()), this, SLOT(fileSaved()) );
+	connect( doc, SIGNAL(contentsChanged()), this, SLOT(fileChanged()) );
 }
 
 void HTMLPreview::fileSaved() {

@@ -16,16 +16,16 @@ SshServerOptionsWidget::SshServerOptionsWidget( QWidget *parent ) :
 
 	QListWidgetItem *first = populateServers();
 
-	connect( ui->addNewButton, SIGNAL( clicked() ), this, SLOT( newServer() ) );
-	connect( ui->deleteButton, SIGNAL( clicked() ), this, SLOT( deleteServer() ) );
+	connect( ui->addNewButton, SIGNAL(clicked()), this, SLOT(newServer()) );
+	connect( ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteServer()) );
 
-	connect( mParent, SIGNAL( accepted() ), this, SLOT( accept() ) );
-	connect( mParent, SIGNAL( rejected() ), this, SLOT( reject() ) );
+	connect( mParent, SIGNAL(accepted()), this, SLOT(accept()) );
+	connect( mParent, SIGNAL(rejected()), this, SLOT(reject()) );
 
 	connect( ui->serversList,
-	         SIGNAL( currentItemChanged( QListWidgetItem *, QListWidgetItem * ) ),
+	         SIGNAL(currentItemChanged(QListWidgetItem *,QListWidgetItem *)),
 	         this,
-	         SLOT( serverClicked( QListWidgetItem *, QListWidgetItem * ) ) );
+	         SLOT(serverClicked(QListWidgetItem *,QListWidgetItem *)) );
 
 	ui->serversList->setCurrentItem( first );
 }
@@ -92,14 +92,14 @@ QListWidgetItem *SshServerOptionsWidget::populateServers() {
 			mConfigWidgets.insert( i, new ServerConfigWidget() );
 			mConfigWidgets[ i ]->setEditHost( host );
 
-			connect( mConfigWidgets[ i ], SIGNAL( accepted() ), mParent, SLOT( accept() ) );
-			connect( mConfigWidgets[ i ], SIGNAL( rejected() ), mParent, SLOT( reject() ) );
+			connect( mConfigWidgets[ i ], SIGNAL(accepted()), mParent, SLOT(accept()) );
+			connect( mConfigWidgets[ i ], SIGNAL(rejected()), mParent, SLOT(reject()) );
 			connect( mConfigWidgets[ i ],
-			         SIGNAL( nameUpdated( QString ) ),
+			         SIGNAL(nameUpdated(QString)),
 			         this,
-			         SLOT( serverNameUpdated( QString ) ) );
+			         SLOT(serverNameUpdated(QString)) );
 
-			connect( this, SIGNAL( accepted() ), mConfigWidgets[ i ], SLOT( acceptedHandler() ) );
+			connect( this, SIGNAL(accepted()), mConfigWidgets[ i ], SLOT(acceptedHandler()) );
 
 			mConfigWidgets[ i ]->hide();
 		}
@@ -141,11 +141,11 @@ void SshServerOptionsWidget::newServer() {
 	mConfigWidgets.insert( row, new ServerConfigWidget() );
 	mConfigWidgets[ row ]->setEditHost( host );
 
-	connect( mConfigWidgets[ row ], SIGNAL( accepted() ), mParent, SLOT( accept() ) );
-	connect( mConfigWidgets[ row ], SIGNAL( rejected() ), mParent, SLOT( reject() ) );
-	connect( mConfigWidgets[ row ], SIGNAL( nameUpdated( QString ) ), this, SLOT( serverNameUpdated( QString ) ) );
+	connect( mConfigWidgets[ row ], SIGNAL(accepted()), mParent, SLOT(accept()) );
+	connect( mConfigWidgets[ row ], SIGNAL(rejected()), mParent, SLOT(reject()) );
+	connect( mConfigWidgets[ row ], SIGNAL(nameUpdated(QString)), this, SLOT(serverNameUpdated(QString)) );
 
-	connect( this, SIGNAL( accepted() ), mConfigWidgets[ row ], SLOT( acceptedHandler() ) );
+	connect( this, SIGNAL(accepted()), mConfigWidgets[ row ], SLOT(acceptedHandler()) );
 
 	ui->serversList->setCurrentItem( item );
 }

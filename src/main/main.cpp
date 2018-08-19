@@ -63,7 +63,7 @@ int main( int argc, char *argv[] ) {
 
 		updateManager = new UpdateManager();
 
-		QTimer::singleShot( 1000, gSiteManager, SLOT( checkForUpdates() ) );
+		QTimer::singleShot( 1000, gSiteManager, SLOT(checkForUpdates()) );
 
 		result = PonyEdit::exec();
 	} catch ( QString &err ) {

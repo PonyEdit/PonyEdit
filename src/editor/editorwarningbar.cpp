@@ -31,7 +31,7 @@ void EditorWarningBar::addButton( const QString &label, QObject *callbackTarget,
 	button->setText( label );
 	mLayout->addWidget( button );
 
-	connect( button, SIGNAL( clicked() ), callbackTarget, callbackMethod );
+	connect( button, SIGNAL(clicked()), callbackTarget, callbackMethod );
 }
 
 void EditorWarningBar::addCloseButton() {
@@ -39,7 +39,7 @@ void EditorWarningBar::addCloseButton() {
 	closeButton->setIcon( QIcon( ":/icons/cross.png" ) );
 	mLayout->addWidget( closeButton );
 
-	connect( closeButton, SIGNAL( clicked() ), this, SLOT( closeAndDestroy() ) );
+	connect( closeButton, SIGNAL(clicked()), this, SLOT(closeAndDestroy()) );
 }
 
 void EditorWarningBar::closeAndDestroy() {

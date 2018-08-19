@@ -33,9 +33,9 @@ SshHost::SshHost() :
 	updateOverallStatus();
 
 	QObject::connect( this,
-	                  SIGNAL( overallStatusInvalidated() ),
+	                  SIGNAL(overallStatusInvalidated()),
 	                  this,
-	                  SLOT( updateOverallStatus() ),
+	                  SLOT(updateOverallStatus()),
 	                  Qt::QueuedConnection );
 }
 
@@ -220,17 +220,17 @@ SshChannel *SshHost::takeNextHomelessChannel() {
 SshSession *SshHost::openSession() {
 	auto *newSession = new SshSession( this );
 	QObject::connect( newSession,
-	                  SIGNAL( hitChannelLimit( SshChannel * ) ),
+	                  SIGNAL(hitChannelLimit(SshChannel *)),
 	                  this,
-	                  SLOT( channelRejected( SshChannel * ) ) );
+	                  SLOT(channelRejected(SshChannel *)) );
 	QObject::connect( newSession,
-	                  SIGNAL( channelNeatlyClosed( SshChannel * ) ),
+	                  SIGNAL(channelNeatlyClosed(SshChannel *)),
 	                  this,
-	                  SLOT( channelNeatlyClosed( SshChannel * ) ) );
+	                  SLOT(channelNeatlyClosed(SshChannel *)) );
 	QObject::connect( newSession,
-	                  SIGNAL( sessionClosed( SshSession * ) ),
+	                  SIGNAL(sessionClosed(SshSession *)),
 	                  this,
-	                  SLOT( sessionEnded( SshSession * ) ) );
+	                  SLOT(sessionEnded(SshSession *)) );
 	mSessions.append( newSession );
 	newSession->start();
 

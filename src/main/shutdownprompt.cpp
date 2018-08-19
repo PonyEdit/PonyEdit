@@ -17,8 +17,8 @@ ShutdownPrompt::ShutdownPrompt( QWidget *parent ) :
 
 	ui->iconLabel->setPixmap( tmpIcon.pixmap( iconSize, iconSize ) );
 
-	connect( ui->remember, SIGNAL( clicked() ), this, SLOT( remember() ) );
-	connect( ui->dontRemember, SIGNAL( clicked() ), this, SLOT( dontRemember() ) );
+	connect( ui->remember, SIGNAL(clicked()), this, SLOT(remember()) );
+	connect( ui->dontRemember, SIGNAL(clicked()), this, SLOT(dontRemember()) );
 }
 
 ShutdownPrompt::~ShutdownPrompt() {

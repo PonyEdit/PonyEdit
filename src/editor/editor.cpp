@@ -46,13 +46,13 @@ Editor::Editor( BaseFile *file ) {
 
 	mFile = file;
 	mFile->editorAttached( this );
-	connect( mFile, SIGNAL( openStatusChanged( int ) ), this, SLOT( openStatusChanged( int ) ) );
-	connect( mFile, SIGNAL( fileProgress( int ) ), this, SLOT( fileOpenProgress( int ) ) );
+	connect( mFile, SIGNAL(openStatusChanged(int)), this, SLOT(openStatusChanged(int)) );
+	connect( mFile, SIGNAL(fileProgress(int)), this, SLOT(fileOpenProgress(int)) );
 	openStatusChanged( mFile->getOpenStatus() );
 
 	mEditor->setDocument( mFile->getTextDocument() );
 
-	connect( gDispatcher, SIGNAL( optionsChanged() ), this, SLOT( applyOptions() ) );
+	connect( gDispatcher, SIGNAL(optionsChanged()), this, SLOT(applyOptions()) );
 	applyOptions();
 }
 
@@ -359,10 +359,10 @@ void Editor::showReadOnlyWarning() {
 	                                             "It has been opened in read-only mode." ) );
 
 	if ( mFile->getLocation().canSudo() && ! mFile->getLocation().isSudo() ) {
-		mReadOnlyWarning->addButton( tr( "Sudo and Edit" ), this, SLOT( sudo() ) );
+		mReadOnlyWarning->addButton( tr( "Sudo and Edit" ), this, SLOT(sudo()) );
 	}
 
-	mReadOnlyWarning->addButton( tr( "Edit Anyway" ), this, SLOT( enableEditing() ) );
+	mReadOnlyWarning->addButton( tr( "Edit Anyway" ), this, SLOT(enableEditing()) );
 	mEditorPaneLayout->insertWidget( 0, mReadOnlyWarning );
 }
 

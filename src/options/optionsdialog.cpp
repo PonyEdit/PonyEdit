@@ -20,13 +20,13 @@ OptionsDialog::OptionsDialog( QWidget *parent ) :
 	ui( new Ui::OptionsDialog ) {
 	ui->setupUi( this );
 
-	connect( ui->buttonBox, SIGNAL( accepted() ), this, SLOT( accept() ) );
-	connect( ui->buttonBox, SIGNAL( rejected() ), this, SLOT( reject() ) );
+	connect( ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept()) );
+	connect( ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()) );
 	connect( ui->buttonBox,
-	         SIGNAL( clicked( QAbstractButton * ) ),
+	         SIGNAL(clicked(QAbstractButton *)),
 	         this,
-	         SLOT( buttonClicked( QAbstractButton * ) ) );
-	connect( this, SIGNAL( accepted() ), this, SLOT( saveOptions() ) );
+	         SLOT(buttonClicked(QAbstractButton *)) );
+	connect( this, SIGNAL(accepted()), this, SLOT(saveOptions()) );
 
 	addPage( ui->editorButton, new EditorOptionsWidget( this ) );
 	addPage( ui->serversButton, new SshServerOptionsWidget( this ) );
@@ -73,7 +73,7 @@ void OptionsDialog::pageClicked( QToolButton *button ) {
 
 void OptionsDialog::addPage( QToolButton *button, OptionsDialogPage *page ) {
 	mPageMap.insert( button, page );
-	connect( button, SIGNAL( clicked() ), this, SLOT( pageClicked() ) );
+	connect( button, SIGNAL(clicked()), this, SLOT(pageClicked()) );
 	mPages.append( page );
 	ui->stackedWidget->addWidget( page );
 }

@@ -59,11 +59,11 @@ SshSession::SshSession( SshHost *host ) :
 	initializeLibrary();
 
 	mThread = new SshSessionThread( this );
-	QObject::connect( this, SIGNAL( killThread() ), mThread, SLOT( quit() ), Qt::QueuedConnection );
+	QObject::connect( this, SIGNAL(killThread()), mThread, SLOT(quit()), Qt::QueuedConnection );
 	moveToThread( mThread );        // Give this QObject to the new thread; then all signals received by this object
 	                                // are run in the thread.
 
-	QObject::connect( mThread, SIGNAL( finished() ), this, SLOT( threadEnded() ) );
+	QObject::connect( mThread, SIGNAL(finished()), this, SLOT(threadEnded()) );
 }
 
 SshSession::~SshSession() {
@@ -106,7 +106,7 @@ void SshSession::threadMain() {
 
 	heartbeatTimer.setInterval( 1000 );
 	heartbeatTimer.setSingleShot( false );
-	QObject::connect( &heartbeatTimer, SIGNAL( timeout() ), this, SLOT( heartbeat() ) );
+	QObject::connect( &heartbeatTimer, SIGNAL(timeout()), this, SLOT(heartbeat()) );
 	heartbeatTimer.start();
 
 	try {
@@ -128,15 +128,15 @@ void SshSession::threadMain() {
 		mSocketReadNotifier = new QSocketNotifier( mSocket, QSocketNotifier::Read );
 		mSocketExceptionNotifier = new QSocketNotifier( mSocket, QSocketNotifier::Exception );
 
-		QObject::connect( mSocketReadNotifier, SIGNAL( activated( int ) ), this, SLOT( handleReadActivity() ) );
+		QObject::connect( mSocketReadNotifier, SIGNAL(activated(int)), this, SLOT(handleReadActivity()) );
 		QObject::connect( mSocketExceptionNotifier,
-		                  SIGNAL( activated( int ) ),
+		                  SIGNAL(activated(int)),
 		                  this,
-		                  SLOT( updateAllChannels() ) );
+		                  SLOT(updateAllChannels()) );
 		QObject::connect( mHost,
-		                  SIGNAL( wakeAllSessions() ),
+		                  SIGNAL(wakeAllSessions()),
 		                  this,
-		                  SLOT( updateAllChannels() ),
+		                  SLOT(updateAllChannels()),
 		                  Qt::QueuedConnection );
 
 		mSocketReadNotifier->setEnabled( true );

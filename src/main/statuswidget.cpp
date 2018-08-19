@@ -13,11 +13,11 @@ StatusWidget::StatusWidget( bool dialogChild, QWidget *parent ) :
 
 	ui->setupUi( this );
 
-	connect( this, SIGNAL( signalUpdateLayouts() ), this, SLOT( updateLayouts() ), Qt::QueuedConnection );
+	connect( this, SIGNAL(signalUpdateLayouts()), this, SLOT(updateLayouts()), Qt::QueuedConnection );
 	connect( ui->buttonBox,
-	         SIGNAL( clicked( QAbstractButton * ) ),
+	         SIGNAL(clicked(QAbstractButton *)),
 	         this,
-	         SLOT( buttonClicked( QAbstractButton * ) ) );
+	         SLOT(buttonClicked(QAbstractButton *)) );
 }
 
 StatusWidget::~StatusWidget() {

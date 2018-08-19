@@ -14,7 +14,7 @@ FavoriteLocationDialog::FavoriteLocationDialog( QWidget *parent, Location::Favor
 	ui->name->setFocus();
 	ui->name->selectAll();
 
-	connect( this, SIGNAL( accepted() ), this, SLOT( acceptHandler() ) );
+	connect( this, SIGNAL(accepted()), this, SLOT(acceptHandler()) );
 }
 
 FavoriteLocationDialog::~FavoriteLocationDialog() {

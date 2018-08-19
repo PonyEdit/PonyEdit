@@ -15,11 +15,11 @@ RegExpTester::RegExpTester( QWidget *parent ) :
 	ui->regexpType->addItem( tr( "W3C XML Schema 1.1" ),
 	                         QVariant( static_cast< int >( QRegExp::W3CXmlSchema11 ) ) );
 
-	connect( ui->regexpType, SIGNAL( currentIndexChanged( int ) ), this, SLOT( updateResult() ) );
-	connect( ui->regexp, SIGNAL( textChanged( QString ) ), this, SLOT( updateResult() ) );
-	connect( ui->testData, SIGNAL( textChanged() ), this, SLOT( updateResult() ) );
-	connect( ui->caseSensitive, SIGNAL( stateChanged( int ) ), this, SLOT( updateResult() ) );
-	connect( gDispatcher, SIGNAL( optionsChanged() ), this, SLOT( applySettings() ) );
+	connect( ui->regexpType, SIGNAL(currentIndexChanged(int)), this, SLOT(updateResult()) );
+	connect( ui->regexp, SIGNAL(textChanged(QString)), this, SLOT(updateResult()) );
+	connect( ui->testData, SIGNAL(textChanged()), this, SLOT(updateResult()) );
+	connect( ui->caseSensitive, SIGNAL(stateChanged(int)), this, SLOT(updateResult()) );
+	connect( gDispatcher, SIGNAL(optionsChanged()), this, SLOT(applySettings()) );
 
 	mUpdating = false;
 

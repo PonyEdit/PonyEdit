@@ -21,9 +21,9 @@ void FtpFile::open() {
 	SFTPRequest *request =
 		new SFTPRequest( SFTPRequest::ReadFile,
 		                 Callback( this,
-		                           SLOT( sftpReadSuccess( QVariantMap ) ),
-		                           SLOT( sftpReadFailure( QString, int ) ),
-		                           SLOT( sftpReadProgress( int ) ) ) );
+		                           SLOT(sftpReadSuccess(QVariantMap)),
+		                           SLOT(sftpReadFailure(QString,int)),
+		                           SLOT(sftpReadProgress(int)) ) );
 	request->setPath( mLocation.getRemotePath() );
 	mHost->sendSftpRequest( request );
 }
@@ -49,9 +49,9 @@ void FtpFile::save() {
 	SFTPRequest *request =
 		new SFTPRequest( SFTPRequest::WriteFile,
 		                 Callback( this,
-		                           SLOT( sftpWriteSuccess( QVariantMap ) ),
-		                           SLOT( sftpWriteFailure( QString, int ) ),
-		                           SLOT( sftpWriteProgress( int ) ) ) );
+		                           SLOT(sftpWriteSuccess(QVariantMap)),
+		                           SLOT(sftpWriteFailure(QString,int)),
+		                           SLOT(sftpWriteProgress(int)) ) );
 	request->setPath( mLocation.getRemotePath() );
 	request->setContent( mContent.toUtf8() );
 	request->setRevision( mRevision );

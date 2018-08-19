@@ -23,7 +23,7 @@
 
 SiteManager::SiteManager() {
 	mManager = new QNetworkAccessManager( this );
-	connect( mManager, SIGNAL( finished( QNetworkReply * ) ), this, SLOT( handleReply( QNetworkReply * ) ) );
+	connect( mManager, SIGNAL(finished(QNetworkReply *)), this, SLOT(handleReply(QNetworkReply *)) );
 }
 
 SiteManager::~SiteManager() {

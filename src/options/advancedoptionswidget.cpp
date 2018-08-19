@@ -8,12 +8,12 @@ AdvancedOptionsWidget::AdvancedOptionsWidget( QWidget *parent ) :
 	ui( new Ui::AdvancedOptionsWidget ) {
 	ui->setupUi( this );
 
-	connect( ui->labelTrace, SIGNAL( clicked() ), this, SLOT( setTrace() ) );
-	connect( ui->labelDebug, SIGNAL( clicked() ), this, SLOT( setDebug() ) );
-	connect( ui->labelInfo, SIGNAL( clicked() ), this, SLOT( setInfo() ) );
-	connect( ui->labelWarn, SIGNAL( clicked() ), this, SLOT( setWarn() ) );
-	connect( ui->labelError, SIGNAL( clicked() ), this, SLOT( setError() ) );
-	connect( ui->labelFatal, SIGNAL( clicked() ), this, SLOT( setFatal() ) );
+	connect( ui->labelTrace, SIGNAL(clicked()), this, SLOT(setTrace()) );
+	connect( ui->labelDebug, SIGNAL(clicked()), this, SLOT(setDebug()) );
+	connect( ui->labelInfo, SIGNAL(clicked()), this, SLOT(setInfo()) );
+	connect( ui->labelWarn, SIGNAL(clicked()), this, SLOT(setWarn()) );
+	connect( ui->labelError, SIGNAL(clicked()), this, SLOT(setError()) );
+	connect( ui->labelFatal, SIGNAL(clicked()), this, SLOT(setFatal()) );
 
 	ui->loggingLevel->setValue( QsLogging::Logger::instance().loggingLevel() );
 }

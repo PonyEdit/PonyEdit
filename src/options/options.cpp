@@ -45,16 +45,16 @@ void Options::autoPersist( QCheckBox *control, const QString &optionKey, bool de
 	control->setChecked( get( optionKey, defaultValue ).toBool() );
 	getInstance()->autoPersist( control,
 	                            optionKey,
-	                            SIGNAL( clicked( bool ) ),
-	                            SLOT( persistantCheckBoxChanged( bool ) ) );
+	                            SIGNAL(clicked(bool)),
+	                            SLOT(persistantCheckBoxChanged(bool)) );
 }
 
 void Options::autoPersist( QLineEdit *control, const QString &optionKey, const QString &defaultValue ) {
 	control->setText( get( optionKey, defaultValue ).toString() );
 	getInstance()->autoPersist( control,
 	                            optionKey,
-	                            SIGNAL( textChanged( QString ) ),
-	                            SLOT( persistantLineEditChanged( QString ) ) );
+	                            SIGNAL(textChanged(QString)),
+	                            SLOT(persistantLineEditChanged(QString)) );
 }
 
 void Options::autoPersist( QWidget *control,
@@ -63,7 +63,7 @@ void Options::autoPersist( QWidget *control,
                            const char *persistSlot ) {
 	mPersistantKeys.insert( control, optionKey );
 	connect( control, changedSignal, this, persistSlot );
-	connect( control, SIGNAL( destroyed( QObject * ) ), this, SLOT( endAutoPersist( QObject * ) ) );
+	connect( control, SIGNAL(destroyed(QObject *)), this, SLOT(endAutoPersist(QObject *)) );
 }
 
 void Options::endAutoPersist( QObject *control ) {

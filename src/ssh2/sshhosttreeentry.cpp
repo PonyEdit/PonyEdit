@@ -20,8 +20,8 @@ SshHostTreeEntry::SshHostTreeEntry( SshHost *host ) :
 	initializeCustomDrawKit();
 	addGutterIcon( GUTTER_LOG, true, sLogIcon, "Show log" );
 
-	connect( mHost, SIGNAL( overallStatusChanged() ), this, SLOT( invalidate() ) );
-	connect( this, SIGNAL( gutterIconClicked( int ) ), this, SLOT( handleGutterIconClick( int ) ) );
+	connect( mHost, SIGNAL(overallStatusChanged()), this, SLOT(invalidate()) );
+	connect( this, SIGNAL(gutterIconClicked(int)), this, SLOT(handleGutterIconClick(int)) );
 }
 
 void SshHostTreeEntry::initializeCustomDrawKit() {

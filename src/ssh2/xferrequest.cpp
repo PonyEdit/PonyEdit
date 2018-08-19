@@ -13,11 +13,11 @@ XferRequest::XferRequest( bool sudo, QByteArray filename, const Callback &callba
 	mEncodedData(),
 	mSize( 0 ) {
 
-	connect( this, SIGNAL( transferSuccess( QVariantMap ) ), callback.getTarget(), callback.getSuccessSlot() );
-	connect( this, SIGNAL( transferFailure( QString, int ) ), callback.getTarget(), callback.getFailureSlot() );
+	connect( this, SIGNAL(transferSuccess(QVariantMap)), callback.getTarget(), callback.getSuccessSlot() );
+	connect( this, SIGNAL(transferFailure(QString,int)), callback.getTarget(), callback.getFailureSlot() );
 
 	if ( callback.getProgressSlot() ) {
-		connect( this, SIGNAL( transferProgress( int ) ), callback.getTarget(), callback.getProgressSlot() );
+		connect( this, SIGNAL(transferProgress(int)), callback.getTarget(), callback.getProgressSlot() );
 	}
 }
 

@@ -35,9 +35,9 @@ WindowManager::WindowManager( QWidget *parent ) :
 	createSearchResults();
 
 	connect( &gOpenFileManager,
-	         SIGNAL( fileClosed( BaseFile * ) ),
+	         SIGNAL(fileClosed(BaseFile *)),
 	         this,
-	         SLOT( fileClosed( BaseFile * ) ),
+	         SLOT(fileClosed(BaseFile *)),
 	         Qt::DirectConnection );
 }
 
@@ -154,12 +154,12 @@ void WindowManager::createSearchBar() {
 
 	mSearchBarWrapper->hide();
 	mSearchBarWrapper->setTitleBarWidget( new QWidget( this ) );
-	connect( mSearchBar, SIGNAL( closeRequested() ), this, SLOT( hideSearchBar() ) );
-	connect( mSearchBar, SIGNAL( find( QString, bool ) ), this, SLOT( findInCurrentEditor( QString, bool ) ) );
+	connect( mSearchBar, SIGNAL(closeRequested()), this, SLOT(hideSearchBar()) );
+	connect( mSearchBar, SIGNAL(find(QString,bool)), this, SLOT(findInCurrentEditor(QString,bool)) );
 	connect( mSearchBar,
-	         SIGNAL( replace( QString, QString, bool ) ),
+	         SIGNAL(replace(QString,QString,bool)),
 	         this,
-	         SLOT( replaceInCurrentEditor( QString, QString, bool ) ) );
+	         SLOT(replaceInCurrentEditor(QString,QString,bool)) );
 	mSearchBarWrapper->setObjectName( "Search Bar" );
 }
 

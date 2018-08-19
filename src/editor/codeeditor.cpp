@@ -16,10 +16,10 @@ CodeEditor::CodeEditor( BaseFile *file, QWidget *parent ) :
 	mFile = file;
 	mLineNumberWidget = new LineNumberWidget( this );
 
-	connect( this, SIGNAL( blockCountChanged( int ) ), this, SLOT( updateLineNumberAreaWidth( int ) ) );
-	connect( this, SIGNAL( updateRequest( QRect, int ) ), this, SLOT( updateLineNumberArea( QRect, int ) ) );
-	connect( this, SIGNAL( cursorPositionChanged() ), this, SLOT( highlightCurrentLine() ) );
-	connect( this, SIGNAL( cursorPositionChanged() ), this, SLOT( highlightMatchingParenthesis() ) );
+	connect( this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)) );
+	connect( this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumberArea(QRect,int)) );
+	connect( this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()) );
+	connect( this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightMatchingParenthesis()) );
 
 	updateLineNumberAreaWidth( 0 );
 	highlightCurrentLine();

@@ -14,19 +14,19 @@ TabbedFileList::TabbedFileList( QWidget *parent ) :
 	mTabs = new QTabBar( this );
 	mTabs->setTabsClosable( true );
 
-	connect( mTabs, SIGNAL( currentChanged( int ) ), this, SLOT( currentChanged( int ) ) );
-	connect( mTabs, SIGNAL( tabCloseRequested( int ) ), this, SLOT( tabCloseRequested( int ) ) );
+	connect( mTabs, SIGNAL(currentChanged(int)), this, SLOT(currentChanged(int)) );
+	connect( mTabs, SIGNAL(tabCloseRequested(int)), this, SLOT(tabCloseRequested(int)) );
 
 	setFeatures( QDockWidget::NoDockWidgetFeatures );
 	setWidget( mTabs );
 
-	connect( &gOpenFileManager, SIGNAL( fileOpened( BaseFile * ) ), this, SLOT( fileOpened( BaseFile * ) ) );
+	connect( &gOpenFileManager, SIGNAL(fileOpened(BaseFile *)), this, SLOT(fileOpened(BaseFile *)) );
 	connect( &gOpenFileManager,
-	         SIGNAL( fileClosed( BaseFile * ) ),
+	         SIGNAL(fileClosed(BaseFile *)),
 	         this,
-	         SLOT( fileClosed( BaseFile * ) ),
+	         SLOT(fileClosed(BaseFile *)),
 	         Qt::DirectConnection );
-	connect( gDispatcher, SIGNAL( selectFile( BaseFile * ) ), this, SLOT( fileSelected( BaseFile * ) ) );
+	connect( gDispatcher, SIGNAL(selectFile(BaseFile *)), this, SLOT(fileSelected(BaseFile *)) );
 
 	// Add any already-open files
 	foreach ( BaseFile *file, gOpenFileManager.getOpenFiles() ) {
@@ -52,9 +52,9 @@ void TabbedFileList::fileOpened( BaseFile *file ) {
 	int idx = mTabs->addTab( file->getLocation().getLabel() );
 	mTabs->setTabData( idx, QVariant::fromValue< Location >( file->getLocation() ) );
 
-	connect( file, SIGNAL( openStatusChanged( int ) ), this, SLOT( fileChanged() ) );
-	connect( file, SIGNAL( fileProgress( int ) ), this, SLOT( fileChanged() ) );
-	connect( file, SIGNAL( unsavedStatusChanged() ), this, SLOT( fileChanged() ) );
+	connect( file, SIGNAL(openStatusChanged(int)), this, SLOT(fileChanged()) );
+	connect( file, SIGNAL(fileProgress(int)), this, SLOT(fileChanged()) );
+	connect( file, SIGNAL(unsavedStatusChanged()), this, SLOT(fileChanged()) );
 }
 
 void TabbedFileList::fileClosed( BaseFile *file ) {

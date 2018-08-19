@@ -34,16 +34,16 @@ UnsavedChangesDialog::UnsavedChangesDialog( const QList< BaseFile * > &files, bo
 	layout->addWidget( mButtonBox );
 
 	foreach ( BaseFile *file, files ) {
-		connect( file, SIGNAL( unsavedStatusChanged() ), this, SLOT( fileStateChanged() ) );
+		connect( file, SIGNAL(unsavedStatusChanged()), this, SLOT(fileStateChanged()) );
 	}
 
 	connect( mTreeView->selectionModel(),
-	         SIGNAL( selectionChanged( QItemSelection, QItemSelection ) ),
+	         SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
 	         this,
-	         SLOT( selectionChanged( QItemSelection, QItemSelection ) ) );
-	connect( mButtonBox, SIGNAL( rejected() ), this, SLOT( reject() ) );
-	connect( mButtonBox, SIGNAL( clicked( QAbstractButton * ) ), this, SLOT( buttonClicked( QAbstractButton * ) ) );
-	connect( &gOpenFileManager, SIGNAL( fileClosed( BaseFile * ) ), this, SLOT( fileClosed( BaseFile * ) ) );
+	         SLOT(selectionChanged(QItemSelection,QItemSelection)) );
+	connect( mButtonBox, SIGNAL(rejected()), this, SLOT(reject()) );
+	connect( mButtonBox, SIGNAL(clicked(QAbstractButton *)), this, SLOT(buttonClicked(QAbstractButton *)) );
+	connect( &gOpenFileManager, SIGNAL(fileClosed(BaseFile *)), this, SLOT(fileClosed(BaseFile *)) );
 }
 
 UnsavedChangesDialog::~UnsavedChangesDialog() = default;

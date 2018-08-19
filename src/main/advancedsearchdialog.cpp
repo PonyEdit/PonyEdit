@@ -21,9 +21,9 @@ AdvancedSearchDialog::AdvancedSearchDialog( QWidget *parent ) :
 
 	ui->find->setFocus();
 
-	connect( ui->searchButton, SIGNAL( clicked() ), this, SLOT( search() ) );
-	connect( ui->searchReplaceButton, SIGNAL( clicked() ), this, SLOT( searchAndReplace() ) );
-	connect( ui->closeButton, SIGNAL( clicked() ), this, SLOT( close() ) );
+	connect( ui->searchButton, SIGNAL(clicked()), this, SLOT(search()) );
+	connect( ui->searchReplaceButton, SIGNAL(clicked()), this, SLOT(searchAndReplace()) );
+	connect( ui->closeButton, SIGNAL(clicked()), this, SLOT(close()) );
 }
 
 AdvancedSearchDialog::~AdvancedSearchDialog() {

@@ -40,8 +40,8 @@ StartupOptionsWidget::StartupOptionsWidget( QWidget *parent ) :
 
 	ui->confirmOnExit->setChecked( Options::ShutdownPrompt );
 
-	connect( ui->setFiles, SIGNAL( toggled( bool ) ), this, SLOT( SetFilesToggled( bool ) ) );
-	connect( ui->currentFiles, SIGNAL( clicked() ), this, SLOT( SetFilesToCurrent() ) );
+	connect( ui->setFiles, SIGNAL(toggled(bool)), this, SLOT(SetFilesToggled(bool)) );
+	connect( ui->currentFiles, SIGNAL(clicked()), this, SLOT(SetFilesToCurrent()) );
 }
 
 StartupOptionsWidget::~StartupOptionsWidget() {

@@ -5,9 +5,9 @@
 LocalFile::LocalFile( const Location &location ) :
 	BaseFile( location ) {
 	connect( this,
-	         SIGNAL( localFileOpened( QString, QByteArray, bool ) ),
+	         SIGNAL(localFileOpened(QString,QByteArray,bool)),
 	         this,
-	         SLOT( openSuccess( QString, QByteArray, bool ) ),
+	         SLOT(openSuccess(QString,QByteArray,bool)),
 	         Qt::QueuedConnection );
 }
 

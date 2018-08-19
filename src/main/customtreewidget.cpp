@@ -19,7 +19,7 @@ CustomTreeWidget::CustomTreeWidget( QWidget *parent ) :
 	setAttribute( Qt::WA_MacShowFocusRect, false );
 	viewport()->setAttribute( Qt::WA_Hover );
 
-	connect( this, SIGNAL( clicked( QModelIndex ) ), this, SLOT( entryClicked( QModelIndex ) ) );
+	connect( this, SIGNAL(clicked(QModelIndex)), this, SLOT(entryClicked(QModelIndex)) );
 }
 
 CustomTreeWidget::~CustomTreeWidget() {

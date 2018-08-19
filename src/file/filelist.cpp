@@ -18,11 +18,11 @@ FileList::FileList( QWidget *parent ) :
 	mTreeView->setMinimumWidth( 150 );
 	setWidget( mTreeView );
 
-	connect( gDispatcher, SIGNAL( selectFile( BaseFile * ) ), this, SLOT( selectFile( BaseFile * ) ) );
+	connect( gDispatcher, SIGNAL(selectFile(BaseFile *)), this, SLOT(selectFile(BaseFile *)) );
 	connect( mTreeView->selectionModel(),
-	         SIGNAL( currentChanged( QModelIndex, QModelIndex ) ),
+	         SIGNAL(currentChanged(QModelIndex,QModelIndex)),
 	         this,
-	         SLOT( fileSelected() ) );
+	         SLOT(fileSelected()) );
 }
 
 void FileList::selectFile( BaseFile *file ) {

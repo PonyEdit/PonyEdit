@@ -14,7 +14,7 @@ void Callback::triggerSuccess( QVariantMap result ) const {
 	}
 
 	auto *tmp = new CallbackDummy();
-	QObject::connect( tmp, SIGNAL( triggerSuccess( QVariantMap ) ), mTarget.data(), mSuccessSlot );
+	QObject::connect( tmp, SIGNAL(triggerSuccess(QVariantMap)), mTarget.data(), mSuccessSlot );
 	tmp->emitTriggerSuccess( std::move( result ) );
 	tmp->deleteLater();
 }
@@ -25,7 +25,7 @@ void Callback::triggerFailure( QString error, int flags ) const {
 	}
 
 	auto *tmp = new CallbackDummy();
-	QObject::connect( tmp, SIGNAL( triggerFailure( QString, int ) ), mTarget.data(), mFailureSlot );
+	QObject::connect( tmp, SIGNAL(triggerFailure(QString,int)), mTarget.data(), mFailureSlot );
 	tmp->emitTriggerFailure( std::move( error ), flags );
 	tmp->deleteLater();
 }
@@ -36,7 +36,7 @@ void Callback::triggerProgress( int progress ) const {
 	}
 
 	auto *tmp = new CallbackDummy();
-	QObject::connect( tmp, SIGNAL( triggerProgress( int ) ), mTarget.data(), mProgressSlot );
+	QObject::connect( tmp, SIGNAL(triggerProgress(int)), mTarget.data(), mProgressSlot );
 	tmp->emitTriggerProgress( progress );
 	tmp->deleteLater();
 }

@@ -10,7 +10,7 @@ FileStatusWidget::FileStatusWidget( BaseFile *file, QWidget *parent ) :
 	StatusWidget( true, parent ) {
 	mFile = file;
 	setButtons( Cancel );
-	connect( file, SIGNAL( openStatusChanged( int ) ), this, SLOT( openStatusChanged() ) );
+	connect( file, SIGNAL(openStatusChanged(int)), this, SLOT(openStatusChanged()) );
 }
 
 FileStatusWidget::~FileStatusWidget() = default;

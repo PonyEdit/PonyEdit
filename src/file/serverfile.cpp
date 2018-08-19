@@ -37,9 +37,9 @@ BaseFile *ServerFile::newFile( const QString &content ) {
 	                       mLocation.getRemotePath().toLatin1(),
 	                       content.toUtf8(),
 	                       Callback( this,
-	                                 SLOT( createSuccess( QVariantMap ) ),
-	                                 SLOT( openFailure( QString, int ) ),
-	                                 SLOT( downloadProgress( int ) ) ) );
+	                                 SLOT(createSuccess(QVariantMap)),
+	                                 SLOT(openFailure(QString,int)),
+	                                 SLOT(downloadProgress(int)) ) );
 
 	return this;
 }
@@ -63,16 +63,16 @@ void ServerFile::open() {
 	                          "open",
 	                          QVariant( params ),
 	                          Callback( this,
-	                                    SLOT( serverOpenSuccess( QVariantMap ) ),
-	                                    SLOT( openFailure( QString, int ) ) ) );
+	                                    SLOT(serverOpenSuccess(QVariantMap)),
+	                                    SLOT(openFailure(QString,int)) ) );
 
 	// Retrieve the file content on a separate SSH channel...
 	mHost->getFileContent( mLocation.isSudo(),
 	                       mLocation.getRemotePath().toLatin1(),
 	                       Callback( this,
-	                                 SLOT( downloadSuccess( QVariantMap ) ),
-	                                 SLOT( openFailure( QString, int ) ),
-	                                 SLOT( downloadProgress( int ) ) ) );
+	                                 SLOT(downloadSuccess(QVariantMap)),
+	                                 SLOT(openFailure(QString,int)),
+	                                 SLOT(downloadProgress(int)) ) );
 }
 
 void ServerFile::downloadProgress( int percent ) {
@@ -142,8 +142,8 @@ void ServerFile::reconnect() {
 	                          "open",
 	                          QVariant( params ),
 	                          Callback( this,
-	                                    SLOT( serverReconnectSuccess( QVariantMap ) ),
-	                                    SLOT( serverReconnectFailure( QString, int ) ) ) );
+	                                    SLOT(serverReconnectSuccess(QVariantMap)),
+	                                    SLOT(serverReconnectFailure(QString,int)) ) );
 }
 
 void ServerFile::serverReconnectSuccess( const QVariantMap &results ) {
@@ -218,7 +218,7 @@ void ServerFile::pumpChangeQueue() {
 		                          this,
 		                          "change",
 		                          QVariant( params ),
-		                          Callback( this, nullptr, SLOT( changePushFailure( QString, int ) ) ) );
+		                          Callback( this, nullptr, SLOT(changePushFailure(QString,int)) ) );
 	}
 }
 
@@ -239,8 +239,8 @@ void ServerFile::save() {
 	                          "save",
 	                          QVariant( params ),
 	                          Callback( this,
-	                                    SLOT( serverSaveSuccess( QVariantMap ) ),
-	                                    SLOT( serverSaveFailure( QString, int ) ) ) );
+	                                    SLOT(serverSaveSuccess(QVariantMap)),
+	                                    SLOT(serverSaveFailure(QString,int)) ) );
 }
 
 void ServerFile::serverSaveSuccess( const QVariantMap &results ) {

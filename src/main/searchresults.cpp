@@ -39,8 +39,8 @@ SearchResults::SearchResults( QWidget *parent ) :
 	mReplaceLabel->setMargin( 5 );
 	childLayout->addWidget( mReplaceButton );
 
-	connect( mTreeView, SIGNAL( clicked( QModelIndex ) ), this, SLOT( itemClicked( QModelIndex ) ) );
-	connect( mReplaceButton, SIGNAL( clicked() ), this, SLOT( replaceClicked() ) );
+	connect( mTreeView, SIGNAL(clicked(QModelIndex)), this, SLOT(itemClicked(QModelIndex)) );
+	connect( mReplaceButton, SIGNAL(clicked()), this, SLOT(replaceClicked()) );
 }
 
 void SearchResults::clearResults() {

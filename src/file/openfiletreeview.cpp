@@ -44,7 +44,7 @@ OpenFileTreeView::OpenFileTreeView( QWidget *parent, int optionFlags, const QLis
 	}
 
 	if ( mExtraColumns ) {
-		connect( this, SIGNAL( clicked( QModelIndex ) ), this, SLOT( itemClicked( QModelIndex ) ) );
+		connect( this, SIGNAL(clicked(QModelIndex)), this, SLOT(itemClicked(QModelIndex)) );
 	} else {
 		header()->setStretchLastSection( true );
 	}

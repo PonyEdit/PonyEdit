@@ -300,9 +300,9 @@ bool ServerChannel::mainUpdate() {
 								mBufferIds.insert( request->getOpeningFile(),
 								                   response.value( "bufferId" ).toInt() );
 								connect( this,
-								         SIGNAL( channelShutdown() ),
+								         SIGNAL(channelShutdown()),
 								         request->getOpeningFile(),
-								         SLOT( serverChannelFailure() ),
+								         SLOT(serverChannelFailure()),
 								         Qt::QueuedConnection );
 							}
 						}

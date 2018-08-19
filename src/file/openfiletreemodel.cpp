@@ -23,11 +23,11 @@ OpenFileTreeModel::OpenFileTreeModel( QObject *parent,
 			fileOpened( file );
 		}
 	} else {
-		connect( &gOpenFileManager, SIGNAL( fileOpened( BaseFile * ) ), this, SLOT( fileOpened( BaseFile * ) ) );
+		connect( &gOpenFileManager, SIGNAL(fileOpened(BaseFile *)), this, SLOT(fileOpened(BaseFile *)) );
 		connect( &gOpenFileManager,
-		         SIGNAL( fileClosed( BaseFile * ) ),
+		         SIGNAL(fileClosed(BaseFile *)),
 		         this,
-		         SLOT( fileClosed( BaseFile * ) ),
+		         SLOT(fileClosed(BaseFile *)),
 		         Qt::DirectConnection );
 
 		// Add any already-open files
@@ -157,9 +157,9 @@ void OpenFileTreeModel::fileOpened( BaseFile *file ) {
 
 	mParent->expandAll();
 
-	connect( file, SIGNAL( openStatusChanged( int ) ), this, SLOT( fileChanged() ) );
-	connect( file, SIGNAL( fileProgress( int ) ), this, SLOT( fileChanged() ) );
-	connect( file, SIGNAL( unsavedStatusChanged() ), this, SLOT( fileChanged() ) );
+	connect( file, SIGNAL(openStatusChanged(int)), this, SLOT(fileChanged()) );
+	connect( file, SIGNAL(fileProgress(int)), this, SLOT(fileChanged()) );
+	connect( file, SIGNAL(unsavedStatusChanged()), this, SLOT(fileChanged()) );
 }
 
 void OpenFileTreeModel::fileClosed( BaseFile *file ) {

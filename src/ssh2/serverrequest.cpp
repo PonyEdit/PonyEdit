@@ -17,13 +17,13 @@ ServerRequest::ServerRequest( ServerFile *file,
 	mPackedRequest() {
 	if ( callback.getFailureSlot() ) {
 		connect( this,
-		         SIGNAL( requestFailure( QString, int ) ),
+		         SIGNAL(requestFailure(QString,int)),
 		         callback.getTarget(),
 		         callback.getFailureSlot() );
 	}
 	if ( callback.getSuccessSlot() ) {
 		connect( this,
-		         SIGNAL( requestSuccess( QVariantMap ) ),
+		         SIGNAL(requestSuccess(QVariantMap)),
 		         callback.getTarget(),
 		         callback.getSuccessSlot() );
 	}

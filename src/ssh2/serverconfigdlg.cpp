@@ -18,13 +18,13 @@ ServerConfigDlg::ServerConfigDlg( QWidget *parent ) :
 
 	ui->configContainer->setLayout( layout );
 
-	connect( ui->buttonBox, SIGNAL( accepted() ), this, SLOT( accept() ) );
-	connect( ui->buttonBox, SIGNAL( rejected() ), this, SLOT( reject() ) );
+	connect( ui->buttonBox, SIGNAL(accepted()), this, SLOT(accept()) );
+	connect( ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()) );
 
-	connect( mConfigWidget, SIGNAL( accepted() ), this, SLOT( accept() ) );
-	connect( mConfigWidget, SIGNAL( rejected() ), this, SLOT( reject() ) );
+	connect( mConfigWidget, SIGNAL(accepted()), this, SLOT(accept()) );
+	connect( mConfigWidget, SIGNAL(rejected()), this, SLOT(reject()) );
 
-	connect( this, SIGNAL( accepted() ), mConfigWidget, SLOT( acceptedHandler() ) );
+	connect( this, SIGNAL(accepted()), mConfigWidget, SLOT(acceptedHandler()) );
 
 	mConfigWidget->setFocus();
 }

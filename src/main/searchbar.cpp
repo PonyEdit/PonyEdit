@@ -14,12 +14,12 @@ SearchBar::SearchBar( QWidget *parent ) :
 	ui->replaceAllButton->setMinimumHeight( 32 );
 #endif
 
-	connect( ui->closeButton, SIGNAL( clicked() ), this, SIGNAL( closeRequested() ) );
-	connect( ui->prevButton, SIGNAL( clicked() ), this, SLOT( findPrev() ) );
-	connect( ui->nextButton, SIGNAL( clicked() ), this, SLOT( findNext() ) );
-	connect( ui->replaceButton, SIGNAL( clicked() ), this, SLOT( replaceCurrent() ) );
-	connect( ui->replaceFindButton, SIGNAL( clicked() ), this, SLOT( replaceCurrentAndFind() ) );
-	connect( ui->replaceAllButton, SIGNAL( clicked() ), this, SLOT( replaceAll() ) );
+	connect( ui->closeButton, SIGNAL(clicked()), this, SIGNAL(closeRequested()) );
+	connect( ui->prevButton, SIGNAL(clicked()), this, SLOT(findPrev()) );
+	connect( ui->nextButton, SIGNAL(clicked()), this, SLOT(findNext()) );
+	connect( ui->replaceButton, SIGNAL(clicked()), this, SLOT(replaceCurrent()) );
+	connect( ui->replaceFindButton, SIGNAL(clicked()), this, SLOT(replaceCurrentAndFind()) );
+	connect( ui->replaceAllButton, SIGNAL(clicked()), this, SLOT(replaceAll()) );
 }
 
 SearchBar::~SearchBar() {
