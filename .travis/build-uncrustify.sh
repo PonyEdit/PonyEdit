@@ -10,7 +10,7 @@ cd extras
 
 
 [ ! -e "$UNCRUSTIFY.tar.gz" ] && wget "https://github.com/uncrustify/uncrustify/archive/$UNCRUSTIFY.tar.gz"
-[ ! -e "uncrustify-$UNCRUSTIFY" ] && tar -xvf "$UNCRUSTIFY.tar.gz"
+[ ! -e "uncrustify-$UNCRUSTIFY" ] && tar -xvf "$UNCRUSTIFY.tar.gz" && rm -rf uncrustify-build
 
 [ ! -e "uncrustify-build" ] && mkdir uncrustify-build
 cd uncrustify-build
