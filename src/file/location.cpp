@@ -194,6 +194,8 @@ QString Location::getHostName() const {
 		case Unsaved:
 			return QObject::tr( "New Files" );
 	}
+
+	return QObject::tr( "New Files" );
 }
 
 QString Location::getHostlessPath() const {
@@ -208,6 +210,8 @@ QString Location::getHostlessPath() const {
 		case Unsaved:
 			throw( QObject::tr( "Unknown protocol" ) );
 	}
+
+	throw( QObject::tr( "Unknown protocol" ) );
 }
 
 bool Location::operator==( const Location &other ) const {
@@ -284,6 +288,8 @@ QIcon Location::getIcon() const {
 		case Unsaved:
 			return QIcon();
 	}
+
+	return QIcon();
 }
 
 Location::Type Location::getType() const {
@@ -583,6 +589,8 @@ QString Location::getDefaultFavoriteName() {
 		case Local:
 			return QObject::tr( "%1 (local)" ).arg( getLabel() );
 	}
+
+	return QObject::tr( "%1 (local)" ).arg( getLabel() );
 }
 
 void Location::createNewDirectory( const QString &name, const Callback &callback ) {
