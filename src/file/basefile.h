@@ -63,12 +63,11 @@ class BaseFile : public QObject {
 		}
 
 		virtual BaseFile *newFile( const QString &content ) = 0;
-		virtual void open() = 0;
-		virtual void save() = 0;
-		virtual void close() = 0;       // Warning: This call is asynchronous in some kinds of file; eg
-		                                // ServerFile.
-		virtual void refresh() = 0;     // Warning: This call is asynchronous in some kinds of file; eg
-		                                // ServerFile.
+
+		virtual void open()    = 0;
+		virtual void save()    = 0;
+		virtual void close()   = 0; // Warning: This call is asynchronous in some kinds of file; eg ServerFile.
+		virtual void refresh() = 0; // Warning: This call is asynchronous in some kinds of file; eg ServerFile.
 		virtual bool canClose() {
 			return true;
 		}

@@ -138,14 +138,14 @@ void Options::load() {
 	}
 
 	EditorFontZoom = settings.value( ntr( "editorFontZoom" ), QVariant( 100 ) ).toInt();
-	WordWrap = settings.value( ntr( "wordWrap" ), QVariant( false ) ).toBool();
-	TabStopWidth = settings.value( ntr( "tabStopWidth" ), QVariant( 8 ) ).toInt();
-	IndentMode =
+	WordWrap       = settings.value( ntr( "wordWrap" ), QVariant( false ) ).toBool();
+	TabStopWidth   = settings.value( ntr( "tabStopWidth" ), QVariant( 8 ) ).toInt();
+	IndentMode     =
 		static_cast< IndentModes >( settings.value( ntr( "indentMode" ),
 		                                            QVariant( static_cast< int >( KeepIndentOnNextLine ) ) ).
 		                            toInt() );
 	IndentSpaces = settings.value( ntr( "indentSpaces" ), QVariant( false ) ).toBool();
-	StripSpaces = settings.value( ntr( "stripSpaces" ), QVariant( true ) ).toBool();
+	StripSpaces  = settings.value( ntr( "stripSpaces" ), QVariant( true ) ).toBool();
 
 	StartupAction =
 		static_cast< StartupActions >( settings.value( ntr( "StartupAction" ),

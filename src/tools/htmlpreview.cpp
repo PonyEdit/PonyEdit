@@ -32,7 +32,7 @@ HTMLPreview::HTMLPreview( MainWindow *parent ) :
 
 	Editor *current = mParent->getCurrentEditor();
 	if ( current ) {
-		BaseFile *file = current->getFile();
+		BaseFile *file     = current->getFile();
 		QTextDocument *doc = file->getTextDocument();
 
 		connect( file, SIGNAL(unsavedStatusChanged()), this, SLOT(fileSaved()) );

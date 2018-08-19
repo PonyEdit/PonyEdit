@@ -12,14 +12,14 @@ WindowManager *gWindowManager = nullptr;
 WindowManager::WindowManager( QWidget *parent ) :
 	QWidget( parent ) {
 	mEditorSelectionLocked = false;
-	mParent = dynamic_cast< MainWindow * >( parent );
-	mCurrentEditorPanel = nullptr;
-	mSearchBarWrapper = nullptr;
-	mSearchBar = nullptr;
-	mRegExpTesterWrapper = nullptr;
-	mRegExpTester = nullptr;
-	mSearchResultsWrapper = nullptr;
-	mSearchResults = nullptr;
+	mParent                = dynamic_cast< MainWindow * >( parent );
+	mCurrentEditorPanel    = nullptr;
+	mSearchBarWrapper      = nullptr;
+	mSearchBar             = nullptr;
+	mRegExpTesterWrapper   = nullptr;
+	mRegExpTester          = nullptr;
+	mSearchResultsWrapper  = nullptr;
+	mSearchResults         = nullptr;
 
 	gWindowManager = this;
 
@@ -144,7 +144,7 @@ void WindowManager::findPrevious() {
 }
 
 void WindowManager::createSearchBar() {
-	mSearchBar = new SearchBar();
+	mSearchBar        = new SearchBar();
 	mSearchBarWrapper = new QDockWidget( "Search", nullptr, Qt::FramelessWindowHint );
 	mSearchBarWrapper->setFeatures( QDockWidget::DockWidgetClosable );
 	mSearchBarWrapper->setWidget( mSearchBar );
@@ -164,7 +164,7 @@ void WindowManager::createSearchBar() {
 }
 
 void WindowManager::createSearchResults() {
-	mSearchResults = new SearchResults();
+	mSearchResults        = new SearchResults();
 	mSearchResultsWrapper = new QDockWidget( "Search Results" );
 	mSearchResultsWrapper->setWidget( mSearchResults );
 
@@ -188,7 +188,7 @@ void WindowManager::hideSearchBar() {
 }
 
 void WindowManager::createRegExpTester() {
-	mRegExpTester = new RegExpTester();
+	mRegExpTester        = new RegExpTester();
 	mRegExpTesterWrapper = new QDockWidget( tr( "Regular Expression Tester" ), nullptr );
 	mRegExpTesterWrapper->setWidget( mRegExpTester );
 

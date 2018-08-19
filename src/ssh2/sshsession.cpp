@@ -125,7 +125,7 @@ void SshSession::threadMain() {
 		libssh2_session_set_blocking( mHandle, false );
 
 		// Hook my socket to Qt's event loop, allowing me to receive signals on network events
-		mSocketReadNotifier = new QSocketNotifier( mSocket, QSocketNotifier::Read );
+		mSocketReadNotifier      = new QSocketNotifier( mSocket, QSocketNotifier::Read );
 		mSocketExceptionNotifier = new QSocketNotifier( mSocket, QSocketNotifier::Exception );
 
 		QObject::connect( mSocketReadNotifier, SIGNAL(activated(int)), this, SLOT(handleReadActivity()) );
@@ -175,8 +175,8 @@ bool SshSession::openSocket( unsigned long ipAddress ) {
 	struct sockaddr_in sin {};
 	memset( &sin, 0, sizeof( sockaddr_in ) );
 
-	sin.sin_family = AF_INET;
-	sin.sin_port = htons( mHost->getPort() );
+	sin.sin_family      = AF_INET;
+	sin.sin_port        = htons( mHost->getPort() );
 	sin.sin_addr.s_addr = ipAddress;
 
 	SSHLOG_INFO( mHost ) << "Connecting to" << Tools::stringifyIpAddress( ipAddress );
@@ -212,7 +212,7 @@ bool SshSession::openSocket() {
 		// DNS lookup, cycle through the results until we find a working IP address
 		SSHLOG_TRACE( mHost ) << "Performing DNS lookup on" << mHost->getHostname();
 		struct hostent *server = gethostbyname( mHost->getHostname() );
-		int tryAddress = 0;
+		int tryAddress         = 0;
 
 		if ( ! server ) {
 			throw( tr( "Could not find host: %1" ).arg( QString( mHost->getHostname() ) ) );
@@ -229,14 +229,14 @@ bool SshSession::openSocket() {
 bool SshSession::verifyHostFingerprint() {
 	setStatus( VerifyingHost );
 
-	QByteArray fingerprint = QByteArray( libssh2_hostkey_hash( mHandle, LIBSSH2_HOSTKEY_HASH_SHA1 ), 20 );
+	QByteArray fingerprint      = QByteArray( libssh2_hostkey_hash( mHandle, LIBSSH2_HOSTKEY_HASH_SHA1 ), 20 );
 	QByteArray knownFingerprint = mHost->getHostFingerprint();
 	if ( knownFingerprint != fingerprint ) {
 		QString title;
 		QString body;
 		if ( knownFingerprint.isEmpty() ) {
 			title = QObject::tr( "%1: Verify Host Fingerprint" ).arg( mHost->getName() );
-			body = QObject::tr(
+			body  = QObject::tr(
 				"There is no fingerprint on file for this host. If this is the first time you are connecting to this server, "
 				"it is safe to ignore this warning.\n\nHost fingerprints provide extra security by verifying that you are "
 				"connecting to the server that you think you are. The first time you connect to a new server, there will be "
@@ -244,7 +244,7 @@ bool SshSession::verifyHostFingerprint() {
 				"changed." );
 		} else {
 			title = QObject::tr( "%1: Host Fingerprint Changed!" ).arg( mHost->getName() );
-			body = QObject::tr(
+			body  = QObject::tr(
 				"The host's fingerprint does not match the one on file! This may be caused by a security breach, or by "
 				"server reconfiguration. Please check with your host administrator before accepting the changed host key!" );
 		}
@@ -268,7 +268,7 @@ bool SshSession::verifyHostFingerprint() {
 bool SshSession::authenticatePassword( bool keyboardInteractive ) {
 	SSHLOG_TRACE( mHost ) << "Authenticating by password" << ( keyboardInteractive ? "(kbd interactive)" : "" );
 
-	bool authenticated = false;
+	bool authenticated    = false;
 	bool passwordRejected = false;
 	bool rememberPassword = mHost->getSavePassword();
 	mPasswordAttempt = mHost->getPassword();
@@ -357,7 +357,7 @@ bool SshSession::authenticatePublicKey() {
 	// If a keyfile has been supplied, try that first.
 	if ( ! mHost->getKeyFile().isEmpty() ) {
 		QByteArray passphrase = mHost->getKeyPassphrase();
-		bool remember = mHost->getSaveKeyPassphrase();
+		bool remember         = mHost->getSaveKeyPassphrase();
 		while ( true ) {
 			SSHLOG_TRACE( mHost ) << "Trying keyfile at " << mHost->getKeyFile();
 			int rc = libssh2_userauth_publickey_fromfile_ex( mHandle,
@@ -391,7 +391,7 @@ bool SshSession::authenticatePublicKey() {
 				}
 
 				passphrase = result.value( "password" ).toByteArray();
-				remember = result.value( "remember" ).toBool();
+				remember   = result.value( "remember" ).toBool();
 			} else {
 				SSHLOG_ERROR( mHost ) << "Key file authentiation rejected";
 				break;
@@ -408,7 +408,7 @@ bool SshSession::authenticatePublicKey() {
 bool SshSession::authenticateAgent() {
 	struct libssh2_agent_publickey *identity, *prevIdentity = nullptr;
 	LIBSSH2_AGENT *agent = nullptr;
-	bool success = false;
+	bool success         = false;
 
 	SSHLOG_TRACE( mHost ) << "Looking for an SSH key agent";
 
@@ -730,7 +730,7 @@ SshChannel *SshSession::getMostConnectedChannel() {
 			int connectionScore = channel->getConnectionScore();
 			if ( connectionScore > mostConnectedScore ) {
 				mostConnectedScore = connectionScore;
-				result = channel;
+				result             = channel;
 				if ( mostConnectedScore == 100 ) {
 					break;
 				}

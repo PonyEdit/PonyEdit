@@ -13,7 +13,7 @@ class OpenFileTreeModel : public QAbstractItemModel {
 
 	public:
 		enum Roles { LocationRole = Qt::UserRole, FileRole = Qt::UserRole + 1, TypeRole = Qt::UserRole + 2,
-			     LabelRole = Qt::UserRole + 3 };
+			     LabelRole    = Qt::UserRole + 3 };
 		enum Level { Root, Host, Directory, File };
 
 		// Displays explicitFiles if specified. If left NULL, gets a list of all currently open files.
@@ -22,7 +22,7 @@ class OpenFileTreeModel : public QAbstractItemModel {
 
 		QModelIndex index( int row, int column, const QModelIndex &parent ) const;
 		QModelIndex parent( const QModelIndex &index ) const;
-		int rowCount( const QModelIndex &parent = QModelIndex() ) const;
+		int rowCount( const QModelIndex &parent    = QModelIndex() ) const;
 		int columnCount( const QModelIndex &parent = QModelIndex() ) const;
 		QVariant data( const QModelIndex &index, int role ) const;
 		Qt::ItemFlags flags( const QModelIndex &index ) const;

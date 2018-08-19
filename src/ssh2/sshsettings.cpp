@@ -39,7 +39,7 @@ void SshSettings::parse( QString config ) {
 			continue;
 		}
 
-		key = line.section( ' ', 0, 0 ).trimmed().toLower();
+		key   = line.section( ' ', 0, 0 ).trimmed().toLower();
 		value = line.section( ' ', 1 ).trimmed().toLower();
 
 		if ( key.isEmpty() || value.isEmpty() ) {
@@ -92,7 +92,7 @@ SshSession::AuthMethods SshSettings::authMethods( QByteArray hostname ) {
 
 QString SshSettings::getValue( QByteArray hostname, QString key, QByteArray originalValue ) {
 	hostname = hostname.toLower();
-	key = key.toLower();
+	key      = key.toLower();
 	QString returnValue = originalValue = originalValue.toLower();
 
 	configMap::const_iterator iterator = mConfig.constBegin();

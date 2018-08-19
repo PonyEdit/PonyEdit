@@ -3,7 +3,7 @@
 #include "customtreewidget.h"
 
 CustomTreeModel::CustomTreeModel( CustomTreeWidget *widget ) {
-	mWidget = widget;
+	mWidget   = widget;
 	mRootNode = new CustomTreeEntry( this );
 }
 
@@ -32,7 +32,7 @@ QModelIndex CustomTreeModel::getEntryIndex( CustomTreeEntry *entry ) const {
 }
 
 QModelIndex CustomTreeModel::parent( const QModelIndex &index ) const {
-	CustomTreeEntry *entry = getEntry( index );
+	CustomTreeEntry *entry  = getEntry( index );
 	CustomTreeEntry *parent = entry->getParent();
 
 	if ( parent == nullptr ) {

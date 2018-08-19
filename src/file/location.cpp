@@ -94,13 +94,13 @@ Location::Location( const Location &parent,
                     bool canWrite ) {
 	mData = new LocationShared();
 	mData->setPath( path );
-	mData->mType = type;
-	mData->mSize = size;
+	mData->mType         = type;
+	mData->mSize         = size;
 	mData->mLastModified = lastModified;
-	mData->mSelfLoaded = true;
-	mData->mParent = parent;
-	mData->mCanRead = canRead | canWrite;
-	mData->mCanWrite = canWrite;
+	mData->mSelfLoaded   = true;
+	mData->mParent       = parent;
+	mData->mCanRead      = canRead | canWrite;
+	mData->mCanWrite     = canWrite;
 }
 
 LocationShared::LocationShared() :
@@ -327,7 +327,7 @@ void LocationShared::setPath( const QString &path ) {
 		QStringList parts = gSftpServerRegExp.capturedTexts();
 		mRemoteUserName = parts[ 2 ];
 		mRemoteHostName = parts[ 3 ];
-		mRemotePath = parts[ 4 ];
+		mRemotePath     = parts[ 4 ];
 
 		if ( mRemotePath.length() == 0 ) {
 			mRemotePath = "/";
@@ -338,7 +338,7 @@ void LocationShared::setPath( const QString &path ) {
 		QStringList parts = gSshServerRegExp.capturedTexts();
 		mRemoteUserName = parts[ 1 ];
 		mRemoteHostName = parts[ 2 ];
-		mRemotePath = parts[ 3 ];
+		mRemotePath     = parts[ 3 ];
 
 		if ( mRemotePath.length() == 0 ) {
 			mRemotePath = "/";
@@ -367,7 +367,7 @@ void LocationShared::setPath( const QString &path ) {
 
 void LocationShared::localLoadSelf() {
 	QFileInfo fileInfo = QFileInfo( mPath );
-	mType = fileInfo.isDir() ? Location::Directory : Location::File;
+	mType       = fileInfo.isDir() ? Location::Directory : Location::File;
 	mSelfLoaded = true;
 }
 
@@ -473,12 +473,12 @@ void LocationShared::sshLsSuccess( const QVariantMap &results ) {
 	while ( i.hasNext() ) {
 		i.next();
 
-		QVariantMap entry = i.value().toMap();
-		QByteArray flags = entry.value( "f", "" ).toByteArray();
-		bool isDir = flags.contains( 'd' );
-		bool canRead = flags.contains( 'r' );
-		bool canWrite = flags.contains( 'w' );
-		int size = entry.value( "s", 0 ).toInt();
+		QVariantMap entry   = i.value().toMap();
+		QByteArray flags    = entry.value( "f", "" ).toByteArray();
+		bool isDir          = flags.contains( 'd' );
+		bool canRead        = flags.contains( 'r' );
+		bool canWrite       = flags.contains( 'w' );
+		int size            = entry.value( "s", 0 ).toInt();
 		qint64 lastModified = entry.value( "m", 0 ).toLongLong();
 
 		children.append( Location( parentLocation,

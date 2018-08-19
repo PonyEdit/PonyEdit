@@ -45,16 +45,16 @@ class ServerChannel : public ShellChannel {
 
 	protected:
 		enum InternalStatus {
-			_WaitingForShell = 40,
-			_CheckingServer = 41,
-			_CheckingServerResponse = 42,
-			_StartingServerUploader = 43,
-			_WaitingForServerUploader = 44,
-			_UploadingServerScript = 45,
+			_WaitingForShell                = 40,
+			_CheckingServer                 = 41,
+			_CheckingServerResponse         = 42,
+			_StartingServerUploader         = 43,
+			_WaitingForServerUploader       = 44,
+			_UploadingServerScript          = 45,
 			_WaitingForServerUploadResponse = 46,
-			_SendingSudoPassword = 47,
-			_WaitingForRequests = 48,
-			_SendingRequest = 49
+			_SendingSudoPassword            = 47,
+			_WaitingForRequests             = 48,
+			_SendingRequest                 = 49
 		};
 
 		bool handleOpening();

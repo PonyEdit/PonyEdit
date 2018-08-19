@@ -66,7 +66,7 @@ void SyntaxHighlighter::highlightBlock( const QString &fullText ) {
 	QColor attributeColor;
 
 	// Get a copy of the context stack leftover from the last block
-	QTextBlock previousBlock = currentBlock().previous();
+	QTextBlock previousBlock           = currentBlock().previous();
 	SyntaxBlockData *previousBlockData =
 		( previousBlock.isValid() ? dynamic_cast< SyntaxBlockData * >( previousBlock.userData() ) : nullptr );
 	if ( previousBlockData ) {
@@ -76,10 +76,13 @@ void SyntaxHighlighter::highlightBlock( const QString &fullText ) {
 	// Track the shortest the stack has been on this line; used if stack is truncated.
 	int shortestStackWatermark = contextStack.size();
 
-	int position = 0;
+	int position        = 0;
 	bool firstIteration = true;
+
 	const SyntaxDefinition::ContextLink *lineEndOverrideContextLink = nullptr;
+
 	QSharedPointer< SyntaxRule > *rule;
+
 	while ( position < text.length() ) {
 		if ( contextStack.size() < shortestStackWatermark ) {
 			shortestStackWatermark = contextStack.size();
@@ -101,10 +104,12 @@ void SyntaxHighlighter::highlightBlock( const QString &fullText ) {
 		}
 
 		// Cycle through all the rules in the context, looking for a match...
-		int matchLength = 0;
-		SyntaxDefinition::ItemData *attributeLink = nullptr;
-		const SyntaxDefinition::ContextLink *contextLink = nullptr;
+		int matchLength  = 0;
 		bool isLookAhead = false;
+
+		SyntaxDefinition::ItemData *attributeLink        = nullptr;
+		const SyntaxDefinition::ContextLink *contextLink = nullptr;
+
 		QStringList dynamicCaptures;
 		for ( auto &idx : context->rules ) {
 			// NOTE: I apologise for this abuse of pointers.
@@ -114,15 +119,15 @@ void SyntaxHighlighter::highlightBlock( const QString &fullText ) {
 			matchLength = ( *rule )->match( text, position );
 			if ( matchLength > 0 ) {
 				// Match! Take note of the attribute and context links
-				attributeLink = ( *rule )->getAttributeLink();
-				contextLink = &( *rule )->getContextLink();
-				isLookAhead = ( *rule )->isLookAhead();
+				attributeLink   = ( *rule )->getAttributeLink();
+				contextLink     = &( *rule )->getContextLink();
+				isLookAhead     = ( *rule )->isLookAhead();
 				dynamicCaptures = ( *rule )->getDynamicCaptures();
 
 				// Special case: If this rule is a lineContinue, override lineEnd of the current context
 				if ( ( *rule )->getType() == SyntaxRule::LineContinue ) {
 					lineEndOverrideContextLink = contextLink;
-					contextLink = nullptr;
+					contextLink                = nullptr;
 				}
 
 				break;
@@ -198,7 +203,7 @@ void SyntaxHighlighter::highlightBlock( const QString &fullText ) {
 
 	// Check if this highlight block is ending on a different stack to the last time
 	SyntaxBlockData *oldBlockData = dynamic_cast< SyntaxBlockData * >( currentBlock().userData() );
-	bool changed = true;
+	bool changed                  = true;
 	if ( oldBlockData ) {
 		changed = ( contextStack != oldBlockData->mStack );
 	}

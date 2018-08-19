@@ -14,7 +14,7 @@ SearchResults::SearchResults( QWidget *parent ) :
 	auto *mainLayout = new QVBoxLayout( this );
 	mainLayout->setMargin( 0 );
 
-	mModel = new SearchResultModel( this );
+	mModel    = new SearchResultModel( this );
 	mDelegate = new SearchResultDelegate( mModel, this );
 
 	mTreeView = new QTreeView( this );

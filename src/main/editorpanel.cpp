@@ -7,7 +7,7 @@
 EditorPanel::EditorPanel( QWidget *parent, EditorPanel *parentPanel, EditorStack *inheritedStack ) :
 	QFrame( parent ) {
 	mParentPanel = parentPanel;
-	mLayout = new QVBoxLayout( this );
+	mLayout      = new QVBoxLayout( this );
 	mLayout->setMargin( 0 );
 	mSplitWidget = nullptr;
 
@@ -97,7 +97,7 @@ void EditorPanel::unsplit() {
 
 	// Pick which descendant to keep during the unsplit. Attempt 1: See if
 	// the current panel is a child of this split panel.
-	EditorPanel *keeper = nullptr;
+	EditorPanel *keeper      = nullptr;
 	EditorPanel *scanCurrent = currentEditor;
 	while ( scanCurrent != nullptr && scanCurrent != this ) {
 		scanCurrent = scanCurrent->getParentPanel();

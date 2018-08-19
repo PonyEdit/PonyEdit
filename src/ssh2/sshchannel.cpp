@@ -32,7 +32,7 @@ void SshChannel::criticalError( const QString &error ) {
 	SSHLOG_ERROR( mHost ) << "SshChannel has hit a critical error: " << error;
 
 	// Note: Error will wind up being logged by SshSession::threadMain's catch block.
-	mStatus = Error;
+	mStatus       = Error;
 	mErrorDetails = error;
 }
 

@@ -30,7 +30,7 @@ void SearchResultModel::clear() {
 
 SearchResultModel::InternalTreeNode *SearchResultModel::createFileNode( const Location &location ) {
 	auto *newNode = new InternalTreeNode();
-	newNode->parent = mRootNode;
+	newNode->parent          = mRootNode;
 	newNode->result.location = location;
 
 	// Keep the locations alphabetically sorted
@@ -107,7 +107,7 @@ QModelIndex SearchResultModel::index( int row, int column, const QModelIndex &pa
 }
 
 QModelIndex SearchResultModel::parent( const QModelIndex &child ) const {
-	InternalTreeNode *thisNode = getNodeForIndex( child );
+	InternalTreeNode *thisNode   = getNodeForIndex( child );
 	InternalTreeNode *parentNode = thisNode->parent;
 	if ( parentNode == nullptr ) {
 		return QModelIndex();
@@ -199,7 +199,7 @@ bool SearchResultModel::setData( const QModelIndex &index, const QVariant &value
 
 		// Update the parent state to reflect the children.
 		bool childrenUnchecked = false;
-		bool childrenChecked = false;
+		bool childrenChecked   = false;
 		foreach ( InternalTreeNode *child, node->parent->children ) {
 			if ( child->checked == Qt::Checked ) {
 				childrenChecked = true;

@@ -88,7 +88,7 @@ void UpdateManager::downloadProgress( qint64 bytesReceived, qint64 bytesTotal ) 
 
 	QLabel *progressLabel = mNotificationDlg->getProgressLabel();
 
-	double rec = bytesReceived;
+	double rec   = bytesReceived;
 	double total = bytesTotal;
 
 	QStringList units;

@@ -57,8 +57,8 @@ bool SyntaxDefXmlHandler::startElement( const QString & /* namespaceURI */,
 
 			// Inside <highlighting>. Look for <list>, <contexts> and <itemDatas>
 			if ( localName.compare( "list", Qt::CaseInsensitive ) == 0 ) {
-				mCurrentBlocks |= List;
-				mKeywordList = new SyntaxDefinition::KeywordList();
+				mCurrentBlocks    |= List;
+				mKeywordList       = new SyntaxDefinition::KeywordList();
 				mKeywordList->name = Tools::getStringXmlAttribute( atts, "name" );
 				mDefinition->addKeywordList( mKeywordList );
 			} else if ( localName.compare( "contexts", Qt::CaseInsensitive ) == 0 ) {
@@ -80,15 +80,15 @@ bool SyntaxDefXmlHandler::startElement( const QString & /* namespaceURI */,
 
 			// Inside <contexts>. Only care about <context> entries
 			if ( localName.compare( "context", Qt::CaseInsensitive ) == 0 ) {
-				mCurrentBlocks |= Context;
-				mContext = new SyntaxDefinition::ContextDef();
-				mContext->name = Tools::getStringXmlAttribute( atts, "name" );
-				mContext->attribute = Tools::getStringXmlAttribute( atts, "attribute" );
-				mContext->lineEndContext = Tools::getStringXmlAttribute( atts, "lineendcontext" );
-				mContext->lineBeginContext = Tools::getStringXmlAttribute( atts, "linebegincontext" );
-				mContext->fallthrough = Tools::getIntXmlAttribute( atts, "fallthrough", 0 );
+				mCurrentBlocks              |= Context;
+				mContext                     = new SyntaxDefinition::ContextDef();
+				mContext->name               = Tools::getStringXmlAttribute( atts, "name" );
+				mContext->attribute          = Tools::getStringXmlAttribute( atts, "attribute" );
+				mContext->lineEndContext     = Tools::getStringXmlAttribute( atts, "lineendcontext" );
+				mContext->lineBeginContext   = Tools::getStringXmlAttribute( atts, "linebegincontext" );
+				mContext->fallthrough        = Tools::getIntXmlAttribute( atts, "fallthrough", 0 );
 				mContext->fallthroughContext = Tools::getStringXmlAttribute( atts, "fallthroughcontext" );
-				mContext->dynamic = Tools::getIntXmlAttribute( atts, "dynamic", 0 );
+				mContext->dynamic            = Tools::getIntXmlAttribute( atts, "dynamic", 0 );
 				mDefinition->addContext( mContext );
 			}
 			break;
@@ -104,7 +104,7 @@ bool SyntaxDefXmlHandler::startElement( const QString & /* namespaceURI */,
 					mRule->addChildRule( QSharedPointer< SyntaxRule >( rule ) );
 				}
 
-				mRule = rule;
+				mRule           = rule;
 				mCurrentBlocks |= Rule;
 			} else {
 				delete rule;
@@ -117,15 +117,15 @@ bool SyntaxDefXmlHandler::startElement( const QString & /* namespaceURI */,
 			// Inside an <ItemDatas> block. Just expect a bunch of <itemdata> entries
 			if ( localName.compare( "itemdata", Qt::CaseInsensitive ) == 0 ) {
 				auto *itemData = new SyntaxDefinition::ItemData();
-				itemData->name = Tools::getStringXmlAttribute( atts, "name" );
-				itemData->styleName = Tools::getStringXmlAttribute( atts, "defStyleNum" );
+				itemData->name           = Tools::getStringXmlAttribute( atts, "name" );
+				itemData->styleName      = Tools::getStringXmlAttribute( atts, "defStyleNum" );
 				itemData->styleNameLower = itemData->styleName.toLower();
-				itemData->color = Tools::getStringXmlAttribute( atts, "color" );
-				itemData->selColor = Tools::getStringXmlAttribute( atts, "selColor" );
-				itemData->italic = Tools::getIntXmlAttribute( atts, "italic", 0 );
-				itemData->bold = Tools::getIntXmlAttribute( atts, "bold", 0 );
-				itemData->underline = Tools::getIntXmlAttribute( atts, "underline", 0 );
-				itemData->strikeout = Tools::getIntXmlAttribute( atts, "strikeout", 0 );
+				itemData->color          = Tools::getStringXmlAttribute( atts, "color" );
+				itemData->selColor       = Tools::getStringXmlAttribute( atts, "selColor" );
+				itemData->italic         = Tools::getIntXmlAttribute( atts, "italic", 0 );
+				itemData->bold           = Tools::getIntXmlAttribute( atts, "bold", 0 );
+				itemData->underline      = Tools::getIntXmlAttribute( atts, "underline", 0 );
+				itemData->strikeout      = Tools::getIntXmlAttribute( atts, "strikeout", 0 );
 				mDefinition->addItemData( itemData );
 			}
 			break;

@@ -37,7 +37,7 @@ SshServerOptionsWidget::~SshServerOptionsWidget() {
 void SshServerOptionsWidget::accept() {
 	for ( int ii = 0; ii < ui->serversList->count(); ii++ ) {
 		QListWidgetItem *item = ui->serversList->item( ii );
-		auto *host = item->data( Qt::UserRole ).value< SshHost * >();
+		auto *host            = item->data( Qt::UserRole ).value< SshHost * >();
 		if ( item->isHidden() ) {
 			for ( auto &mConfigWidget : mConfigWidgets ) {
 				if ( mConfigWidget->getEditHost() == host ) {
@@ -62,7 +62,7 @@ QListWidgetItem *SshServerOptionsWidget::populateServers() {
 	QHash< SshHost *, bool > currentList;
 	for ( int i = 0; i < ui->serversList->count(); i++ ) {
 		QListWidgetItem *item = ui->serversList->item( i );
-		auto *host = item->data( Qt::UserRole ).value< SshHost * >();
+		auto *host            = item->data( Qt::UserRole ).value< SshHost * >();
 		currentList.insert( host, false );
 	}
 
@@ -84,7 +84,7 @@ QListWidgetItem *SshServerOptionsWidget::populateServers() {
 	// Remove the list entries that have not been marked as "ok to keep"
 	for ( int i = 0; i < ui->serversList->count(); i++ ) {
 		QListWidgetItem *item = ui->serversList->item( i );
-		auto *host = item->data( Qt::UserRole ).value< SshHost * >();
+		auto *host            = item->data( Qt::UserRole ).value< SshHost * >();
 		if ( ! currentList.value( host, true ) ) {
 			i--;
 			delete item;
@@ -160,12 +160,12 @@ void SshServerOptionsWidget::deleteServer() {
 }
 
 void SshServerOptionsWidget::serverNameUpdated( const QString &newName ) {
-	auto *widget = dynamic_cast< ServerConfigWidget * >( sender() );
+	auto *widget  = dynamic_cast< ServerConfigWidget * >( sender() );
 	SshHost *host = widget->getEditHost();
 
 	for ( int ii = 0; ii < ui->serversList->count(); ii++ ) {
 		QListWidgetItem *item = ui->serversList->item( ii );
-		auto *testHost = item->data( Qt::UserRole ).value< SshHost * >();
+		auto *testHost        = item->data( Qt::UserRole ).value< SshHost * >();
 		if ( testHost == host ) {
 			item->setText( newName );
 			break;

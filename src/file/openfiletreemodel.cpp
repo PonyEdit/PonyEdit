@@ -11,9 +11,9 @@ OpenFileTreeModel::OpenFileTreeModel( QObject *parent,
                                       int flags,
                                       const QList< BaseFile * > *files ) :
 	QAbstractItemModel( parent ) {
-	mOptionFlags = flags;
+	mOptionFlags  = flags;
 	mTopLevelNode = new Node( Root );
-	mParent = dynamic_cast< OpenFileTreeView * >( parent );
+	mParent       = dynamic_cast< OpenFileTreeView * >( parent );
 
 	mExplicitFiles = ( files != nullptr );
 	if ( mExplicitFiles ) {
@@ -152,7 +152,7 @@ void OpenFileTreeModel::fileOpened( BaseFile *file ) {
 
 	// Create a Node for the new file
 	auto *newNode = new Node( File );
-	newNode->file = file;
+	newNode->file     = file;
 	newNode->location = file->getLocation();
 	addNodeToTree( directoryNode, newNode );
 	mFileLookup.insert( file, newNode );
@@ -169,7 +169,7 @@ void OpenFileTreeModel::fileClosed( BaseFile *file ) {
 }
 
 void OpenFileTreeModel::fileChanged() {
-	auto *file = dynamic_cast< BaseFile * >( QObject::sender() );
+	auto *file     = dynamic_cast< BaseFile * >( QObject::sender() );
 	Node *fileNode = mFileLookup.value( file );
 	if ( fileNode ) {
 		QModelIndex index = getNodeIndex( fileNode );
@@ -290,7 +290,7 @@ void OpenFileTreeModel::removeNode( const QModelIndex &index ) {
 		return;
 	}
 
-	int row = parentNode->children.indexOf( node );
+	int row                 = parentNode->children.indexOf( node );
 	QModelIndex parentIndex = parent( index );
 
 	beginRemoveRows( parentIndex, row, row );

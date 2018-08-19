@@ -52,7 +52,7 @@ FileDialog::FileDialog( QWidget *parent, bool saveAs ) :
 
 	setAcceptDrops( true );
 
-	mSaveAs = saveAs;
+	mSaveAs        = saveAs;
 	mInEditHandler = false;
 	setWindowTitle( saveAs ? tr( "Save As" ) : tr( "Open File" ) );
 
@@ -148,7 +148,7 @@ FileDialog::~FileDialog() {
 void FileDialog::restoreState() {
 	QSettings settings;
 	restoreGeometry( settings.value( "filedialog/geometry" ).toByteArray() );
-	mSortingColumn = settings.value( "filedialog/sortColumn", QVariant( 0 ) ).toInt();
+	mSortingColumn  = settings.value( "filedialog/sortColumn", QVariant( 0 ) ).toInt();
 	mReverseSorting = settings.value( "filedialog/reverseSort", QVariant( false ) ).toBool();
 }
 
@@ -375,7 +375,7 @@ void FileDialog::folderChildrenLoaded( const QList< Location > &children, const 
 		mFileListModel->setHorizontalHeaderLabels( headerLabels );
 		ui->fileList->setColumnWidth( 0, 250 );
 
-		QVariant itemData = ui->filterList->itemData( ui->filterList->currentIndex() );
+		QVariant itemData         = ui->filterList->itemData( ui->filterList->currentIndex() );
 		QList< QVariant > filters =
 			( itemData.isValid() ? ui->filterList->itemData( ui->filterList->currentIndex() ).toList() :
 			  QList<
@@ -469,7 +469,7 @@ void FileDialog::columnHeaderClicked( int column ) {
 	if ( mSortingColumn == column ) {
 		mReverseSorting = ! mReverseSorting;
 	} else {
-		mSortingColumn = column;
+		mSortingColumn  = column;
 		mReverseSorting = false;
 	}
 	applySort();
@@ -573,10 +573,10 @@ void FileDialog::upLevel() {
 }
 
 void FileDialog::fileDoubleClicked( QModelIndex index ) {
-	QStandardItem *item = mFileListModel->itemFromIndex( index );
-	int row = item->row();
+	QStandardItem *item        = mFileListModel->itemFromIndex( index );
+	int row                    = item->row();
 	QStandardItem *primaryItem = mFileListModel->item( row, 0 );
-	auto location = primaryItem->data( DATA_ROLE ).value< Location >();
+	auto location              = primaryItem->data( DATA_ROLE ).value< Location >();
 
 	if ( location.isDirectory() ) {
 		showLocation( location );
@@ -682,7 +682,7 @@ void FileDialog::updateFavorites() {
 	QMap< QString, bool > currentList;
 	for ( int i = 0; i < mFavoriteLocationsBranch->childCount(); i++ ) {
 		CustomTreeEntry *child = mFavoriteLocationsBranch->child( i );
-		auto *path = child->getData< QString * >();
+		auto *path             = child->getData< QString * >();
 		if ( ! path ) {
 			continue;
 		}
@@ -713,7 +713,7 @@ void FileDialog::updateFavorites() {
 	// Remove list entries that don't belong
 	for ( int i = 1; i < mFavoriteLocationsBranch->childCount(); i++ ) {
 		CustomTreeEntry *child = mFavoriteLocationsBranch->child( i );
-		auto *path = child->getData< QString * >();
+		auto *path             = child->getData< QString * >();
 		if ( ! path ) {
 			continue;
 		}
@@ -727,9 +727,9 @@ void FileDialog::updateFavorites() {
 void FileDialog::favoriteMenu( CustomTreeEntry *entry, QPoint pos ) {
 	pos = entry->mapToGlobal( pos );
 
-	QString path = *( entry->getData< QString * >() );
-	auto *contextMenu = new QMenu( this );
-	QAction *deleteAction = contextMenu->addAction( tr( "Delete Favorite" ) );
+	QString path            = *( entry->getData< QString * >() );
+	auto *contextMenu       = new QMenu( this );
+	QAction *deleteAction   = contextMenu->addAction( tr( "Delete Favorite" ) );
 	QAction *selectedAction = contextMenu->exec( pos );
 
 	if ( selectedAction == deleteAction ) {
@@ -816,7 +816,7 @@ void FileDialog::fileNameIndexChanged() {
 		QStringList filenames = Tools::splitQuotedList( text, ',' );
 
 		QAbstractItemModel *model = ui->fileList->model();
-		int rows = model->rowCount();
+		int rows                  = model->rowCount();
 		for ( int row = 0; row < rows; row++ ) {
 			if ( filenames.contains( model->data( model->index( row, 0 ) ).toString(),
 			                         Qt::CaseSensitive ) ) {

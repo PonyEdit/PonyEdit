@@ -29,7 +29,7 @@ void FtpFile::open() {
 }
 
 void FtpFile::sftpReadSuccess( const QVariantMap &results ) {
-	QByteArray content = results.value( "content", QByteArray() ).toByteArray();
+	QByteArray content  = results.value( "content", QByteArray() ).toByteArray();
 	QByteArray checksum = BaseFile::getChecksum( content ).toLatin1();
 
 	openSuccess( QString::fromUtf8( content, content.size() ), checksum, false );
@@ -62,8 +62,8 @@ void FtpFile::save() {
 void FtpFile::sftpWriteSuccess( const QVariantMap &results ) {
 	setProgress( -1 );
 
-	int revision = results.value( "revision" ).toInt();
-	int undoLength = results.value( "undoLength" ).toInt();
+	int revision        = results.value( "revision" ).toInt();
+	int undoLength      = results.value( "undoLength" ).toInt();
 	QByteArray checksum = results.value( "checksum" ).toByteArray();
 
 	savedRevision( revision, undoLength, checksum );

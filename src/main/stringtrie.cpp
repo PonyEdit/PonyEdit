@@ -9,7 +9,7 @@ QVector< StringTrie::Node > *StringTrie::sCurrentNodeHeap;
 
 StringTrie::StringTrie() {
 	sNodeHeapCursor = NODE_HEAP_SIZE;
-	mRoot = allocateNode();
+	mRoot           = allocateNode();
 }
 
 void StringTrie::addWord( const QString &word ) {

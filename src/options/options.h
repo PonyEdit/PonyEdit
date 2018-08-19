@@ -13,20 +13,20 @@ class Options : QObject {
 
 	public:
 		enum IndentModes {
-			NoAutoIndent = 0,
+			NoAutoIndent         = 0,
 			KeepIndentOnNextLine = 1,
-			SmartIndent = 2 // Not used yet; reserved.
+			SmartIndent          = 2 // Not used yet; reserved.
 		};
 
 		enum StartupActions {
-			NoFiles = 0,
-			BlankFile = 1,
+			NoFiles     = 0,
+			BlankFile   = 1,
 			ReopenFiles = 2,
-			SetFiles = 3
+			SetFiles    = 3
 		};
 
 		enum FileListTypes {
-			QuickList = 0,
+			QuickList  = 0,
 			TabbedList = 1
 		};
 

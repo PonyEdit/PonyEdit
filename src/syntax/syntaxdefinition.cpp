@@ -53,8 +53,8 @@ void SyntaxDefinition::unlink() {
 
 	foreach ( QSharedPointer< ContextDef > context, mContextList ) {
 		context->fallthroughContextLink = ContextLink();
-		context->lineBeginContextLink = ContextLink();
-		context->lineEndContextLink = ContextLink();
+		context->lineBeginContextLink   = ContextLink();
+		context->lineEndContextLink     = ContextLink();
 
 		foreach ( QSharedPointer< SyntaxRule > rule, context->rules ) {
 			rule->unlink();
@@ -114,7 +114,7 @@ bool SyntaxDefinition::link() {
 					QLOG_WARN() << "Warning: IncludeRule names non-existent context: " << source;
 				} else {
 					if ( rule->getIncludeAttrib() ) {
-						context->attribute = sourceContext->attribute;
+						context->attribute     = sourceContext->attribute;
 						context->attributeLink = sourceContext->attributeLink;
 					}
 

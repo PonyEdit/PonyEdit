@@ -23,11 +23,11 @@
 #include "syntax/syntaxrule.h"
 #include "website/sitemanager.h"
 
-GlobalDispatcher *gDispatcher = nullptr;
-SiteManager *gSiteManager = nullptr;
+GlobalDispatcher *gDispatcher       = nullptr;
+SiteManager *gSiteManager           = nullptr;
 SyntaxDefManager *gSyntaxDefManager = nullptr;
-MainWindow *gMainWindow = nullptr;
-bool PonyEdit::sApplicationExiting = false;
+MainWindow *gMainWindow             = nullptr;
+bool PonyEdit::sApplicationExiting  = false;
 
 PonyEdit::PonyEdit( int argc, char **argv ) :
 	QApplication( argc, argv ),
@@ -104,8 +104,8 @@ PonyEdit::PonyEdit( int argc, char **argv ) :
 		Options::load();
 
 		gSyntaxDefManager = new SyntaxDefManager();
-		gSiteManager = new SiteManager();
-		gDispatcher = new GlobalDispatcher();
+		gSiteManager      = new SiteManager();
+		gDispatcher       = new GlobalDispatcher();
 		mDialogRethreader = new DialogRethreader();
 
 		gMainWindow = new MainWindow();
@@ -163,7 +163,7 @@ void PonyEdit::receiveMessage() {
 		return;
 	}
 	QByteArray byteArray = localSocket->readAll();
-	QString message = QString::fromUtf8( byteArray.constData() );
+	QString message      = QString::fromUtf8( byteArray.constData() );
 
 	gMainWindow->openSingleFile( Location( message ) );
 

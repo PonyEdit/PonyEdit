@@ -24,9 +24,9 @@ class DialogRethreader : public QObject {
 			QMutex mutex;
 
 			DialogRethreadRequest rq;
-			rq.options = options;
+			rq.options       = options;
 			rq.factoryMethod = ( createDialog< T > );
-			rq.lock = &mutex;
+			rq.lock          = &mutex;
 
 			DialogEvent *e = new DialogEvent( sRunDialogEventId );
 			e->request = &rq;

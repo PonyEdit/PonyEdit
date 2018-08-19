@@ -15,9 +15,9 @@
 
 Editor::Editor( BaseFile *file ) {
 	mReadOnlyWarning = nullptr;
-	mFirstOpen = true;
+	mFirstOpen       = true;
 
-	mEditorPane = new QWidget( this );
+	mEditorPane       = new QWidget( this );
 	mEditorPaneLayout = new QVBoxLayout( mEditorPane );
 	mEditorPaneLayout->setSpacing( 0 );
 	mEditorPaneLayout->setMargin( 0 );
@@ -276,7 +276,7 @@ int Editor::replace( const QString &findText,
 	}
 
 	// Verify the selected text matches the search text, and replace
-	bool match = false;
+	bool match           = false;
 	QString selectedText = mEditor->textCursor().selectedText();
 	if ( useRegex ) {
 		QRegExp re( findText, caseSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive );

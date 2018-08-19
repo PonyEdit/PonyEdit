@@ -8,9 +8,9 @@
 
 OpenFileTreeView::OpenFileTreeView( QWidget *parent, int optionFlags, const QList< BaseFile * > *files ) :
 	QTreeView( parent ) {
-	mExtraColumns = 0;
+	mExtraColumns  = 0;
 	mRefreshColumn = 0;
-	mCloseColumn = 0;
+	mCloseColumn   = 0;
 
 	// Create & attach the model; the model supplies the data in tree layout to display
 	mModel = new OpenFileTreeModel( this, optionFlags, files );

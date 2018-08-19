@@ -38,7 +38,7 @@ BaseFile *BaseFile::getFile( const Location &location ) {
 	}
 
 	// If not, create a new file object.
-	BaseFile *newFile = nullptr;
+	BaseFile *newFile           = nullptr;
 	Location::Protocol protocol = location.getProtocol();
 	switch ( protocol ) {
 		case Location::Ssh:
@@ -154,8 +154,8 @@ void BaseFile::openSuccess( const QString &content, const QByteArray &checksum, 
 	}
 
 	mLastSaveChecksum = checksum;
-	mContent = content;
-	mReadOnly = readOnly;
+	mContent          = content;
+	mReadOnly         = readOnly;
 
 	// Detect line ending mode, then convert it to unix-style. Use unix-style line endings everywhere, only convert
 	// to DOS at save time.
@@ -183,7 +183,7 @@ void BaseFile::openFailure( const QString &error, int /*errorFlags*/ ) {
 
 void BaseFile::setOpenStatus( OpenStatus newStatus ) {
 	mOpenStatus = newStatus;
-	mProgress = -1;
+	mProgress   = -1;
 	emit openStatusChanged( newStatus );
 }
 
@@ -212,7 +212,7 @@ void BaseFile::savedRevision( int revision, int undoLength, const QByteArray &ch
 	setLastSavedRevision( revision );
 
 	mLastSavedUndoLength = undoLength;
-	mChanged = ( undoLength != mDocument->availableUndoSteps() );
+	mChanged             = ( undoLength != mDocument->availableUndoSteps() );
 
 	gDispatcher->emitGeneralStatusMessage( QString( "Finished saving " ) + mLocation.getLabel() );
 	QLOG_TRACE() << "Saved file" << mLocation.getLabel() << "at revision" << revision;

@@ -11,7 +11,7 @@ ShutdownPrompt::ShutdownPrompt( QWidget *parent ) :
 	ui->setupUi( this );
 
 	QStyle *style = this->style();
-	int iconSize = style->pixelMetric( QStyle::PM_MessageBoxIconSize, nullptr, this );
+	int iconSize  = style->pixelMetric( QStyle::PM_MessageBoxIconSize, nullptr, this );
 
 	QIcon tmpIcon = style->standardIcon( QStyle::SP_MessageBoxQuestion, nullptr, this );
 

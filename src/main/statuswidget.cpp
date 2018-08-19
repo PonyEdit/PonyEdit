@@ -6,10 +6,10 @@
 StatusWidget::StatusWidget( bool dialogChild, QWidget *parent ) :
 	QWidget( parent ),
 	ui( new Ui::StatusWidget ) {
-	mDialogChild = dialogChild;
+	mDialogChild        = dialogChild;
 	mCurrentInputWidget = nullptr;
-	mCloseOnButton = false;
-	mResult = None;
+	mCloseOnButton      = false;
+	mResult             = None;
 
 	ui->setupUi( this );
 
@@ -100,13 +100,13 @@ void StatusWidget::setButtons( Buttons buttons ) {
 
 	// Pick a default button
 	QAbstractButton *firstButton = nullptr;
-	int highestValue = 1;
+	int highestValue             = 1;
 	QMapIterator< QAbstractButton *, Button > i( mButtons );
 	while ( i.hasNext() ) {
 		i.next();
 		if ( i.value() > highestValue ) {
 			highestValue = i.value();
-			firstButton = i.key();
+			firstButton  = i.key();
 		}
 	}
 

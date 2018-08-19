@@ -81,7 +81,7 @@ class SshHost : public QObject {
 		                        ServerFile *file,
 		                        const QByteArray &request,
 		                        const QVariant &parameters = QVariant(),
-		                        const Callback &callback = Callback() );
+		                        const Callback &callback   = Callback() );
 		void sendSftpRequest( SFTPRequest *request );
 
 		void getFileContent( bool sudo, const QByteArray &filename, const Callback &callback = Callback() );

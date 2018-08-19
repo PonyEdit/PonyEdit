@@ -83,7 +83,7 @@ void RegExpTester::updateResult() {
 
 		int colorCount = 0;
 		for ( int i = 1; i <= regExp.captureCount(); i++ ) {
-			quint32 color = mCaptureColors[ colorCount ];
+			quint32 color         = mCaptureColors[ colorCount ];
 			QListWidgetItem *item = new QListWidgetItem( regExp.cap( i ) );
 
 			item->setBackgroundColor( QColor( color ) );

@@ -20,8 +20,8 @@ EditorOptionsWidget::~EditorOptionsWidget() {
 
 void EditorOptionsWidget::apply() {
 	Options::TabStopWidth = ui->tabStopWidth->value();
-	Options::WordWrap = ui->wordWrap->isChecked();
-	Options::IndentMode = ui->keepIndent->isChecked() ? Options::KeepIndentOnNextLine : Options::NoAutoIndent;
+	Options::WordWrap     = ui->wordWrap->isChecked();
+	Options::IndentMode   = ui->keepIndent->isChecked() ? Options::KeepIndentOnNextLine : Options::NoAutoIndent;
 	Options::IndentSpaces = ui->indentSpaces->isChecked();
-	Options::StripSpaces = ui->stripSpaces->isChecked();
+	Options::StripSpaces  = ui->stripSpaces->isChecked();
 }

@@ -63,23 +63,23 @@ SyntaxRule::SyntaxRule( SyntaxRule *parent, const QString &name, const QXmlAttri
 			return;
 		}
 
-		mAttribute = Tools::getStringXmlAttribute( attributes, "attribute" );
-		mContext = Tools::getStringXmlAttribute( attributes, "context" );
-		mBeginRegion = Tools::getStringXmlAttribute( attributes, "beginregion" );
-		mEndRegion = Tools::getStringXmlAttribute( attributes, "endregion" );
-		mLookAhead = Tools::getIntXmlAttribute( attributes, "lookahead", 0 );
+		mAttribute     = Tools::getStringXmlAttribute( attributes, "attribute" );
+		mContext       = Tools::getStringXmlAttribute( attributes, "context" );
+		mBeginRegion   = Tools::getStringXmlAttribute( attributes, "beginregion" );
+		mEndRegion     = Tools::getStringXmlAttribute( attributes, "endregion" );
+		mLookAhead     = Tools::getIntXmlAttribute( attributes, "lookahead", 0 );
 		mFirstNonSpace = Tools::getIntXmlAttribute( attributes, "firstnonspace", 0 );
-		mColumn = Tools::getIntXmlAttribute( attributes, "column", -1 );
-		mCharacterA = Tools::getCharXmlAttribute( attributes, "char" );
-		mCharacterB = Tools::getCharXmlAttribute( attributes, "char1" );
-		mString = Tools::getStringXmlAttribute( attributes, "string" );
+		mColumn        = Tools::getIntXmlAttribute( attributes, "column", -1 );
+		mCharacterA    = Tools::getCharXmlAttribute( attributes, "char" );
+		mCharacterB    = Tools::getCharXmlAttribute( attributes, "char1" );
+		mString        = Tools::getStringXmlAttribute( attributes, "string" );
 
 		int tmpSensitivity = Tools::getIntXmlAttribute( attributes, "insensitive", -1 );
 		mCaseSensitivity = tmpSensitivity <
 		                   0 ? -1 : ( tmpSensitivity ? Qt::CaseInsensitive : Qt::CaseSensitive );
 
-		mDynamic = Tools::getIntXmlAttribute( attributes, "dynamic", 0 );
-		mMinimal = Tools::getIntXmlAttribute( attributes, "minimal", 0 );
+		mDynamic       = Tools::getIntXmlAttribute( attributes, "dynamic", 0 );
+		mMinimal       = Tools::getIntXmlAttribute( attributes, "minimal", 0 );
 		mIncludeAttrib = Tools::getIntXmlAttribute( attributes, "includeAttrib", 0 );
 
 		mValid = true;
@@ -119,12 +119,12 @@ SyntaxRule::SyntaxRule( SyntaxRule *parent,
 
 
 	if ( maintainLinks ) {
-		mAttributeLink = other->mAttributeLink;
-		mRegExp = other->mRegExp;
-		mRegExpLineStart = other->mRegExpLineStart;
-		mKeywordLink = other->mKeywordLink;
-		mContextLink = other->mContextLink;
-		mDynamicCharIndex = other->mDynamicCharIndex;
+		mAttributeLink      = other->mAttributeLink;
+		mRegExp             = other->mRegExp;
+		mRegExpLineStart    = other->mRegExpLineStart;
+		mKeywordLink        = other->mKeywordLink;
+		mContextLink        = other->mContextLink;
+		mDynamicCharIndex   = other->mDynamicCharIndex;
 		mDynamicStringSlots = other->mDynamicStringSlots;
 	}
 
@@ -223,7 +223,7 @@ bool SyntaxRule::link( SyntaxDefinition *def ) {
 	}
 
 	if ( getCaseSensitivity() == Qt::CaseSensitive ) {
-		mString = mString.toLower();
+		mString     = mString.toLower();
 		mCharacterA = mCharacterA.toLower();
 		mCharacterB = mCharacterB.toLower();
 	}
@@ -261,7 +261,7 @@ bool SyntaxRule::link( SyntaxDefinition *def ) {
 
 void SyntaxRule::prepareRegExp() {
 	if ( ! mString.isEmpty() && mString.at( 0 ) != '^' ) {
-		mString = '^' + mString;
+		mString          = '^' + mString;
 		mRegExpLineStart = false;
 	} else {
 		mRegExpLineStart = true;
@@ -353,8 +353,8 @@ int SyntaxRule::match( const QString &string, int position ) {
 
 		case Keyword:
 			if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
-				bool caseSensitive = mDefinition->getKeywordCaseSensitivity();
-				const QChar *s = string.constData() + position;
+				bool caseSensitive           = mDefinition->getKeywordCaseSensitivity();
+				const QChar *s               = string.constData() + position;
 				const StringTrie::Node *scan =
 					( caseSensitive ? mKeywordLink->items : mKeywordLink->lcItems ).startScan();
 				int length = 0;
@@ -389,7 +389,7 @@ int SyntaxRule::match( const QString &string, int position ) {
 			if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
 				// Octals start with 0, but have no x like hex. eg; 01562 is octal.
 				if ( string.at( position ) == '0' ) {
-					int lookahead = 1;
+					int lookahead  = 1;
 					const QChar *s = string.constData() + position + 1;
 					while ( position + lookahead < string.length() && ( *s >= '0' ) && ( *s <= '7' ) ) {
 						s++, lookahead++;
@@ -438,8 +438,8 @@ int SyntaxRule::match( const QString &string, int position ) {
 		case Float:
 			if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
 				// [-][0-9]+.[0-9]#+e[0-9]+
-				const QChar *s = string.constData() + position;
-				int extra = 0;
+				const QChar *s   = string.constData() + position;
+				int extra        = 0;
 				bool seenDecimal = false;
 				if ( *s == '-' ) {
 					extra++, s++;
@@ -464,7 +464,7 @@ int SyntaxRule::match( const QString &string, int position ) {
 			if ( position == 0 || mDefinition->isDeliminator( string.at( position - 1 ) ) ) {
 				// [-]0x[0-9]+
 				const QChar *s = string.constData() + position;
-				int extra = 0;
+				int extra      = 0;
 				if ( *s == '-' ) {
 					extra++, s++;
 				}

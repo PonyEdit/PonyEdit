@@ -245,7 +245,7 @@ bool ServerChannel::handleOpening() {
 			}
 
 			mSudoPasswordAttempt = result.value( "password" ).toByteArray();
-			mTriedSudoPassword = false;
+			mTriedSudoPassword   = false;
 		}
 
 		// Send the password
@@ -379,7 +379,7 @@ bool ServerChannel::mainUpdate() {
 void ServerChannel::finalizeServerInit( const QByteArray &initString ) {
 	if ( initString.contains( "Sudo-prompt" ) ) {
 		mSudoPasswordAttempt = mHost->getSudoPassword();
-		mTriedSudoPassword = mSudoPasswordAttempt.isNull();
+		mTriedSudoPassword   = mSudoPasswordAttempt.isNull();
 
 		mInternalStatus = _SendingSudoPassword;
 		return;

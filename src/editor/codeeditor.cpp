@@ -13,7 +13,7 @@
 
 CodeEditor::CodeEditor( BaseFile *file, QWidget *parent ) :
 	QPlainTextEdit( parent ) {
-	mFile = file;
+	mFile             = file;
 	mLineNumberWidget = new LineNumberWidget( this );
 
 	connect( this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)) );
@@ -27,7 +27,7 @@ CodeEditor::CodeEditor( BaseFile *file, QWidget *parent ) :
 
 int CodeEditor::lineNumberAreaWidth() {
 	int digits = 1;
-	int max = qMax( 1, blockCount() );
+	int max    = qMax( 1, blockCount() );
 	while ( max >= 10 ) {
 		max /= 10;
 		++digits;
@@ -66,11 +66,11 @@ void CodeEditor::lineNumberAreaPaintEvent( QPaintEvent *event ) {
 	painter.fillRect( event->rect(), Qt::lightGray );
 
 	QTextBlock block = firstVisibleBlock();
-	int blockNumber = block.blockNumber();
+	int blockNumber  = block.blockNumber();
 
 	qreal offset = Options::EditorFontZoom / 100.0;
 
-	qreal top = blockBoundingGeometry( block ).translated( contentOffset() ).top();
+	qreal top    = blockBoundingGeometry( block ).translated( contentOffset() ).top();
 	qreal bottom = blockBoundingGeometry( block ).translated( contentOffset() ).bottom();
 
 	while ( block.isValid() && top <= event->rect().bottom() ) {
@@ -85,8 +85,8 @@ void CodeEditor::lineNumberAreaPaintEvent( QPaintEvent *event ) {
 			                  number );
 		}
 
-		block = block.next();
-		top = blockBoundingGeometry( block ).translated( contentOffset() ).top();
+		block  = block.next();
+		top    = blockBoundingGeometry( block ).translated( contentOffset() ).top();
 		bottom = blockBoundingRect( block ).translated( contentOffset() ).bottom();
 		++blockNumber;
 	}
@@ -110,9 +110,9 @@ void CodeEditor::highlightCurrentLine() {
 }
 
 void CodeEditor::applyIndent( QTextCursor &cursor, bool outdent ) {
-	QTextDocument *doc = document();
-	int position = cursor.position();
-	int column = 0;
+	QTextDocument *doc  = document();
+	int position        = cursor.position();
+	int column          = 0;
 	int lastTabPosition = 0;
 
 	for ( int i = cursor.block().position(); i < position; i++ ) {
@@ -158,9 +158,9 @@ void CodeEditor::applyIndent( QTextCursor &cursor, bool outdent ) {
 
 int CodeEditor::firstNonWhiteSpace( const QTextBlock &block ) {
 	QTextDocument *doc = document();
-	int scan = block.position();
-	int length = block.length();
-	int end = scan + length;
+	int scan           = block.position();
+	int length         = block.length();
+	int end            = scan + length;
 
 	while ( scan < end && doc->characterAt( scan ).isSpace() ) {
 		scan++;
@@ -202,13 +202,13 @@ void CodeEditor::keyPressEvent( QKeyEvent *event ) {
 
 		// If stuff is selected, indent each line
 		if ( textCursor().hasSelection() ) {
-			QTextBlock block = document()->findBlock( textCursor().selectionStart() );
+			QTextBlock block      = document()->findBlock( textCursor().selectionStart() );
 			QTextCursor tmpCursor = QTextCursor( document() );
 			tmpCursor.setPosition( firstNonWhiteSpace( block ) );
 
-			int selectionEnd = textCursor().selectionEnd();
+			int selectionEnd     = textCursor().selectionEnd();
 			QTextBlock lastBlock = document()->findBlock( selectionEnd );
-			int lastLine = lastBlock.blockNumber();
+			int lastLine         = lastBlock.blockNumber();
 			if ( selectionEnd > lastBlock.position() && lastLine < lastBlock.blockNumber() ) {
 				lastLine++;
 			}
@@ -247,7 +247,7 @@ void CodeEditor::keyPressEvent( QKeyEvent *event ) {
 	// Keep indent on next line, if options say to
 	if ( Options::IndentMode == Options::KeepIndentOnNextLine ) {
 		if ( event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter ) {
-			const QTextBlock &currentBlock = textCursor().block();
+			const QTextBlock &currentBlock  = textCursor().block();
 			const QTextBlock &previousBlock = currentBlock.previous();
 
 			if ( previousBlock.isValid() ) {
@@ -338,7 +338,7 @@ void CodeEditor::focusInEvent( QFocusEvent *e ) {
 
 void CodeEditor::highlightMatchingParenthesis() {
 	QString doc = this->toPlainText();
-	int pos = this->textCursor().position();
+	int pos     = this->textCursor().position();
 
 	QChar leftChar, rightChar, curChar, compareChar, skipChar;
 	int leftPos = -1, rightPos = -1, bracketCount = 0;

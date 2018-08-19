@@ -69,7 +69,7 @@ void TabbedFileList::fileSelected( BaseFile *file ) {
 
 void TabbedFileList::fileChanged() {
 	auto *file = dynamic_cast< BaseFile * >( QObject::sender() );
-	int idx = findTab( file );
+	int idx    = findTab( file );
 	if ( file->hasUnsavedChanges() ) {
 		mTabs->setTabText( idx, file->getLocation().getLabel() + " *" );
 	} else {

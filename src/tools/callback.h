@@ -8,9 +8,9 @@
 class QObject;
 class Callback {
 	public:
-		Callback( QObject *target = nullptr,
-		          const char *successSlot = nullptr,
-		          const char *failureSlot = nullptr,
+		Callback( QObject *target          = nullptr,
+		          const char *successSlot  = nullptr,
+		          const char *failureSlot  = nullptr,
 		          const char *progressSlot = nullptr );
 
 		inline QObject *getTarget() const {
@@ -29,7 +29,7 @@ class Callback {
 			return mProgressSlot;
 		}
 
-		void triggerSuccess( QVariantMap result = QVariantMap() ) const;
+		void triggerSuccess( QVariantMap result       = QVariantMap() ) const;
 		void triggerFailure( QString error, int flags = 0 ) const;
 		void triggerProgress( int progress ) const;
 

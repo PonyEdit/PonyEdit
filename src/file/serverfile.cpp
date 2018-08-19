@@ -15,7 +15,7 @@
 
 ServerFile::ServerFile( const Location &location ) :
 	BaseFile( location ) {
-	mHost = location.getRemoteHost();
+	mHost             = location.getRemoteHost();
 	mChangePumpCursor = 0;
 }
 
@@ -98,7 +98,7 @@ void ServerFile::downloadSuccess( const QVariantMap &result ) {
 		return;
 	}
 
-	mDownloadedData = result.value( "data" ).toByteArray();
+	mDownloadedData     = result.value( "data" ).toByteArray();
 	mDownloadedChecksum = result.value( "checksum" ).toByteArray();
 	finalizeFileOpen();
 }
@@ -191,8 +191,8 @@ void ServerFile::handleDocumentChange( int position, int removeChars, const QStr
 	auto *change = new Change();
 	change->revision = mRevision;
 	change->position = position;
-	change->remove = removeChars;
-	change->insert = insert;
+	change->remove   = removeChars;
+	change->insert   = insert;
 	mChangesSinceLastSave.append( change );
 
 	if ( mOpenStatus == Ready ) {
@@ -244,8 +244,8 @@ void ServerFile::save() {
 }
 
 void ServerFile::serverSaveSuccess( const QVariantMap &results ) {
-	int revision = results.value( "revision" ).toInt();
-	int undoLength = results.value( "undoLength" ).toInt();
+	int revision        = results.value( "revision" ).toInt();
+	int undoLength      = results.value( "undoLength" ).toInt();
 	QByteArray checksum = results.value( "checksum" ).toByteArray();
 
 	savedRevision( revision, undoLength, checksum );
@@ -290,7 +290,7 @@ void ServerFile::sudo() {
 
 	// Change location
 	mLocation = mLocation.getSudoLocation();
-	mHost = mLocation.getRemoteHost();
+	mHost     = mLocation.getRemoteHost();
 
 	// Reconnect like this was a dropout
 	reconnect();

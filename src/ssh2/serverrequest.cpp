@@ -39,8 +39,8 @@ const QByteArray &ServerRequest::prepare( int bufferId ) {
 		requestRoot.insert( "b", bufferId );
 	}
 
-	mPackedRequest = QJsonDocument::fromVariant( QVariant( requestRoot ) ).toJson();
-	mPackedRequest = Tools::bin( mPackedRequest );
+	mPackedRequest  = QJsonDocument::fromVariant( QVariant( requestRoot ) ).toJson();
+	mPackedRequest  = Tools::bin( mPackedRequest );
 	mPackedRequest += "\n";
 
 	// "bin" the request; clear out characters that are trouble for ssh comms
@@ -57,7 +57,7 @@ void ServerRequest::handleReply( const QVariantMap &reply ) {
 		emit requestSuccess( reply );
 	} else {
 		QByteArray code = reply.value( "code" ).toByteArray();
-		int errorFlags = 0;
+		int errorFlags  = 0;
 
 		if ( code == "perm" ) {
 			errorFlags |= PermissionError;

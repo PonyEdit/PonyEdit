@@ -66,7 +66,7 @@ void StartupOptionsWidget::apply() {
 		Options::StartupFilesLineNo.clear();
 
 		Options::StartupAction = Options::SetFiles;
-		Options::StartupFiles = ui->fileList->toPlainText().split( QRegExp( "(\r|\n)+" ) );
+		Options::StartupFiles  = ui->fileList->toPlainText().split( QRegExp( "(\r|\n)+" ) );
 		for ( int ii = 0; ii < Options::StartupFiles.length(); ii++ ) {
 			Options::StartupFilesLineNo.append( 1 );
 		}

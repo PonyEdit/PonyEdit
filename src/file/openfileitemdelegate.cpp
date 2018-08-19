@@ -19,10 +19,10 @@ OpenFileItemDelegate::OpenFileItemDelegate( OpenFileTreeView *parent ) :
 void OpenFileItemDelegate::paint( QPainter *painter,
                                   const QStyleOptionViewItem &option,
                                   const QModelIndex &index ) const {
-	auto location = index.data( OpenFileTreeModel::LocationRole ).value< Location >();
-	auto *file = index.data( OpenFileTreeModel::FileRole ).value< BaseFile * >();
+	auto location                  = index.data( OpenFileTreeModel::LocationRole ).value< Location >();
+	auto *file                     = index.data( OpenFileTreeModel::FileRole ).value< BaseFile * >();
 	OpenFileTreeModel::Level level = static_cast< OpenFileTreeModel::Level >( index.data( OpenFileTreeModel::TypeRole ).toInt() );
-	QString label = index.data( OpenFileTreeModel::LabelRole ).toString();
+	QString label                  = index.data( OpenFileTreeModel::LabelRole ).toString();
 
 	// Always paint the default background
 	QStyledItemDelegate::paint( painter, option, index );
@@ -98,9 +98,9 @@ void OpenFileItemDelegate::paint( QPainter *painter,
 					                 32,
 					                 labelRect.height() - 4 );
 					so.direction = Qt::LeftToRight;
-					so.minimum = 0;
-					so.maximum = 100;
-					so.progress = file->getProgress();
+					so.minimum   = 0;
+					so.maximum   = 100;
+					so.progress  = file->getProgress();
 
 					sp.drawControl( QStyle::CE_ProgressBar, so );
 

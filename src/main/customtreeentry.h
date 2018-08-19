@@ -51,7 +51,7 @@ class CustomTreeEntry : public QObject {
 
 		template < class T > void setData( T data ) {
 			mDataDeleteProc = nullptr;
-			mData = static_cast< void * >( data );
+			mData           = static_cast< void * >( data );
 		}
 
 		template < class T > T getData() const {

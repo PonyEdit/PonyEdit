@@ -177,7 +177,7 @@ bool SFTPChannel::updateLs() {
 
 bool SFTPChannel::updateMkDir() {
 	QByteArray path = mCurrentRequest->getPath().toUtf8();
-	int rc = libssh2_sftp_mkdir_ex( mHandle, path, path.length(), 0644 );
+	int rc          = libssh2_sftp_mkdir_ex( mHandle, path, path.length(), 0644 );
 	if ( rc == LIBSSH2_ERROR_EAGAIN ) {
 		return true;    // Try again.
 	}

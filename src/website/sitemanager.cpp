@@ -84,8 +84,8 @@ void SiteManager::handleReply( QNetworkReply *reply ) {
 }
 
 void SiteManager::handleUpdateCheckReply( QList< QVariant > reply, bool forceNotification ) {
-	int update_major = MAJOR_VERSION;
-	int update_minor = MINOR_VERSION;
+	int update_major    = MAJOR_VERSION;
+	int update_minor    = MINOR_VERSION;
 	int update_revision = REVISION;
 	QString update_version;
 	QString update_url;
@@ -99,11 +99,11 @@ void SiteManager::handleUpdateCheckReply( QList< QVariant > reply, bool forceNot
 		QVariantMap entry = rawEntry.toMap();
 
 		// Split the version number...
-		QString version = entry[ "tag_name" ].toString();
+		QString version           = entry[ "tag_name" ].toString();
 		QStringList versionPieces = version.split( notNumeric );
-		int major = versionPieces.empty() ? 0 : versionPieces.takeFirst().toInt();
-		int minor = versionPieces.empty() ? 0 : versionPieces.takeFirst().toInt();
-		int revision = versionPieces.empty() ? 0 : versionPieces.takeFirst().toInt();
+		int major                 = versionPieces.empty() ? 0 : versionPieces.takeFirst().toInt();
+		int minor                 = versionPieces.empty() ? 0 : versionPieces.takeFirst().toInt();
+		int revision              = versionPieces.empty() ? 0 : versionPieces.takeFirst().toInt();
 
 		// Find a download URL...
 		QString entry_url;
@@ -137,11 +137,11 @@ void SiteManager::handleUpdateCheckReply( QList< QVariant > reply, bool forceNot
 			if ( major > update_major ||
 			     ( major == update_major && minor > update_minor ) ||
 			     ( major == update_major && minor == update_minor && revision > update_revision ) ) {
-				update_version = version;
-				update_major = major;
-				update_minor = minor;
+				update_version  = version;
+				update_major    = major;
+				update_minor    = minor;
 				update_revision = revision;
-				update_url = entry_url;
+				update_url      = entry_url;
 			}
 		}
 	}

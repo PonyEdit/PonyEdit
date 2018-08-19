@@ -31,7 +31,7 @@ class SshSession : public QObject {
 	Q_OBJECT
 
 	public:
-		enum Status { Error = -1, Disconnected = 0, NsLookup = 1, OpeningConnection = 2, VerifyingHost = 3, Authenticating = 4,
+		enum Status { Error     = -1, Disconnected = 0, NsLookup = 1, OpeningConnection = 2, VerifyingHost = 3, Authenticating = 4,
 			      Connected = 100 };
 		enum AuthMethod { AuthNone = 0, AuthPassword = 1, AuthKeyboardInteractive = 2, AuthPublicKey = 4 };
 		Q_DECLARE_FLAGS( AuthMethods, AuthMethod )

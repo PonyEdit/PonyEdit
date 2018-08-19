@@ -21,7 +21,7 @@ void SearchResultDelegate::paint( QPainter *painter,
 		painter->setFont( *Options::EditorFont );
 
 		QPen originalPen = painter->pen();
-		QRect drawRect = option.rect;
+		QRect drawRect   = option.rect;
 
 		drawRect.setLeft( drawRect.left() + option.decorationSize.width() + 5 );
 
@@ -31,10 +31,10 @@ void SearchResultDelegate::paint( QPainter *painter,
 		painter->drawText( drawRect, lineNumber );
 		drawRect.setLeft( drawRect.left() + painter->boundingRect( drawRect, lineNumber ).width() + 10 );
 
-		QString left = result->matchedLine.mid( 0, result->start );
+		QString left  = result->matchedLine.mid( 0, result->start );
 		QString match = result->matchedLine.mid( result->start, result->length );
 
-		int leftWidth = painter->boundingRect( drawRect, left ).width();
+		int leftWidth  = painter->boundingRect( drawRect, left ).width();
 		int matchWidth = painter->boundingRect( drawRect, match ).width();
 
 		// Draw a highlight rectangle

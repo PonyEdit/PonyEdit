@@ -176,7 +176,7 @@ ShellChannel::ReadReply XferChannel::readBinaryData( int size ) {
 		}
 
 		int currentLength = mBinaryReadBuffer.length();
-		auto percent = static_cast< int >( ( static_cast< float >( currentLength ) / size ) * 100 );
+		auto percent      = static_cast< int >( ( static_cast< float >( currentLength ) / size ) * 100 );
 		mCurrentRequest->handleProgress( percent );
 	}
 

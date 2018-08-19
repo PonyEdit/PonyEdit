@@ -6,9 +6,9 @@
 
 void SyntaxDefManager::Record::pack( const QXmlAttributes &atts ) {
 	syntaxName = Tools::getStringXmlAttribute( atts, "name" );
-	category = Tools::getStringXmlAttribute( atts, "section" );
-	priority = Tools::getIntXmlAttribute( atts, "priority", 0 );
-	hidden = Tools::getIntXmlAttribute( atts, "hidden", 0 );
+	category   = Tools::getStringXmlAttribute( atts, "section" );
+	priority   = Tools::getIntXmlAttribute( atts, "priority", 0 );
+	hidden     = Tools::getIntXmlAttribute( atts, "hidden", 0 );
 
 	QStringList patternStrings = Tools::getStringXmlAttribute( atts, "extensions" ).split( ';' );
 	foreach ( const QString &pattern, patternStrings ) {
@@ -66,7 +66,7 @@ void SyntaxDefManager::indexFile( const QFileInfo &fileinfo ) {
 	if ( fileinfo.isFile() ) {
 		auto *record = new Record();
 		record->lastUpdated = QDateTime::currentDateTime();
-		record->filename = fileinfo.filePath();
+		record->filename    = fileinfo.filePath();
 
 		// Open the file and read just enough to pull out the <language> block
 		QFile file( fileinfo.filePath() );

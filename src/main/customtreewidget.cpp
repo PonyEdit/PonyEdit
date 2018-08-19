@@ -33,7 +33,7 @@ void CustomTreeWidget::addTopLevelEntry( CustomTreeEntry *entry ) {
 
 void CustomTreeWidget::mousePressEvent( QMouseEvent *event ) {
 	// Work out what was clicked.
-	QModelIndex index = indexAt( event->pos() );
+	QModelIndex index      = indexAt( event->pos() );
 	CustomTreeEntry *entry = mModel->getEntry( index );
 	mLastClickedPoint = event->pos() - visualRect( index ).topLeft();
 

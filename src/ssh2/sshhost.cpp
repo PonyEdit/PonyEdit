@@ -311,11 +311,11 @@ void SshHost::sendServerRequest( bool sudo,
 
 void SshHost::checkChannelCount() {
 	// For each type of channel, check their counts.
-	int serverCount = countChannels( SshChannel::Server );
+	int serverCount     = countChannels( SshChannel::Server );
 	int sudoServerCount = countChannels( SshChannel::SudoServer );
-	int xferCount = countChannels( SshChannel::Xfer );
-	int sudoXferCount = countChannels( SshChannel::SudoXfer );
-	int sftpCount = countChannels( SshChannel::Sftp );
+	int xferCount       = countChannels( SshChannel::Xfer );
+	int sudoXferCount   = countChannels( SshChannel::SudoXfer );
+	int sftpCount       = countChannels( SshChannel::Sftp );
 
 	// Check if we need more server channels.
 	if ( serverCount < MAX_SERVER_CHANNELS &&
@@ -371,7 +371,7 @@ SFTPRequest *SshHost::getNextSftpRequest() {
 ServerRequest *SshHost::getNextServerRequest( bool sudo, const QMap< ServerFile *, int > &registeredBuffers ) {
 	ServerRequest *request = nullptr;
 
-	QMutex &lock = sudo ? mSudoServerRequestQueueMutex : mServerRequestQueueMutex;
+	QMutex &lock                   = sudo ? mSudoServerRequestQueueMutex : mServerRequestQueueMutex;
 	QList< ServerRequest * > &list = sudo ? mSudoServerRequestQueue : mServerRequestQueue;
 
 	lock.lock();
@@ -404,7 +404,7 @@ bool SshHost::waitBeforeCheckingServer( SshChannel *channel ) {
 	mFirstServerScriptCheckerLock.lock();
 	if ( mFirstServerScriptChecker == nullptr ) {
 		mFirstServerScriptChecker = channel;
-		result = false;
+		result                    = false;
 	}
 	mFirstServerScriptCheckerLock.unlock();
 
@@ -412,7 +412,7 @@ bool SshHost::waitBeforeCheckingServer( SshChannel *channel ) {
 }
 
 void SshHost::firstServerCheckComplete() {
-	mServerScriptChecked = true;
+	mServerScriptChecked      = true;
 	mFirstServerScriptChecker = nullptr;
 }
 
@@ -513,13 +513,13 @@ void SshHost::updateOverallStatus() {
 	// Work out which channel is closest to being connected, and display that channel's status.
 	SshChannel *mostConnectedChannel = nullptr;
 	SshSession *mostConnectedSession = nullptr;
-	int mostConnectedScore = 0;
+	int mostConnectedScore           = 0;
 
 	foreach ( SshSession *session, mSessions ) {
 		SshChannel *localMaximum = session->getMostConnectedChannel();
-		int score = localMaximum ? localMaximum->getConnectionScore() : session->getStatus();
+		int score                = localMaximum ? localMaximum->getConnectionScore() : session->getStatus();
 		if ( score > mostConnectedScore ) {
-			mostConnectedScore = score;
+			mostConnectedScore   = score;
 			mostConnectedSession = session;
 			mostConnectedChannel = localMaximum;
 			if ( score == 100 ) {
@@ -544,7 +544,7 @@ void SshHost::updateOverallStatus() {
 void SshHost::setOverallStatus( Status newStatus, const QString &connectionString ) {
 	if ( newStatus != mOverallStatus || connectionString != mConnectionString ) {
 		mConnectionString = connectionString;
-		mOverallStatus = newStatus;
+		mOverallStatus    = newStatus;
 
 		emit overallStatusChanged();
 	}

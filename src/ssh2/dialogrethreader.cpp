@@ -6,7 +6,7 @@ int DialogRethreader::sRunDialogEventId;
 
 DialogRethreader::DialogRethreader() :
 	QObject( nullptr ) {
-	sInstance = this;
+	sInstance         = this;
 	sRunDialogEventId = QEvent::registerEventType();
 }
 
@@ -14,7 +14,7 @@ bool DialogRethreader::event( QEvent *event ) {
 	if ( event->type() == sRunDialogEventId ) {
 		event->accept();
 
-		auto *e = dynamic_cast< DialogEvent * >( event );
+		auto *e                   = dynamic_cast< DialogEvent * >( event );
 		DialogRethreadRequest *rq = e->request;
 
 		ThreadCrossingDialog *dialog = rq->factoryMethod();

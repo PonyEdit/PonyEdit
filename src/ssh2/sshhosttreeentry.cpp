@@ -34,7 +34,7 @@ void SshHostTreeEntry::initializeCustomDrawKit() {
 		sConnectingIcon[ i ] = QIcon( QString( ":/icons/status-blue-%1.png" ).arg( i + 1 ) );
 	}
 	sConnectedIcon = QIcon( ":/icons/status-green.png" );
-	sLogIcon = QIcon( ":/icons/log.png" );
+	sLogIcon       = QIcon( ":/icons/log.png" );
 }
 
 void SshHostTreeEntry::customDraw( QPainter *painter, const QStyleOptionViewItem &option ) {

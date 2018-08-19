@@ -80,14 +80,14 @@ void Tools::loadServers() {
 		host->setKeyFile( settings.value( "keyFile" ).toByteArray() );
 
 		QByteArray password = QByteArray::fromBase64( settings.value( "password" ).toByteArray() );
-		bool savePassword = settings.value( "savePassword", password.length() > 0 ).toBool();
+		bool savePassword   = settings.value( "savePassword", password.length() > 0 ).toBool();
 		if ( savePassword ) {
 			host->setPassword( password );
 			host->setSavePassword( savePassword );
 		}
 
 		QByteArray keyPassphrase = QByteArray::fromBase64( settings.value( "keyPassphrase" ).toByteArray() );
-		bool saveKeyPassphrase = settings.value( "saveKeyPassphrase", keyPassphrase.length() > 0 ).toBool();
+		bool saveKeyPassphrase   = settings.value( "saveKeyPassphrase", keyPassphrase.length() > 0 ).toBool();
 		if ( saveKeyPassphrase ) {
 			host->setKeyPassphrase( keyPassphrase );
 			host->setSaveKeyPassphrase( saveKeyPassphrase );
@@ -110,7 +110,7 @@ void Tools::loadServers() {
 	for ( int i = 0; i < count; i++ ) {
 		settings.setArrayIndex( i );
 		QString hostname = settings.value( "hostname" ).toString();
-		QByteArray key = settings.value( "hostkey" ).toByteArray();
+		QByteArray key   = settings.value( "hostkey" ).toByteArray();
 		SshHost::registerKnownFingerprint( hostname, key );
 	}
 }
@@ -174,7 +174,7 @@ QString Tools::squashLabel( const QString &label, const QFontMetrics &metrics, i
 	int fullWidth = metrics.boundingRect( label ).width();
 	int shortFall = fullWidth - availableWidth;
 
-	int cursor = 0;
+	int cursor     = 0;
 	QString result = label;
 	while ( shortFall > 0 ) {
 		int nextSeparator = result.indexOf( separators, cursor );
@@ -183,7 +183,7 @@ QString Tools::squashLabel( const QString &label, const QFontMetrics &metrics, i
 		}
 
 		QString shorten = result.mid( cursor, nextSeparator - cursor );
-		int cullLength = metrics.boundingRect( shorten.mid( 1 ) ).width();
+		int cullLength  = metrics.boundingRect( shorten.mid( 1 ) ).width();
 
 		result.replace( cursor, shorten.length(), shorten[ 0 ] );
 		cursor = cursor + 2;
@@ -214,7 +214,7 @@ QChar Tools::getCharXmlAttribute( const QXmlAttributes &attribs, const QString &
 int Tools::getIntXmlAttribute( const QXmlAttributes &attribs, const QString &key, int defaulVal ) {
 	bool ok;
 	QString stringValue = getStringXmlAttribute( attribs, key );
-	int value = stringValue.toInt( &ok );
+	int value           = stringValue.toInt( &ok );
 	if ( ok ) {
 		return value;
 	}
@@ -367,7 +367,7 @@ QString Tools::stringifyIpAddress( unsigned long ipAddress ) {
 }
 
 QByteArray Tools::bin( const QByteArray &source ) {
-	const auto *c = reinterpret_cast< const unsigned char * >( source.constData() );
+	const auto *c            = reinterpret_cast< const unsigned char * >( source.constData() );
 	const unsigned char *end = c + source.length();
 	QByteArray result;
 
@@ -400,9 +400,9 @@ unsigned char Tools::unbinEscape( unsigned char c ) {
 }
 
 int Tools::unbin( QByteArray &target, const char *source, int maxTarget, int maxSource, bool *leftoverEscape ) {
-	const auto *unsignedSource = reinterpret_cast< const unsigned char * >( source );
+	const auto *unsignedSource     = reinterpret_cast< const unsigned char * >( source );
 	const unsigned char *sourceEnd = unsignedSource + maxSource;
-	const unsigned char *c = unsignedSource;
+	const unsigned char *c         = unsignedSource;
 
 	if ( leftoverEscape && *leftoverEscape && c < sourceEnd ) {
 		target.append( static_cast< char >( unbinEscape( *c ) ) );

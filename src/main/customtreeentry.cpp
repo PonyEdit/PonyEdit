@@ -40,7 +40,7 @@ CustomTreeEntry::~CustomTreeEntry() {
 
 	foreach ( CustomTreeEntry *child, mChildren ) {
 		child->mParent = nullptr;
-		child->mModel = nullptr;
+		child->mModel  = nullptr;
 		delete child;
 	}
 
@@ -57,9 +57,9 @@ void CustomTreeEntry::updateChildIndices() {
 }
 
 void CustomTreeEntry::addChild( CustomTreeEntry *child ) {
-	child->mModel = mModel;
+	child->mModel  = mModel;
 	child->mParent = this;
-	mDelayedLoad = false;
+	mDelayedLoad   = false;
 
 	mModel->beginInsertRows( mModel->getEntryIndex( this ), mChildren.count(), mChildren.count() );
 	mChildren.append( child );
@@ -76,7 +76,7 @@ void CustomTreeEntry::removeAllChildren() {
 	mModel->beginRemoveRows( mModel->getEntryIndex( this ), 0, mChildren.count() - 1 );
 	foreach ( CustomTreeEntry *entry, mChildren ) {
 		entry->mParent = nullptr;
-		entry->mModel = nullptr;
+		entry->mModel  = nullptr;
 		delete entry;
 	}
 	mChildren.clear();
@@ -177,9 +177,9 @@ void CustomTreeEntry::invalidate() {
 
 void CustomTreeEntry::addGutterIcon( int id, bool hover, const QIcon &icon, const QString &tooltip ) {
 	GutterIcon gi;
-	gi.id = id;
-	gi.hover = hover;
-	gi.icon = icon;
+	gi.id      = id;
+	gi.hover   = hover;
+	gi.icon    = icon;
 	gi.tooltip = tooltip;
 	mGutterIcons.append( gi );
 }
