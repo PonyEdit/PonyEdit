@@ -21,8 +21,10 @@
 namespace Ui { class FileDialog; }
 
 // Specialty tableview; used in the file list to force selection cursor to leftmost column
+#ifdef __llvm__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wweak-vtables"
+#endif
 class SelectionlessTable : public QTableView {
 	public:
 		SelectionlessTable( QWidget *p ) :
@@ -33,8 +35,9 @@ class SelectionlessTable : public QTableView {
 			}
 		}
 };
+#ifdef __llvm__
 #pragma clang diagnostic pop
-
+#endif
 
 class CustomTreeEntry;
 class FileDialog : public QDialog {

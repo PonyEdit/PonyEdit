@@ -140,8 +140,10 @@ class SshSession : public QObject {
 
 Q_DECLARE_OPERATORS_FOR_FLAGS( SshSession::AuthMethods )
 
+#ifdef __llvm__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wweak-vtables"
+#endif
 class SshSessionThread : public QThread {
 	public:
 		SshSessionThread( SshSession *session ) :
@@ -157,6 +159,7 @@ class SshSessionThread : public QThread {
 	private:
 		SshSession *mSession;
 };
+#ifdef __llvm__
 #pragma clang diagnostic pop
-
+#endif
 #endif  // SSHSESSION_H
